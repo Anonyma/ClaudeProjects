@@ -1,0 +1,17 @@
+# MLX Whisper for fast local transcription on Apple Silicon
+mlx-whisper>=0.4.0
+
+# Supabase for persistence
+supabase>=2.0.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# Progress bars
+tqdm>=4.65.0
+
+# OpenAI API (optional, for cloud transcription)
+openai>=1.0.0
+
+# Audio file handling
+pydub>=0.25.0

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Command Center</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --border: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-yellow: #d29922;
+            --accent-red: #f85149;
+            --accent-purple: #a371f7;
+            --accent-orange: #db6d28;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value { font-size: 24px; font-weight: 600; }
+        .stat-label { font-size: 12px; color: var(--text-secondary); }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .filter-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 16px;
+        }
+
+        .project-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .project-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .project-type {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .status-active { background: rgba(63, 185, 80, 0.2); color: var(--accent-green); }
+        .status-needs-fix { background: rgba(248, 81, 73, 0.2); color: var(--accent-red); }
+        .status-wip { background: rgba(210, 153, 34, 0.2); color: var(--accent-yellow); }
+        .status-archived { background: rgba(139, 148, 158, 0.2); color: var(--text-secondary); }
+        .status-deprecated { background: rgba(139, 148, 158, 0.2); color: var(--text-secondary); }
+
+        .header-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        .access-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        .access-badge.online { background: rgba(88, 166, 255, 0.2); color: var(--accent-blue); }
+        .access-badge.local { background: rgba(163, 113, 247, 0.2); color: var(--accent-purple); }
+        .access-badge.unconfigured { background: rgba(219, 109, 40, 0.2); color: var(--accent-orange); }
+
+        .project-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .access-section {
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .access-title {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .access-links {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .access-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .access-link:hover {
+            background: var(--bg-primary);
+        }
+
+        .access-link-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .access-link-row .access-link {
+            flex: 1;
+        }
+
+        .copy-path-btn {
+            padding: 8px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .copy-path-btn:hover {
+            background: var(--bg-primary);
+            border-color: var(--accent-blue);
+        }
+
+        .access-link.primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .access-link.primary:hover {
+            background: #4090e0;
+        }
+
+        .platform-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .copy-btn {
+            margin-left: auto;
+            padding: 4px 8px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .copy-btn:hover { background: var(--bg-primary); }
+
+        .project-meta {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .meta-item { display: flex; align-items: center; gap: 4px; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .session-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        .session-link:hover { text-decoration: underline; }
+
+        .add-project-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .add-project-btn:hover { transform: scale(1.1); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 { margin-bottom: 20px; font-size: 18px; }
+
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-group textarea { min-height: 80px; resize: vertical; }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary { background: var(--accent-blue); color: white; }
+        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border); }
+
+        /* Health Panel */
+        .health-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .health-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .last-sync {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: normal;
+        }
+
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .health-item {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bg-tertiary);
+        }
+
+        .health-item.healthy { border-left: 3px solid var(--accent-green); }
+        .health-item.warning { border-left: 3px solid var(--accent-red); }
+        .health-item.info { border-left: 3px solid var(--accent-yellow); }
+        .health-item.muted { border-left: 3px solid var(--text-secondary); }
+
+        .health-count {
+            display: block;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .health-item.healthy .health-count { color: var(--accent-green); }
+        .health-item.warning .health-count { color: var(--accent-red); }
+        .health-item.info .health-count { color: var(--accent-yellow); }
+        .health-item.muted .health-count { color: var(--text-secondary); }
+
+        .health-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .attention-list {
+            padding: 0 16px 16px;
+        }
+
+        .attention-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 12px;
+            background: rgba(248, 81, 73, 0.1);
+            border: 1px solid rgba(248, 81, 73, 0.3);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .attention-item.wip {
+            background: rgba(210, 153, 34, 0.1);
+            border-color: rgba(210, 153, 34, 0.3);
+        }
+
+        .attention-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .attention-reason {
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding-left: 24px;
+        }
+
+        .attention-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding-left: 24px;
+            margin-top: 4px;
+        }
+
+        .attention-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .attention-link:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .attention-link.primary {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        .attention-link.primary:hover {
+            background: #4090e0;
+        }
+
+        /* Sessions Panel */
+        .sessions-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .sessions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .sessions-note {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: normal;
+        }
+
+        .sessions-list {
+            padding: 12px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .session-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .session-btn:hover {
+            border-color: var(--accent-purple);
+            background: rgba(163, 113, 247, 0.1);
+        }
+
+        .no-sessions {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* Quick Actions Panel */
+        .quick-actions {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .actions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .toggle-actions {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .actions-grid.collapsed { display: none; }
+
+        .action-group-title {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 6px;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent-blue);
+            background: var(--bg-primary);
+        }
+
+        .action-icon { font-size: 16px; }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--accent-green);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .projects-grid { grid-template-columns: 1fr; }
+            .stats { flex-wrap: wrap; }
+            header { flex-direction: column; gap: 16px; align-items: flex-start; }
+            .actions-grid { grid-template-columns: 1fr; }
+            .health-grid { grid-template-columns: repeat(2, 1fr); }
+            .health-header, .sessions-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <span>Project Command Center</span>
+            </h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="totalProjects">-</div>
+                    <div class="stat-label">Total Projects</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="activeProjects">-</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="needsFixProjects">-</div>
+                    <div class="stat-label">Needs Fix</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="deployedProjects">-</div>
+                    <div class="stat-label">Deployed</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Health Check Panel -->
+        <div class="health-panel" id="healthPanel">
+            <div class="health-header">
+                <span>🩺 Project Health</span>
+                <span class="last-sync" id="lastSync">Last sync: checking...</span>
+            </div>
+            <div class="health-grid">
+                <div class="health-item healthy">
+                    <span class="health-count" id="healthyCount">-</span>
+                    <span class="health-label">Healthy</span>
+                </div>
+                <div class="health-item warning">
+                    <span class="health-count" id="needsFixCount">-</span>
+                    <span class="health-label">Needs Fix</span>
+                </div>
+                <div class="health-item info">
+                    <span class="health-count" id="wipCount">-</span>
+                    <span class="health-label">WIP</span>
+                </div>
+                <div class="health-item muted">
+                    <span class="health-count" id="archivedCount">-</span>
+                    <span class="health-label">Archived</span>
+                </div>
+            </div>
+            <div class="attention-list" id="attentionList"></div>
+        </div>
+
+        <!-- Claude Sessions Panel -->
+        <div class="sessions-panel" id="sessionsPanel">
+            <div class="sessions-header">
+                <span>🤖 Saved Claude Sessions</span>
+                <span class="sessions-note">URLs saved when projects were created</span>
+            </div>
+            <div class="sessions-list" id="sessionsList">Loading...</div>
+        </div>
+
+        <!-- Quick Actions Panel -->
+        <div class="quick-actions" id="quickActions">
+            <div class="actions-header">
+                <span>⚡ Quick Actions</span>
+                <button class="toggle-actions" onclick="toggleActions()">▼</button>
+            </div>
+            <div class="actions-grid" id="actionsGrid">
+                <div class="action-group">
+                    <div class="action-group-title">Sync & Data</div>
+                    <button class="action-btn" onclick="copyCommand('sync')">
+                        <span class="action-icon">🔄</span>
+                        <span>Copy Sync Command</span>
+                    </button>
+                    <button class="action-btn" onclick="copyCommand('dry-run')">
+                        <span class="action-icon">👁️</span>
+                        <span>Copy Dry-Run Command</span>
+                    </button>
+                    <button class="action-btn" onclick="openLink('supabase')">
+                        <span class="action-icon">🗄️</span>
+                        <span>Supabase Dashboard</span>
+                    </button>
+                </div>
+                <div class="action-group">
+                    <div class="action-group-title">Deployments</div>
+                    <button class="action-btn" onclick="openLink('netlify')">
+                        <span class="action-icon">🚀</span>
+                        <span>Netlify Dashboard</span>
+                    </button>
+                    <button class="action-btn" onclick="openLink('railway')">
+                        <span class="action-icon">🚂</span>
+                        <span>Railway Dashboard</span>
+                    </button>
+                    <button class="action-btn" onclick="openLink('github')">
+                        <span class="action-icon">🐙</span>
+                        <span>GitHub Profile</span>
+                    </button>
+                </div>
+                <div class="action-group">
+                    <div class="action-group-title">Quick Open</div>
+                    <button class="action-btn" onclick="openLink('study-app')">
+                        <span class="action-icon">📚</span>
+                        <span>NotebookLM Study Hub</span>
+                    </button>
+                    <button class="action-btn" onclick="openLink('art-app')">
+                        <span class="action-icon">🎨</span>
+                        <span>Art Discovery</span>
+                    </button>
+                    <button class="action-btn" onclick="copyPath('projects-json')">
+                        <span class="action-icon">📋</span>
+                        <span>Copy projects.json Path</span>
+                    </button>
+                </div>
+                <div class="action-group">
+                    <div class="action-group-title">Local Files</div>
+                    <button class="action-btn" onclick="copyPath('sync-log')">
+                        <span class="action-icon">📝</span>
+                        <span>Copy Sync Log Path</span>
+                    </button>
+                    <button class="action-btn" onclick="copyPath('claude-md')">
+                        <span class="action-icon">📖</span>
+                        <span>Copy CLAUDE.md Path</span>
+                    </button>
+                    <button class="action-btn" onclick="copyPath('tabs-backup')">
+                        <span class="action-icon">🗂️</span>
+                        <span>Copy Tabs Backup Path</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast notification -->
+        <div class="toast" id="toast"></div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="needs-fix">Needs Fix</button>
+            <button class="filter-btn" data-filter="wip">WIP</button>
+            <button class="filter-btn" data-filter="deployed">Deployed</button>
+            <button class="filter-btn" data-filter="local">Local Only</button>
+            <button class="filter-btn" data-filter="archived">Archived</button>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+            <div class="loading"><div class="spinner"></div></div>
+        </div>
+    </div>
+
+    <button class="add-project-btn" onclick="openAddModal()">+</button>
+
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <h2>Add New Project</h2>
+            <form id="addProjectForm">
+                <div class="form-group">
+                    <label>Project ID (slug)</label>
+                    <input type="text" name="id" required placeholder="my-project-name">
+                </div>
+                <div class="form-group">
+                    <label>Project Name</label>
+                    <input type="text" name="name" required placeholder="My Project Name">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" placeholder="What does this project do?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select name="type">
+                        <option value="web-app">Web App</option>
+                        <option value="telegram-bot">Telegram Bot</option>
+                        <option value="python-scripts">Python Scripts</option>
+                        <option value="document">Document</option>
+                        <option value="artifact">Browser Artifact</option>
+                        <option value="api">API</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="active">Active</option>
+                        <option value="wip">Work in Progress</option>
+                        <option value="needs-fix">Needs Fix</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Hosted URL (if deployed)</label>
+                    <input type="url" name="hosted_url" placeholder="https://my-app.netlify.app">
+                </div>
+                <div class="form-group">
+                    <label>Local Path</label>
+                    <input type="text" name="path" placeholder="/Users/z/Desktop/Projects/my-project">
+                </div>
+                <div class="form-group">
+                    <label>Localhost Command (if needed)</label>
+                    <input type="text" name="localhost_command" placeholder="python -m http.server 8000">
+                </div>
+                <div class="form-group">
+                    <label>GitHub Repo URL</label>
+                    <input type="url" name="github_repo" placeholder="https://github.com/user/repo">
+                </div>
+                <div class="form-group">
+                    <label>Claude Session URL</label>
+                    <input type="url" name="claude_session_url" placeholder="https://claude.ai/code/session_...">
+                </div>
+                <div class="form-group">
+                    <label>Tags (comma-separated)</label>
+                    <input type="text" name="tags" placeholder="web, dashboard, supabase">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

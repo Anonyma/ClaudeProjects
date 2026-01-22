@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "description": "Index of all projects created with Claude CLI",
+    "lastUpdated": "2026-01-22T17:05:00Z",
+    "localPath": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/projects.json",
+    "supabaseTable": "claude_projects",
+    "dashboardUrl": "https://project-command-center.netlify.app"
+  },
+  "projects": [
+    {
+      "id": "substack-dashboard",
+      "name": "Substack Reads Dashboard",
+      "description": "Dashboard to track reading status of 93 saved Substack articles. Syncs with Supabase for cross-device access.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/substack-dashboard",
+      "type": "web-app",
+      "created": "2025-01-20",
+      "tags": ["dashboard", "substack", "reading-tracker", "supabase", "pwa"],
+      "status": "active",
+      "access": {
+        "method": "file",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/substack-dashboard/index.html",
+        "instructions": "Open directly in browser. Works offline. Data syncs to Supabase automatically.",
+        "hosted": null,
+        "requiresServer": false
+      },
+      "supabase": {
+        "projectId": "substack",
+        "table": "reading_status"
+      },
+      "files": ["index.html", "articles.json", "manifest.json"]
+    },
+    {
+      "id": "reading-dashboard",
+      "name": "NotebookLM Reading Dashboard",
+      "description": "Dashboard for NotebookLM sources. Original version before Substack dashboard was created separately.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard",
+      "type": "web-app",
+      "created": "2025-01-19",
+      "tags": ["dashboard", "notebooklm", "reading-tracker"],
+      "status": "deprecated",
+      "access": {
+        "method": "file-or-localhost",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard/index.html",
+        "instructions": "Can open directly (uses embedded-data.js). For full functionality run: cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard && ./start-server.sh then open http://localhost:8000",
+        "hosted": null,
+        "requiresServer": false,
+        "serverCommand": "cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard && python3 -m http.server 8000"
+      },
+      "files": ["index.html", "embedded-data.js", "start-server.sh", "SETUP.md"]
+    },
+    {
+      "id": "notebooklm-scrape",
+      "name": "NotebookLM Study System",
+      "description": "Complete pipeline: Playwright scrapes NotebookLM audio → Whisper transcribes → GPT generates summaries/quizzes → Supabase stores → Web app serves. 13 podcasts, 116 quiz questions.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/notebooklm_scrape",
+      "type": "python-scripts + web-app",
+      "created": "2025-01-19",
+      "updated": "2025-01-21",
+      "tags": ["scraper", "notebooklm", "transcription", "quizzes", "study", "supabase", "playwright"],
+      "status": "active",
+      "access": {
+        "method": "cli + web",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/notebooklm_scrape/study-app/index.html",
+        "instructions": "Scripts: /Users/z/miniforge3/bin/python <script>.py. Study app: open hosted URL or local file.",
+        "hosted": "https://elaborate-beignet-acdd88.netlify.app/",
+        "deploymentPlatform": "netlify",
+        "requiresServer": false
+      },
+      "supabase": {
+        "projectId": "ydwjzlikslebokuxzwco",
+        "tables": ["notebooklm_notebooks", "notebooklm_assets", "notebooklm_transcripts", "notebooklm_summaries", "notebooklm_quizzes"]
+      },
+      "files": ["playwright_sync.py", "transcribe_optimized.py", "upload_to_supabase.py", "upload_transcripts.py", "generate_study_materials.py", "export_study_materials.py", "study-app/index.html", "CLAUDE.md"]
+    },
+    {
+      "id": "htgaa-biobootcamp",
+      "name": "HTGAA BioBootcamp Day 1 Study Guide",
+      "description": "Interactive study guide covering HTGAA Bio-Bootcamp Day 1: Central Dogma, DNA Structure, Gene Expression, CRISPR, Phage Therapy, Genetic Circuits. Includes educational images, quizzes, and progress tracking.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/htgaa-biobootcamp",
+      "type": "web-app",
+      "created": "2025-01-20",
+      "tags": ["biotech", "learning", "htgaa", "course", "synthetic-biology", "crispr", "molecular-biology"],
+      "status": "active",
+      "access": {
+        "method": "file-or-hosted",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/htgaa-biobootcamp/htgaa-day1-course.html",
+        "instructions": "Open directly in browser or use GitHub Pages hosted URL for mobile access.",
+        "hosted": "https://anonyma.github.io/htgaa-biobootcamp/htgaa-day1-course.html",
+        "requiresServer": false
+      },
+      "github": {
+        "repo": "https://github.com/Anonyma/htgaa-biobootcamp",
+        "pages": "https://anonyma.github.io/htgaa-biobootcamp/"
+      },
+      "files": ["index.html", "htgaa-day1-course.html"]
+    },
+    {
+      "id": "htgaa-learning-guide",
+      "name": "HTGAA BioBootcamp Learning Guide",
+      "description": "Comprehensive learning guide document for HTGAA BioBootcamp program",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects",
+      "type": "document",
+      "created": "2025-01-19",
+      "tags": ["biotech", "learning", "guide", "htgaa", "document"],
+      "status": "active",
+      "access": {
+        "method": "file",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/HTGAA_BioBootcamp_Learning_Guide.html",
+        "instructions": "Open directly in browser. Single HTML document.",
+        "hosted": null,
+        "requiresServer": false
+      },
+      "files": ["HTGAA_BioBootcamp_Learning_Guide.html", "HTGAA_BioBootcamp_Learning_Guide.md"]
+    },
+    {
+      "id": "tg-personal-assistant",
+      "name": "Telegram Personal Assistant Bot",
+      "description": "Telegram bot for personal knowledge management and expense tracking. Features: writing ideas categorization, motivation/tweet saving, guides management. Uses OpenAI (TTS, Vision OCR) and Anthropic (categorization, content rewriting).",
+      "path": null,
+      "type": "telegram-bot",
+      "created": "2025-01-20",
+      "updated": "2025-01-21",
+      "tags": ["telegram", "bot", "knowledge-management", "expenses", "openai", "anthropic", "python"],
+      "status": "needs-fix",
+      "statusNote": "Railway deployment crashed - missing TELEGRAM_BOT_TOKEN env var",
+      "access": {
+        "method": "telegram-bot",
+        "url": null,
+        "instructions": "Bot needs env vars configured in Railway: TELEGRAM_BOT_TOKEN, OPENAI_API_KEY, ANTHROPIC_API_KEY",
+        "hosted": null,
+        "requiresServer": true
+      },
+      "github": {
+        "repo": "https://github.com/Anonyma/tg-personal-assistant",
+        "branches": [
+          "claude/telegram-bot-knowledge-expenses-xb4Gv",
+          "claude/telegram-bot-knowledge-expenses-H087v"
+        ]
+      },
+      "deployments": {
+        "railway": {
+          "url": "https://railway.com/project/b5ce1b7f-56d5-419f-be7d-fb15e2334011",
+          "status": "crashed",
+          "crashReason": "TELEGRAM_BOT_TOKEN not configured",
+          "lastCrash": "2025-01-21T11:48:00Z"
+        },
+        "replit": {
+          "url": "https://replit.com/@techno0ptimist/Knowledge-Keeper",
+          "status": "archived",
+          "archiveReason": "Ran out of free tier credits"
+        }
+      },
+      "claudeCodeSession": "https://claude.ai/code/session_01QyJ6wVxnkezziPMEHA2xqS",
+      "files": ["bot.py", "config.py", "database.py", "tts.py", "requirements.txt", "Procfile", "runtime.txt", "processors/"]
+    },
+    {
+      "id": "art-discovery",
+      "name": "Art Discovery Web App",
+      "description": "Web app for discovering and exploring art. Built with Supabase backend. Has deployment issues with database not displaying.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/art-discovery",
+      "type": "web-app",
+      "created": "2025-01-20",
+      "lastModified": "2026-01-22T17:05:00Z",
+      "tags": ["art", "discovery", "supabase", "web-app", "netlify"],
+      "status": "needs-fix",
+      "statusNote": "Database not displaying on deployment",
+      "access": {
+        "method": "hosted",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/art-discovery/index.html",
+        "instructions": "Open hosted URL or local file in browser",
+        "hosted": "https://art-discoverer.netlify.app",
+        "deploymentPlatform": "netlify",
+        "requiresServer": false
+      },
+      "github": {
+        "repo": "https://github.com/Anonyma/art-discovery",
+        "branch": "claude/art-discovery-app-SWJPH"
+      },
+      "deployments": {
+        "netlify": [
+          {
+            "name": "art-discover",
+            "url": "https://app.netlify.com/projects/art-discover/overview"
+          },
+          {
+            "name": "art-discoverer",
+            "url": "https://app.netlify.com/projects/art-discoverer/overview"
+          }
+        ]
+      },
+      "supabase": {
+        "projectId": "ydwjzlikslebokuxzwco"
+      },
+      "claudeCodeSession": "https://claude.ai/code/session_01TSzbPD6M1oW3gkSdSZHnTC"
+    },
+    {
+      "id": "project-command-center",
+      "name": "Project Command Center",
+      "description": "Central dashboard to track ALL Claude-generated projects: deployed apps, local projects, browser artifacts, WIP items. Connects to Supabase claude_projects table for persistence.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/project-command-center",
+      "type": "web-app",
+      "created": "2026-01-21",
+      "lastModified": "2026-01-22T17:05:00Z",
+      "tags": ["dashboard", "meta", "tracking", "supabase", "project-management", "netlify"],
+      "status": "active",
+      "access": {
+        "method": "hosted",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/project-command-center/index.html",
+        "instructions": "Open hosted URL or local file in browser",
+        "hosted": "https://project-command-center.netlify.app",
+        "deploymentPlatform": "netlify",
+        "requiresServer": false
+      },
+      "supabase": {
+        "projectId": "ydwjzlikslebokuxzwco",
+        "table": "claude_projects"
+      },
+      "files": ["index.html"]
+    },
+    {
+      "id": "voice-memo-transcriber",
+      "name": "Voice Memo Transcriber",
+      "description": "Local-first voice memo transcription using MLX Whisper on Apple Silicon. Includes web dashboard, preprocessing pipeline, and Supabase sync. Handles 2+ hour files in 8-12 minutes.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-memo-transcriber",
+      "type": "python-scripts + web-app",
+      "created": "2026-01-22",
+      "tags": ["transcription", "whisper", "mlx", "voice-memos", "apple-silicon", "supabase", "dashboard"],
+      "status": "active",
+      "access": {
+        "method": "cli + web",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-memo-transcriber/dashboard/index.html",
+        "instructions": "Dashboard: open dashboard/index.html. CLI: python3 scripts/transcribe.py <file>",
+        "hosted": null,
+        "requiresServer": false
+      },
+      "supabase": {
+        "projectId": "ydwjzlikslebokuxzwco",
+        "tables": ["voice_memos", "voice_transcripts"]
+      },
+      "files": ["CLAUDE.md", "requirements.txt", "scripts/transcribe.py", "scripts/preprocess.py", "scripts/sync_to_supabase.py", "scripts/batch_process.py", "dashboard/index.html"]
+    }
+  ],
+  "sharedResources": {
+    "supabase": {
+      "url": "https://ydwjzlikslebokuxzwco.supabase.co",
+      "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU",
+      "schemaFile": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/supabase-schema.sql",
+      "tables": ["reading_status", "notebooklm_notebooks", "notebooklm_assets", "notebooklm_transcripts", "notebooklm_summaries", "notebooklm_quizzes", "voice_memos", "voice_transcripts"]
+    },
+    "projectsIndex": {
+      "localPath": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/projects.json",
+      "supabaseTable": "claude_projects"
+    }
+  }
+}

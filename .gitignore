@@ -1,0 +1,44 @@
+# Environment and secrets
+.env
+.env.local
+
+# Node modules
+node_modules/
+.npm/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Audio files (too large for git)
+*.mp3
+*.wav
+*.m4a
+notebooklm_scrape/notebooklm-audio/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Netlify
+.netlify/
+
+# Logs
+*.log
+progress.log
+
+# Large generated files
+transcripts/
+
+# Projects with their own git repos (managed separately)
+art-discovery/
+htgaa-biobootcamp/

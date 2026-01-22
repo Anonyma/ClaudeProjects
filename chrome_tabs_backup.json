@@ -1,0 +1,209 @@
+{
+  "backup_date": "2025-01-21",
+  "total_original_tabs": 38,
+  "unique_tabs_after_dedup": 25,
+  "duplicates_removed": 13,
+
+  "organized_tabs": {
+    "Claude AI Chats": [
+      {
+        "title": "Claude Chat",
+        "url": "https://claude.ai/chat/6145d462-1ac6-4f7b-9e03-a51cca5e0380",
+        "note": "Active chat - appeared twice (duplicate removed)"
+      },
+      {
+        "title": "Claude Chat",
+        "url": "https://claude.ai/chat/6128293a-669b-4de1-a73f-d7764554def6",
+        "note": "Suspended chat"
+      },
+      {
+        "title": "Claude Chat",
+        "url": "https://claude.ai/chat/6c4c57a4-ef5c-42af-a3c5-aabf3e0d4432",
+        "note": "Suspended chat"
+      }
+    ],
+
+    "Claude Code Sessions": [
+      {
+        "title": "Build Art Discovery web app with Supabase",
+        "url": "https://claude.ai/code/session_01TSzbPD6M1oW3gkSdSZHnTC",
+        "note": "Active session"
+      },
+      {
+        "title": "Build Telegram bot for knowledge and expenses",
+        "url": "https://claude.ai/code/session_01QyJ6wVxnkezziPMEHA2xqS",
+        "note": "Appeared twice (duplicate removed)"
+      },
+      {
+        "title": "Claude Code Session (unknown)",
+        "url": "https://claude.ai/code/session_01MKo9Xy638rF8DvmdYUnN5Y",
+        "note": "Suspended - title was just 'claude.ai'"
+      }
+    ],
+
+    "Claude Settings & Platform": [
+      {
+        "title": "Claude Settings - Usage",
+        "url": "https://claude.ai/settings/usage"
+      },
+      {
+        "title": "Claude Settings - General",
+        "url": "https://claude.ai/settings/general"
+      },
+      {
+        "title": "Claude Developer Platform",
+        "url": "https://platform.claude.com/dashboard"
+      },
+      {
+        "title": "Claude OAuth (expired)",
+        "url": "https://claude.ai/oauth/authorize?...",
+        "note": "SAFE TO CLOSE - OAuth flow is expired, appeared 3 times"
+      }
+    ],
+
+    "Art Discovery Project": [
+      {
+        "title": "Anonyma's Project | Supabase",
+        "url": "https://supabase.com/dashboard/project/ydwjzlikslebokuxzwco/sql/18d6e36a-8ca1-477b-a5bf-766df1e614fa"
+      },
+      {
+        "title": "art-discover | Netlify",
+        "url": "https://app.netlify.com/projects/art-discover/overview"
+      },
+      {
+        "title": "art-discoverer | Netlify",
+        "url": "https://app.netlify.com/projects/art-discoverer/overview",
+        "note": "Different project name - might be duplicate deployment?"
+      },
+      {
+        "title": "seed.sql - GitHub",
+        "url": "https://raw.githubusercontent.com/Anonyma/art-discovery/refs/heads/claude/art-discovery-app-SWJPH/seed.sql?token=GHSAT0AAAAAADSN5W2272QWFBS22CLQ5ELC2LQWZVA",
+        "note": "Token may be expired"
+      }
+    ],
+
+    "Telegram Bot Project": [
+      {
+        "title": "tg-personal-assistant - GitHub",
+        "url": "https://github.com/Anonyma/tg-personal-assistant/tree/claude/telegram-bot-knowledge-expenses-H087v",
+        "note": "Appeared twice (duplicate removed)"
+      },
+      {
+        "title": "Editing config.py - GitHub",
+        "url": "https://github.com/Anonyma/tg-personal-assistant/edit/claude/telegram-bot-knowledge-expenses-H087v/config.py"
+      },
+      {
+        "title": "tg-personal-assistant | Railway",
+        "url": "https://railway.com/project/b5ce1b7f-56d5-419f-be7d-fb15e2334011/service/56783995-1dc3-460c-9de4-faaaf98cff8a?environmentId=50087309-d7da-4935-8b96-f38de0f8ff5e",
+        "note": "Appeared twice (duplicate removed)"
+      }
+    ],
+
+    "Replit Projects": [
+      {
+        "title": "Clawd Setup",
+        "url": "https://replit.com/@techno0ptimist/Clawd-Setup",
+        "note": "Appeared twice"
+      },
+      {
+        "title": "Knowledge Keeper",
+        "url": "https://replit.com/@techno0ptimist/Knowledge-Keeper",
+        "note": "Appeared twice"
+      },
+      {
+        "title": "Code Runner",
+        "url": "https://replit.com/@techno0ptimist/Code-Runner",
+        "note": "Appeared twice"
+      }
+    ],
+
+    "Local Development": [
+      {
+        "title": "Bank Transaction Analysis - Open WebUI",
+        "url": "http://localhost:8080/c/efd3a7a5-b6b7-48f3-9e06-39bbbd1cd278",
+        "note": "Local server - appeared twice via different paths"
+      }
+    ],
+
+    "External References": [
+      {
+        "title": "Workona - Claude tasks",
+        "url": "https://workona.com/0/nedm93/claude-tasks/"
+      },
+      {
+        "title": "X.com post by mattyp",
+        "url": "https://x.com/mattyp/status/2013466276824523180"
+      },
+      {
+        "title": "Perplexity - Password security search",
+        "url": "https://www.perplexity.ai/search/hat-s-the-most-secure-password-RP7wbkN.RhG6x5_yGEVAbA"
+      },
+      {
+        "title": "ChatGPT conversation",
+        "url": "https://chatgpt.com/c/696d51e2-6b44-832d-9ce5-db6a2a71ec3f"
+      },
+      {
+        "title": "OpenAI Audio TTS",
+        "url": "https://platform.openai.com/audio/tts"
+      },
+      {
+        "title": "NotebookLM Study Hub",
+        "url": "https://elaborate-beignet-acdd88.netlify.app/"
+      },
+      {
+        "title": "Clawdbot - Personal AI Assistant",
+        "url": "https://clawd.bot/"
+      },
+      {
+        "title": "Clawdbot Docs - Sandboxing",
+        "url": "https://docs.clawd.bot/gateway/sandboxing"
+      }
+    ]
+  },
+
+  "safe_to_close": [
+    {
+      "reason": "Expired OAuth flows (3 tabs)",
+      "urls": ["https://claude.ai/oauth/authorize?..."]
+    },
+    {
+      "reason": "Duplicates already captured above",
+      "count": 13
+    },
+    {
+      "reason": "Workona redirects (intermediate URLs)",
+      "note": "The real destinations are captured in organized_tabs"
+    }
+  ],
+
+  "raw_urls_for_reopening": [
+    "https://workona.com/0/nedm93/claude-tasks/",
+    "http://localhost:8080/c/efd3a7a5-b6b7-48f3-9e06-39bbbd1cd278",
+    "https://claude.ai/chat/6145d462-1ac6-4f7b-9e03-a51cca5e0380",
+    "https://claude.ai/chat/6128293a-669b-4de1-a73f-d7764554def6",
+    "https://claude.ai/chat/6c4c57a4-ef5c-42af-a3c5-aabf3e0d4432",
+    "https://claude.ai/code/session_01TSzbPD6M1oW3gkSdSZHnTC",
+    "https://claude.ai/code/session_01QyJ6wVxnkezziPMEHA2xqS",
+    "https://claude.ai/code/session_01MKo9Xy638rF8DvmdYUnN5Y",
+    "https://claude.ai/settings/usage",
+    "https://claude.ai/settings/general",
+    "https://platform.claude.com/dashboard",
+    "https://replit.com/@techno0ptimist/Clawd-Setup",
+    "https://replit.com/@techno0ptimist/Knowledge-Keeper",
+    "https://replit.com/@techno0ptimist/Code-Runner",
+    "https://x.com/mattyp/status/2013466276824523180",
+    "https://www.perplexity.ai/search/hat-s-the-most-secure-password-RP7wbkN.RhG6x5_yGEVAbA",
+    "https://chatgpt.com/c/696d51e2-6b44-832d-9ce5-db6a2a71ec3f",
+    "https://supabase.com/dashboard/project/ydwjzlikslebokuxzwco/sql/18d6e36a-8ca1-477b-a5bf-766df1e614fa",
+    "https://app.netlify.com/projects/art-discover/overview",
+    "https://app.netlify.com/projects/art-discoverer/overview",
+    "https://raw.githubusercontent.com/Anonyma/art-discovery/refs/heads/claude/art-discovery-app-SWJPH/seed.sql",
+    "https://github.com/Anonyma/tg-personal-assistant/tree/claude/telegram-bot-knowledge-expenses-H087v",
+    "https://github.com/Anonyma/tg-personal-assistant/edit/claude/telegram-bot-knowledge-expenses-H087v/config.py",
+    "https://railway.com/project/b5ce1b7f-56d5-419f-be7d-fb15e2334011/service/56783995-1dc3-460c-9de4-faaaf98cff8a?environmentId=50087309-d7da-4935-8b96-f38de0f8ff5e",
+    "https://platform.openai.com/audio/tts",
+    "https://elaborate-beignet-acdd88.netlify.app/",
+    "https://clawd.bot/",
+    "https://docs.clawd.bot/gateway/sandboxing"
+  ]
+}

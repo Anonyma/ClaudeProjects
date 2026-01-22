@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Substack Reads</title>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-card-hover: #222230;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6b6b7b;
+            --accent: #ff6b35;
+            --accent-glow: rgba(255, 107, 53, 0.3);
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --border: #2a2a3a;
+            --gradient-1: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            --gradient-2: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            min-width: 200px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Filter Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        /* Articles Grid */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
+        }
+
+        /* Article Card */
+        .article-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+
+        .article-card.read {
+            opacity: 0.6;
+        }
+
+        .article-card.read .article-title {
+            text-decoration: line-through;
+            text-decoration-color: var(--text-muted);
+        }
+
+        .article-card.in-progress {
+            border-left: 3px solid var(--warning);
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .publication {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .reading-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .article-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .article-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .article-title a:hover {
+            color: var(--accent);
+        }
+
+        .article-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .author-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .status-toggle {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .status-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .status-btn:hover {
+            border-color: var(--text-muted);
+        }
+
+        .status-btn.active {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .status-btn.in-progress-btn.active {
+            background: var(--warning);
+            border-color: var(--warning);
+        }
+
+        /* Category Tags */
+        .category-tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-right: 0.25rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                justify-content: space-around;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .articles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1025px) and (max-width: 1400px) {
+            .articles-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1401px) {
+            .articles-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+            z-index: 50;
+        }
+
+        .scroll-top:hover {
+            transform: scale(1.1);
+        }
+
+        .scroll-top.visible {
+            display: flex;
+        }
+
+        /* Sync Indicator */
+        .sync-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .sync-indicator.connected {
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .sync-indicator.syncing {
+            background: var(--warning);
+            animation: pulse 1s infinite;
+        }
+
+        .sync-indicator.error {
+            background: #dc2626;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">Substack Reads</div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search articles...">
+            </div>
+            <span class="sync-indicator" id="syncIndicator" title="Supabase sync status"></span>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-count" id="totalCount">0</span>
+                <span class="stat-label">Total</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-count" id="unreadCount">0</span>
+                <span class="stat-label">Unread</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-count" id="inProgressCount">0</span>
+                <span class="stat-label">In Progress</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-count" id="readCount">0</span>
+                <span class="stat-label">Read</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-count" id="totalTime">0h</span>
+                <span class="stat-label">Reading Time</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="unread">Unread</button>
+            <button class="filter-btn" data-filter="in-progress">In Progress</button>
+            <button class="filter-btn" data-filter="read">Read</button>
+            <select class="sort-select" id="sortSelect">
+                <option value="default">Default Order</option>
+                <option value="reading-time-asc">Reading Time (Short First)</option>
+                <option value="reading-time-desc">Reading Time (Long First)</option>
+                <option value="publication">By Publication</option>
+                <option value="title">By Title</option>
+            </select>
+        </div>
+
+        <div class="articles-grid" id="articlesGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <button class="scroll-top" id="scrollTop">↑</button>
+
+    <script>
+        // Article data - embedded for file:// protocol support
+        const ARTICLES_DATA = [
+  {
+    "id": 1,
+    "title": "Full Guide: How To Start Writing Long Form (Essays, Articles, Newsletters, etc)",
+    "publication": "future/proof",
+    "author": "DAN KOE",
+    "readingTime": 25,
+    "date": "Jan 13",
+    "description": "For those who don't care about short form and have deep ideas they want to articulate online",
+    "slug": "full-guide-how-to-start-writing-long-form"
+  },
+  {
+    "id": 2,
+    "title": "Sometimes the reason you can't find people you resonate with is because you misread the ones you meet",
+    "publication": "Escaping Flatland",
+    "author": "Henrik Karlsson",
+    "readingTime": 10,
+    "date": "April 23, 2025",
+    "description": "Sometimes two people will stand next to each other for fifteen years, both feeling out of place and alone",
+    "slug": "sometimes-the-reason-you-cant-find-people"
+  },
+  {
+    "id": 3,
+    "title": "How Will the Miracle Happen Today?",
+    "publication": "KK",
+    "author": "Kevin Kelly",
+    "readingTime": 10,
+    "date": "Jan 12",
+    "description": "When I was in my twenties I would hitchhike to work every day.",
+    "slug": "how-will-the-miracle-happen-today"
+  },
+  {
+    "id": 4,
+    "title": "REVIEW: How to Solve It, by George Pólya",
+    "publication": "Mr. and Mrs. Psmith's Bookshelf",
+    "author": "John Psmith",
+    "readingTime": 35,
+    "date": "Jan 12",
+    "description": "How to Solve It: A New Aspect of Mathematical Method",
+    "slug": "review-how-to-solve-it"
+  },
+  {
+    "id": 5,
+    "title": "What Could Happiness Cost—$10 Million?",
+    "publication": "Artificial Whimsy",
+    "author": "Artificial Whimsy",
+    "readingTime": 8,
+    "date": "November 19, 2025",
+    "description": "How Silicon Valley's wealth culture distorts our definition of 'enough'",
+    "slug": "what-could-happiness-cost"
+  },
+  {
+    "id": 6,
+    "title": "Capital in the 22nd Century",
+    "publication": "Philosopher count",
+    "author": "Philip Trammell and Dwarkesh Patel",
+    "readingTime": 36,
+    "date": "December 29, 2025",
+    "description": "Piketty was wrong about the past. He's probably right about the future.",
+    "slug": "capital-in-the-22nd-century"
+  },
+  {
+    "id": 7,
+    "title": "Introducing 'Stupid Easy Fixes'",
+    "publication": "Fractal Window",
+    "author": "Amit Tal",
+    "readingTime": 3,
+    "date": "December 19, 2025",
+    "description": "A new series on infuriatingly solvable problems",
+    "slug": "introducing-stupid-easy-fixes"
+  },
+  {
+    "id": 8,
+    "title": "How to Learn Anything and REMEMBER It: Feynman's Technique",
+    "publication": "Educated and Free",
+    "author": "Dissident Teacher",
+    "readingTime": 7,
+    "date": "March 19, 2020",
+    "description": "Something you'll almost certainly never do in high school because it actually works.",
+    "slug": "feynmans-technique"
+  },
+  {
+    "id": 9,
+    "title": "Learning How to Learn",
+    "publication": "Educated and Free",
+    "author": "Dissident Teacher",
+    "readingTime": 14,
+    "date": "June 15, 2025",
+    "description": "Cornell Notes offer the biggest bang for the buck when it comes to processing new information",
+    "slug": "learning-how-to-learn"
+  },
+  {
+    "id": 10,
+    "title": "Humanoid Robotics, Mapped",
+    "publication": "Hardware FYI",
+    "author": "Hardware FYI",
+    "readingTime": 4,
+    "date": "December 13, 2025",
+    "description": "Weekend Wire #49",
+    "slug": "humanoid-robotics-mapped"
+  },
+  {
+    "id": 11,
+    "title": "You're Already at Your Peak",
+    "publication": "Jason Zhao",
+    "author": "Jason Zhao",
+    "readingTime": 1,
+    "date": "August 4, 2024",
+    "description": "Kinetic Energy > Potential Energy",
+    "slug": "youre-already-at-your-peak"
+  },
+  {
+    "id": 12,
+    "title": "Rule of the Five Percent",
+    "publication": "Aporia",
+    "author": "Aporia",
+    "readingTime": 6,
+    "date": "May 22, 2024",
+    "description": "How China selects its governing elite.",
+    "slug": "rule-of-the-five-percent"
+  },
+  {
+    "id": 13,
+    "title": "A dopamine detox to reset your life in 30 days",
+    "publication": "future/proof",
+    "author": "DAN KOE",
+    "readingTime": 13,
+    "date": "October 16, 2025",
+    "description": "Because most of modern life has become a blur, and you're tired of it",
+    "slug": "dopamine-detox-30-days"
+  },
+  {
+    "id": 14,
+    "title": "Math Academy Wants To Supercharge Your Learning",
+    "publication": "Pershmail",
+    "author": "Michael Pershan",
+    "readingTime": 7,
+    "date": "February 6, 2025",
+    "description": "A review of the online learning program",
+    "slug": "math-academy-review"
+  },
+  {
+    "id": 15,
+    "title": "How I read",
+    "publication": "Escaping Flatland",
+    "author": "Henrik Karlsson",
+    "readingTime": 10,
+    "date": "October 1, 2025",
+    "description": "Reading well is an endurance sport.",
+    "slug": "how-i-read"
+  },
+  {
+    "id": 16,
+    "title": "Ask not why would you work in biology, but rather: why wouldn't you?",
+    "publication": "Owl Posting",
+    "author": "Abhishaike Mahajan",
+    "readingTime": 9,
+    "date": "October 2, 2025",
+    "description": "1.9k words, 9 minutes reading time",
+    "slug": "why-work-in-biology"
+  },
+  {
+    "id": 17,
+    "title": "Why We Need to Talk about the Right's Stupidity Problem",
+    "publication": "Nathan Cofnas's Newsletter",
+    "author": "Nathan Cofnas",
+    "readingTime": 49,
+    "date": "January 2, 2024",
+    "description": "To win over the elites, the right needs to challenge the Big Lie that motivates wokism",
+    "slug": "rights-stupidity-problem"
+  },
+  {
+    "id": 18,
+    "title": "Repronews #74: In vitro eggs, IQ selection, Boomergeddon—oh my!",
+    "publication": "Craig Willy's Evopolitics",
+    "author": "Craig Willy",
+    "readingTime": 7,
+    "date": "October 3, 2025",
+    "description": "Human IVG achieved | Herasight offers IQ selection | IVF-maxing in the UK",
+    "slug": "repronews-74"
+  },
+  {
+    "id": 19,
+    "title": "The 25 Most Interesting Ideas I've Found in 2025 (So Far)",
+    "publication": "Derek Thompson",
+    "author": "Derek Thompson",
+    "readingTime": 17,
+    "date": "September 18, 2025",
+    "description": "Charts and history lessons—across culture, politics, AI, economics, health, science",
+    "slug": "25-most-interesting-ideas-2025"
+  },
+  {
+    "id": 20,
+    "title": "How to get (really) good at things",
+    "publication": "Unreasonable",
+    "author": "Matt Švarcs Richardson",
+    "readingTime": 11,
+    "date": "September 3, 2025",
+    "description": "Developing mastery through Deliberate Practice",
+    "slug": "how-to-get-good-at-things"
+  },
+  {
+    "id": 21,
+    "title": "6 Ways Sprinting Will Change Your Life (protocol inside)",
+    "publication": "thymos",
+    "author": "JOEL BERGANN-HOLZ",
+    "readingTime": 7,
+    "date": "August 19, 2025",
+    "description": "How to fix your broken nervous system in 20 minutes",
+    "slug": "sprinting-will-change-your-life"
+  },
+  {
+    "id": 22,
+    "title": "how to share your work online 1.",
+    "publication": "notes on shapeshifting",
+    "author": "gabi abrão",
+    "readingTime": 1,
+    "date": "March 30, 2023",
+    "description": "",
+    "slug": "how-to-share-work-online"
+  },
+  {
+    "id": 23,
+    "title": "Record your life, write it all.",
+    "publication": "Covered",
+    "author": "Mary.T",
+    "readingTime": 9,
+    "date": "October 19, 2024",
+    "description": "Why you should journal, why your ordinary life should be recorded.",
+    "slug": "record-your-life"
+  },
+  {
+    "id": 24,
+    "title": "Everything I Know about Self-Publishing",
+    "publication": "KK",
+    "author": "Kevin Kelly",
+    "readingTime": 31,
+    "date": "August 20, 2025",
+    "description": "In my professional life, I've had several bestselling books published by New York publishers",
+    "slug": "everything-about-self-publishing"
+  },
+  {
+    "id": 25,
+    "title": "Let's Solve Your Lack of Discipline",
+    "publication": "Conquer",
+    "author": "Conquer",
+    "readingTime": 4,
+    "date": "August 26, 2025",
+    "description": "It's a symptom not a cause.",
+    "slug": "solve-lack-of-discipline"
+  },
+  {
+    "id": 26,
+    "title": "how to stop waiting for your life to begin",
+    "publication": "so it goes",
+    "author": "dylan joseph",
+    "readingTime": 6,
+    "date": "July 17, 2025",
+    "description": "a note on procrastination in the fast-paced world",
+    "slug": "stop-waiting-for-life"
+  },
+  {
+    "id": 27,
+    "title": "30 Great Essays About Biology",
+    "publication": "Niko McCarty",
+    "author": "Niko McCarty",
+    "readingTime": 11,
+    "date": "September 12, 2024",
+    "description": "If you read one a day, you may just fall in love.",
+    "slug": "30-great-essays-biology"
+  },
+  {
+    "id": 28,
+    "title": "How To Be Organised in 2025",
+    "publication": "The Wardrobe Edit",
+    "author": "Anna Newton",
+    "readingTime": 14,
+    "date": "December 28, 2024",
+    "description": "29 ideas to make you feel like you have your s**t together...",
+    "slug": "how-to-be-organised-2025"
+  },
+  {
+    "id": 29,
+    "title": "We're in a Massive Financial Bubble, and It's Popping",
+    "publication": "Dougald Lamont's Substack",
+    "author": "Dougald Lamont",
+    "readingTime": 20,
+    "date": "August 15, 2025",
+    "description": "Today in the U.S. we are in the fourth superbubble of the last hundred years.",
+    "slug": "massive-financial-bubble"
+  },
+  {
+    "id": 30,
+    "title": "Advice for Making Life More Whimsical & Joyful",
+    "publication": "Feeling! Magazine",
+    "author": "Jenna O'Brien",
+    "readingTime": 16,
+    "date": "June 5, 2025",
+    "description": "20 ideas for making things a little lighter and a little more magical",
+    "slug": "whimsical-joyful-life"
+  },
+  {
+    "id": 31,
+    "title": "I am bad at sex.",
+    "publication": "Despicable Woman",
+    "author": "Sabrina",
+    "readingTime": 12,
+    "date": "April 14, 2025",
+    "description": "The jig is up, folks.",
+    "slug": "bad-at-sex"
+  },
+  {
+    "id": 32,
+    "title": "Anatomy of a Biotech Failure: Part I",
+    "publication": "Libraries for the Future",
+    "author": "age1 and Soleil Wizman",
+    "readingTime": 26,
+    "date": "August 28, 2025",
+    "description": "Eight Case Studies in Recent Shutdown History",
+    "slug": "anatomy-biotech-failure"
+  },
+  {
+    "id": 33,
+    "title": "why 'just do it' is the worst advice for anxious ADHD brains",
+    "publication": "Open Tabs Club",
+    "author": "The ADHD Journal and lina",
+    "readingTime": 6,
+    "date": "July 25, 2025",
+    "description": "the loop no to-do list can fix: dysregulation and overwhelm",
+    "slug": "just-do-it-adhd"
+  },
+  {
+    "id": 34,
+    "title": "I'm 28 and I feel like I'm running out of time",
+    "publication": "Not a Girl, not yet a Woman",
+    "author": "Selin Mina",
+    "readingTime": 4,
+    "date": "August 13, 2025",
+    "description": "The pressure of being in your late twenties and the strange in-between of adulthood.",
+    "slug": "28-running-out-of-time"
+  },
+  {
+    "id": 35,
+    "title": "I want to do everything, so I do nothing",
+    "publication": "All Over the Place",
+    "author": "Luisa",
+    "readingTime": 5,
+    "date": "March 23, 2024",
+    "description": "On midnight anxieties and career paths",
+    "slug": "want-to-do-everything"
+  },
+  {
+    "id": 36,
+    "title": "Become The Main Character Of Your Life Before It's Too Late",
+    "publication": "Doing The Impossible",
+    "author": "David Goudet",
+    "readingTime": 7,
+    "date": "August 10, 2025",
+    "description": "Escaping the Matrix in a disconnected world",
+    "slug": "main-character-life"
+  },
+  {
+    "id": 37,
+    "title": "Relationships are coevolutionary loops",
+    "publication": "Escaping Flatland",
+    "author": "Henrik Karlsson",
+    "readingTime": 14,
+    "date": "October 31, 2023",
+    "description": "Looking for Alice, part 3",
+    "slug": "relationships-coevolutionary-loops"
+  },
+  {
+    "id": 38,
+    "title": "Stop Overthinking - Chapter 2",
+    "publication": "Motivational Corner",
+    "author": "Dave Mbawa",
+    "readingTime": 12,
+    "date": "August 25, 2025",
+    "description": "31 Days to Silence Anxiety, Overcome Fear and Become Unstoppable",
+    "slug": "stop-overthinking-ch2"
+  },
+  {
+    "id": 39,
+    "title": "lazy ambitious. the worst kind of stuck.",
+    "publication": "Shrinidhi Iyer",
+    "author": "Shrinidhi Iyer",
+    "readingTime": 4,
+    "date": "June 7, 2025",
+    "description": "I think one of the most frustrating things in the world is being lazy ambitious.",
+    "slug": "lazy-ambitious"
+  },
+  {
+    "id": 40,
+    "title": "How to actually sit with your feelings",
+    "publication": "voilà ma vie",
+    "author": "farah marianne",
+    "readingTime": 3,
+    "date": "August 19, 2025",
+    "description": "'just feel it and let it go'...how?",
+    "slug": "sit-with-your-feelings"
+  },
+  {
+    "id": 41,
+    "title": "How to be more agentic",
+    "publication": "Useful Fictions",
+    "author": "Cate Hall",
+    "readingTime": 8,
+    "date": "January 10, 2024",
+    "description": "On a supposedly difficult thing",
+    "slug": "how-to-be-more-agentic"
+  },
+  {
+    "id": 42,
+    "title": "The Nonwriter's Guide to Writing A Lot",
+    "publication": "Moonshots",
+    "author": "James Horton, PhD.",
+    "readingTime": 14,
+    "date": "January 17, 2025",
+    "description": "Toxic Preconditions (And How to Fight Them)",
+    "slug": "nonwriters-guide-writing"
+  },
+  {
+    "id": 43,
+    "title": "How to brilliantly articulate your thoughts",
+    "publication": "Mindcraft",
+    "author": "Bechem Ayuk",
+    "readingTime": 7,
+    "date": "July 28, 2025",
+    "description": "A practical guide for everyday use",
+    "slug": "articulate-your-thoughts"
+  },
+  {
+    "id": 44,
+    "title": "what's stopping you from doing what you want?",
+    "publication": "crystal clear",
+    "author": "Erifili Gounari",
+    "readingTime": 5,
+    "date": "July 24, 2025",
+    "description": "you owe yourself a life well lived",
+    "slug": "whats-stopping-you"
+  },
+  {
+    "id": 45,
+    "title": "some parts of you only emerge for certain people",
+    "publication": "velvet noise",
+    "author": "maja",
+    "readingTime": 6,
+    "date": "August 15, 2025",
+    "description": "how the right gaze reshapes who we become",
+    "slug": "parts-emerge-for-certain-people"
+  },
+  {
+    "id": 46,
+    "title": "No Country Ever Got Rich From Tourism",
+    "publication": "The Palladium Letter",
+    "author": "Palladium Editors",
+    "readingTime": 16,
+    "date": "July 18, 2025",
+    "description": "Factories and offices will always generate far more wealth than hotels and restaurants.",
+    "slug": "no-country-rich-tourism"
+  },
+  {
+    "id": 47,
+    "title": "How I tricked myself into consistency that feels effortless",
+    "publication": "Elevated It Girl",
+    "author": "Robin Collins",
+    "readingTime": 5,
+    "date": "May 25, 2025",
+    "description": "without becoming a 5am gym girl or downloading another habit tracker",
+    "slug": "tricked-into-consistency"
+  },
+  {
+    "id": 48,
+    "title": "We need to abandon the internet",
+    "publication": "payday pastries",
+    "author": "Shelley-Marie",
+    "readingTime": 12,
+    "date": "January 25, 2025",
+    "description": "I've been chronically online for two decades. Maybe the internet took the best of my intelligence.",
+    "slug": "abandon-the-internet"
+  },
+  {
+    "id": 49,
+    "title": "Quitting Your Phone is Actually Simple",
+    "publication": "This Is Human",
+    "author": "Ray Katharine Cohen",
+    "readingTime": 11,
+    "date": "August 10, 2025",
+    "description": "but not necessarily easy",
+    "slug": "quitting-phone-simple"
+  },
+  {
+    "id": 50,
+    "title": "Henrik Karlsson: The Writing Process Nobody Teaches You",
+    "publication": "David Perell's How I Write",
+    "author": "David Perell and Henrik Karlsson",
+    "readingTime": 92,
+    "date": "August 13, 2025",
+    "description": "A five-step method for authentic writing",
+    "slug": "writing-process-nobody-teaches"
+  },
+  {
+    "id": 51,
+    "title": "how to do everything you want in your twenties",
+    "publication": "JW Meditations",
+    "author": "Jay",
+    "readingTime": 11,
+    "date": "March 30, 2025",
+    "description": "a framework for making the most of life after college",
+    "slug": "do-everything-in-twenties"
+  },
+  {
+    "id": 52,
+    "title": "Why Super Babies, Copying Ideas, Billionaires, and Immortality Are Good",
+    "publication": "Scaling Knowledge",
+    "author": "Moritz Wallawitsch",
+    "readingTime": 7,
+    "date": "August 11, 2025",
+    "description": "Most are wrong about Genetic Enhancement, Innovation, Wealth Creation, and Defeating Death.",
+    "slug": "super-babies-billionaires-immortality"
+  },
+  {
+    "id": 53,
+    "title": "How to Scale Proteomics",
+    "publication": "Asimov Press",
+    "author": "Niko McCarty",
+    "readingTime": 12,
+    "date": "August 4, 2025",
+    "description": "A look inside Parallel Squared Technology Institute",
+    "slug": "how-to-scale-proteomics"
+  },
+  {
+    "id": 54,
+    "title": "Why Vertical Farming Failed",
+    "publication": "Hardware FYI",
+    "author": "Hardware FYI",
+    "readingTime": 6,
+    "date": "July 1, 2025",
+    "description": "The Analog #137",
+    "slug": "why-vertical-farming-failed"
+  },
+  {
+    "id": 55,
+    "title": "How to Become an Expert in Anything FAST (and think like a genius)",
+    "publication": "Profound Ideas",
+    "author": "Craig Perry",
+    "readingTime": 14,
+    "date": "July 20, 2025",
+    "description": "A 3-step framework to speak like an expert and think like a genius.",
+    "slug": "become-expert-fast"
+  },
+  {
+    "id": 56,
+    "title": "the quiet grief of growing up",
+    "publication": "a quiet revolution",
+    "author": "memz",
+    "readingTime": 3,
+    "date": "March 28, 2025",
+    "description": "a reflection on the ache of change and the hope in becoming...",
+    "slug": "quiet-grief-growing-up"
+  },
+  {
+    "id": 57,
+    "title": "How I Went From Reading 20 Books Per Year to Over 75 Books",
+    "publication": "Read and Think Deeply",
+    "author": "Ryan Hall",
+    "readingTime": 5,
+    "date": "June 17, 2025",
+    "description": "My Reading Tips",
+    "slug": "from-20-to-75-books"
+  },
+  {
+    "id": 58,
+    "title": "How To Remember What You Read",
+    "publication": "Read and Think Deeply",
+    "author": "Ryan Hall",
+    "readingTime": 7,
+    "date": "July 1, 2025",
+    "description": "Five simple techniques that have helped me master what I am reading",
+    "slug": "remember-what-you-read"
+  },
+  {
+    "id": 59,
+    "title": "National IQ papers must be retracted",
+    "publication": "Meng Hu on HBD and Austrian Economics",
+    "author": "Meng Hu",
+    "readingTime": 39,
+    "date": "July 3, 2024",
+    "description": "Why Kevin Bird and Rebecca Sear don't get it",
+    "slug": "national-iq-papers-retracted"
+  },
+  {
+    "id": 60,
+    "title": "In Defense of GDP Bros",
+    "publication": "Deep Left Analysis",
+    "author": "DeepLeftAnalysis",
+    "readingTime": 16,
+    "date": "June 25, 2025",
+    "description": "One-dimensional thinking.",
+    "slug": "defense-of-gdp-bros"
+  },
+  {
+    "id": 61,
+    "title": "Joining Noetik",
+    "publication": "Owl Posting",
+    "author": "Abhishaike Mahajan",
+    "readingTime": 13,
+    "date": "June 29, 2025",
+    "description": "2.8k words, 14 minutes reading time",
+    "slug": "joining-noetik"
+  },
+  {
+    "id": 62,
+    "title": "Thoughts on agency",
+    "publication": "Escaping Flatland",
+    "author": "Henrik Karlsson",
+    "readingTime": 4,
+    "date": "June 12, 2024",
+    "description": "Gustav Klimt, Beech Grove I, 1902",
+    "slug": "thoughts-on-agency"
+  },
+  {
+    "id": 63,
+    "title": "how to stop tying your self-worth to outcomes",
+    "publication": "The Science of Being",
+    "author": "lina",
+    "readingTime": 23,
+    "date": "June 15, 2025",
+    "description": "tools, stories, and science for ego involvement, burnout, and self-respect",
+    "slug": "stop-tying-self-worth-outcomes"
+  },
+  {
+    "id": 64,
+    "title": "Wall Street Is Wrong About Biotech",
+    "publication": "Frameshifts with Benjamin Arya",
+    "author": "Benjamin Arya",
+    "readingTime": 2,
+    "date": "June 4, 2025",
+    "description": "Markets are down and IPOs are ice-cold but cell therapies, AI-designed capsids are sprinting ahead.",
+    "slug": "wall-street-wrong-biotech"
+  },
+  {
+    "id": 65,
+    "title": "A primer on why microbiome research is hard",
+    "publication": "Owl Posting",
+    "author": "Abhishaike Mahajan",
+    "readingTime": 29,
+    "date": "June 17, 2024",
+    "description": "6.3k words, 29 minutes reading time",
+    "slug": "microbiome-research-hard"
+  },
+  {
+    "id": 66,
+    "title": "Wet-lab innovations will lead the AI revolution in biology",
+    "publication": "Owl Posting",
+    "author": "Abhishaike Mahajan",
+    "readingTime": 9,
+    "date": "July 15, 2024",
+    "description": "1.9k words, 9 minutes reading time",
+    "slug": "wet-lab-innovations-ai-biology"
+  },
+  {
+    "id": 67,
+    "title": "Drugs currently in clinical trials will likely not be impacted by AI",
+    "publication": "Owl Posting",
+    "author": "Abhishaike Mahajan",
+    "readingTime": 28,
+    "date": "May 20, 2025",
+    "description": "6.4k words, 30 minutes reading time",
+    "slug": "drugs-clinical-trials-ai"
+  },
+  {
+    "id": 68,
+    "title": "HYPERCELLECTION: A Collection of Biology-Based Cryptography Puzzles",
+    "publication": "Reilly's Substack",
+    "author": "Reilly Cooper",
+    "readingTime": 2,
+    "date": "May 16, 2025",
+    "description": "What if we could encode secrets with biology?",
+    "slug": "hypercellection-biology-cryptography"
+  },
+  {
+    "id": 69,
+    "title": "China's Impact on Global Biotech: Perspectives from the Front Line",
+    "publication": "Jacopo's Newsletter",
+    "author": "Jacopo Gabrielli, Kush Desai, and Jamie Rintoul",
+    "readingTime": 15,
+    "date": "April 7, 2025",
+    "description": "The biotech industry operates on a well-defined financial model",
+    "slug": "china-impact-global-biotech"
+  },
+  {
+    "id": 70,
+    "title": "How to Build Essential Technology",
+    "publication": "Essential Technology",
+    "author": "Adam Marblestone",
+    "readingTime": 6,
+    "date": "February 7, 2025",
+    "description": "A vision for accelerating R&D",
+    "slug": "build-essential-technology"
+  },
+  {
+    "id": 71,
+    "title": "The TechBio Idea Maze: to be, or not to be, an AI-native Biotech?",
+    "publication": "Shawn's thoughts & musings",
+    "author": "Shawn Dimantha",
+    "readingTime": 14,
+    "date": "August 12, 2024",
+    "description": "Finding a path to TechBio success through the fog",
+    "slug": "techbio-idea-maze"
+  },
+  {
+    "id": 72,
+    "title": "What Limits a Cell's Size?",
+    "publication": "Asimov Press",
+    "author": "Niko McCarty",
+    "readingTime": 4,
+    "date": "March 26, 2025",
+    "description": "Two physical constraints help explain why cells are so tiny",
+    "slug": "what-limits-cell-size"
+  },
+  {
+    "id": 73,
+    "title": "Developing oral drugs for antibody targets",
+    "publication": "David's Substack",
+    "author": "David",
+    "readingTime": 8,
+    "date": "December 20, 2024",
+    "description": "A differentiated fast-follower strategy for the bold",
+    "slug": "oral-drugs-antibody-targets"
+  },
+  {
+    "id": 74,
+    "title": "Why was GLP-1 not a biotech success story?",
+    "publication": "David's Substack",
+    "author": "David",
+    "readingTime": 9,
+    "date": "January 10, 2025",
+    "description": "On the realities of contrarianism in biopharma",
+    "slug": "glp1-not-biotech-success"
+  },
+  {
+    "id": 75,
+    "title": "The Business of Promoting Longevity and Healthspan",
+    "publication": "Ground Truths",
+    "author": "Eric Topol",
+    "readingTime": 8,
+    "date": "March 22, 2025",
+    "description": "A crop of new consumer-facing companies with unconventional data collection",
+    "slug": "business-longevity-healthspan"
+  },
+  {
+    "id": 76,
+    "title": "Predictive biology",
+    "publication": "Creode",
+    "author": "Jacob Kimmel",
+    "readingTime": 13,
+    "date": "August 30, 2024",
+    "description": "An emergent epistemology",
+    "slug": "predictive-biology"
+  },
+  {
+    "id": 77,
+    "title": "A Beginner's Guide to Scientific Roadmapping",
+    "publication": "Essential Technology",
+    "author": "Adam Marblestone",
+    "readingTime": 19,
+    "date": "March 21, 2025",
+    "description": "Wonderful maps and how to read them",
+    "slug": "scientific-roadmapping-guide"
+  },
+  {
+    "id": 78,
+    "title": "People who demand nothing of you (or, notes on charismatic people)",
+    "publication": "Altered",
+    "author": "Carmen",
+    "readingTime": 7,
+    "date": "August 1, 2024",
+    "description": "How charisma feels",
+    "slug": "people-who-demand-nothing"
+  },
+  {
+    "id": 79,
+    "title": "Beyond 'Abolish The FDA'",
+    "publication": "Astral Codex Ten",
+    "author": "Scott Alexander",
+    "readingTime": 10,
+    "date": "December 6, 2023",
+    "description": "",
+    "slug": "beyond-abolish-fda"
+  },
+  {
+    "id": 80,
+    "title": "Highlights From The Comments On Polyamory",
+    "publication": "Astral Codex Ten",
+    "author": "Scott Alexander",
+    "readingTime": 44,
+    "date": "February 21, 2024",
+    "description": "",
+    "slug": "highlights-comments-polyamory"
+  },
+  {
+    "id": 81,
+    "title": "The perverse incentives of euthanasia",
+    "publication": "Noahpinion",
+    "author": "Noah Smith",
+    "readingTime": 13,
+    "date": "April 3, 2024",
+    "description": "Suggesting that people die is not a good way of saving taxpayer money.",
+    "slug": "perverse-incentives-euthanasia"
+  },
+  {
+    "id": 82,
+    "title": "In Continued Defense Of Non-Frequentist Probabilities",
+    "publication": "Astral Codex Ten",
+    "author": "Scott Alexander",
+    "readingTime": 15,
+    "date": "March 21, 2024",
+    "description": "",
+    "slug": "defense-non-frequentist-probabilities"
+  },
+  {
+    "id": 83,
+    "title": "Nobody Can Make You Feel Genetically Inferior Without Your Consent",
+    "publication": "Astral Codex Ten",
+    "author": "Scott Alexander",
+    "readingTime": 6,
+    "date": "June 12, 2024",
+    "description": "",
+    "slug": "genetically-inferior-consent"
+  },
+  {
+    "id": 84,
+    "title": "Can we pick the best sperm?",
+    "publication": "Just Emil Kirkegaard Things",
+    "author": "Emil O. W. Kirkegaard",
+    "readingTime": 11,
+    "date": "May 4, 2023",
+    "description": "A potentially overlooked method",
+    "slug": "pick-the-best-sperm"
+  },
+  {
+    "id": 85,
+    "title": "Meiosis is all you need",
+    "publication": "De Novo",
+    "author": "Metacelsus",
+    "readingTime": 2,
+    "date": "July 1, 2022",
+    "description": "Iterated embryo selection, without the embryos",
+    "slug": "meiosis-all-you-need"
+  },
+  {
+    "id": 86,
+    "title": "The Case for Bio/Acc",
+    "publication": "Anatoly Karlin's Blog",
+    "author": "Anatoly Karlin",
+    "readingTime": 7,
+    "date": "June 7, 2024",
+    "description": "Is Biological Acceleration Relevant Under Short AI Timelines?",
+    "slug": "case-for-bio-acc"
+  },
+  {
+    "id": 87,
+    "title": "Why All Job Displacement Predictions are Wrong",
+    "publication": "Scaling Knowledge",
+    "author": "Moritz Wallawitsch",
+    "readingTime": 11,
+    "date": "May 30, 2023",
+    "description": "Explanations of Cognitive Automation",
+    "slug": "job-displacement-predictions-wrong"
+  },
+  {
+    "id": 88,
+    "title": "How To Understand Things",
+    "publication": "Nabeel S. Qureshi",
+    "author": "Nabeel S. Qureshi",
+    "readingTime": 16,
+    "date": "July 2, 2020",
+    "description": "The smartest person I've ever known had a habit that, as a teenager, I found striking...",
+    "slug": "how-to-understand-things"
+  },
+  {
+    "id": 89,
+    "title": "Notes on Karl Popper",
+    "publication": "Nabeel S. Qureshi",
+    "author": "Nabeel S. Qureshi",
+    "readingTime": 18,
+    "date": "January 26, 2020",
+    "description": "A woven web of guesses",
+    "slug": "notes-karl-popper"
+  },
+  {
+    "id": 90,
+    "title": "Notes on Puzzles",
+    "publication": "Nabeel S. Qureshi",
+    "author": "Nabeel S. Qureshi",
+    "readingTime": 19,
+    "date": "July 11, 2023",
+    "description": "I mostly don't play chess anymore - it's too addictive",
+    "slug": "notes-on-puzzles"
+  },
+  {
+    "id": 91,
+    "title": "Constitutional AI: RLHF On Steroids",
+    "publication": "Astral Codex Ten",
+    "author": "Scott Alexander",
+    "readingTime": 7,
+    "date": "May 8, 2023",
+    "description": "",
+    "slug": "constitutional-ai-rlhf"
+  },
+  {
+    "id": 92,
+    "title": "Attempts To Put Statistics In Context, Put Into Context",
+    "publication": "Astral Codex Ten",
+    "author": "Scott Alexander",
+    "readingTime": 4,
+    "date": "June 8, 2023",
+    "description": "",
+    "slug": "statistics-in-context"
+  },
+  {
+    "id": 93,
+    "title": "Advice That Actually Worked For Me",
+    "publication": "Nabeel S. Qureshi",
+    "author": "Nabeel S. Qureshi",
+    "readingTime": 12,
+    "date": "July 4, 2022",
+    "description": "My contribution to the 'productivity advice' genre.",
+    "slug": "advice-that-actually-worked"
+  }
+];
+
+        // Project identifier for multi-project support
+        const PROJECT_ID = 'substack';
+
+        // Supabase configuration
+        const SUPABASE_URL = 'https://ydwjzlikslebokuxzwco.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_vuov7K4RfO5M9fVUeVnfmA_MTQaiqug';
+
+        // State
+        let articles = [];
+        let readingStatus = {};
+        let currentFilter = 'all';
+        let currentSort = 'default';
+        let searchQuery = '';
+        let supabase = null;
+        let isConnected = false;
+
+        // Local Storage keys
+        const STORAGE_KEY = 'substack_reading_status';
+
+        // Initialize Supabase
+        function initSupabase() {
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                isConnected = true;
+                updateSyncIndicator('connected');
+                return true;
+            } catch (e) {
+                console.error('Error initializing Supabase:', e);
+                updateSyncIndicator('error');
+            }
+            return false;
+        }
+
+        // Update sync indicator
+        function updateSyncIndicator(status) {
+            const el = document.getElementById('syncIndicator');
+            if (!el) return;
+            el.className = 'sync-indicator ' + status;
+            el.title = status === 'connected' ? 'Synced with Supabase' :
+                       status === 'syncing' ? 'Syncing...' :
+                       status === 'error' ? 'Sync error' : '';
+        }
+
+
+        // Load reading status from localStorage (cache)
+        function loadReadingStatusFromCache() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    readingStatus = JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error('Error loading reading status from cache:', e);
+                readingStatus = {};
+            }
+        }
+
+        // Save reading status to localStorage (cache)
+        function saveReadingStatusToCache() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(readingStatus));
+            } catch (e) {
+                console.error('Error saving reading status to cache:', e);
+            }
+        }
+
+        // Load reading status from Supabase
+        async function loadReadingStatusFromSupabase() {
+            if (!supabase) return;
+
+            try {
+                updateSyncIndicator('syncing');
+                const { data, error } = await supabase
+                    .from('reading_status')
+                    .select('article_id, status')
+                    .eq('project', PROJECT_ID);
+
+                if (error) throw error;
+
+                // Merge with local status (Supabase takes precedence)
+                data.forEach(row => {
+                    if (row.status === 'unread') {
+                        delete readingStatus[row.article_id];
+                    } else {
+                        readingStatus[row.article_id] = row.status;
+                    }
+                });
+
+                saveReadingStatusToCache();
+                updateSyncIndicator('connected');
+                return true;
+            } catch (e) {
+                console.error('Error loading from Supabase:', e);
+                updateSyncIndicator('error');
+                return false;
+            }
+        }
+
+        // Save single status to Supabase
+        async function saveStatusToSupabase(articleId, status) {
+            if (!supabase) return;
+
+            try {
+                if (status === 'unread') {
+                    // Delete the row if marking as unread
+                    await supabase
+                        .from('reading_status')
+                        .delete()
+                        .eq('project', PROJECT_ID)
+                        .eq('article_id', String(articleId));
+                } else {
+                    // Upsert the status
+                    await supabase
+                        .from('reading_status')
+                        .upsert({
+                            project: PROJECT_ID,
+                            article_id: String(articleId),
+                            status: status
+                        }, {
+                            onConflict: 'project,article_id'
+                        });
+                }
+            } catch (e) {
+                console.error('Error saving to Supabase:', e);
+            }
+        }
+
+        // Get article status
+        function getStatus(articleId) {
+            return readingStatus[articleId] || 'unread';
+        }
+
+        // Set article status
+        function setStatus(articleId, status) {
+            if (status === 'unread') {
+                delete readingStatus[articleId];
+            } else {
+                readingStatus[articleId] = status;
+            }
+            saveReadingStatusToCache();
+            saveStatusToSupabase(articleId, status);
+            updateStats();
+            renderArticles();
+        }
+
+        // Toggle status
+        function toggleStatus(articleId, targetStatus) {
+            const currentStatus = getStatus(articleId);
+            if (currentStatus === targetStatus) {
+                setStatus(articleId, 'unread');
+            } else {
+                setStatus(articleId, targetStatus);
+            }
+        }
+
+        // Filter articles
+        function filterArticles(articles) {
+            let filtered = articles;
+
+            // Apply status filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(a => getStatus(a.id) === currentFilter);
+            }
+
+            // Apply search filter
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filtered = filtered.filter(a =>
+                    a.title.toLowerCase().includes(query) ||
+                    a.publication.toLowerCase().includes(query) ||
+                    a.author.toLowerCase().includes(query) ||
+                    (a.description && a.description.toLowerCase().includes(query))
+                );
+            }
+
+            return filtered;
+        }
+
+        // Sort articles
+        function sortArticles(articles) {
+            const sorted = [...articles];
+            switch (currentSort) {
+                case 'reading-time-asc':
+                    return sorted.sort((a, b) => (a.readingTime || 0) - (b.readingTime || 0));
+                case 'reading-time-desc':
+                    return sorted.sort((a, b) => (b.readingTime || 0) - (a.readingTime || 0));
+                case 'publication':
+                    return sorted.sort((a, b) => a.publication.localeCompare(b.publication));
+                case 'title':
+                    return sorted.sort((a, b) => a.title.localeCompare(b.title));
+                default:
+                    return sorted;
+            }
+        }
+
+        // Update stats
+        function updateStats() {
+            const total = articles.length;
+            let unread = 0, inProgress = 0, read = 0;
+            let totalTime = 0;
+
+            articles.forEach(a => {
+                const status = getStatus(a.id);
+                if (status === 'read') read++;
+                else if (status === 'in-progress') inProgress++;
+                else unread++;
+                totalTime += a.readingTime || 0;
+            });
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('unreadCount').textContent = unread;
+            document.getElementById('inProgressCount').textContent = inProgress;
+            document.getElementById('readCount').textContent = read;
+
+            const hours = Math.floor(totalTime / 60);
+            const mins = totalTime % 60;
+            document.getElementById('totalTime').textContent = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+        }
+
+        // Create article card HTML
+        function createArticleCard(article) {
+            const status = getStatus(article.id);
+            const statusClass = status !== 'unread' ? status : '';
+
+            return `
+                <div class="article-card ${statusClass}" data-id="${article.id}">
+                    <div class="article-meta">
+                        <span class="publication">${escapeHtml(article.publication)}</span>
+                        <span class="reading-time">${article.readingTime || '?'} min</span>
+                    </div>
+                    <h3 class="article-title">${escapeHtml(article.title)}</h3>
+                    ${article.description ? `<p class="article-description">${escapeHtml(article.description)}</p>` : ''}
+                    <div class="article-footer">
+                        <span class="author-date">${escapeHtml(article.author)} · ${article.date}</span>
+                        <div class="status-toggle">
+                            <button class="status-btn in-progress-btn ${status === 'in-progress' ? 'active' : ''}"
+                                    onclick="toggleStatus(${article.id}, 'in-progress')"
+                                    title="Mark as In Progress">◐</button>
+                            <button class="status-btn ${status === 'read' ? 'active' : ''}"
+                                    onclick="toggleStatus(${article.id}, 'read')"
+                                    title="Mark as Read">✓</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Render articles
+        function renderArticles() {
+            const grid = document.getElementById('articlesGrid');
+            const filtered = filterArticles(articles);
+            const sorted = sortArticles(filtered);
+
+            if (sorted.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No articles found</h3>
+                        <p>Try adjusting your filters or search query</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = sorted.map(createArticleCard).join('');
+        }
+
+        // Initialize
+        async function init() {
+            // Load from cache first for fast startup
+            loadReadingStatusFromCache();
+            articles = ARTICLES_DATA;
+            updateStats();
+            renderArticles();
+
+            // Try to connect to Supabase and sync
+            if (initSupabase()) {
+                await loadReadingStatusFromSupabase();
+                updateStats();
+                renderArticles();
+            }
+
+            // Set up event listeners
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                renderArticles();
+            });
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    renderArticles();
+                });
+            });
+
+            document.getElementById('sortSelect').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                renderArticles();
+            });
+
+            // Scroll to top button
+            const scrollTopBtn = document.getElementById('scrollTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    scrollTopBtn.classList.add('visible');
+                } else {
+                    scrollTopBtn.classList.remove('visible');
+                }
+            });
+
+            scrollTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>

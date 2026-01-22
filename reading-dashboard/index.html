@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Reading Dashboard</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-card-hover: #1f3460;
+            --accent: #e94560;
+            --accent-soft: rgba(233, 69, 96, 0.15);
+            --text-primary: #edf2f4;
+            --text-secondary: #8d99ae;
+            --text-muted: #5c6378;
+            --border: #2a2a4a;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --info: #118ab2;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                height: 100vh;
+                z-index: 200;
+                transition: left 0.3s;
+                width: 280px;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 150;
+            }
+            .sidebar-overlay.open {
+                display: block;
+            }
+            .mobile-filter-btn {
+                display: flex !important;
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 90px;
+        }
+
+        .sidebar h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .filter-btn .count {
+            margin-left: auto;
+            font-size: 0.8rem;
+            background: var(--bg-primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .topic-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .topic-tag:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .topic-tag.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .topics-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        /* Article Grid */
+        .articles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .articles-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .articles-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+        }
+
+        .articles-grid.list-view {
+            grid-template-columns: 1fr;
+        }
+
+        /* Article Card */
+        .article-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .article-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .article-card:hover::before {
+            opacity: 1;
+        }
+
+        .article-card.read {
+            opacity: 0.6;
+        }
+
+        .article-card.read::before {
+            background: var(--success);
+            opacity: 1;
+        }
+
+        .article-card.in-progress::before {
+            background: var(--warning);
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-type {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
+        }
+
+        .card-type.pdf { background: #ef476f20; color: #ef476f; }
+        .card-type.web { background: #06d6a020; color: #06d6a0; }
+        .card-type.markdown { background: #118ab220; color: #118ab2; }
+
+        .card-notebook {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-muted);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .status-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .status-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .status-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .status-btn.read-btn.active {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .status-btn.progress-btn.active {
+            background: var(--warning);
+            border-color: var(--warning);
+            color: #1a1a2e;
+        }
+
+        /* Mobile Filter Button */
+        .mobile-filter-btn {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Setup Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            background: var(--gradient-1);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Notebook Section Headers */
+        .notebook-section {
+            margin-bottom: 2rem;
+        }
+
+        .notebook-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .notebook-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .notebook-count {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: var(--bg-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        /* Sync Status */
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .sync-dot.syncing {
+            background: var(--warning);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 400;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">Reading Dashboard</div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search articles, topics, notebooks...">
+            </div>
+            <button class="mobile-filter-btn" onclick="toggleSidebar()">
+                <span>Filters</span>
+            </button>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-value" id="totalCount">0</span>
+                    <span>articles</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="readCount">0</span>
+                    <span>read</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="progressCount">0</span>
+                    <span>in progress</span>
+                </div>
+                <div class="sync-status">
+                    <div class="sync-dot" id="syncDot"></div>
+                    <span id="syncText">Synced</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <aside class="sidebar" id="sidebar">
+            <div class="filter-section">
+                <h3>Status</h3>
+                <div class="filter-group">
+                    <button class="filter-btn active" data-status="all">
+                        <span>All</span>
+                        <span class="count" id="allCount">0</span>
+                    </button>
+                    <button class="filter-btn" data-status="unread">
+                        <span>Unread</span>
+                        <span class="count" id="unreadCount">0</span>
+                    </button>
+                    <button class="filter-btn" data-status="in-progress">
+                        <span>In Progress</span>
+                        <span class="count" id="inProgressCount">0</span>
+                    </button>
+                    <button class="filter-btn" data-status="read">
+                        <span>Read</span>
+                        <span class="count" id="readFilterCount">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3>Source Type</h3>
+                <div class="filter-group">
+                    <button class="filter-btn" data-type="all">
+                        <span>All Types</span>
+                    </button>
+                    <button class="filter-btn" data-type="web">
+                        <span>Web Articles</span>
+                    </button>
+                    <button class="filter-btn" data-type="pdf">
+                        <span>PDFs</span>
+                    </button>
+                    <button class="filter-btn" data-type="markdown">
+                        <span>Markdown</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3>Topics</h3>
+                <div class="topics-grid" id="topicsGrid">
+                    <!-- Topics populated by JS -->
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3>Notebooks</h3>
+                <div class="filter-group" id="notebooksFilter">
+                    <!-- Notebooks populated by JS -->
+                </div>
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <section class="articles-container">
+            <div class="articles-header">
+                <h2 id="resultsTitle">All Articles</h2>
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid" title="Grid View">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </button>
+                    <button class="view-btn" data-view="list" title="List View">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="articles-grid" id="articlesGrid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading articles...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Setup Modal -->
+    <div class="modal" id="setupModal">
+        <div class="modal-content">
+            <h2>Connect to Supabase</h2>
+            <p>Enter your Supabase credentials to sync reading progress across devices. You can find these in your Supabase project settings.</p>
+            <div class="form-group">
+                <label for="supabaseUrl">Supabase URL</label>
+                <input type="text" id="supabaseUrl" placeholder="https://xxxxx.supabase.co">
+            </div>
+            <div class="form-group">
+                <label for="supabaseKey">Anon/Public Key</label>
+                <input type="text" id="supabaseKey" placeholder="eyJhbGciOiJIUzI1NiIs...">
+            </div>
+            <button class="btn-primary" onclick="connectSupabase()">Connect & Sync</button>
+            <p style="margin-top: 1rem; font-size: 0.85rem; text-align: center;">
+                <a href="#" onclick="skipSetup()" style="color: var(--accent);">Skip for now (use local storage)</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="embedded-data.js"></script>
+    <script>
+        // State
+        let articles = [];
+        let notebooks = [];
+        let readingStatus = {};
+        let supabaseClient = null;
+        let currentFilters = {
+            status: 'all',
+            type: 'all',
+            topic: null,
+            notebook: null,
+            search: ''
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadArticles();
+            checkSupabaseSetup();
+            setupEventListeners();
+        });
+
+        // Load articles from embedded or fetched JSON
+        async function loadArticles() {
+            try {
+                // Use embedded data if available (works without server), otherwise fetch
+                let sources, notebooksData;
+                if (typeof SOURCES_DATA !== 'undefined' && typeof NOTEBOOKS_DATA !== 'undefined') {
+                    sources = SOURCES_DATA;
+                    notebooksData = NOTEBOOKS_DATA;
+                } else {
+                    const [sourcesRes, notebooksRes] = await Promise.all([
+                        fetch('data/sources.json'),
+                        fetch('data/notebooks.json')
+                    ]);
+                    sources = await sourcesRes.json();
+                    notebooksData = await notebooksRes.json();
+                }
+                notebooks = notebooksData;
+
+                // Create a notebook lookup map
+                const notebookMap = {};
+                notebooks.forEach(nb => {
+                    notebookMap[nb.notebook_id] = nb;
+                });
+
+                // Enrich articles with notebook data
+                articles = sources.map((source, index) => {
+                    const notebook = notebookMap[source.notebook_id] || {};
+                    return {
+                        id: `${source.notebook_id}_${index}`,
+                        title: source.source_title,
+                        type: source.source_type,
+                        url: source.source_url,
+                        notebookId: source.notebook_id,
+                        notebookTitle: notebook.title || 'Unknown Notebook',
+                        topics: notebook.topic_tags || [],
+                        complexity: getComplexity(source.source_type, source.source_title),
+                        readingTime: getReadingTime(source.source_type),
+                        firstSeen: source.first_seen_at
+                    };
+                });
+
+                populateFilters();
+                renderArticles();
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                showToast('Error loading articles. Check console.', 'error');
+            }
+        }
+
+        // Estimate complexity based on type and title
+        function getComplexity(type, title) {
+            const titleLower = title.toLowerCase();
+            if (type === 'pdf') return 'Advanced';
+            if (titleLower.includes('introduction') || titleLower.includes('guide')) return 'Beginner';
+            if (titleLower.includes('wikipedia')) return 'Intermediate';
+            if (titleLower.includes('nber') || titleLower.includes('academic')) return 'Advanced';
+            return 'Intermediate';
+        }
+
+        // Estimate reading time based on type
+        function getReadingTime(type) {
+            const times = {
+                'pdf': '15-30 min',
+                'web': '5-10 min',
+                'markdown': '10-20 min'
+            };
+            return times[type] || '10 min';
+        }
+
+        // Populate filters
+        function populateFilters() {
+            // Collect all topics
+            const topicCounts = {};
+            articles.forEach(article => {
+                article.topics.forEach(topic => {
+                    topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+                });
+            });
+
+            // Sort topics by count
+            const sortedTopics = Object.entries(topicCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20);
+
+            const topicsGrid = document.getElementById('topicsGrid');
+            topicsGrid.innerHTML = sortedTopics.map(([topic, count]) => `
+                <span class="topic-tag" data-topic="${topic}">
+                    ${topic}
+                    <span style="opacity:0.6">${count}</span>
+                </span>
+            `).join('');
+
+            // Notebooks filter
+            const notebooksFilter = document.getElementById('notebooksFilter');
+            notebooksFilter.innerHTML = `
+                <button class="filter-btn active" data-notebook="all">
+                    <span>All Notebooks</span>
+                </button>
+                ${notebooks.slice(0, 15).map(nb => `
+                    <button class="filter-btn" data-notebook="${nb.notebook_id}">
+                        <span>${nb.title.length > 30 ? nb.title.slice(0, 30) + '...' : nb.title}</span>
+                        <span class="count">${nb.source_count || 0}</span>
+                    </button>
+                `).join('')}
+            `;
+
+            updateCounts();
+        }
+
+        // Update filter counts
+        function updateCounts() {
+            const total = articles.length;
+            const read = articles.filter(a => readingStatus[a.id] === 'read').length;
+            const inProgress = articles.filter(a => readingStatus[a.id] === 'in-progress').length;
+            const unread = total - read - inProgress;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('readCount').textContent = read;
+            document.getElementById('progressCount').textContent = inProgress;
+            document.getElementById('allCount').textContent = total;
+            document.getElementById('unreadCount').textContent = unread;
+            document.getElementById('inProgressCount').textContent = inProgress;
+            document.getElementById('readFilterCount').textContent = read;
+        }
+
+        // Render articles
+        function renderArticles() {
+            const filtered = filterArticles();
+            const grid = document.getElementById('articlesGrid');
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📚</div>
+                        <h3>No articles found</h3>
+                        <p>Try adjusting your filters or search query</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by notebook if no specific filter
+            if (!currentFilters.notebook || currentFilters.notebook === 'all') {
+                const grouped = {};
+                filtered.forEach(article => {
+                    if (!grouped[article.notebookId]) {
+                        grouped[article.notebookId] = {
+                            title: article.notebookTitle,
+                            articles: []
+                        };
+                    }
+                    grouped[article.notebookId].articles.push(article);
+                });
+
+                grid.innerHTML = Object.entries(grouped).map(([id, group]) => `
+                    <div class="notebook-section">
+                        <div class="notebook-header">
+                            <h3 class="notebook-title">${group.title}</h3>
+                            <span class="notebook-count">${group.articles.length} articles</span>
+                        </div>
+                        <div class="articles-grid ${document.querySelector('.view-btn.active')?.dataset.view === 'list' ? 'list-view' : ''}">
+                            ${group.articles.map(renderArticleCard).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                grid.innerHTML = filtered.map(renderArticleCard).join('');
+            }
+
+            document.getElementById('resultsTitle').textContent =
+                `${filtered.length} Article${filtered.length !== 1 ? 's' : ''}`;
+        }
+
+        // Render single article card
+        function renderArticleCard(article) {
+            const status = readingStatus[article.id] || 'unread';
+            return `
+                <article class="article-card ${status}" data-id="${article.id}">
+                    <div class="card-header">
+                        <h3 class="card-title">${article.title}</h3>
+                        <span class="card-type ${article.type}">${article.type}</span>
+                    </div>
+                    <div class="card-notebook">
+                        <span>📓</span>
+                        <span>${article.notebookTitle}</span>
+                    </div>
+                    <div class="card-meta">
+                        <span class="card-meta-item">⏱️ ${article.readingTime}</span>
+                        <span class="card-meta-item">📊 ${article.complexity}</span>
+                    </div>
+                    ${article.topics.length > 0 ? `
+                        <div class="card-tags">
+                            ${article.topics.slice(0, 3).map(t => `<span class="card-tag">${t}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="card-actions">
+                        <button class="status-btn ${status === 'unread' ? 'active' : ''}"
+                                onclick="setStatus('${article.id}', 'unread', event)">
+                            Unread
+                        </button>
+                        <button class="status-btn progress-btn ${status === 'in-progress' ? 'active' : ''}"
+                                onclick="setStatus('${article.id}', 'in-progress', event)">
+                            Reading
+                        </button>
+                        <button class="status-btn read-btn ${status === 'read' ? 'active' : ''}"
+                                onclick="setStatus('${article.id}', 'read', event)">
+                            Read
+                        </button>
+                    </div>
+                </article>
+            `;
+        }
+
+        // Filter articles
+        function filterArticles() {
+            return articles.filter(article => {
+                // Status filter
+                if (currentFilters.status !== 'all') {
+                    const status = readingStatus[article.id] || 'unread';
+                    if (currentFilters.status !== status) return false;
+                }
+
+                // Type filter
+                if (currentFilters.type !== 'all' && article.type !== currentFilters.type) {
+                    return false;
+                }
+
+                // Topic filter
+                if (currentFilters.topic && !article.topics.includes(currentFilters.topic)) {
+                    return false;
+                }
+
+                // Notebook filter
+                if (currentFilters.notebook && currentFilters.notebook !== 'all' &&
+                    article.notebookId !== currentFilters.notebook) {
+                    return false;
+                }
+
+                // Search filter
+                if (currentFilters.search) {
+                    const search = currentFilters.search.toLowerCase();
+                    const matches =
+                        article.title.toLowerCase().includes(search) ||
+                        article.notebookTitle.toLowerCase().includes(search) ||
+                        article.topics.some(t => t.toLowerCase().includes(search));
+                    if (!matches) return false;
+                }
+
+                return true;
+            });
+        }
+
+        // Set reading status
+        async function setStatus(articleId, status, event) {
+            event?.stopPropagation();
+
+            if (readingStatus[articleId] === status) {
+                // Toggle off
+                delete readingStatus[articleId];
+            } else {
+                readingStatus[articleId] = status;
+            }
+
+            await saveStatus();
+            updateCounts();
+            renderArticles();
+        }
+
+        // Save status to storage
+        async function saveStatus() {
+            const syncDot = document.getElementById('syncDot');
+            const syncText = document.getElementById('syncText');
+
+            syncDot.classList.add('syncing');
+            syncText.textContent = 'Syncing...';
+
+            try {
+                if (supabaseClient) {
+                    // Save to Supabase
+                    const entries = Object.entries(readingStatus).map(([id, status]) => ({
+                        article_id: id,
+                        status: status,
+                        updated_at: new Date().toISOString()
+                    }));
+
+                    const { error } = await supabaseClient
+                        .from('reading_status')
+                        .upsert(entries, { onConflict: 'article_id' });
+
+                    if (error) throw error;
+                }
+
+                // Always save to localStorage as backup
+                localStorage.setItem('readingStatus', JSON.stringify(readingStatus));
+
+                syncDot.classList.remove('syncing');
+                syncText.textContent = 'Synced';
+            } catch (error) {
+                console.error('Sync error:', error);
+                syncDot.classList.remove('syncing');
+                syncText.textContent = 'Sync failed';
+                showToast('Failed to sync. Changes saved locally.', 'error');
+            }
+        }
+
+        // Load status from storage
+        async function loadStatus() {
+            try {
+                if (supabaseClient) {
+                    const { data, error } = await supabaseClient
+                        .from('reading_status')
+                        .select('*');
+
+                    if (error) throw error;
+
+                    readingStatus = {};
+                    data.forEach(row => {
+                        readingStatus[row.article_id] = row.status;
+                    });
+                } else {
+                    // Load from localStorage
+                    const saved = localStorage.getItem('readingStatus');
+                    if (saved) {
+                        readingStatus = JSON.parse(saved);
+                    }
+                }
+            } catch (error) {
+                console.error('Load error:', error);
+                // Fallback to localStorage
+                const saved = localStorage.getItem('readingStatus');
+                if (saved) {
+                    readingStatus = JSON.parse(saved);
+                }
+            }
+
+            updateCounts();
+            renderArticles();
+        }
+
+        // Check Supabase setup
+        function checkSupabaseSetup() {
+            const url = localStorage.getItem('supabaseUrl');
+            const key = localStorage.getItem('supabaseKey');
+
+            if (url && key) {
+                initSupabase(url, key);
+            } else {
+                document.getElementById('setupModal').classList.add('open');
+            }
+        }
+
+        // Initialize Supabase
+        async function initSupabase(url, key) {
+            try {
+                supabaseClient = supabase.createClient(url, key);
+                await loadStatus();
+                showToast('Connected to Supabase!', 'success');
+            } catch (error) {
+                console.error('Supabase init error:', error);
+                showToast('Failed to connect to Supabase', 'error');
+                supabaseClient = null;
+                loadStatus(); // Fall back to localStorage
+            }
+        }
+
+        // Connect Supabase from modal
+        async function connectSupabase() {
+            const url = document.getElementById('supabaseUrl').value.trim();
+            const key = document.getElementById('supabaseKey').value.trim();
+
+            if (!url || !key) {
+                showToast('Please enter both URL and key', 'error');
+                return;
+            }
+
+            localStorage.setItem('supabaseUrl', url);
+            localStorage.setItem('supabaseKey', key);
+
+            document.getElementById('setupModal').classList.remove('open');
+            await initSupabase(url, key);
+        }
+
+        // Skip Supabase setup
+        function skipSetup() {
+            document.getElementById('setupModal').classList.remove('open');
+            loadStatus();
+            showToast('Using local storage. Data won\'t sync across devices.', 'info');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                currentFilters.search = e.target.value;
+                renderArticles();
+            });
+
+            // Status filters
+            document.querySelectorAll('[data-status]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-status]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilters.status = btn.dataset.status;
+                    renderArticles();
+                });
+            });
+
+            // Type filters
+            document.querySelectorAll('[data-type]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-type]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilters.type = btn.dataset.type;
+                    renderArticles();
+                });
+            });
+
+            // Topic filters (use event delegation)
+            document.getElementById('topicsGrid').addEventListener('click', (e) => {
+                const tag = e.target.closest('.topic-tag');
+                if (tag) {
+                    const wasActive = tag.classList.contains('active');
+                    document.querySelectorAll('.topic-tag').forEach(t => t.classList.remove('active'));
+                    if (!wasActive) {
+                        tag.classList.add('active');
+                        currentFilters.topic = tag.dataset.topic;
+                    } else {
+                        currentFilters.topic = null;
+                    }
+                    renderArticles();
+                }
+            });
+
+            // Notebook filters (use event delegation)
+            document.getElementById('notebooksFilter').addEventListener('click', (e) => {
+                const btn = e.target.closest('.filter-btn');
+                if (btn) {
+                    document.querySelectorAll('#notebooksFilter .filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilters.notebook = btn.dataset.notebook;
+                    renderArticles();
+                }
+            });
+
+            // View toggle
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.articles-grid').forEach(grid => {
+                        grid.classList.toggle('list-view', btn.dataset.view === 'list');
+                    });
+                });
+            });
+        }
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toast.style.borderLeft = `3px solid var(--${type === 'error' ? 'accent' : type === 'success' ? 'success' : 'info'})`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => {
+                console.log('SW registration failed:', err);
+            });
+        }
+    </script>
+</body>
+</html>

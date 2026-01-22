@@ -1,0 +1,331 @@
+[
+  {
+    "notebook_id": "a8e34a7e-bb2d-47b3-8356-3228b22464dd",
+    "title": "Work, Wealth, and Automation: Navigating the New Social Question",
+    "description": "These sources examine the complex intersection of artificial intelligence, automation, and the future of global labour markets. Research indicates that while AI can significantly boost productivity, it also risks displacing workers across both routine and high-skilled occupations, potentially necessitating radical shifts in social policy. Proposed solutions include Universal Basic Income (UBI), Negative Income Tax, and job guarantees, though these face significant hurdles regarding financing, political feasibility, and administrative implementation.",
+    "topic_tags": [
+      "artificial intelligence",
+      "automation",
+      "global labour markets",
+      "productivity",
+      "social policy",
+      "Universal Basic Income (UBI)",
+      "Negative Income Tax",
+      "job guarantees",
+      "Engels' Pause",
+      "human rights implications"
+    ],
+    "source_count": 79,
+    "created_display": "19 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100421Z"
+  },
+  {
+    "notebook_id": "b9eba7aa-1a19-45a1-8807-aed8ca61c396",
+    "title": "Urban Imaginings and the Aesthetics of Design",
+    "description": "These sources examine the evolution of global design, architecture, and urban identity from the seventeenth century to the modern era. They highlight how Art Deco and Art Nouveau served as international languages of modernity, manifesting in everything from Shanghais municipal buildings and Mumbais cinemas to Western fashion during the Great Depression.",
+    "topic_tags": [
+      "global design",
+      "architecture",
+      "urban identity",
+      "Art Deco",
+      "Art Nouveau",
+      "modernity",
+      "Shanghai",
+      "Mumbai",
+      "Western fashion",
+      "visual heritage"
+    ],
+    "source_count": 100,
+    "created_display": "13 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100949Z"
+  },
+  {
+    "notebook_id": "d832d9c4-ba5d-40dc-b9ef-c4eebb34263e",
+    "title": "Patterns and Thresholds of Cosmic and Human History",
+    "description": "These sources provide an interdisciplinary examination of historical milestones, tracing existence from the origins of life and cellular complexity to the modern era. They contrast the vast 13-billion-year scope of Big History with conventional narratives focused on human civilisation, agriculture, and recorded statecraft.",
+    "topic_tags": [
+      "Big History",
+      "human civilisation",
+      "Scientific and Industrial Revolutions",
+      "military-industrial complex",
+      "technological advancement",
+      "socio-economic consequences"
+    ],
+    "source_count": 61,
+    "created_display": "19 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100954Z"
+  },
+  {
+    "notebook_id": "ce87dcca-5698-4987-97d2-0c38162b87ed",
+    "title": "Materials and Commodities: Shaping Human History and the Environment",
+    "description": "These sources examine the material and energetic foundations that have constructed human civilisation across different eras. Scientific analysis highlights the chemical versatility of glass, the electronic importance of silicon, and the transformative effects of beverages, sugar, and commodities.",
+    "topic_tags": [
+      "materials science",
+      "glass",
+      "silicon",
+      "fossil fuels",
+      "cement",
+      "steel",
+      "plastics",
+      "fertiliser",
+      "environmental impact",
+      "commodities"
+    ],
+    "source_count": 73,
+    "created_display": "17 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100957Z"
+  },
+  {
+    "notebook_id": "cdfce2fe-1e01-4f64-ae89-91b316865770",
+    "title": "Power and Prestige of the Ancien Régime",
+    "description": "The sources examine the history and cultural evolution of the French monarchy, with a particular focus on the Palace of Versailles and the reigns of Louis XIV and Louis XVI. Topics include rigid etiquette and absolute power, influential roles of royal mistresses and Marie Antoinette, socio-political causes of the French Revolution, and the modern legacy of luxury and French heritage.",
+    "topic_tags": [
+      "French monarchy",
+      "Palace of Versailles",
+      "Louis XIV",
+      "Louis XVI",
+      "Marie Antoinette",
+      "French Revolution",
+      "Enlightenment",
+      "absolute monarchy",
+      "Rococo"
+    ],
+    "source_count": 58,
+    "created_display": "17 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100961Z"
+  },
+  {
+    "notebook_id": "b005fd54-85b3-4b34-af3a-a8260b35c217",
+    "title": "The Shift to In Silico Medicine: Ending Animal Testing",
+    "description": "Sources on in silico medicine approaches to replace animal testing with computational methods.",
+    "topic_tags": [
+      "in silico medicine",
+      "animal testing",
+      "computational biology",
+      "drug discovery"
+    ],
+    "source_count": 17,
+    "created_display": "22 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100971Z"
+  },
+  {
+    "notebook_id": "27e177f7-b331-4150-b0b6-caa442abd293",
+    "title": "raising exceptional children",
+    "description": "Sources on parenting and raising exceptional children",
+    "topic_tags": [
+      "parenting",
+      "child development",
+      "education"
+    ],
+    "source_count": 28,
+    "created_display": "09 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100981Z"
+  },
+  {
+    "notebook_id": "cognitive-plasticity-and-occupational-complexity-in-aging-re",
+    "title": "Cognitive Plasticity and Occupational Complexity in Aging Research",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 85,
+    "created_display": "09 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100984Z"
+  },
+  {
+    "notebook_id": "metabolic-pathways-aging-and-longevity",
+    "title": "Metabolic Pathways, Aging, and Longevity",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 10,
+    "created_display": "03 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100987Z"
+  },
+  {
+    "notebook_id": "fetal-cells-repair-maternal-heart-after-injury",
+    "title": "Fetal Cells Repair Maternal Heart after Injury",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 24,
+    "created_display": "16 Dec 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100990Z"
+  },
+  {
+    "notebook_id": "vienna-a-legacy-of-art-history-and-culture",
+    "title": "Vienna: A Legacy of Art, History, and Culture",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 25,
+    "created_display": "15 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.100993Z"
+  },
+  {
+    "notebook_id": "transformers-ml-ai",
+    "title": "Transformers ML AI",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 9,
+    "created_display": "09 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101000Z"
+  },
+  {
+    "notebook_id": "systems-thinking-and-the-dynamics-of-complex-networks",
+    "title": "Systems Thinking and the Dynamics of Complex Networks",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 39,
+    "created_display": "15 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101004Z"
+  },
+  {
+    "notebook_id": "evolution-and-identity-in-the-east-slavic-world",
+    "title": "Evolution and Identity in the East Slavic World",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 45,
+    "created_display": "15 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101007Z"
+  },
+  {
+    "notebook_id": "china-biotech",
+    "title": "China biotech",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 10,
+    "created_display": "09 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101009Z"
+  },
+  {
+    "notebook_id": "advances-in-nucleic-acid-gene-therapies",
+    "title": "Advances in Nucleic Acid Gene Therapies",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 23,
+    "created_display": "11 Sep 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101011Z"
+  },
+  {
+    "notebook_id": "cellular-reprogramming-advancing-longevity-and-health",
+    "title": "Cellular Reprogramming: Advancing Longevity and Health",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 36,
+    "created_display": "11 Sep 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101014Z"
+  },
+  {
+    "notebook_id": "gene-therapies-advancements-challenges-and-future-prospects",
+    "title": "Gene Therapies: Advancements, Challenges, and Future Prospects",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 16,
+    "created_display": "19 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101016Z"
+  },
+  {
+    "notebook_id": "targeting-amyloidogenesis-therapies-and-mechanisms",
+    "title": "Targeting Amyloidogenesis: Therapies and Mechanisms",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 18,
+    "created_display": "01 Sep 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101018Z"
+  },
+  {
+    "notebook_id": "mitochondrial-medicine-therapies-and-innovations",
+    "title": "Mitochondrial Medicine: Therapies and Innovations",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 23,
+    "created_display": "19 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101021Z"
+  },
+  {
+    "notebook_id": "rna-editing-expanding-gene-therapys-horizons",
+    "title": "RNA Editing: Expanding Gene Therapy's Horizons",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 25,
+    "created_display": "20 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101023Z"
+  },
+  {
+    "notebook_id": "hela-cells-cultivation-applications-and-milestones",
+    "title": "HeLa Cells: Cultivation, Applications, and Milestones",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 7,
+    "created_display": "15 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101025Z"
+  },
+  {
+    "notebook_id": "culturing-and-clinical-application-of-ipscs",
+    "title": "Culturing and Clinical Application of iPSCs",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 23,
+    "created_display": "20 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101027Z"
+  },
+  {
+    "notebook_id": "longevity-research-project-portfolio-cost-effective-approach",
+    "title": "Longevity Research Project Portfolio: Cost-Effective Approaches",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 11,
+    "created_display": "15 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101029Z"
+  },
+  {
+    "notebook_id": "red-blood-cells-next-gen-therapy-and-drug-delivery",
+    "title": "Red Blood Cells: Next-Gen Therapy and Drug Delivery",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 9,
+    "created_display": "06 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101032Z"
+  },
+  {
+    "notebook_id": "artificial-wombs-technology-ethics-and-future-of-reproductio",
+    "title": "Artificial Wombs: Technology, Ethics, and Future of Reproduction",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 10,
+    "created_display": "11 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101034Z"
+  },
+  {
+    "notebook_id": "revolutionizing-medicine-nanoparticle-and-oligonucleotide-th",
+    "title": "Revolutionizing Medicine: Nanoparticle and Oligonucleotide Therapies",
+    "description": null,
+    "topic_tags": [],
+    "source_count": 9,
+    "created_display": "03 Aug 2025",
+    "updated_display": null,
+    "first_seen_at": "2026-01-19T01:13:21.101036Z"
+  }
+]

@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTGAA Bio-Bootcamp Learning Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: var(--dark);
+            background: var(--light);
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        h4 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+        
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        
+        tr:hover {
+            background: #e2e8f0;
+        }
+        
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
+        
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        blockquote {
+            border-left: 4px solid var(--secondary);
+            background: linear-gradient(90deg, #ecfdf5 0%, transparent 100%);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+        
+        blockquote strong {
+            color: var(--secondary);
+        }
+        
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+        
+        a:hover {
+            border-bottom-color: var(--primary);
+        }
+        
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            margin: 2rem 0;
+            border-radius: 2px;
+        }
+        
+        strong {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        em {
+            font-style: italic;
+            color: var(--gray);
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                padding: 0;
+                font-size: 11pt;
+            }
+            
+            h1 {
+                font-size: 24pt;
+            }
+            
+            h2 {
+                font-size: 18pt;
+                page-break-after: avoid;
+            }
+            
+            h3 {
+                font-size: 14pt;
+                page-break-after: avoid;
+            }
+            
+            table, pre, blockquote {
+                page-break-inside: avoid;
+            }
+            
+            a {
+                color: var(--primary);
+            }
+        }
+        
+        /* Checkbox styling */
+        li:has(input[type="checkbox"]) {
+            list-style: none;
+            margin-left: -1.5rem;
+        }
+    </style>
+</head>
+<body>
+<h1 id="htgaa-bio-bootcamp-complete-learning-guide">HTGAA Bio-Bootcamp: Complete Learning Guide</h1>
+<h3 id="tailored-for-longevity-biotech-biomedical-applications">Tailored for Longevity Biotech &amp; Biomedical Applications</h3>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<p>The HTGAA Bio-Bootcamp is a <strong>3-day intensive</strong> (Jan 19, 21, 23, 2026) preparing you for the full HTGAA course. It covers:</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Theme</th>
+<th>Your Interest Alignment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Day 1</strong></td>
+<td>Central Dogma, DNA Engineering, CRISPR, Phage Therapy, Genetic Circuits</td>
+<td><strong>HIGH</strong> - Gene therapies, therapeutics</td>
+</tr>
+<tr>
+<td><strong>Day 2</strong></td>
+<td>Wet Lab Methods, Scientific Method, Molecular Biology Tools</td>
+<td><strong>MEDIUM</strong> - Foundational skills</td>
+</tr>
+<tr>
+<td><strong>Day 3</strong></td>
+<td>Python/Colab, Benchling, Bioinformatics, AI Tools</td>
+<td><strong>HIGH</strong> - Software/AI integration</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-1-knowledge-prerequisites">Part 1: Knowledge Prerequisites</h2>
+<h3 id="tier-1-essential-must-know-before-bootcamp">Tier 1: Essential (Must Know Before Bootcamp)</h3>
+<h4 id="molecular-biology-fundamentals">Molecular Biology Fundamentals</h4>
+<ul>
+<li><strong>The Central Dogma</strong>: DNA → RNA → Protein flow</li>
+<li><strong>DNA Structure</strong>: Double helix, base pairing (A-T, G-C), 5' to 3' directionality</li>
+<li><strong>Gene Expression</strong>: Transcription, translation basics</li>
+<li><strong>Proteins</strong>: Amino acids, folding, function</li>
+</ul>
+<blockquote>
+<p><strong>Longevity Relevance</strong>: Understanding how genes encode proteins is foundational for comprehending gene therapies targeting aging pathways (e.g., telomerase, sirtuins, mTOR).</p>
+</blockquote>
+<h4 id="chemistry-basics">Chemistry Basics</h4>
+<ul>
+<li>Organic chemistry concepts (functional groups, bonds)</li>
+<li>Basic biochemistry (enzymes, substrates, catalysis)</li>
+<li>pH, buffers, solutions</li>
+</ul>
+<h3 id="tier-2-helpful-will-accelerate-learning">Tier 2: Helpful (Will Accelerate Learning)</h3>
+<h4 id="genetics">Genetics</h4>
+<ul>
+<li>Mutations (point, frameshift, insertion, deletion)</li>
+<li>Gene regulation (promoters, enhancers, repressors)</li>
+<li>Plasmids and vectors</li>
+</ul>
+<h4 id="cell-biology">Cell Biology</h4>
+<ul>
+<li>Cell structure (prokaryotic vs eukaryotic)</li>
+<li>Cell membrane, organelles</li>
+<li>Cell division basics</li>
+</ul>
+<h4 id="for-your-software-background">For Your Software Background</h4>
+<ul>
+<li>Basic Python syntax (you'll learn this in Day 3, but pre-knowledge helps)</li>
+<li>Familiarity with Jupyter notebooks/Google Colab</li>
+<li>Command line basics</li>
+</ul>
+<hr />
+<h2 id="part-2-day-by-day-content-breakdown">Part 2: Day-by-Day Content Breakdown</h2>
+<h3 id="day-1-foundations-global-projects">DAY 1: Foundations &amp; Global Projects</h3>
+<p><strong>Date: Tuesday, January 19th, 2026 | 9 AM - 12 PM EST</strong></p>
+<h4 id="1-introduction">1. Introduction</h4>
+<ul>
+<li>HTGAA course structure, nodes, homework, labs, final projects</li>
+<li>BioBootcamp expectations and deliverables</li>
+</ul>
+<h4 id="2-the-central-dogma-of-biology-synthetic-biology-applications">2. The Central Dogma of Biology &amp; Synthetic Biology Applications</h4>
+<p><strong>Speaker: Anna-Thérèse Mehra</strong></p>
+<p><strong>Topics:</strong>
+- Tree of life (domains, evolution)
+- DNA/RNA/Proteins relationship
+- The central dogma in detail</p>
+<blockquote>
+<p><strong>Longevity Connection</strong>: The central dogma explains how genetic information flows—critical for understanding how aging-related genes (like <em>TP53</em>, <em>FOXO</em>, <em>SIRT1</em>) produce proteins that regulate lifespan.</p>
+</blockquote>
+<p><strong>Resources Provided:</strong>
+- DNA Replication video: https://www.youtube.com/watch?v=0Ha9nppnwOc
+- Protein Synthesis videos: https://www.youtube.com/watch?v=Z6n7CWyoqFU
+- PCR explanation: https://www.youtube.com/watch?v=JRAA4C2OPwq
+- CRISPR-Cas video: https://www.youtube.com/watch?v=2pp17E4E-O8</p>
+<h4 id="3-dna-design-genome-engineering-methods">3. DNA Design &amp; Genome Engineering Methods</h4>
+<p><strong>Speakers: Dominika Wawrzyniak, Michelle Yue</strong></p>
+<p><strong>Topics:</strong>
+- DNA/gene structure
+- Gene regulation mechanisms
+- Mutations and their effects
+- <strong>The Synbio Design Cycle</strong> (Design → Build → Test → Learn)
+- Vectors and chassis organisms
+- Enzymes for molecular biology
+- <strong>CRISPR</strong> and other DNA modifiers (ZFNs, TALENs)</p>
+<blockquote>
+<p><strong>Longevity Connection</strong>: CRISPR is revolutionizing aging research—from editing genes linked to cellular senescence to developing gene therapies for age-related diseases. Understanding genome engineering is essential for longevity biotech.</p>
+</blockquote>
+<p><strong>Resources Provided:</strong>
+- Cambridge Intro to Genetic Engineering
+- Innovative Genomics CRISPR Resource - covers CRISPR in Nature, Technology, Medicine, Agriculture, Ethics
+- Broad Institute's CRISPR in a Nutshell
+- MIT OpenCourseWare lectures on Recombinant DNA, ZFNs, TALENs, Gibson Assembly
+- Recent papers: Wang &amp; Doudna 2023, Makarova et al. 2025</p>
+<h4 id="4-phage-therapeutics-global-project">4. Phage Therapeutics (Global Project)</h4>
+<p><strong>Speaker: Dr. Lisa Riedmayr</strong></p>
+<p><strong>Topics:</strong>
+- Introduction to bacteriophages
+- The need for phage therapy (antibiotic resistance crisis)
+- Future directions</p>
+<blockquote>
+<p><strong>Longevity Connection</strong>: Phage therapy represents a therapeutic approach that could address infections in aging populations where antibiotic resistance is a major concern. Also relevant for microbiome engineering.</p>
+</blockquote>
+<p><strong>Resource</strong>: Phages: The Deadliest Beings on Earth (Kurzgesagt)</p>
+<h4 id="5-genetic-circuits-global-project">5. Genetic Circuits (Global Project)</h4>
+<p><strong>Speaker: Dr. Johannes Stein</strong></p>
+<p><strong>Topics:</strong>
+- Basic components of genetic circuits
+- Elements required (promoters, RBS, terminators, reporters)
+- Applications in synthetic biology</p>
+<blockquote>
+<p><strong>Longevity Connection</strong>: Genetic circuits can be programmed as biosensors for aging biomarkers or as therapeutic delivery systems that respond to cellular aging states.</p>
+</blockquote>
+<p><strong>Resources:</strong>
+- Synthetic Biology: Programming Living Bacteria - Christoph Voigt
+- Synthetic Biology: An Emerging Engineering Discipline - Timothy Lu</p>
+<h4 id="6-colored-proteins-for-bioart-global-project">6. Colored Proteins for BioArt (Global Project)</h4>
+<p><strong>Speaker: Dr. Cholpisit (Ice) Kiattisewee</strong></p>
+<h4 id="7-discourse-onboarding">7. Discourse Onboarding</h4>
+<p><strong>Speaker: Dr. Derek Jacoby</strong>
+- Getting started with the HTGAA Discourse community</p>
+<hr />
+<h3 id="day-2-wet-lab-methods-scientific-practice">DAY 2: Wet Lab Methods &amp; Scientific Practice</h3>
+<p><strong>Date: Wednesday, January 21st, 2026 | 9 AM - 12 PM EST</strong></p>
+<h4 id="1-literature-research">1. Literature Research</h4>
+<p><strong>Speaker: Anastasia Bernaz</strong></p>
+<p><strong>Topics:</strong>
+- Effective literature searching
+- Google Scholar, PubMed usage
+- Literature review methodology
+- AI tools for research</p>
+<p><strong>Resources:</strong>
+- Search engines: Google Scholar, PubMed, Scopus, bioRxiv
+- Literature managers: Mendeley, Zotero
+- AI assistants: Research Rabbit, Elicit</p>
+<blockquote>
+<p><strong>For Your Longevity Focus</strong>: Use these tools to search for aging research papers. Try queries like "cellular senescence therapeutics", "senolytics clinical trials", "epigenetic clocks biomarkers".</p>
+</blockquote>
+<h4 id="2-scientific-method-experimental-design">2. Scientific Method &amp; Experimental Design</h4>
+<p><strong>Speaker: Dominika Wawrzyniak</strong></p>
+<p><strong>Topics:</strong>
+- The scientific method and good scientific practices
+- Defining scientific questions and hypotheses
+- Designing experiments with proper controls
+- Laboratory notebooks (ELN)</p>
+<p><strong>Resources:</strong>
+- Electronic lab notebooks: Benchling, SciNote ELN
+- Protocols: Protocols.io
+- Guidelines: Max-Planck Society, DFG
+- iGEM Synbio Engineering Cycle Guide</p>
+<h4 id="3-tools-for-molecular-biology">3. Tools for Molecular Biology</h4>
+<p><strong>Speaker: Adrian Filips</strong></p>
+<p><strong>Topics:</strong>
+- Online databases
+- DNA synthesis services
+- Metabolic engineering tools</p>
+<p><strong>Key Databases to Learn:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Database</th>
+<th>Purpose</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GenBank</td>
+<td>DNA sequences</td>
+<td>ncbi.nlm.nih.gov/genbank</td>
+</tr>
+<tr>
+<td>BLAST</td>
+<td>Sequence alignment</td>
+<td>blast.ncbi.nlm.nih.gov</td>
+</tr>
+<tr>
+<td>UniProt</td>
+<td>Protein sequences/function</td>
+<td>uniprot.org</td>
+</tr>
+<tr>
+<td>PDB</td>
+<td>Protein structures</td>
+<td>rcsb.org</td>
+</tr>
+<tr>
+<td>KEGG</td>
+<td>Metabolic pathways</td>
+<td>kegg.jp</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>For Your Bioinformatics Interest</strong>: These databases are essential for computational biology. BLAST and UniProt will be your go-to tools for analyzing protein sequences related to aging pathways.</p>
+</blockquote>
+<h4 id="4-wet-lab-methods">4. Wet Lab Methods</h4>
+<p><strong>Speakers: Dr. Jieming Chu, Adrian Filips, Martina Armas, Benjamin Arias</strong></p>
+<p><strong>Techniques Covered:</strong>
+- Biosafety and sterile techniques
+- Culturing microorganisms
+- DNA extraction and sequence analysis
+- <strong>PCR</strong> (Polymerase Chain Reaction)
+- Restriction enzyme-based assembly
+- Ligation
+- <strong>Gibson Assembly</strong>
+- Gel electrophoresis
+- Cell transformation</p>
+<p><strong>Resources:</strong>
+- Biocalculators: NEBioCalculator, NEBuilder
+- Tm Calculators: NEB Tm Calculator, Primer3
+- Virtual labs: Molecular Biology Virtual Labs
+- Plasmids 101 (Addgene)</p>
+<h4 id="5-scientific-figures">5. Scientific Figures</h4>
+<p><strong>Speaker: Yehuda Binik</strong>
+- Guidelines for clear, accurate scientific figures
+- Tools for creating figures</p>
+<hr />
+<h3 id="day-3-coding-bioinformatics-ai-tools">DAY 3: Coding, Bioinformatics &amp; AI Tools</h3>
+<p><strong>Date: Friday, January 23rd, 2026 | 9 AM - 12 PM EST</strong></p>
+<blockquote>
+<p><strong>This day is HIGHLY relevant to your software background!</strong></p>
+</blockquote>
+<h4 id="1-introduction_1">1. Introduction</h4>
+<p><strong>Speaker: Ethan Itovitch</strong></p>
+<h4 id="2-python-fundamentals-colab">2. Python Fundamentals &amp; Colab</h4>
+<p><strong>Speaker: Dr. Paul Kao</strong></p>
+<p><strong>Topics:</strong>
+- Fundamentals of Python
+- Basic syntax
+- Setting up Google Colab</p>
+<p><strong>Resources Provided:</strong>
+- Walkthrough: <code>Python-Basics-HTGAA-Bootcamp-2025.ipynb</code>
+- Part 2: <code>Python-HTGAA-Bootcamp-2025.ipynb</code></p>
+<blockquote>
+<p><strong>For Your Backend Engineering Background</strong>: This will be review for you, but focus on the biology-specific applications. The Colabs show how to apply Python to biological data.</p>
+</blockquote>
+<h4 id="3-benchling-basics">3. Benchling Basics</h4>
+<p><strong>Speaker: Dr. Cholpisit (Ice) Kiattisewee</strong></p>
+<p><strong>Topics:</strong>
+- Reading DNA sequences
+- <em>In silico</em> cloning by scenario
+- Essential Benchling features</p>
+<p>Benchling is industry-standard software for molecular biology R&amp;D—essentially the "GitHub for biology". Learning it is valuable for any biotech career.</p>
+<h4 id="4-accessible-biolabs">4. Accessible Biolabs</h4>
+<p><strong>Speaker: Adrian Filips</strong></p>
+<p><strong>Topics:</strong>
+- Setting up labs with limited resources
+- Accessible protocols for external students</p>
+<h4 id="5-colab-examples-and-ai-tools">5. Colab Examples and AI Tools</h4>
+<p><strong>Speaker: Suvin Sundararajan</strong></p>
+<p><strong>Topics:</strong>
+- From Code to Lab: Practical Applications with CoLab &amp; Opentrons</p>
+<p><strong>Resources Provided:</strong>
+- Example 1: Rosetta protein mutation scanning
+- Example 2: Opentrons lab automation
+- AI tools: Connected Papers, Research Rabbit</p>
+<p><strong>Key Bioinformatics Tools:</strong>
+- NEBuilder Assembly Tool: https://nebuilder.neb.com/
+- NCBI BLAST: https://blast.ncbi.nlm.nih.gov/
+- IDT OligoAnalyzer: https://www.idtdna.com/pages/tools/oligoanalyzer
+- IDT Codon Optimization: https://www.idtdna.com/pages/tools/codon-optimization-tool
+- Twist Codon Optimization: https://www.twistbioscience.com/</p>
+<p><strong>Safety/Regulatory Resources:</strong>
+- NIH Guidelines: https://osp.od.nih.gov/
+- CDC BMBL Hub: https://www.cdc.gov/labs/bmbl/</p>
+<h4 id="6-htgaa-infrastructure">6. HTGAA Infrastructure</h4>
+<p><strong>Speaker: Greg Galparin</strong>
+- Creating your HTGAA website page</p>
+<hr />
+<h2 id="part-3-mapping-to-full-htgaa-curriculum">Part 3: Mapping to Full HTGAA Curriculum</h2>
+<p>The bootcamp prepares you for these HTGAA weekly topics:</p>
+<table>
+<thead>
+<tr>
+<th>Bootcamp Topic</th>
+<th>HTGAA Week</th>
+<th>Topic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Central Dogma, DNA basics</td>
+<td>Week 1</td>
+<td>Principles &amp; Practices</td>
+</tr>
+<tr>
+<td>DNA Design, CRISPR</td>
+<td>Week 4</td>
+<td>Next Generation Synthesis</td>
+</tr>
+<tr>
+<td>Genome Engineering</td>
+<td>Week 7</td>
+<td>Genome Engineering</td>
+</tr>
+<tr>
+<td>Genetic Circuits</td>
+<td>Week 5-6</td>
+<td>Bio-Production, Biodesign</td>
+</tr>
+<tr>
+<td>Phage Therapeutics</td>
+<td>Week 12</td>
+<td>Engineering Human Gut Microbiome</td>
+</tr>
+<tr>
+<td>Wet Lab Methods</td>
+<td>Weeks 1-16</td>
+<td>Throughout (lab components)</td>
+</tr>
+<tr>
+<td>Python/Bioinformatics</td>
+<td>Week 15</td>
+<td>Tool Chains, Automation</td>
+</tr>
+<tr>
+<td>Protein Design (Rosetta)</td>
+<td>Week 13</td>
+<td>Computational Protein Design</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Full HTGAA Weekly Curriculum:</strong>
+- Week 1: Principles &amp; Practices
+- Week 2: DNA Nanostructures
+- Week 3: Synthetic Minimal Cells
+- Week 4: Next Generation Synthesis
+- Week 5: Bio-Production
+- Week 6: Darwin on Steroids, Biodesign, Diversity Selection
+- Week 7: Genome Engineering
+- Week 8: Fluorescence In-Situ Sequencing
+- Week 9: Synthetic Developmental Biology
+- Week 10: Biofabrication and Additive Manufacturing
+- Week 11: Gene Drives &amp; Synthetic Ecosystems
+- Week 12: Engineering the Human Gut Microbiome
+- Week 13: Computational Protein Design
+- Week 14: Break
+- Week 15: Tool Chains, Automation, &amp; Open Hardware
+- Week 16: Invention, Intellectual Property</p>
+<blockquote>
+<p><strong>HTGAA Final Project</strong>: You'll create a prototype demonstrating your skills—consider something longevity-focused like a senescence biosensor or an aging biomarker detection system.</p>
+</blockquote>
+<hr />
+<h2 id="part-4-longevity-biotech-relevance-deep-dive">Part 4: Longevity Biotech Relevance Deep Dive</h2>
+<h3 id="how-each-bootcamp-topic-connects-to-aging-research">How Each Bootcamp Topic Connects to Aging Research</h3>
+<h4 id="1-central-dogma-gene-expression-aging-pathways">1. Central Dogma &amp; Gene Expression → Aging Pathways</h4>
+<p>Key aging genes to know:
+- <strong>SIRT1-7</strong> (Sirtuins): NAD+-dependent deacetylases regulating metabolism and stress response
+- <strong>mTOR</strong>: Master regulator of growth; inhibition extends lifespan
+- <strong>FOXO transcription factors</strong>: Stress resistance and longevity
+- <strong>TP53</strong>: Tumor suppressor, cellular senescence trigger
+- <strong>TERT</strong>: Telomerase component; telomere maintenance</p>
+<h4 id="2-crispr-genome-engineering-gene-therapy-for-aging">2. CRISPR &amp; Genome Engineering → Gene Therapy for Aging</h4>
+<p>Current applications:
+- Editing cells to remove senescence markers
+- Correcting age-related genetic diseases (progeria)
+- Engineering cells to produce therapeutic proteins
+- Creating animal models of aging</p>
+<h4 id="3-genetic-circuits-therapeutic-delivery">3. Genetic Circuits → Therapeutic Delivery</h4>
+<p>Potential applications:
+- Circuits that sense aging biomarkers and respond
+- Programmable senolytic systems
+- Living therapeutics for microbiome engineering</p>
+<h4 id="4-phage-therapy-microbiome-infection">4. Phage Therapy → Microbiome &amp; Infection</h4>
+<p>Relevance:
+- Aging microbiome changes correlate with health decline
+- Phages can selectively modulate microbiome
+- Alternative to antibiotics in immunocompromised elderly</p>
+<h4 id="5-bioinformatics-aging-data-analysis">5. Bioinformatics → Aging Data Analysis</h4>
+<p>Applications:
+- Analyzing transcriptomic data from aging tissues
+- Epigenetic clock development
+- Drug discovery for senolytics
+- Biomarker identification</p>
+<hr />
+<h2 id="part-5-interactive-learning-tools">Part 5: Interactive Learning Tools</h2>
+<h3 id="molecular-biology-simulations">Molecular Biology Simulations</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What It Offers</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LabXchange</td>
+<td>Harvard's free biotech simulations</td>
+<td>Wet lab technique practice</td>
+</tr>
+<tr>
+<td>PhET Simulations</td>
+<td>Interactive science simulations</td>
+<td>Conceptual understanding</td>
+</tr>
+<tr>
+<td>BioMan Biology</td>
+<td>Games and virtual labs</td>
+<td>Fun review</td>
+</tr>
+<tr>
+<td>VCell</td>
+<td>Cell modeling software</td>
+<td>Advanced computational biology</td>
+</tr>
+<tr>
+<td>MERLOT Virtual Labs</td>
+<td>Collection of biology simulations</td>
+<td>Various techniques</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Links:</strong>
+- LabXchange: https://www.labxchange.org/
+- PhET: https://phet.colorado.edu/
+- BioMan Biology: https://www.biomanbio.com/
+- VCell: https://vcell.org/
+- MERLOT: https://virtuallabs.merlot.org/</p>
+<h3 id="bioinformatics-learning-for-your-background">Bioinformatics Learning (For Your Background!)</h3>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Description</th>
+<th>Why Use It</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rosalind</td>
+<td>Gamified bioinformatics problems</td>
+<td>Learn algorithms through coding challenges</td>
+</tr>
+<tr>
+<td>Coursera: Biology Meets Programming</td>
+<td>UC San Diego course</td>
+<td>Python + biology integration</td>
+</tr>
+<tr>
+<td>Galaxy Training Network</td>
+<td>Interactive tutorials</td>
+<td>Learn analysis workflows</td>
+</tr>
+<tr>
+<td>Python for Biologists</td>
+<td>Book + exercises</td>
+<td>Apply your Python skills</td>
+</tr>
+<tr>
+<td>Biopython Tutorial</td>
+<td>Library documentation</td>
+<td>Essential Python library for bio</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Links:</strong>
+- Rosalind: http://rosalind.info/
+- Coursera Bioinformatics: https://www.coursera.org/learn/bioinformatics
+- Galaxy Training: https://training.galaxyproject.org/
+- Python for Biologists: https://pythonforbiologists.com/
+- Biopython: https://biopython.org/</p>
+<h3 id="longevity-specific-learning">Longevity-Specific Learning</h3>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stanford: Science of How to Live Forever</td>
+<td>Executive-level longevity science</td>
+</tr>
+<tr>
+<td>Buck Institute Online Course</td>
+<td>Biology of aging fundamentals</td>
+</tr>
+<tr>
+<td>UC Berkeley: Biology of Aging</td>
+<td>Cellular &amp; molecular aging</td>
+</tr>
+<tr>
+<td>TIME Initiative Resources</td>
+<td>Aging research community</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Links:</strong>
+- Stanford Course: https://online.stanford.edu/courses/som-xche0035-science-how-live-forever
+- Buck Institute: https://www.buckinstitute.org/
+- TIME Initiative: https://www.timeinitiative.org/resources</p>
+<hr />
+<h2 id="part-6-study-prompts-for-self-learning">Part 6: Study Prompts for Self-Learning</h2>
+<p>Use these prompts with Claude or ChatGPT to generate study materials:</p>
+<h3 id="central-dogma-molecular-biology">Central Dogma &amp; Molecular Biology</h3>
+<p><strong>Prompt 1:</strong></p>
+<pre><code>Explain the central dogma of molecular biology as if I'm a software engineer.
+Use analogies to programming concepts (like compilation, interpretation, APIs).
+Then explain how this relates to genetic diseases and gene therapy.
+</code></pre>
+<p><strong>Prompt 2:</strong></p>
+<pre><code>Create a quiz with 10 questions about DNA replication, transcription, and
+translation. Include questions about the enzymes involved and their functions.
+Focus on aspects relevant to understanding CRISPR and gene editing.
+</code></pre>
+<p><strong>Prompt 3:</strong></p>
+<pre><code>Explain the difference between eukaryotic and prokaryotic gene expression.
+Why does this matter for synthetic biology and using E. coli as a chassis organism?
+</code></pre>
+<h3 id="crispr-genome-engineering">CRISPR &amp; Genome Engineering</h3>
+<p><strong>Prompt 4:</strong></p>
+<pre><code>I'm learning CRISPR for the first time. Explain:
+1. How Cas9 finds its target
+2. How guide RNAs are designed
+3. The difference between gene knockout and knock-in
+4. Current limitations and how they're being addressed
+Include recent advances from 2024-2025.
+</code></pre>
+<p><strong>Prompt 5:</strong></p>
+<pre><code>Compare CRISPR-Cas9, ZFNs, and TALENs. Create a table showing their
+mechanisms, advantages, disadvantages, and best use cases. Which is most
+relevant for therapeutic applications?
+</code></pre>
+<h3 id="bioinformatics-python">Bioinformatics &amp; Python</h3>
+<p><strong>Prompt 6:</strong></p>
+<pre><code>I'm a backend engineer learning bioinformatics. Create a learning roadmap
+that covers:
+1. Essential biology concepts I need
+2. Key Python libraries (Biopython, etc.)
+3. Important databases and how to query them programmatically
+4. A small project analyzing a gene related to aging (suggest one)
+</code></pre>
+<p><strong>Prompt 7:</strong></p>
+<pre><code>Write a Python tutorial using Biopython to:
+1. Fetch a gene sequence from NCBI (use SIRT1 as an example)
+2. Translate it to protein sequence
+3. Perform a BLAST search
+4. Visualize the results
+Include explanations of the biology at each step.
+</code></pre>
+<h3 id="longevity-aging-biology">Longevity &amp; Aging Biology</h3>
+<p><strong>Prompt 8:</strong></p>
+<pre><code>Explain the hallmarks of aging (López-Otín et al.) and for each hallmark,
+describe:
+1. The molecular mechanisms
+2. How it contributes to age-related diseases
+3. Current therapeutic approaches targeting it
+4. Key genes/proteins involved
+</code></pre>
+<p><strong>Prompt 9:</strong></p>
+<pre><code>I want to understand senolytics. Explain:
+1. What cellular senescence is
+2. Why senescent cells accumulate with age
+3. How senolytics work (mechanism of action)
+4. Current clinical trials and their results
+5. Key companies working on this
+</code></pre>
+<p><strong>Prompt 10:</strong></p>
+<pre><code>Create a study guide for understanding epigenetic clocks. Cover:
+1. What epigenetic modifications are
+2. How methylation patterns change with age
+3. How clocks are trained/calibrated
+4. Differences between Horvath, GrimAge, PhenoAge clocks
+5. How these are used in longevity research
+</code></pre>
+<h3 id="synthetic-biology-genetic-circuits">Synthetic Biology &amp; Genetic Circuits</h3>
+<p><strong>Prompt 11:</strong></p>
+<pre><code>Explain genetic circuits using programming analogies. Cover:
+1. Promoters as 'function calls'
+2. Repressors and activators as 'if/else statements'
+3. Feedback loops as 'while loops'
+4. Give examples of real genetic circuits and their applications
+</code></pre>
+<hr />
+<h2 id="part-7-pre-bootcamp-action-plan">Part 7: Pre-Bootcamp Action Plan</h2>
+<h3 id="week-before-bootcamp">Week Before Bootcamp</h3>
+<p><strong>Day 1-2: Central Dogma Review</strong>
+- Watch: DNA Replication video (https://www.youtube.com/watch?v=0Ha9nppnwOc)
+- Watch: Protein Synthesis videos from handout
+- Read: Basic molecular biology on Khan Academy</p>
+<p><strong>Day 3-4: CRISPR Deep Dive</strong>
+- Watch: CRISPR-Cas video (https://www.youtube.com/watch?v=2pp17E4E-O8)
+- Explore: Innovative Genomics CRISPR Resource (https://innovativegenomics.org/)
+- Watch: Broad Institute's CRISPR talk</p>
+<p><strong>Day 5-6: Python &amp; Tools Setup</strong>
+- Set up Google Colab account
+- Install Biopython: <code>pip install biopython</code>
+- Create Benchling account (free academic): https://www.benchling.com/
+- Explore NCBI (https://www.ncbi.nlm.nih.gov/) and UniProt (https://www.uniprot.org/)</p>
+<p><strong>Day 7: Literature Tools</strong>
+- Set up Zotero (https://www.zotero.org/) or Mendeley (https://www.mendeley.com/)
+- Try Research Rabbit (https://www.researchrabbit.ai/)
+- Search PubMed for "longevity gene therapy" to practice</p>
+<h3 id="during-bootcamp">During Bootcamp</h3>
+<ul>
+<li>Take notes in a digital lab notebook (try Benchling or Notion)</li>
+<li>Ask questions in the Discourse forum</li>
+<li>Connect concepts to your longevity interests</li>
+</ul>
+<h3 id="after-bootcamp">After Bootcamp</h3>
+<ul>
+<li>Complete all homework assignments</li>
+<li>Start planning your final project (longevity-themed!)</li>
+<li>Join the HTGAA community discussions</li>
+</ul>
+<hr />
+<h2 id="part-8-your-personalized-bioinformatics-learning-path">Part 8: Your Personalized Bioinformatics Learning Path</h2>
+<p>Given your backend engineering background, here's a tailored progression:</p>
+<h3 id="phase-1-biology-foundations-1-2-weeks">Phase 1: Biology Foundations (1-2 weeks)</h3>
+<ol>
+<li>Complete Khan Academy's molecular biology section</li>
+<li>Read "Molecular Biology of the Cell" Chapter 1-6 (Alberts)</li>
+<li>Use Rosalind problems to reinforce concepts</li>
+</ol>
+<h3 id="phase-2-python-for-biology-2-3-weeks">Phase 2: Python for Biology (2-3 weeks)</h3>
+<ol>
+<li>Coursera: Biology Meets Programming (UC San Diego)</li>
+<li>Learn Biopython through their official tutorial</li>
+<li>Practice with NCBI databases programmatically</li>
+</ol>
+<h3 id="phase-3-data-analysis-2-3-weeks">Phase 3: Data Analysis (2-3 weeks)</h3>
+<ol>
+<li>Learn pandas/numpy for biological data</li>
+<li>Galaxy Training Network tutorials</li>
+<li>Analyze real datasets (GEO database has aging studies)</li>
+</ol>
+<h3 id="phase-4-advanced-applications-ongoing">Phase 4: Advanced Applications (Ongoing)</h3>
+<ol>
+<li>Machine learning for biology (scikit-learn)</li>
+<li>Single-cell analysis (Scanpy)</li>
+<li>Structural bioinformatics (PDB, AlphaFold)</li>
+</ol>
+<h3 id="longevity-specific-bioinformatics-projects">Longevity-Specific Bioinformatics Projects</h3>
+<ol>
+<li><strong>Aging Gene Network Analysis</strong>: Download gene expression data from aging tissues, identify differentially expressed genes</li>
+<li><strong>Epigenetic Clock Implementation</strong>: Implement a simple methylation clock predictor</li>
+<li><strong>Senescence Signature Detector</strong>: Build a classifier for senescent cell markers</li>
+<li><strong>Drug Repurposing Analysis</strong>: Analyze compound databases for potential senolytics</li>
+</ol>
+<hr />
+<h2 id="summary-what-youll-gain">Summary: What You'll Gain</h2>
+<p>After the Bio-Bootcamp + self-study, you'll be able to:</p>
+<ul>
+<li>✅ Understand how genetic information flows from DNA to protein</li>
+<li>✅ Design basic genetic constructs using CRISPR and other tools</li>
+<li>✅ Navigate key molecular biology databases</li>
+<li>✅ Perform wet lab techniques (PCR, cloning, transformation)</li>
+<li>✅ Use Python for biological data analysis</li>
+<li>✅ Design experiments with proper controls</li>
+<li>✅ Read and critically evaluate scientific literature</li>
+<li>✅ Apply these skills to longevity research questions</li>
+</ul>
+<p><strong>Most importantly for your interests</strong>: You'll have the foundation to understand and contribute to longevity biotech—whether that's analyzing aging data, designing therapeutic constructs, or building bioinformatics tools for the field.</p>
+<hr />
+<h2 id="key-resources-links">Key Resources &amp; Links</h2>
+<h3 id="official-htgaa">Official HTGAA</h3>
+<ul>
+<li>MIT Media Lab HTGAA: https://www.media.mit.edu/courses/htgaa/</li>
+<li>Bio Academy: https://bio.academany.org/</li>
+<li>HTGAA 2025 Notion: https://howtogrowalmostanything.notion.site/</li>
+</ul>
+<h3 id="interactive-learning">Interactive Learning</h3>
+<ul>
+<li>LabXchange: https://www.labxchange.org/</li>
+<li>PhET Simulations: https://phet.colorado.edu/</li>
+<li>Rosalind Bioinformatics: http://rosalind.info/</li>
+</ul>
+<h3 id="bioinformatics">Bioinformatics</h3>
+<ul>
+<li>Coursera Bioinformatics: https://www.coursera.org/learn/bioinformatics</li>
+<li>Biopython: https://biopython.org/</li>
+<li>Galaxy Training: https://training.galaxyproject.org/</li>
+</ul>
+<h3 id="longevity-science">Longevity Science</h3>
+<ul>
+<li>Stanford Longevity Course: https://online.stanford.edu/courses/som-xche0035-science-how-live-forever</li>
+<li>Buck Institute: https://www.buckinstitute.org/</li>
+<li>TIME Initiative: https://www.timeinitiative.org/resources</li>
+</ul>
+<h3 id="databases">Databases</h3>
+<ul>
+<li>NCBI/GenBank: https://www.ncbi.nlm.nih.gov/</li>
+<li>UniProt: https://www.uniprot.org/</li>
+<li>PDB: https://www.rcsb.org/</li>
+<li>PubMed: https://pubmed.ncbi.nlm.nih.gov/</li>
+</ul>
+<h3 id="tools">Tools</h3>
+<ul>
+<li>Benchling: https://www.benchling.com/</li>
+<li>Research Rabbit: https://www.researchrabbit.ai/</li>
+<li>Connected Papers: https://www.connectedpapers.com/</li>
+</ul>
+<hr />
+<p><em>Generated for HTGAA 2025 Bio-Bootcamp preparation</em>
+<em>Focus: Longevity Biotech &amp; Biomedical Applications</em></p>
+</body>
+</html>
