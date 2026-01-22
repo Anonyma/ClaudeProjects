@@ -432,6 +432,80 @@
             }
         }
 
+        /* Command Modal */
+        .command-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .command-modal.open {
+            display: flex;
+        }
+
+        .command-modal-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .command-modal-content h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .command-hint {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .command-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .command-box code {
+            flex: 1;
+            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            word-break: break-all;
+            white-space: pre-wrap;
+            color: var(--success);
+        }
+
+        .copy-command-btn {
+            flex-shrink: 0;
+        }
+
+        .command-note {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-modal-btn {
+            width: 100%;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .container {
@@ -542,31 +616,37 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
+    <!-- Command Modal -->
+    <div class="command-modal" id="command-modal">
+        <div class="command-modal-content">
+            <h3>Run in Terminal</h3>
+            <p class="command-hint">Copy this command and run it in your terminal:</p>
+            <div class="command-box">
+                <code id="command-text"></code>
+                <button class="btn btn-primary copy-command-btn" id="copy-command-btn">Copy</button>
+            </div>
+            <p class="command-note">The dashboard will update automatically when transcription completes.</p>
+            <button class="btn btn-secondary close-modal-btn" id="close-modal-btn">Close</button>
+        </div>
+    </div>
+
     <script>
+        // Wait for everything to load
+        document.addEventListener('DOMContentLoaded', init);
+
         // Supabase configuration
         const SUPABASE_URL = 'https://ydwjzlikslebokuxzwco.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_vuov7K4RfO5M9fVUeVnfmA_MTQaiqug';
 
-        // Initialize Supabase client
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         // State
+        let supabaseClient = null;
         let memos = [];
         let currentMemo = null;
         let isEditing = false;
 
-        // DOM Elements
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const fileList = document.getElementById('file-list');
-        const transcriptPanel = document.getElementById('transcript-panel');
-        const overlay = document.getElementById('overlay');
-        const transcriptContent = document.getElementById('transcript-content');
-        const refreshBtn = document.getElementById('refresh-btn');
-        const closePanel = document.getElementById('close-panel');
-        const copyBtn = document.getElementById('copy-btn');
-        const editBtn = document.getElementById('edit-btn');
-        const saveBtn = document.getElementById('save-btn');
+        // DOM Elements (set in init)
+        let dropZone, fileInput, fileList, transcriptPanel, overlay;
+        let transcriptContent, refreshBtn, closePanel, copyBtn, editBtn, saveBtn;
 
         // Model info
         const modelInfo = {
@@ -577,11 +657,40 @@
             'openai': { name: 'OpenAI API', factor: 0.03, costPerMin: 0.006 }
         };
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadMemos();
+        function init() {
+            console.log('Initializing Voice Memo Transcriber...');
+
+            // Initialize Supabase client
+            if (!window.supabase) {
+                console.error('Supabase library not loaded!');
+                return;
+            }
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // Get DOM Elements
+            dropZone = document.getElementById('drop-zone');
+            fileInput = document.getElementById('file-input');
+            fileList = document.getElementById('file-list');
+            transcriptPanel = document.getElementById('transcript-panel');
+            overlay = document.getElementById('overlay');
+            transcriptContent = document.getElementById('transcript-content');
+            refreshBtn = document.getElementById('refresh-btn');
+            closePanel = document.getElementById('close-panel');
+            copyBtn = document.getElementById('copy-btn');
+            editBtn = document.getElementById('edit-btn');
+            saveBtn = document.getElementById('save-btn');
+
+            console.log('DOM elements loaded, setting up listeners...');
             setupEventListeners();
-        });
+            loadMemos();
+            setupRealtimeSubscription();
+            console.log('Initialization complete!');
+        }
+
+        // Alias for Supabase client (used throughout the code)
+        function getSupabase() {
+            return supabaseClient;
+        }
 
         function setupEventListeners() {
             // Prevent browser from opening files dropped anywhere on the page
@@ -604,6 +713,13 @@
             copyBtn.addEventListener('click', copyTranscript);
             editBtn.addEventListener('click', toggleEdit);
             saveBtn.addEventListener('click', saveTranscript);
+
+            // Command modal
+            document.getElementById('close-modal-btn').addEventListener('click', closeCommandModal);
+            document.getElementById('copy-command-btn').addEventListener('click', copyCommand);
+            document.getElementById('command-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'command-modal') closeCommandModal();
+            });
         }
 
         function handleDragOver(e) {
@@ -668,7 +784,7 @@
             const fileHash = await computeFileHash(file);
 
             // Check if already exists
-            const { data: existing } = await supabase
+            const { data: existing } = await supabaseClient
                 .from('voice_memos')
                 .select('*')
                 .eq('file_hash', fileHash)
@@ -683,7 +799,7 @@
             const duration = await getAudioDuration(file);
 
             // Add to database
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('voice_memos')
                 .insert({
                     file_hash: fileHash,
@@ -713,7 +829,7 @@
         }
 
         async function loadMemos() {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('voice_memos')
                 .select('*, voice_transcripts(*)')
                 .order('created_at', { ascending: false });
@@ -851,7 +967,7 @@
             const wordCount = newText.trim().split(/\s+/).length;
             const transcriptId = currentMemo.voice_transcripts[0].id;
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('voice_transcripts')
                 .update({
                     transcript_text: newText,
@@ -881,7 +997,7 @@
         async function deleteMemo(memoId) {
             if (!confirm('Delete this memo? This cannot be undone.')) return;
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('voice_memos')
                 .delete()
                 .eq('id', memoId);
@@ -899,13 +1015,27 @@
             const model = document.getElementById('model-select').value;
             const preprocess = document.getElementById('preprocess-toggle').checked;
 
-            let cmd = `cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-memo-transcriber && `;
-            cmd += `python3 scripts/transcribe.py "audio/inbox/${filename}"`;
-            cmd += ` --model ${model}`;
+            let cmd = `cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-memo-transcriber && python3 scripts/transcribe.py "audio/inbox/${filename}" --model ${model}`;
             if (!preprocess) cmd += ' --no-preprocess';
             cmd += ' --move';
 
-            alert(`Run this command in Terminal:\n\n${cmd}\n\nThe dashboard will update automatically when complete.`);
+            const modal = document.getElementById('command-modal');
+            const commandText = document.getElementById('command-text');
+            commandText.textContent = cmd;
+            modal.classList.add('open');
+        }
+
+        function closeCommandModal() {
+            document.getElementById('command-modal').classList.remove('open');
+        }
+
+        function copyCommand() {
+            const cmd = document.getElementById('command-text').textContent;
+            navigator.clipboard.writeText(cmd).then(() => {
+                showToast('Command copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy', 'error');
+            });
         }
 
         function showToast(message, type = 'info') {
@@ -918,16 +1048,18 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // Subscribe to realtime updates
-        supabase
-            .channel('voice_memos')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'voice_memos' }, () => {
-                loadMemos();
-            })
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'voice_transcripts' }, () => {
-                loadMemos();
-            })
-            .subscribe();
+        // Subscribe to realtime updates (called from init)
+        function setupRealtimeSubscription() {
+            supabaseClient
+                .channel('voice_memos')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'voice_memos' }, () => {
+                    loadMemos();
+                })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'voice_transcripts' }, () => {
+                    loadMemos();
+                })
+                .subscribe();
+        }
     </script>
 </body>
 </html>
