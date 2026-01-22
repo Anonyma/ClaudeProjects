@@ -15,9 +15,10 @@ NC='\033[0m' # No Color
 # Project definitions with launch commands
 declare -A PROJECTS
 PROJECTS=(
-    ["voice"]="open '$PROJECTS_DIR/voice-memo-transcriber/dashboard/index.html'"
-    ["voice-memo"]="open '$PROJECTS_DIR/voice-memo-transcriber/dashboard/index.html'"
-    ["voice-memo-transcriber"]="open '$PROJECTS_DIR/voice-memo-transcriber/dashboard/index.html'"
+    ["voice"]="start_voice_app"
+    ["voice-memo"]="start_voice_app"
+    ["voice-memo-transcriber"]="start_voice_app"
+    ["voice-dashboard"]="open '$PROJECTS_DIR/voice-memo-transcriber/dashboard/index.html'"
 
     ["study"]="open '$PROJECTS_DIR/notebooklm_scrape/study-app/index.html'"
     ["notebooklm"]="open '$PROJECTS_DIR/notebooklm_scrape/study-app/index.html'"
@@ -49,6 +50,40 @@ HOSTED=(
     ["command-hosted"]="open 'https://project-command-center.netlify.app'"
 )
 
+# Function to start voice memo transcriber (server + dashboard)
+start_voice_app() {
+    echo -e "${GREEN}Starting Voice Memo Transcriber...${NC}"
+
+    # Check if server is already running
+    if curl -s http://localhost:5111/health > /dev/null 2>&1; then
+        echo -e "${BLUE}Server already running${NC}"
+    else
+        echo -e "${YELLOW}Starting transcription server...${NC}"
+        cd "$PROJECTS_DIR/voice-memo-transcriber"
+        python3 server.py &
+        SERVER_PID=$!
+        sleep 2
+
+        if curl -s http://localhost:5111/health > /dev/null 2>&1; then
+            echo -e "${GREEN}Server started (PID: $SERVER_PID)${NC}"
+        else
+            echo -e "${YELLOW}Server may take a moment to start...${NC}"
+        fi
+    fi
+
+    echo -e "${GREEN}Opening dashboard...${NC}"
+    open "$PROJECTS_DIR/voice-memo-transcriber/dashboard/index.html"
+}
+
+# Function to stop voice server
+stop_voice_server() {
+    if pkill -f "python3 server.py"; then
+        echo -e "${GREEN}Voice server stopped${NC}"
+    else
+        echo -e "${YELLOW}No voice server running${NC}"
+    fi
+}
+
 show_help() {
     echo -e "${CYAN}╔════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${CYAN}║${NC}              ${GREEN}Claude Projects Launcher${NC}                      ${CYAN}║${NC}"
@@ -57,7 +92,7 @@ show_help() {
     echo -e "${YELLOW}Usage:${NC} launch [project-name]"
     echo ""
     echo -e "${GREEN}Local Dashboards:${NC}"
-    echo -e "  ${BLUE}voice${NC}, voice-memo        Voice Memo Transcriber dashboard"
+    echo -e "  ${BLUE}voice${NC}, voice-memo        Voice Memo Transcriber (starts server + dashboard)"
     echo -e "  ${BLUE}study${NC}, notebooklm        NotebookLM Study App"
     echo -e "  ${BLUE}substack${NC}                 Substack Reading Dashboard"
     echo -e "  ${BLUE}art${NC}                      Art Discovery App"
@@ -75,6 +110,7 @@ show_help() {
     echo -e "  ${BLUE}launch list${NC}              Show all projects from projects.json"
     echo -e "  ${BLUE}launch edit${NC}              Open projects.json in editor"
     echo -e "  ${BLUE}launch dir${NC}               Open ClaudeProjects folder"
+    echo -e "  ${BLUE}launch voice-stop${NC}        Stop the voice transcriber server"
     echo ""
 }
 
@@ -106,6 +142,9 @@ case "$1" in
         ;;
     "dir"|"folder"|"open")
         open "$PROJECTS_DIR"
+        ;;
+    "voice-stop"|"stop-voice")
+        stop_voice_server
         ;;
     *)
         # Check local projects first

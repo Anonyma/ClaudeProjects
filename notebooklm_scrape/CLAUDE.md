@@ -114,3 +114,59 @@ Stored in `/Users/z/Desktop/PersonalProjects/ClaudeProjects/.env`:
 | GPT-4o-mini | Summaries/quizzes | ~$0.10 |
 | Supabase | Free tier | $0 |
 | Netlify | Free tier | $0 |
+
+## Audio Generation Workflow (Browser Automation)
+
+When helping generate new NotebookLM audio overviews:
+
+1. **Always have a conversation first** before generating:
+   - Suggest variations for existing notebooks (different angles, topics not yet covered)
+   - Suggest new topics based on user's interests
+   - Confirm which notebooks the user wants to generate audio for
+
+2. **Check existing audio** before generating:
+   - Review `assets.json` for existing audio assets per notebook
+   - Verify on NotebookLM UI which audio already exists
+   - Don't regenerate audio that already exists unless user wants a new angle
+
+3. **Daily quota**: User's tier allows ~3 audio/day - be mindful and confirm count
+
+4. **Audio settings**: Always set length to "Long" unless user specifies otherwise
+
+5. **Format options**: Deep dive (default), Brief, Critique, Debate - ask user preference
+
+## Study Materials Format Requirements
+
+### Summary Format (for human reading)
+Summaries should NOT be meta ("The podcast discusses..."). Instead, write like an article that teaches the actual content:
+
+- **Article-style prose**: Present the information as if teaching the reader directly
+- **Key concepts explained**: Don't just list that a topic was covered; explain what was taught
+- **Structured sections**: Use headers to organize by topic/theme
+- **Examples included**: Include specific examples, statistics, or case studies mentioned
+- **Relevant links**: Research and include 3-5 links to learn more about key topics
+- **Visual suggestions**: Note where images/diagrams would help (to be sourced later)
+
+### Claude Reference Format (for AI continuity)
+A separate machine-readable section to help future Claude sessions:
+
+```json
+{
+  "topics_covered": ["topic1", "topic2"],
+  "key_concepts": {
+    "concept_name": "brief definition or explanation"
+  },
+  "connections_to_other_notebooks": ["notebook_title"],
+  "suggested_follow_ups": ["topic that could be explored deeper"],
+  "questions_raised": ["open questions from this episode"]
+}
+```
+
+This enables:
+- Avoiding repetition in future audio generation
+- Linking concepts across notebooks
+- Building on previously learned material
+
+## GitHub Repository
+
+Study app repo: https://github.com/Anonyma/notebooklm-study-hub

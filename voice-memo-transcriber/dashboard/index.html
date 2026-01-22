@@ -35,7 +35,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -54,22 +54,23 @@
             font-weight: 600;
         }
 
-        .stats-bar {
+        .server-status {
             display: flex;
-            gap: 2rem;
+            align-items: center;
+            gap: 0.5rem;
             font-size: 0.875rem;
             color: var(--text-secondary);
         }
 
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--error);
         }
 
-        .stat-value {
-            color: var(--text-primary);
-            font-weight: 600;
+        .status-dot.connected {
+            background: var(--success);
         }
 
         /* Drop Zone */
@@ -89,6 +90,11 @@
             background: rgba(59, 130, 246, 0.05);
         }
 
+        .drop-zone.has-file {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
         .drop-zone h2 {
             font-size: 1.25rem;
             margin-bottom: 0.5rem;
@@ -103,112 +109,302 @@
             display: none;
         }
 
-        /* Settings Panel */
-        .settings-panel {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 2rem;
+        .file-info {
+            margin-top: 1rem;
             padding: 1rem;
-            background: var(--bg-secondary);
+            background: var(--bg-tertiary);
             border-radius: 8px;
-            flex-wrap: wrap;
+            text-align: left;
         }
 
-        .setting-group {
+        .file-info .filename {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-info .meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Options Panel */
+        .options-panel {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .options-panel h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .option-group label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .option-group select,
+        .option-group input[type="range"] {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .option-group input[type="range"] {
+            padding: 0;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .option-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+
+        .checkbox-group {
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
 
-        .setting-group label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent);
         }
 
-        .setting-group select,
-        .setting-group input[type="checkbox"] {
+        .speed-value {
+            font-size: 0.875rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Transcription Options */
+        .transcribe-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .transcribe-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .transcribe-card:hover {
+            border-color: var(--accent);
+        }
+
+        .transcribe-card.selected {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .transcribe-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .transcribe-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .transcribe-card .badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: var(--success);
+            color: white;
+        }
+
+        .transcribe-card .badge.paid {
+            background: var(--warning);
+        }
+
+        .transcribe-card p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .estimate {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .estimate .time {
+            color: var(--text-primary);
+        }
+
+        .estimate .cost {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .estimate .cost.paid {
+            color: var(--warning);
+        }
+
+        /* Model Select for MLX */
+        .model-select-wrapper {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .model-select-wrapper label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .model-select-wrapper select {
+            width: 100%;
             background: var(--bg-tertiary);
             border: 1px solid var(--border);
             color: var(--text-primary);
             padding: 0.5rem;
-            border-radius: 4px;
+            border-radius: 6px;
+            font-size: 0.875rem;
         }
 
-        .setting-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        /* File List */
-        .file-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .file-item {
-            background: var(--bg-secondary);
+        /* Transcribe Button */
+        .transcribe-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: var(--accent);
+            color: white;
+            border: none;
             border-radius: 8px;
-            padding: 1.25rem;
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 1rem;
-            align-items: start;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 2rem;
         }
 
-        .file-info {
+        .transcribe-btn:hover:not(:disabled) {
+            background: var(--accent-hover);
+        }
+
+        .transcribe-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Progress */
+        .progress-container {
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .progress-container.visible {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* Result Panel */
+        .result-panel {
+            display: none;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .result-panel.visible {
+            display: block;
+        }
+
+        .result-header {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .result-header h3 {
+            font-size: 1.1rem;
+        }
+
+        .result-actions {
+            display: flex;
             gap: 0.5rem;
         }
 
-        .file-name {
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .file-meta {
+        .result-meta {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             font-size: 0.8rem;
             color: var(--text-secondary);
+            margin-bottom: 1rem;
         }
 
-        .file-actions {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .status-pending {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--warning);
-        }
-
-        .status-processing {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--accent);
-        }
-
-        .status-completed {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--success);
-        }
-
-        .status-failed {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--error);
+        .transcript-box {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            line-height: 1.8;
         }
 
         /* Buttons */
@@ -241,162 +437,7 @@
             background: var(--border);
         }
 
-        .btn-danger {
-            background: transparent;
-            color: var(--error);
-            border: 1px solid var(--error);
-        }
-
-        .btn-danger:hover {
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Transcript Panel */
-        .transcript-panel {
-            display: none;
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 50%;
-            height: 100vh;
-            background: var(--bg-secondary);
-            border-left: 1px solid var(--border);
-            padding: 2rem;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .transcript-panel.open {
-            display: block;
-        }
-
-        .transcript-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .transcript-header h2 {
-            font-size: 1.25rem;
-        }
-
-        .transcript-content {
-            background: var(--bg-tertiary);
-            padding: 1.5rem;
-            border-radius: 8px;
-            min-height: 300px;
-            white-space: pre-wrap;
-            font-size: 0.9rem;
-            line-height: 1.8;
-        }
-
-        .transcript-content[contenteditable="true"] {
-            outline: none;
-            border: 1px solid var(--border);
-        }
-
-        .transcript-content[contenteditable="true"]:focus {
-            border-color: var(--accent);
-        }
-
-        .transcript-meta {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .transcript-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        /* Audio Player */
-        .audio-player {
-            margin-top: 1rem;
-            width: 100%;
-        }
-
-        audio {
-            width: 100%;
-            height: 40px;
-        }
-
-        /* Warning Box */
-        .warning-box {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid var(--warning);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-state h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--border);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Overlay */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 99;
-        }
-
-        .overlay.open {
-            display: block;
-        }
-
-        /* Time estimate */
-        .time-estimate {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            background: var(--bg-tertiary);
-            border-radius: 6px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        /* Toast notifications */
+        /* Toast */
         .toast-container {
             position: fixed;
             bottom: 2rem;
@@ -413,127 +454,71 @@
             animation: slideIn 0.3s ease;
         }
 
-        .toast-success {
-            border-color: var(--success);
-        }
-
-        .toast-error {
-            border-color: var(--error);
-        }
+        .toast-success { border-color: var(--success); }
+        .toast-error { border-color: var(--error); }
+        .toast-warning { border-color: var(--warning); }
 
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Command Modal */
-        .command-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .command-modal.open {
-            display: flex;
-        }
-
-        .command-modal-content {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 2rem;
-            max-width: 700px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .command-modal-content h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1.25rem;
-        }
-
-        .command-hint {
-            color: var(--text-secondary);
+        /* Server Required Notice */
+        .server-notice {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
             font-size: 0.875rem;
+        }
+
+        .server-notice code {
+            background: var(--bg-tertiary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* History */
+        .history-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .history-section h3 {
+            font-size: 1.1rem;
             margin-bottom: 1rem;
         }
 
-        .command-box {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
+        .history-item {
+            background: var(--bg-secondary);
             border-radius: 8px;
             padding: 1rem;
+            margin-bottom: 0.5rem;
             display: flex;
-            gap: 1rem;
-            align-items: flex-start;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .command-box code {
+        .history-item .info {
             flex: 1;
-            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+        }
+
+        .history-item .filename {
+            font-weight: 500;
+        }
+
+        .history-item .meta {
             font-size: 0.8rem;
-            line-height: 1.6;
-            word-break: break-all;
-            white-space: pre-wrap;
-            color: var(--success);
-        }
-
-        .copy-command-btn {
-            flex-shrink: 0;
-        }
-
-        .command-note {
             color: var(--text-secondary);
-            font-size: 0.8rem;
-            margin-top: 1rem;
-            margin-bottom: 1.5rem;
         }
 
-        .close-modal-btn {
-            width: 100%;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .stats-bar {
-                flex-wrap: wrap;
-                gap: 1rem;
-            }
-
-            .settings-panel {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .transcript-panel {
-                width: 100%;
-            }
-
-            .file-item {
-                grid-template-columns: 1fr;
-            }
+            .container { padding: 1rem; }
+            .transcribe-options { grid-template-columns: 1fr; }
+            .options-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -541,286 +526,272 @@
     <div class="container">
         <header>
             <h1>Voice Memo Transcriber</h1>
-            <div class="stats-bar">
-                <div class="stat">
-                    <span>Total:</span>
-                    <span class="stat-value" id="stat-total">0</span>
-                </div>
-                <div class="stat">
-                    <span>Hours:</span>
-                    <span class="stat-value" id="stat-hours">0</span>
-                </div>
-                <div class="stat">
-                    <span>Pending:</span>
-                    <span class="stat-value" id="stat-pending">0</span>
-                </div>
+            <div class="server-status">
+                <span class="status-dot" id="status-dot"></span>
+                <span id="status-text">Checking server...</span>
             </div>
         </header>
 
+        <div class="server-notice" id="server-notice" style="display: none;">
+            <strong>Local server not running.</strong> Start it with:
+            <code>cd voice-memo-transcriber && python server.py</code>
+            <br><small>You can still use OpenAI (cloud) without the local server.</small>
+        </div>
+
+        <!-- Drop Zone -->
         <div class="drop-zone" id="drop-zone">
-            <h2>Drop audio files here</h2>
-            <p>or click to browse</p>
-            <input type="file" id="file-input" accept="audio/*" multiple>
-        </div>
-
-        <div class="settings-panel">
-            <div class="setting-group">
-                <label for="model-select">Model:</label>
-                <select id="model-select">
-                    <option value="large-v3" selected>MLX Whisper Large V3 (Recommended)</option>
-                    <option value="large-v3-turbo">MLX Whisper Large V3 Turbo (Faster)</option>
-                    <option value="medium">MLX Whisper Medium</option>
-                    <option value="small">MLX Whisper Small (Fast)</option>
-                    <option value="openai">OpenAI API (Cloud)</option>
-                </select>
-            </div>
-            <div class="setting-group">
-                <input type="checkbox" id="preprocess-toggle" checked>
-                <label for="preprocess-toggle">Preprocessing (faster)</label>
-            </div>
-            <div class="setting-group">
-                <button class="btn btn-secondary" id="refresh-btn">Refresh</button>
+            <h2>Drop audio file here</h2>
+            <p>or click to browse (mp3, m4a, wav, etc.)</p>
+            <input type="file" id="file-input" accept="audio/*">
+            <div class="file-info" id="file-info" style="display: none;">
+                <div class="filename" id="filename"></div>
+                <div class="meta" id="file-meta"></div>
             </div>
         </div>
 
-        <div class="file-list" id="file-list">
-            <div class="empty-state">
-                <h3>No voice memos yet</h3>
-                <p>Drop audio files above or add them to the audio/inbox folder</p>
+        <!-- Preprocessing Options -->
+        <div class="options-panel">
+            <h3>Preprocessing Options</h3>
+            <div class="options-grid">
+                <div class="option-group">
+                    <label>Playback Speed</label>
+                    <input type="range" id="speed-slider" min="1" max="2" step="0.25" value="1">
+                    <span class="speed-value" id="speed-value">1.0x (normal)</span>
+                </div>
+                <div class="option-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="remove-silence" checked>
+                        <label for="remove-silence">Remove silence (faster)</label>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="compress" checked>
+                        <label for="compress">Compress audio (16kHz mono)</label>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <!-- Transcription Options -->
+        <div class="transcribe-options">
+            <div class="transcribe-card selected" id="card-local" onclick="selectMethod('local')">
+                <h4>
+                    Local (MLX Whisper)
+                    <span class="badge">Free</span>
+                </h4>
+                <p>Runs on your Mac using Apple Silicon. Private - audio never leaves your device.</p>
+                <div class="estimate">
+                    <span class="time" id="local-time">~2 min</span>
+                    <span class="cost">$0.00</span>
+                </div>
+                <div class="model-select-wrapper">
+                    <label>Model</label>
+                    <select id="mlx-model">
+                        <option value="large-v3" selected>Large V3 (Best quality)</option>
+                        <option value="large-v3-turbo">Large V3 Turbo (Faster)</option>
+                        <option value="medium">Medium (Balanced)</option>
+                        <option value="small">Small (Quick)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="transcribe-card" id="card-openai" onclick="selectMethod('openai')">
+                <h4>
+                    OpenAI (Cloud)
+                    <span class="badge paid">Paid</span>
+                </h4>
+                <p>Uses OpenAI's Whisper API. Fast, but requires API key and costs money.</p>
+                <div class="estimate">
+                    <span class="time" id="openai-time">~30 sec</span>
+                    <span class="cost paid" id="openai-cost">$0.12</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transcribe Button -->
+        <button class="transcribe-btn" id="transcribe-btn" disabled>
+            Select an audio file to transcribe
+        </button>
+
+        <!-- Progress -->
+        <div class="progress-container" id="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text">Preparing...</div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-panel" id="result-panel">
+            <div class="result-header">
+                <h3>Transcript</h3>
+                <div class="result-actions">
+                    <button class="btn btn-primary" onclick="copyTranscript()">Copy</button>
+                    <button class="btn btn-secondary" onclick="downloadTranscript()">Download</button>
+                    <button class="btn btn-secondary" onclick="resetUI()">New File</button>
+                </div>
+            </div>
+            <div class="result-meta">
+                <span id="result-words">0 words</span>
+                <span id="result-time">Transcribed in 0s</span>
+                <span id="result-method">via Local</span>
+            </div>
+            <div class="transcript-box" id="transcript-box"></div>
+        </div>
+
+        <!-- History -->
+        <div class="history-section" id="history-section" style="display: none;">
+            <h3>Recent Transcripts</h3>
+            <div id="history-list"></div>
         </div>
     </div>
 
-    <!-- Transcript Panel -->
-    <div class="overlay" id="overlay"></div>
-    <div class="transcript-panel" id="transcript-panel">
-        <div class="transcript-header">
-            <h2 id="transcript-title">Transcript</h2>
-            <button class="btn btn-secondary" id="close-panel">&times; Close</button>
-        </div>
-        <div class="audio-player" id="audio-player-container" style="display: none;">
-            <audio id="audio-player" controls></audio>
-        </div>
-        <div class="transcript-content" id="transcript-content" contenteditable="false"></div>
-        <div class="transcript-meta">
-            <span id="word-count">0 words</span>
-            <span id="transcript-date">-</span>
-        </div>
-        <div class="transcript-actions">
-            <button class="btn btn-primary" id="copy-btn">Copy to Clipboard</button>
-            <button class="btn btn-secondary" id="edit-btn">Edit</button>
-            <button class="btn btn-secondary" id="save-btn" style="display: none;">Save</button>
-        </div>
-    </div>
-
-    <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Command Modal -->
-    <div class="command-modal" id="command-modal">
-        <div class="command-modal-content">
-            <h3>Run in Terminal</h3>
-            <p class="command-hint">Copy this command and run it in your terminal:</p>
-            <div class="command-box">
-                <code id="command-text"></code>
-                <button class="btn btn-primary copy-command-btn" id="copy-command-btn">Copy</button>
-            </div>
-            <p class="command-note">The dashboard will update automatically when transcription completes.</p>
-            <button class="btn btn-secondary close-modal-btn" id="close-modal-btn">Close</button>
-        </div>
-    </div>
-
     <script>
-        // Wait for everything to load
-        document.addEventListener('DOMContentLoaded', init);
-
-        // Supabase configuration
+        // Configuration
+        const LOCAL_SERVER = 'http://localhost:5111';
         const SUPABASE_URL = 'https://ydwjzlikslebokuxzwco.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_vuov7K4RfO5M9fVUeVnfmA_MTQaiqug';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU';
 
         // State
         let supabaseClient = null;
-        let memos = [];
-        let currentMemo = null;
-        let isEditing = false;
+        let currentFile = null;
+        let currentMethod = 'local';
+        let serverAvailable = false;
+        let estimates = null;
 
-        // DOM Elements (set in init)
-        let dropZone, fileInput, fileList, transcriptPanel, overlay;
-        let transcriptContent, refreshBtn, closePanel, copyBtn, editBtn, saveBtn;
-
-        // Model info
-        const modelInfo = {
-            'large-v3': { name: 'MLX Whisper Large V3', factor: 0.1 },
-            'large-v3-turbo': { name: 'MLX Whisper Large V3 Turbo', factor: 0.07 },
-            'medium': { name: 'MLX Whisper Medium', factor: 0.15 },
-            'small': { name: 'MLX Whisper Small', factor: 0.08 },
-            'openai': { name: 'OpenAI API', factor: 0.03, costPerMin: 0.006 }
-        };
-
-        function init() {
-            console.log('Initializing Voice Memo Transcriber...');
-
-            // Initialize Supabase client
-            if (!window.supabase) {
-                console.error('Supabase library not loaded!');
-                return;
-            }
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-            // Get DOM Elements
-            dropZone = document.getElementById('drop-zone');
-            fileInput = document.getElementById('file-input');
-            fileList = document.getElementById('file-list');
-            transcriptPanel = document.getElementById('transcript-panel');
-            overlay = document.getElementById('overlay');
-            transcriptContent = document.getElementById('transcript-content');
-            refreshBtn = document.getElementById('refresh-btn');
-            closePanel = document.getElementById('close-panel');
-            copyBtn = document.getElementById('copy-btn');
-            editBtn = document.getElementById('edit-btn');
-            saveBtn = document.getElementById('save-btn');
-
-            console.log('DOM elements loaded, setting up listeners...');
             setupEventListeners();
-            loadMemos();
-            setupRealtimeSubscription();
-            console.log('Initialization complete!');
-        }
-
-        // Alias for Supabase client (used throughout the code)
-        function getSupabase() {
-            return supabaseClient;
-        }
+            checkServerStatus();
+            loadHistory();
+        });
 
         function setupEventListeners() {
-            // Prevent browser from opening files dropped anywhere on the page
-            document.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); });
-            document.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); });
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
 
-            // Drop zone
-            dropZone.addEventListener('click', () => fileInput.click());
-            dropZone.addEventListener('dragover', handleDragOver);
-            dropZone.addEventListener('dragleave', handleDragLeave);
-            dropZone.addEventListener('drop', handleDrop);
-            fileInput.addEventListener('change', handleFileSelect);
-
-            // Refresh
-            refreshBtn.addEventListener('click', loadMemos);
-
-            // Panel
-            closePanel.addEventListener('click', closeTranscriptPanel);
-            overlay.addEventListener('click', closeTranscriptPanel);
-            copyBtn.addEventListener('click', copyTranscript);
-            editBtn.addEventListener('click', toggleEdit);
-            saveBtn.addEventListener('click', saveTranscript);
-
-            // Command modal
-            document.getElementById('close-modal-btn').addEventListener('click', closeCommandModal);
-            document.getElementById('copy-command-btn').addEventListener('click', copyCommand);
-            document.getElementById('command-modal').addEventListener('click', (e) => {
-                if (e.target.id === 'command-modal') closeCommandModal();
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+                dropZone.addEventListener(event, e => { e.preventDefault(); e.stopPropagation(); });
+                document.body.addEventListener(event, e => { e.preventDefault(); e.stopPropagation(); });
             });
+
+            // Highlight drop zone
+            ['dragenter', 'dragover'].forEach(event => {
+                dropZone.addEventListener(event, () => dropZone.classList.add('drag-over'));
+            });
+            ['dragleave', 'drop'].forEach(event => {
+                dropZone.addEventListener(event, () => dropZone.classList.remove('drag-over'));
+            });
+
+            // Handle drop
+            dropZone.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+            // Speed slider
+            const speedSlider = document.getElementById('speed-slider');
+            speedSlider.addEventListener('input', () => {
+                const speed = parseFloat(speedSlider.value);
+                const labels = { 1: '1.0x (normal)', 1.25: '1.25x', 1.5: '1.5x', 1.75: '1.75x', 2: '2.0x (fast)' };
+                document.getElementById('speed-value').textContent = labels[speed] || `${speed}x`;
+                updateEstimates();
+            });
+
+            // Preprocessing checkboxes
+            document.getElementById('remove-silence').addEventListener('change', updateEstimates);
+            document.getElementById('compress').addEventListener('change', updateEstimates);
+
+            // Model select
+            document.getElementById('mlx-model').addEventListener('change', updateEstimates);
+
+            // Transcribe button
+            document.getElementById('transcribe-btn').addEventListener('click', startTranscription);
         }
 
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.add('drag-over');
+        async function checkServerStatus() {
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+            const serverNotice = document.getElementById('server-notice');
+
+            try {
+                const response = await fetch(`${LOCAL_SERVER}/health`, { method: 'GET' });
+                if (response.ok) {
+                    const data = await response.json();
+                    serverAvailable = true;
+                    statusDot.classList.add('connected');
+                    statusText.textContent = 'Server connected';
+                    serverNotice.style.display = 'none';
+                }
+            } catch (e) {
+                serverAvailable = false;
+                statusDot.classList.remove('connected');
+                statusText.textContent = 'Server offline';
+                serverNotice.style.display = 'block';
+
+                // If server not available, switch to OpenAI
+                if (currentMethod === 'local') {
+                    selectMethod('openai');
+                }
+                document.getElementById('card-local').classList.add('disabled');
+            }
         }
 
-        function handleDragLeave(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.remove('drag-over');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.remove('drag-over');
-            const files = Array.from(e.dataTransfer.files);
-            handleFiles(files);
-        }
-
-        function handleFileSelect(e) {
-            const files = Array.from(e.target.files);
-            handleFiles(files);
-        }
-
-        // Audio file extensions to accept
-        const AUDIO_EXTENSIONS = ['.mp3', '.m4a', '.wav', '.ogg', '.flac', '.aac', '.wma', '.opus', '.webm'];
-
-        function isAudioFile(file) {
-            // Check MIME type first
-            if (file.type && file.type.startsWith('audio/')) return true;
-            // Fallback to extension check (Voice Memos .m4a sometimes has no MIME type)
-            const ext = '.' + file.name.split('.').pop().toLowerCase();
-            return AUDIO_EXTENSIONS.includes(ext);
-        }
-
-        async function handleFiles(files) {
-            const audioFiles = files.filter(isAudioFile);
-
-            if (audioFiles.length === 0) {
-                showToast('No audio files selected. Supported: ' + AUDIO_EXTENSIONS.join(', '), 'error');
+        function selectMethod(method) {
+            if (method === 'local' && !serverAvailable) {
+                showToast('Local server not running. Start it first or use OpenAI.', 'warning');
                 return;
             }
 
-            for (const file of audioFiles) {
-                await addFileToQueue(file);
-            }
-
-            loadMemos();
+            currentMethod = method;
+            document.querySelectorAll('.transcribe-card').forEach(card => card.classList.remove('selected'));
+            document.getElementById(`card-${method === 'local' ? 'local' : 'openai'}`).classList.add('selected');
+            updateTranscribeButton();
         }
 
-        async function computeFileHash(file) {
-            const buffer = await file.arrayBuffer();
-            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+        async function handleFile(file) {
+            if (!file) return;
 
-        async function addFileToQueue(file) {
-            const fileHash = await computeFileHash(file);
-
-            // Check if already exists
-            const { data: existing } = await supabaseClient
-                .from('voice_memos')
-                .select('*')
-                .eq('file_hash', fileHash)
-                .single();
-
-            if (existing) {
-                showToast(`"${file.name}" already exists (${existing.status})`, 'warning');
+            // Check if audio file
+            if (!file.type.startsWith('audio/') && !isAudioExtension(file.name)) {
+                showToast('Please select an audio file', 'error');
                 return;
             }
 
-            // Get audio duration
+            currentFile = file;
+
+            // Update UI
+            const dropZone = document.getElementById('drop-zone');
+            const fileInfo = document.getElementById('file-info');
+            dropZone.classList.add('has-file');
+            fileInfo.style.display = 'block';
+
+            document.getElementById('filename').textContent = file.name;
+
+            // Get duration
             const duration = await getAudioDuration(file);
+            const durationMin = (duration / 60).toFixed(1);
+            const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+            document.getElementById('file-meta').textContent = `${durationMin} min | ${sizeMB} MB`;
 
-            // Add to database
-            const { data, error } = await supabaseClient
-                .from('voice_memos')
-                .insert({
-                    file_hash: fileHash,
-                    filename: file.name,
-                    duration_seconds: duration,
-                    status: 'pending',
-                    preprocessing_applied: document.getElementById('preprocess-toggle').checked
-                })
-                .select()
-                .single();
+            // Store duration for estimates
+            currentFile.duration = duration;
 
-            if (error) {
-                showToast(`Error adding file: ${error.message}`, 'error');
-                return;
-            }
-
-            showToast(`Added "${file.name}" to queue`, 'success');
+            updateEstimates();
+            updateTranscribeButton();
         }
 
-        async function getAudioDuration(file) {
-            return new Promise((resolve) => {
+        function isAudioExtension(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            return ['mp3', 'm4a', 'wav', 'ogg', 'flac', 'aac', 'wma', 'opus', 'webm'].includes(ext);
+        }
+
+        function getAudioDuration(file) {
+            return new Promise(resolve => {
                 const audio = new Audio();
                 audio.onloadedmetadata = () => resolve(audio.duration);
                 audio.onerror = () => resolve(0);
@@ -828,214 +799,327 @@
             });
         }
 
-        async function loadMemos() {
-            const { data, error } = await supabaseClient
-                .from('voice_memos')
-                .select('*, voice_transcripts(*)')
-                .order('created_at', { ascending: false });
+        function updateEstimates() {
+            if (!currentFile || !currentFile.duration) return;
 
-            if (error) {
-                showToast(`Error loading memos: ${error.message}`, 'error');
-                return;
-            }
+            const duration = currentFile.duration;
+            const speed = parseFloat(document.getElementById('speed-slider').value);
+            const removeSilence = document.getElementById('remove-silence').checked;
+            const compress = document.getElementById('compress').checked;
 
-            memos = data || [];
-            renderMemos();
-            updateStats();
+            // Effective duration after preprocessing
+            let effectiveDuration = duration / speed;
+            if (removeSilence) effectiveDuration *= 0.8;
+
+            // MLX estimates based on model
+            const model = document.getElementById('mlx-model').value;
+            const modelFactors = {
+                'large-v3': 0.1,
+                'large-v3-turbo': 0.07,
+                'medium': 0.15,
+                'small': 0.08
+            };
+            const mlxTime = effectiveDuration * (modelFactors[model] || 0.1);
+            document.getElementById('local-time').textContent = formatTime(mlxTime);
+
+            // OpenAI estimates
+            const openaiTime = 30 + (effectiveDuration / 60) * 2;
+            const openaiCost = (duration / 60) * 0.006;
+            document.getElementById('openai-time').textContent = formatTime(openaiTime);
+            document.getElementById('openai-cost').textContent = `$${openaiCost.toFixed(2)}`;
+
+            estimates = { mlxTime, openaiTime, openaiCost };
         }
 
-        function renderMemos() {
-            if (memos.length === 0) {
-                fileList.innerHTML = `
-                    <div class="empty-state">
-                        <h3>No voice memos yet</h3>
-                        <p>Drop audio files above or add them to the audio/inbox folder</p>
-                    </div>
-                `;
-                return;
-            }
-
-            fileList.innerHTML = memos.map(memo => {
-                const duration = formatDuration(memo.duration_seconds);
-                const estimate = getTimeEstimate(memo.duration_seconds);
-                const hasTranscript = memo.voice_transcripts && memo.voice_transcripts.length > 0;
-                const createdAt = new Date(memo.created_at).toLocaleDateString();
-
-                return `
-                    <div class="file-item" data-id="${memo.id}">
-                        <div class="file-info">
-                            <div class="file-name">${memo.filename}</div>
-                            <div class="file-meta">
-                                <span>${duration}</span>
-                                <span>${createdAt}</span>
-                                ${hasTranscript ? `<span>${memo.voice_transcripts[0].word_count} words</span>` : ''}
-                            </div>
-                            ${memo.status === 'pending' ? `
-                                <div class="time-estimate">
-                                    Estimated: ${estimate}
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div class="file-actions">
-                            <span class="status-badge status-${memo.status}">${memo.status}</span>
-                            ${hasTranscript ? `
-                                <button class="btn btn-secondary" onclick="viewTranscript('${memo.id}')">View</button>
-                            ` : ''}
-                            ${memo.status === 'pending' ? `
-                                <button class="btn btn-primary" onclick="showTranscribeInstructions('${memo.filename}')">Transcribe</button>
-                            ` : ''}
-                            <button class="btn btn-danger" onclick="deleteMemo('${memo.id}')">Delete</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+        function formatTime(seconds) {
+            if (seconds < 60) return `~${Math.round(seconds)} sec`;
+            return `~${(seconds / 60).toFixed(1)} min`;
         }
 
-        function updateStats() {
-            const total = memos.length;
-            const pending = memos.filter(m => m.status === 'pending').length;
-            const hours = memos.reduce((sum, m) => sum + (m.duration_seconds || 0), 0) / 3600;
-
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-pending').textContent = pending;
-            document.getElementById('stat-hours').textContent = hours.toFixed(1);
-        }
-
-        function formatDuration(seconds) {
-            if (!seconds) return '0:00';
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function getTimeEstimate(durationSeconds) {
-            if (!durationSeconds) return '-';
-            const model = document.getElementById('model-select').value;
-            const info = modelInfo[model];
-            const estimatedSeconds = durationSeconds * info.factor;
-
-            if (estimatedSeconds < 60) {
-                return `~${Math.round(estimatedSeconds)} seconds`;
-            }
-            return `~${Math.round(estimatedSeconds / 60)} minutes`;
-        }
-
-        async function viewTranscript(memoId) {
-            const memo = memos.find(m => m.id === memoId);
-            if (!memo || !memo.voice_transcripts || memo.voice_transcripts.length === 0) {
-                showToast('No transcript available', 'error');
-                return;
-            }
-
-            currentMemo = memo;
-            const transcript = memo.voice_transcripts[0];
-
-            document.getElementById('transcript-title').textContent = memo.filename;
-            transcriptContent.textContent = transcript.transcript_text;
-            document.getElementById('word-count').textContent = `${transcript.word_count} words`;
-            document.getElementById('transcript-date').textContent = new Date(transcript.created_at).toLocaleString();
-
-            transcriptPanel.classList.add('open');
-            overlay.classList.add('open');
-        }
-
-        function closeTranscriptPanel() {
-            transcriptPanel.classList.remove('open');
-            overlay.classList.remove('open');
-            currentMemo = null;
-            isEditing = false;
-            transcriptContent.contentEditable = 'false';
-            editBtn.textContent = 'Edit';
-            saveBtn.style.display = 'none';
-        }
-
-        function toggleEdit() {
-            isEditing = !isEditing;
-            transcriptContent.contentEditable = isEditing ? 'true' : 'false';
-            editBtn.textContent = isEditing ? 'Cancel' : 'Edit';
-            saveBtn.style.display = isEditing ? 'inline-block' : 'none';
-
-            if (isEditing) {
-                transcriptContent.focus();
+        function updateTranscribeButton() {
+            const btn = document.getElementById('transcribe-btn');
+            if (!currentFile) {
+                btn.disabled = true;
+                btn.textContent = 'Select an audio file to transcribe';
+            } else if (currentMethod === 'local' && !serverAvailable) {
+                btn.disabled = true;
+                btn.textContent = 'Start local server to use MLX';
+            } else {
+                btn.disabled = false;
+                const methodLabel = currentMethod === 'local' ? 'MLX Whisper' : 'OpenAI';
+                btn.textContent = `Transcribe with ${methodLabel}`;
             }
         }
 
-        async function saveTranscript() {
-            if (!currentMemo) return;
+        async function startTranscription() {
+            if (!currentFile) return;
 
-            const newText = transcriptContent.textContent;
-            const wordCount = newText.trim().split(/\s+/).length;
-            const transcriptId = currentMemo.voice_transcripts[0].id;
+            const btn = document.getElementById('transcribe-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
 
-            const { error } = await supabaseClient
-                .from('voice_transcripts')
-                .update({
-                    transcript_text: newText,
-                    word_count: wordCount
-                })
-                .eq('id', transcriptId);
+            btn.disabled = true;
+            progressContainer.classList.add('visible');
+            progressFill.style.width = '0%';
 
-            if (error) {
-                showToast(`Error saving: ${error.message}`, 'error');
-                return;
+            try {
+                if (currentMethod === 'local') {
+                    await transcribeLocal(progressFill, progressText);
+                } else {
+                    await transcribeOpenAI(progressFill, progressText);
+                }
+            } catch (error) {
+                showToast(`Transcription failed: ${error.message}`, 'error');
+                progressContainer.classList.remove('visible');
+                btn.disabled = false;
+            }
+        }
+
+        async function transcribeLocal(progressFill, progressText) {
+            progressText.textContent = 'Uploading to local server...';
+            progressFill.style.width = '10%';
+
+            const formData = new FormData();
+            formData.append('file', currentFile);
+            formData.append('method', 'mlx');
+            formData.append('model', document.getElementById('mlx-model').value);
+            formData.append('speed', document.getElementById('speed-slider').value);
+            formData.append('remove_silence', document.getElementById('remove-silence').checked);
+            formData.append('compress', document.getElementById('compress').checked);
+
+            progressText.textContent = 'Transcribing with MLX Whisper...';
+            progressFill.style.width = '30%';
+
+            // Simulate progress (actual progress would need WebSocket)
+            const estimatedTime = estimates?.mlxTime || 60;
+            const progressInterval = setInterval(() => {
+                const current = parseFloat(progressFill.style.width);
+                if (current < 90) {
+                    progressFill.style.width = `${current + (60 / estimatedTime)}%`;
+                }
+            }, 1000);
+
+            const response = await fetch(`${LOCAL_SERVER}/transcribe`, {
+                method: 'POST',
+                body: formData
+            });
+
+            clearInterval(progressInterval);
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Transcription failed');
             }
 
-            showToast('Transcript saved', 'success');
-            toggleEdit();
-            loadMemos();
+            const result = await response.json();
+            progressFill.style.width = '100%';
+            progressText.textContent = 'Complete!';
+
+            await showResult(result);
+            await saveToSupabase(result);
+        }
+
+        async function transcribeOpenAI(progressFill, progressText) {
+            // Get API key from localStorage or prompt
+            let apiKey = localStorage.getItem('openai_api_key');
+            if (!apiKey) {
+                apiKey = prompt('Enter your OpenAI API key:');
+                if (!apiKey) throw new Error('API key required');
+                localStorage.setItem('openai_api_key', apiKey);
+            }
+
+            progressText.textContent = 'Uploading to OpenAI...';
+            progressFill.style.width = '20%';
+
+            const formData = new FormData();
+            formData.append('file', currentFile);
+            formData.append('model', 'whisper-1');
+            formData.append('response_format', 'verbose_json');
+
+            const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: formData
+            });
+
+            progressFill.style.width = '80%';
+
+            if (!response.ok) {
+                const error = await response.json();
+                if (error.error?.code === 'invalid_api_key') {
+                    localStorage.removeItem('openai_api_key');
+                }
+                throw new Error(error.error?.message || 'OpenAI API error');
+            }
+
+            const data = await response.json();
+            progressFill.style.width = '100%';
+            progressText.textContent = 'Complete!';
+
+            const result = {
+                transcript: data.text,
+                word_count: data.text.split(/\s+/).length,
+                duration_seconds: currentFile.duration,
+                method: 'openai',
+                model: 'whisper-1',
+                cost_usd: (currentFile.duration / 60) * 0.006,
+                filename: currentFile.name
+            };
+
+            await showResult(result);
+            await saveToSupabase(result);
+        }
+
+        async function showResult(result) {
+            const resultPanel = document.getElementById('result-panel');
+            const transcriptBox = document.getElementById('transcript-box');
+
+            transcriptBox.textContent = result.transcript;
+            document.getElementById('result-words').textContent = `${result.word_count} words`;
+            document.getElementById('result-time').textContent = result.transcription_time_seconds
+                ? `Transcribed in ${result.transcription_time_seconds.toFixed(1)}s`
+                : '';
+            document.getElementById('result-method').textContent = `via ${result.method === 'mlx' || result.method === 'local' ? 'MLX Whisper' : 'OpenAI'}`;
+
+            if (result.cost_usd > 0) {
+                document.getElementById('result-method').textContent += ` ($${result.cost_usd.toFixed(2)})`;
+            }
+
+            resultPanel.classList.add('visible');
+            document.getElementById('progress-container').classList.remove('visible');
+
+            // Store for copy/download
+            window.currentResult = result;
+        }
+
+        async function saveToSupabase(result) {
+            try {
+                // Save memo
+                const { data: memo, error: memoError } = await supabaseClient
+                    .from('voice_memos')
+                    .insert({
+                        filename: result.filename,
+                        file_hash: result.file_hash || crypto.randomUUID(),
+                        duration_seconds: result.duration_seconds,
+                        status: 'completed'
+                    })
+                    .select()
+                    .single();
+
+                if (memoError) throw memoError;
+
+                // Save transcript
+                const { error: transcriptError } = await supabaseClient
+                    .from('voice_transcripts')
+                    .insert({
+                        memo_id: memo.id,
+                        transcript_text: result.transcript,
+                        word_count: result.word_count,
+                        model_used: result.model,
+                        transcription_method: result.method
+                    });
+
+                if (transcriptError) throw transcriptError;
+
+                loadHistory();
+            } catch (e) {
+                console.error('Failed to save to Supabase:', e);
+            }
         }
 
         function copyTranscript() {
-            const text = transcriptContent.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Copied to clipboard', 'success');
-            }).catch(() => {
-                showToast('Failed to copy', 'error');
-            });
-        }
-
-        async function deleteMemo(memoId) {
-            if (!confirm('Delete this memo? This cannot be undone.')) return;
-
-            const { error } = await supabaseClient
-                .from('voice_memos')
-                .delete()
-                .eq('id', memoId);
-
-            if (error) {
-                showToast(`Error deleting: ${error.message}`, 'error');
-                return;
+            if (window.currentResult) {
+                navigator.clipboard.writeText(window.currentResult.transcript);
+                showToast('Copied to clipboard!', 'success');
             }
-
-            showToast('Memo deleted', 'success');
-            loadMemos();
         }
 
-        function showTranscribeInstructions(filename) {
-            const model = document.getElementById('model-select').value;
-            const preprocess = document.getElementById('preprocess-toggle').checked;
-
-            let cmd = `cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-memo-transcriber && python3 scripts/transcribe.py "audio/inbox/${filename}" --model ${model}`;
-            if (!preprocess) cmd += ' --no-preprocess';
-            cmd += ' --move';
-
-            const modal = document.getElementById('command-modal');
-            const commandText = document.getElementById('command-text');
-            commandText.textContent = cmd;
-            modal.classList.add('open');
+        function downloadTranscript() {
+            if (window.currentResult) {
+                const blob = new Blob([window.currentResult.transcript], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = window.currentResult.filename.replace(/\.[^/.]+$/, '.txt');
+                a.click();
+                URL.revokeObjectURL(url);
+            }
         }
 
-        function closeCommandModal() {
-            document.getElementById('command-modal').classList.remove('open');
+        function resetUI() {
+            currentFile = null;
+            window.currentResult = null;
+
+            document.getElementById('drop-zone').classList.remove('has-file');
+            document.getElementById('file-info').style.display = 'none';
+            document.getElementById('result-panel').classList.remove('visible');
+            document.getElementById('progress-container').classList.remove('visible');
+            document.getElementById('file-input').value = '';
+
+            updateTranscribeButton();
         }
 
-        function copyCommand() {
-            const cmd = document.getElementById('command-text').textContent;
-            navigator.clipboard.writeText(cmd).then(() => {
-                showToast('Command copied to clipboard!', 'success');
-            }).catch(() => {
-                showToast('Failed to copy', 'error');
-            });
+        async function loadHistory() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('voice_memos')
+                    .select('*, voice_transcripts(*)')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+
+                if (error) throw error;
+
+                const historySection = document.getElementById('history-section');
+                const historyList = document.getElementById('history-list');
+
+                if (data && data.length > 0) {
+                    historySection.style.display = 'block';
+                    historyList.innerHTML = data.map(memo => {
+                        const hasTranscript = memo.voice_transcripts && memo.voice_transcripts.length > 0;
+                        const wordCount = hasTranscript ? memo.voice_transcripts[0].word_count : 0;
+                        const duration = memo.duration_seconds ? `${(memo.duration_seconds / 60).toFixed(1)} min` : '';
+
+                        return `
+                            <div class="history-item">
+                                <div class="info">
+                                    <div class="filename">${memo.filename}</div>
+                                    <div class="meta">${duration} | ${wordCount} words | ${new Date(memo.created_at).toLocaleDateString()}</div>
+                                </div>
+                                ${hasTranscript ? `<button class="btn btn-secondary" onclick="viewHistoryTranscript('${memo.id}')">View</button>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (e) {
+                console.error('Failed to load history:', e);
+            }
+        }
+
+        async function viewHistoryTranscript(memoId) {
+            const { data, error } = await supabaseClient
+                .from('voice_memos')
+                .select('*, voice_transcripts(*)')
+                .eq('id', memoId)
+                .single();
+
+            if (data && data.voice_transcripts && data.voice_transcripts.length > 0) {
+                const transcript = data.voice_transcripts[0];
+                window.currentResult = {
+                    transcript: transcript.transcript_text,
+                    word_count: transcript.word_count,
+                    filename: data.filename,
+                    method: transcript.transcription_method || 'unknown'
+                };
+
+                document.getElementById('transcript-box').textContent = transcript.transcript_text;
+                document.getElementById('result-words').textContent = `${transcript.word_count} words`;
+                document.getElementById('result-time').textContent = '';
+                document.getElementById('result-method').textContent = `via ${transcript.transcription_method || 'unknown'}`;
+                document.getElementById('result-panel').classList.add('visible');
+            }
         }
 
         function showToast(message, type = 'info') {
@@ -1044,21 +1128,7 @@
             toast.className = `toast toast-${type}`;
             toast.textContent = message;
             container.appendChild(toast);
-
             setTimeout(() => toast.remove(), 3000);
-        }
-
-        // Subscribe to realtime updates (called from init)
-        function setupRealtimeSubscription() {
-            supabaseClient
-                .channel('voice_memos')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'voice_memos' }, () => {
-                    loadMemos();
-                })
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'voice_transcripts' }, () => {
-                    loadMemos();
-                })
-                .subscribe();
         }
     </script>
 </body>

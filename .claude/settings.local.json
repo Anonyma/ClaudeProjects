@@ -48,7 +48,11 @@
       "Bash(launchctl load:*)",
       "Bash(launchctl list:*)",
       "Bash(git rm:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git clone:*)",
+      "Bash(claude --teleport session_01QyJ6wVxnkezziPMEHA2xqS)"
     ]
   }
 }

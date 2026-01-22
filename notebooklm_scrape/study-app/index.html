@@ -217,6 +217,76 @@
             border-left: 3px solid var(--accent);
         }
 
+        .article-content {
+            line-height: 1.8;
+        }
+
+        .article-content h1, .article-content h2, .article-content h3 {
+            color: var(--text);
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .article-content h2 {
+            font-size: 1.3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .article-content p {
+            margin-bottom: 15px;
+        }
+
+        .resources-section {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+        }
+
+        .resources-section h4 {
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .resource-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .resource-link {
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .resource-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .topics-covered {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .topic-tag {
+            background: var(--accent-dim);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
         /* Quiz view */
         .quiz-progress {
             background: var(--bg);
@@ -416,11 +486,10 @@
         // Fetch data
         async function fetchData() {
             try {
-                // Fetch summaries
-                const { data: summaryData, error: summaryError } = await db
+                // Fetch all summaries (standard, tldr, rich)
+                const { data: allSummaryData, error: summaryError } = await db
                     .from('notebooklm_summaries')
-                    .select('*, notebooklm_assets(asset_title)')
-                    .eq('summary_type', 'standard');
+                    .select('*, notebooklm_assets(asset_title)');
 
                 if (summaryError) {
                     console.error('Summary fetch error:', summaryError);
@@ -428,22 +497,39 @@
                     return;
                 }
 
-                // Fetch TLDRs
-                const { data: tldrData, error: tldrError } = await db
-                    .from('notebooklm_summaries')
-                    .select('asset_id, summary_text')
-                    .eq('summary_type', 'tldr');
+                // Organize by asset_id and type
+                const summaryMap = {};
+                allSummaryData?.forEach(s => {
+                    const assetId = s.asset_id;
+                    if (!summaryMap[assetId]) {
+                        summaryMap[assetId] = {
+                            asset_id: assetId,
+                            title: s.notebooklm_assets?.asset_title || 'Unknown'
+                        };
+                    }
+                    if (s.summary_type === 'rich') {
+                        summaryMap[assetId].rich = s;
+                    } else if (s.summary_type === 'standard') {
+                        summaryMap[assetId].standard = s;
+                    } else if (s.summary_type === 'tldr') {
+                        summaryMap[assetId].tldr = s.summary_text;
+                    }
+                });
 
-                if (tldrError) console.error('TLDR fetch error:', tldrError);
-
-                const tldrMap = {};
-                tldrData?.forEach(t => tldrMap[t.asset_id] = t.summary_text);
-
-                summaries = summaryData?.map(s => ({
-                    ...s,
-                    title: s.notebooklm_assets?.asset_title || 'Unknown',
-                    tldr: tldrMap[s.asset_id]
-                })) || [];
+                // Convert to array, preferring rich summaries
+                summaries = Object.values(summaryMap).map(s => {
+                    const source = s.rich || s.standard;
+                    return {
+                        id: source?.id,
+                        asset_id: s.asset_id,
+                        title: s.title,
+                        summary_text: source?.summary_text || '',
+                        key_points: source?.key_points || [],
+                        tldr: s.rich?.metadata?.tldr || s.tldr,
+                        metadata: s.rich?.metadata || null,
+                        is_rich: !!s.rich
+                    };
+                }).filter(s => s.id);
 
                 // Fetch quizzes
                 const { data: quizData, error: quizError } = await db
@@ -485,6 +571,7 @@
                         <p>${s.tldr || s.summary_text.substring(0, 150)}...</p>
                         <div class="card-meta">
                             <span>${s.key_points?.length || 0} key points</span>
+                            ${s.is_rich ? '<span class="badge success">Rich</span>' : ''}
                         </div>
                     </div>
                 `).join('');
@@ -528,16 +615,76 @@
             currentQuiz = null;
         }
 
+        // Simple markdown to HTML converter
+        function markdownToHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/^(.+)$/gm, '<p>$1</p>')
+                .replace(/<p><h/g, '<h')
+                .replace(/<\/h([123])><\/p>/g, '</h$1>');
+        }
+
         // Summary view
         function openSummary(id) {
             const summary = summaries.find(s => s.id === id);
             if (!summary) return;
 
             const keyPointsHtml = summary.key_points?.map(p => `<li>${p}</li>`).join('') || '';
+            const metadata = summary.metadata;
+
+            // Build resources section for rich summaries
+            let resourcesHtml = '';
+            if (metadata?.resources) {
+                const r = metadata.resources;
+                const searchLinks = r.search_queries?.map(q =>
+                    `<a href="https://www.google.com/search?q=${encodeURIComponent(q)}" target="_blank" class="resource-link">🔍 ${q}</a>`
+                ).join('') || '';
+
+                const wikiLinks = r.wikipedia_articles?.map(a =>
+                    `<a href="https://en.wikipedia.org/wiki/${encodeURIComponent(a.replace(/ /g, '_'))}" target="_blank" class="resource-link">📚 ${a}</a>`
+                ).join('') || '';
+
+                const imageLinks = r.image_searches?.map(q =>
+                    `<a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}" target="_blank" class="resource-link">🖼️ ${q}</a>`
+                ).join('') || '';
+
+                if (searchLinks || wikiLinks || imageLinks) {
+                    resourcesHtml = `
+                        <div class="resources-section">
+                            <h4>Learn More</h4>
+                            <div class="resource-links">
+                                ${wikiLinks}${searchLinks}${imageLinks}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Build topics section for rich summaries
+            let topicsHtml = '';
+            if (metadata?.claude_reference?.topics_covered?.length) {
+                topicsHtml = `
+                    <div class="topics-covered">
+                        ${metadata.claude_reference.topics_covered.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+                    </div>
+                `;
+            }
+
+            // Use article format for rich summaries, old format for standard
+            const contentHtml = summary.is_rich
+                ? `<div class="article-content">${markdownToHtml(summary.summary_text)}</div>`
+                : `<p>${summary.summary_text}</p>`;
 
             document.getElementById('modal-body').innerHTML = `
                 <div class="summary-content">
                     <h2>${summary.title}</h2>
+                    ${summary.is_rich ? '<span class="badge success" style="margin-bottom: 15px; display: inline-block;">Rich Summary</span>' : ''}
 
                     ${summary.tldr ? `
                         <div class="summary-section">
@@ -546,9 +693,11 @@
                         </div>
                     ` : ''}
 
+                    ${topicsHtml}
+
                     <div class="summary-section">
-                        <h4>Summary</h4>
-                        <p>${summary.summary_text}</p>
+                        ${summary.is_rich ? '' : '<h4>Summary</h4>'}
+                        ${contentHtml}
                     </div>
 
                     ${keyPointsHtml ? `
@@ -557,6 +706,8 @@
                             <ul class="key-points">${keyPointsHtml}</ul>
                         </div>
                     ` : ''}
+
+                    ${resourcesHtml}
                 </div>
             `;
 
