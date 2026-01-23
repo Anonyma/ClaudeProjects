@@ -420,19 +420,107 @@
 
         .history-section h3 { font-size: 1.1rem; margin-bottom: 1rem; }
 
-        .history-item {
+        .history-card {
             background: var(--bg-secondary);
-            border-radius: 8px;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .history-header {
             padding: 1rem;
-            margin-bottom: 0.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .history-item .info { flex: 1; }
-        .history-item .filename { font-weight: 500; }
-        .history-item .meta { font-size: 0.8rem; color: var(--text-secondary); }
+        .history-header:hover { background: var(--bg-tertiary); }
+
+        .history-info { flex: 1; }
+        .history-filename { font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+        .history-meta { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+        .done-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .expand-icon {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            transition: transform 0.2s;
+        }
+
+        .history-card.expanded .expand-icon { transform: rotate(180deg); }
+
+        .history-content {
+            display: none;
+            padding: 0 1rem 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .history-card.expanded .history-content { display: block; }
+
+        .transcript-versions { margin-top: 1rem; }
+
+        .version-tab {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            margin-right: 0.25rem;
+            color: var(--text-secondary);
+        }
+
+        .version-tab.active {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+
+        .version-content {
+            background: var(--bg-tertiary);
+            border-radius: 0 8px 8px 8px;
+            padding: 1rem;
+        }
+
+        .version-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .transcript-text {
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border-radius: 6px;
+        }
+
+        .version-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .version-actions .btn { font-size: 0.75rem; padding: 0.4rem 0.8rem; }
 
         @media (max-width: 768px) {
             .container { padding: 1rem; }
@@ -909,10 +997,23 @@
         }
 
         function formatElapsed(seconds) {
-            if (seconds < 60) return `${seconds}s`;
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
+            if (seconds < 60) return `${Math.round(seconds)}s`;
+            const hours = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = Math.round(seconds % 60);
+            if (hours > 0) return `${hours}h ${mins}m ${secs}s`;
             return `${mins}m ${secs}s`;
+        }
+
+        function formatDuration(seconds) {
+            // Human-readable duration for display (e.g., "1h 6m" or "45m 30s")
+            if (!seconds) return '';
+            const hours = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = Math.round(seconds % 60);
+            if (hours > 0) return `${hours}h ${mins}m`;
+            if (mins > 0) return `${mins}m ${secs}s`;
+            return `${secs}s`;
         }
 
         async function transcribeWithOpenAI() {
@@ -980,7 +1081,7 @@
             document.getElementById('transcript-box').textContent = result.transcript;
             document.getElementById('result-words').textContent = `${result.word_count} words`;
             document.getElementById('result-time').textContent = result.transcription_time_seconds
-                ? `Transcribed in ${result.transcription_time_seconds.toFixed(1)}s` : '';
+                ? `Transcribed in ${formatDuration(result.transcription_time_seconds)}` : '';
             document.getElementById('result-method').textContent = `via ${result.method === 'mlx_whisper' || result.method === 'mlx' ? 'MLX Whisper' : 'OpenAI'}`;
             if (result.cost_usd > 0) {
                 document.getElementById('result-method').textContent += ` ($${result.cost_usd.toFixed(2)})`;
@@ -990,21 +1091,37 @@
 
         async function saveToSupabase(result) {
             try {
-                const { data: memo, error: memoError } = await supabaseClient
+                // Check if memo with same filename exists
+                let memoId;
+                const { data: existingMemo } = await supabaseClient
                     .from('voice_memos')
-                    .insert({
-                        filename: result.filename,
-                        file_hash: crypto.randomUUID(),
-                        duration_seconds: result.duration_seconds,
-                        status: 'completed'
-                    })
-                    .select()
+                    .select('id')
+                    .eq('filename', result.filename)
                     .single();
 
-                if (memoError) throw memoError;
+                if (existingMemo) {
+                    // Add new transcript version to existing memo
+                    memoId = existingMemo.id;
+                } else {
+                    // Create new memo
+                    const { data: newMemo, error: memoError } = await supabaseClient
+                        .from('voice_memos')
+                        .insert({
+                            filename: result.filename,
+                            file_hash: crypto.randomUUID(),
+                            duration_seconds: result.duration_seconds,
+                            status: 'completed'
+                        })
+                        .select()
+                        .single();
 
+                    if (memoError) throw memoError;
+                    memoId = newMemo.id;
+                }
+
+                // Add transcript version
                 await supabaseClient.from('voice_transcripts').insert({
-                    memo_id: memo.id,
+                    memo_id: memoId,
                     transcript_text: result.transcript,
                     word_count: result.word_count,
                     model_used: result.model,
@@ -1052,20 +1169,34 @@
                     .from('voice_memos')
                     .select('*, voice_transcripts(*)')
                     .order('created_at', { ascending: false })
-                    .limit(5);
+                    .limit(10);
 
                 if (data?.length) {
                     data.forEach(m => processedFiles.add(m.filename));
                     document.getElementById('history-section').style.display = 'block';
-                    document.getElementById('history-list').innerHTML = data.map(memo => {
-                        const t = memo.voice_transcripts?.[0];
+                    document.getElementById('history-list').innerHTML = data.map((memo, idx) => {
+                        const transcripts = memo.voice_transcripts || [];
+                        const hasTranscripts = transcripts.length > 0;
+                        const totalWords = transcripts.reduce((sum, t) => sum + (t.word_count || 0), 0);
+                        const duration = memo.duration_seconds ? formatDuration(memo.duration_seconds) : '';
+
                         return `
-                            <div class="history-item">
-                                <div class="info">
-                                    <div class="filename">${memo.filename}</div>
-                                    <div class="meta">${memo.duration_seconds ? (memo.duration_seconds/60).toFixed(1) + ' min | ' : ''}${t?.word_count || 0} words</div>
+                            <div class="history-card" id="history-${memo.id}">
+                                <div class="history-header" onclick="toggleHistoryCard('${memo.id}')">
+                                    <div class="history-info">
+                                        <div class="history-filename">
+                                            ${memo.filename}
+                                            ${hasTranscripts ? '<span class="done-badge">Done</span>' : ''}
+                                        </div>
+                                        <div class="history-meta">
+                                            ${duration ? duration + ' | ' : ''}${transcripts.length} version${transcripts.length !== 1 ? 's' : ''} | ${totalWords} words
+                                        </div>
+                                    </div>
+                                    <span class="expand-icon">▼</span>
                                 </div>
-                                ${t ? `<button class="btn btn-secondary" onclick="viewHistory('${memo.id}')">View</button>` : ''}
+                                <div class="history-content">
+                                    ${hasTranscripts ? renderTranscriptVersions(memo.id, transcripts, memo.filename) : '<p style="color: var(--text-secondary); padding: 1rem 0;">No transcripts yet</p>'}
+                                </div>
                             </div>
                         `;
                     }).join('');
@@ -1073,23 +1204,83 @@
             } catch (e) { console.error(e); }
         }
 
-        async function viewHistory(id) {
-            const { data } = await supabaseClient
-                .from('voice_memos')
-                .select('*, voice_transcripts(*)')
-                .eq('id', id)
-                .single();
+        function renderTranscriptVersions(memoId, transcripts, filename) {
+            if (transcripts.length === 0) return '';
 
-            if (data?.voice_transcripts?.[0]) {
-                const t = data.voice_transcripts[0];
-                window.currentResult = {
-                    transcript: t.transcript_text,
-                    word_count: t.word_count,
-                    filename: data.filename,
-                    method: t.transcription_method
-                };
-                showResult(window.currentResult);
-            }
+            // Sort by created_at descending (newest first)
+            transcripts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            const tabs = transcripts.map((t, i) => {
+                const method = t.transcription_method === 'mlx_whisper' || t.transcription_method === 'mlx' ? 'MLX' : 'OpenAI';
+                const model = t.model_used || 'unknown';
+                return `<button class="version-tab ${i === 0 ? 'active' : ''}" onclick="switchVersion('${memoId}', ${i})">${method} (${model})</button>`;
+            }).join('');
+
+            const contents = transcripts.map((t, i) => {
+                const date = new Date(t.created_at).toLocaleDateString();
+                const method = t.transcription_method === 'mlx_whisper' || t.transcription_method === 'mlx' ? 'MLX Whisper' : 'OpenAI';
+                return `
+                    <div class="version-panel" id="version-${memoId}-${i}" style="${i !== 0 ? 'display:none' : ''}">
+                        <div class="version-meta">
+                            <span>${t.word_count || 0} words</span>
+                            <span>${method}</span>
+                            <span>${date}</span>
+                        </div>
+                        <div class="transcript-text">${escapeHtml(t.transcript_text || '')}</div>
+                        <div class="version-actions">
+                            <button class="btn btn-primary" onclick="copyVersionTranscript('${memoId}', ${i})">Copy</button>
+                            <button class="btn btn-secondary" onclick="downloadVersionTranscript('${memoId}', ${i}, '${filename}')">Download</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="transcript-versions" data-transcripts='${JSON.stringify(transcripts.map(t => ({ text: t.transcript_text, method: t.transcription_method })))}'>
+                    <div class="version-tabs">${tabs}</div>
+                    <div class="version-content">${contents}</div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function toggleHistoryCard(memoId) {
+            const card = document.getElementById(`history-${memoId}`);
+            card.classList.toggle('expanded');
+        }
+
+        function switchVersion(memoId, index) {
+            const card = document.getElementById(`history-${memoId}`);
+            card.querySelectorAll('.version-tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i === index);
+            });
+            card.querySelectorAll('.version-panel').forEach((panel, i) => {
+                panel.style.display = i === index ? 'block' : 'none';
+            });
+        }
+
+        function copyVersionTranscript(memoId, index) {
+            const card = document.getElementById(`history-${memoId}`);
+            const data = JSON.parse(card.querySelector('.transcript-versions').dataset.transcripts);
+            navigator.clipboard.writeText(data[index].text);
+            showToast('Copied!', 'success');
+        }
+
+        function downloadVersionTranscript(memoId, index, filename) {
+            const card = document.getElementById(`history-${memoId}`);
+            const data = JSON.parse(card.querySelector('.transcript-versions').dataset.transcripts);
+            const text = data[index].text;
+            const method = data[index].method === 'mlx_whisper' || data[index].method === 'mlx' ? 'mlx' : 'openai';
+            const blob = new Blob([text], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename.replace(/\.[^/.]+$/, `_${method}.txt`);
+            a.click();
         }
 
         function showToast(message, type = 'info') {
