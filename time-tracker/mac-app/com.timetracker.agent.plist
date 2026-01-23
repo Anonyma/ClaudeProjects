@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.timetracker.agent</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/z/miniforge3/bin/python</string>
+        <string>/Users/z/Desktop/PersonalProjects/ClaudeProjects/time-tracker/mac-app/app.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/z/Desktop/PersonalProjects/ClaudeProjects/time-tracker/mac-app</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/timetracker.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/timetracker.error.log</string>
+</dict>
+</plist>

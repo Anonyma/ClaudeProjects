@@ -42,3 +42,4 @@ transcripts/
 # Projects with their own git repos (managed separately)
 art-discovery/
 htgaa-biobootcamp/
+supabase/.temp/

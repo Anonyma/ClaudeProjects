@@ -1,7 +1,7 @@
 {
   "meta": {
     "description": "Index of all projects created with Claude CLI",
-    "lastUpdated": "2026-01-22T21:30:00Z",
+    "lastUpdated": "2026-01-23",
     "localPath": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/projects.json",
     "supabaseTable": "claude_projects",
     "dashboardUrl": "https://project-command-center.netlify.app"
@@ -14,7 +14,13 @@
       "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/substack-dashboard",
       "type": "web-app",
       "created": "2025-01-20",
-      "tags": ["dashboard", "substack", "reading-tracker", "supabase", "pwa"],
+      "tags": [
+        "dashboard",
+        "substack",
+        "reading-tracker",
+        "supabase",
+        "pwa"
+      ],
       "status": "active",
       "access": {
         "method": "file",
@@ -27,7 +33,11 @@
         "projectId": "substack",
         "table": "reading_status"
       },
-      "files": ["index.html", "articles.json", "manifest.json"]
+      "files": [
+        "index.html",
+        "articles.json",
+        "manifest.json"
+      ]
     },
     {
       "id": "reading-dashboard",
@@ -36,7 +46,11 @@
       "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard",
       "type": "web-app",
       "created": "2025-01-19",
-      "tags": ["dashboard", "notebooklm", "reading-tracker"],
+      "tags": [
+        "dashboard",
+        "notebooklm",
+        "reading-tracker"
+      ],
       "status": "deprecated",
       "access": {
         "method": "file-or-localhost",
@@ -46,17 +60,31 @@
         "requiresServer": false,
         "serverCommand": "cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard && python3 -m http.server 8000"
       },
-      "files": ["index.html", "embedded-data.js", "start-server.sh", "SETUP.md"]
+      "files": [
+        "index.html",
+        "embedded-data.js",
+        "start-server.sh",
+        "SETUP.md"
+      ]
     },
     {
       "id": "notebooklm-scrape",
       "name": "NotebookLM Study System",
-      "description": "Complete pipeline: Playwright scrapes NotebookLM audio → Whisper transcribes → GPT generates rich article-style summaries/quizzes → Supabase stores → Web app serves. Supports rich summaries with learning resources and Claude reference format for AI continuity.",
+      "description": "Complete pipeline: Playwright scrapes NotebookLM audio \u2192 Whisper transcribes \u2192 GPT generates rich article-style summaries/quizzes \u2192 Supabase stores \u2192 Web app serves. Supports rich summaries with learning resources and Claude reference format for AI continuity.",
       "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/notebooklm_scrape",
       "type": "python-scripts + web-app",
       "created": "2025-01-19",
       "updated": "2026-01-22",
-      "tags": ["scraper", "notebooklm", "transcription", "quizzes", "study", "supabase", "playwright", "rich-summaries"],
+      "tags": [
+        "scraper",
+        "notebooklm",
+        "transcription",
+        "quizzes",
+        "study",
+        "supabase",
+        "playwright",
+        "rich-summaries"
+      ],
       "status": "active",
       "access": {
         "method": "cli + web",
@@ -72,9 +100,25 @@
       },
       "supabase": {
         "projectId": "ydwjzlikslebokuxzwco",
-        "tables": ["notebooklm_notebooks", "notebooklm_assets", "notebooklm_transcripts", "notebooklm_summaries", "notebooklm_quizzes"]
+        "tables": [
+          "notebooklm_notebooks",
+          "notebooklm_assets",
+          "notebooklm_transcripts",
+          "notebooklm_summaries",
+          "notebooklm_quizzes"
+        ]
       },
-      "files": ["playwright_sync.py", "transcribe_optimized.py", "upload_to_supabase.py", "upload_transcripts.py", "generate_study_materials.py", "generate_rich_summaries.py", "export_study_materials.py", "study-app/index.html", "CLAUDE.md"]
+      "files": [
+        "playwright_sync.py",
+        "transcribe_optimized.py",
+        "upload_to_supabase.py",
+        "upload_transcripts.py",
+        "generate_study_materials.py",
+        "generate_rich_summaries.py",
+        "export_study_materials.py",
+        "study-app/index.html",
+        "CLAUDE.md"
+      ]
     },
     {
       "id": "htgaa-biobootcamp",
@@ -83,7 +127,15 @@
       "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/htgaa-biobootcamp",
       "type": "web-app",
       "created": "2025-01-20",
-      "tags": ["biotech", "learning", "htgaa", "course", "synthetic-biology", "crispr", "molecular-biology"],
+      "tags": [
+        "biotech",
+        "learning",
+        "htgaa",
+        "course",
+        "synthetic-biology",
+        "crispr",
+        "molecular-biology"
+      ],
       "status": "active",
       "access": {
         "method": "file-or-hosted",
@@ -96,7 +148,10 @@
         "repo": "https://github.com/Anonyma/htgaa-biobootcamp",
         "pages": "https://anonyma.github.io/htgaa-biobootcamp/"
       },
-      "files": ["index.html", "htgaa-day1-course.html"]
+      "files": [
+        "index.html",
+        "htgaa-day1-course.html"
+      ]
     },
     {
       "id": "htgaa-learning-guide",
@@ -105,7 +160,13 @@
       "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects",
       "type": "document",
       "created": "2025-01-19",
-      "tags": ["biotech", "learning", "guide", "htgaa", "document"],
+      "tags": [
+        "biotech",
+        "learning",
+        "guide",
+        "htgaa",
+        "document"
+      ],
       "status": "active",
       "access": {
         "method": "file",
@@ -114,7 +175,10 @@
         "hosted": null,
         "requiresServer": false
       },
-      "files": ["HTGAA_BioBootcamp_Learning_Guide.html", "HTGAA_BioBootcamp_Learning_Guide.md"]
+      "files": [
+        "HTGAA_BioBootcamp_Learning_Guide.html",
+        "HTGAA_BioBootcamp_Learning_Guide.md"
+      ]
     },
     {
       "id": "tg-personal-assistant",
@@ -124,7 +188,15 @@
       "type": "telegram-bot",
       "created": "2025-01-20",
       "updated": "2025-01-21",
-      "tags": ["telegram", "bot", "knowledge-management", "expenses", "openai", "anthropic", "python"],
+      "tags": [
+        "telegram",
+        "bot",
+        "knowledge-management",
+        "expenses",
+        "openai",
+        "anthropic",
+        "python"
+      ],
       "status": "needs-fix",
       "statusNote": "Railway deployment crashed - missing TELEGRAM_BOT_TOKEN env var",
       "access": {
@@ -155,7 +227,16 @@
         }
       },
       "claudeCodeSession": "https://claude.ai/code/session_01QyJ6wVxnkezziPMEHA2xqS",
-      "files": ["bot.py", "config.py", "database.py", "tts.py", "requirements.txt", "Procfile", "runtime.txt", "processors/"]
+      "files": [
+        "bot.py",
+        "config.py",
+        "database.py",
+        "tts.py",
+        "requirements.txt",
+        "Procfile",
+        "runtime.txt",
+        "processors/"
+      ]
     },
     {
       "id": "art-discovery",
@@ -165,7 +246,13 @@
       "type": "web-app",
       "created": "2025-01-20",
       "lastModified": "2026-01-22T17:05:00Z",
-      "tags": ["art", "discovery", "supabase", "web-app", "netlify"],
+      "tags": [
+        "art",
+        "discovery",
+        "supabase",
+        "web-app",
+        "netlify"
+      ],
       "status": "needs-fix",
       "statusNote": "Database not displaying on deployment",
       "access": {
@@ -205,7 +292,14 @@
       "type": "web-app",
       "created": "2026-01-21",
       "lastModified": "2026-01-22T17:05:00Z",
-      "tags": ["dashboard", "meta", "tracking", "supabase", "project-management", "netlify"],
+      "tags": [
+        "dashboard",
+        "meta",
+        "tracking",
+        "supabase",
+        "project-management",
+        "netlify"
+      ],
       "status": "active",
       "access": {
         "method": "hosted",
@@ -219,7 +313,9 @@
         "projectId": "ydwjzlikslebokuxzwco",
         "table": "claude_projects"
       },
-      "files": ["index.html"]
+      "files": [
+        "index.html"
+      ]
     },
     {
       "id": "voice-memo-transcriber",
@@ -228,7 +324,15 @@
       "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-memo-transcriber",
       "type": "python-scripts + web-app",
       "created": "2026-01-22",
-      "tags": ["transcription", "whisper", "mlx", "voice-memos", "apple-silicon", "supabase", "dashboard"],
+      "tags": [
+        "transcription",
+        "whisper",
+        "mlx",
+        "voice-memos",
+        "apple-silicon",
+        "supabase",
+        "dashboard"
+      ],
       "status": "active",
       "access": {
         "method": "cli + web",
@@ -239,9 +343,20 @@
       },
       "supabase": {
         "projectId": "ydwjzlikslebokuxzwco",
-        "tables": ["voice_memos", "voice_transcripts"]
+        "tables": [
+          "voice_memos",
+          "voice_transcripts"
+        ]
       },
-      "files": ["CLAUDE.md", "requirements.txt", "scripts/transcribe.py", "scripts/preprocess.py", "scripts/sync_to_supabase.py", "scripts/batch_process.py", "dashboard/index.html"]
+      "files": [
+        "CLAUDE.md",
+        "requirements.txt",
+        "scripts/transcribe.py",
+        "scripts/preprocess.py",
+        "scripts/sync_to_supabase.py",
+        "scripts/batch_process.py",
+        "dashboard/index.html"
+      ]
     },
     {
       "id": "time-tracker",
@@ -250,7 +365,15 @@
       "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/time-tracker",
       "type": "python-scripts + web-app",
       "created": "2026-01-23",
-      "tags": ["time-tracking", "adhd", "productivity", "menu-bar", "pushover", "supabase", "pwa"],
+      "tags": [
+        "time-tracking",
+        "adhd",
+        "productivity",
+        "menu-bar",
+        "pushover",
+        "supabase",
+        "pwa"
+      ],
       "status": "active",
       "access": {
         "method": "cli + web",
@@ -261,9 +384,22 @@
       },
       "supabase": {
         "projectId": "ydwjzlikslebokuxzwco",
-        "tables": ["activity_logs", "pings", "device_state", "time_tracker_settings"]
+        "tables": [
+          "activity_logs",
+          "pings",
+          "device_state",
+          "time_tracker_settings"
+        ]
       },
-      "files": ["CLAUDE.md", "mac-app/app.py", "mac-app/afk_detector.py", "mac-app/supabase_client.py", "dashboard/index.html", "supabase/schema.sql", "ios-shortcut/README.md"]
+      "files": [
+        "CLAUDE.md",
+        "mac-app/app.py",
+        "mac-app/afk_detector.py",
+        "mac-app/supabase_client.py",
+        "dashboard/index.html",
+        "supabase/schema.sql",
+        "ios-shortcut/README.md"
+      ]
     },
     {
       "id": "writing-challenge",
@@ -272,7 +408,15 @@
       "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/writing-challenge",
       "type": "web-app",
       "created": "2026-01-23",
-      "tags": ["writing", "productivity", "habit-tracker", "pomodoro", "goals", "react", "localstorage"],
+      "tags": [
+        "writing",
+        "productivity",
+        "habit-tracker",
+        "pomodoro",
+        "goals",
+        "react",
+        "localstorage"
+      ],
       "status": "active",
       "access": {
         "method": "file",
@@ -282,7 +426,10 @@
         "requiresServer": false
       },
       "claudeSessionUrl": "https://claude.ai/chat/4630db9d-7a34-40eb-80ef-6e97da5d9c34",
-      "files": ["index.html", "writing-challenge-app.jsx"]
+      "files": [
+        "index.html",
+        "writing-challenge-app.jsx"
+      ]
     },
     {
       "id": "voice-studio",
@@ -291,7 +438,15 @@
       "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-studio",
       "type": "web-app",
       "created": "2026-01-23",
-      "tags": ["public-speaking", "toastmasters", "articulation", "voice", "speech-recognition", "react", "localstorage"],
+      "tags": [
+        "public-speaking",
+        "toastmasters",
+        "articulation",
+        "voice",
+        "speech-recognition",
+        "react",
+        "localstorage"
+      ],
       "status": "active",
       "access": {
         "method": "file",
@@ -301,7 +456,30 @@
         "requiresServer": false
       },
       "claudeSessionUrl": "https://claude.ai/chat/fd279de2-16d0-4423-b5df-68d869233830",
-      "files": ["index.html", "voice-studio.jsx"]
+      "files": [
+        "index.html",
+        "voice-studio.jsx"
+      ]
+    },
+    {
+      "id": "test-project-cli",
+      "name": "Test Project Updated",
+      "description": null,
+      "path": null,
+      "type": "web-app",
+      "created": "2026-01-23",
+      "tags": [],
+      "status": "archived",
+      "access": {
+        "method": null,
+        "url": null,
+        "hosted": null,
+        "requiresServer": false
+      },
+      "github": {
+        "repo": "https://github.com/test/repo",
+        "branch": null
+      }
     }
   ],
   "sharedResources": {
@@ -309,7 +487,20 @@
       "url": "https://ydwjzlikslebokuxzwco.supabase.co",
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU",
       "schemaFile": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/supabase-schema.sql",
-      "tables": ["reading_status", "notebooklm_notebooks", "notebooklm_assets", "notebooklm_transcripts", "notebooklm_summaries", "notebooklm_quizzes", "voice_memos", "voice_transcripts", "activity_logs", "pings", "device_state", "time_tracker_settings"]
+      "tables": [
+        "reading_status",
+        "notebooklm_notebooks",
+        "notebooklm_assets",
+        "notebooklm_transcripts",
+        "notebooklm_summaries",
+        "notebooklm_quizzes",
+        "voice_memos",
+        "voice_transcripts",
+        "activity_logs",
+        "pings",
+        "device_state",
+        "time_tracker_settings"
+      ]
     },
     "projectsIndex": {
       "localPath": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/projects.json",

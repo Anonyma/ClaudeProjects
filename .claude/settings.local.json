@@ -52,7 +52,16 @@
       "Bash(git branch:*)",
       "Bash(git push:*)",
       "Bash(git clone:*)",
-      "Bash(claude --teleport session_01QyJ6wVxnkezziPMEHA2xqS)"
+      "Bash(claude --teleport session_01QyJ6wVxnkezziPMEHA2xqS)",
+      "Bash(/Users/z/miniforge3/bin/pip install:*)",
+      "Bash(launch write)",
+      "Bash(/bin/bash:*)",
+      "Bash(sudo launchctl:*)",
+      "Bash(date:*)",
+      "Bash(at:*)",
+      "Bash(atq:*)",
+      "Bash(atrm:*)",
+      "Bash(mail:*)"
     ]
   }
 }
