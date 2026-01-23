@@ -1,0 +1,1252 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Mic, MicOff, Play, Pause, Square, ChevronRight, ChevronLeft, Clock, BookOpen, MessageCircle, Sparkles, Target, RotateCcw, Volume2, Lightbulb, CheckCircle, ArrowRight, Shuffle, Info, X, History, Trash2, AlertTriangle, Settings, Bell, BellOff, ChevronDown, ChevronUp } from 'lucide-react';
+
+// ============ DATA ============
+
+const TABLE_TOPICS = [
+  "Adventure", "Silence", "Tomorrow", "Courage", "Home", "Change", "Success", "Failure",
+  "Freedom", "Trust", "Memory", "Growth", "Balance", "Power", "Wonder", "Fear",
+  "Connection", "Simplicity", "Purpose", "Gratitude", "Challenge", "Dreams", "Legacy",
+  "Patience", "Creativity", "Resilience", "Boundaries", "Authenticity", "Momentum", "Serenity",
+  "Innovation", "Tradition", "Vulnerability", "Ambition", "Compassion", "Curiosity", "Discipline"
+];
+
+const STORY_PROMPTS = [
+  "A time you learned something unexpected from a stranger",
+  "The moment everything changed",
+  "A small decision that had big consequences",
+  "When you had to trust your instincts",
+  "A gift that meant more than its price",
+  "The day you surprised yourself",
+  "A misunderstanding that led somewhere good",
+  "When you found courage you didn't know you had"
+];
+
+const ESSAY_TOPICS = [
+  "Should we prioritize happiness or meaning in life?",
+  "Is technology making us more or less connected?",
+  "What role should tradition play in modern society?",
+  "Is failure necessary for success?",
+  "Should we follow our passion or be practical?",
+  "Does social media do more harm than good?",
+  "Is privacy a right worth fighting for?",
+  "Should education focus on skills or knowledge?"
+];
+
+const FILLER_WORDS = ["um", "uh", "like", "you know", "basically", "literally", "actually", "honestly", "i mean", "sort of", "kind of", "right", "so yeah"];
+
+const VOCABULARY_ENHANCEMENTS = {
+  transitions: [
+    { basic: "also", elevated: ["furthermore", "moreover", "additionally", "what's more"] },
+    { basic: "but", elevated: ["however", "nevertheless", "on the other hand", "conversely", "yet"] },
+    { basic: "so", elevated: ["therefore", "consequently", "as a result", "thus", "hence"] },
+    { basic: "because", elevated: ["since", "given that", "considering", "owing to the fact that"] },
+    { basic: "like", elevated: ["such as", "for instance", "to illustrate", "notably"] },
+    { basic: "first", elevated: ["to begin with", "initially", "at the outset", "primarily"] },
+    { basic: "in the end", elevated: ["ultimately", "in conclusion", "to summarize", "all things considered"] },
+    { basic: "I think", elevated: ["I would argue", "it seems to me", "I'm inclined to believe", "from my perspective"] }
+  ],
+  power_phrases: [
+    "The key insight here is...",
+    "What's particularly striking is...",
+    "This brings us to a crucial point...",
+    "Consider the implications of...",
+    "The underlying principle is...",
+    "What sets this apart is...",
+    "The evidence suggests...",
+    "Looking at the broader picture..."
+  ]
+};
+
+const MODES = {
+  tableTopics: {
+    id: 'tableTopics',
+    name: 'Table Topics',
+    subtitle: 'Impromptu Speaking',
+    icon: MessageCircle,
+    color: 'amber',
+    defaultTime: 120,
+    timeOptions: [60, 90, 120, 180],
+    description: 'Think on your feet. Receive a random word and speak about it for 1-3 minutes.'
+  },
+  spokenEssay: {
+    id: 'spokenEssay',
+    name: 'Spoken Essay',
+    subtitle: 'Structured Arguments',
+    icon: BookOpen,
+    color: 'blue',
+    defaultTime: 600,
+    timeOptions: [300, 600, 900, 1200],
+    description: 'Practice building and defending ideas with clear structure and logical flow.'
+  },
+  storytelling: {
+    id: 'storytelling',
+    name: 'Storytelling',
+    subtitle: 'Narrative Practice',
+    icon: Sparkles,
+    color: 'purple',
+    defaultTime: 300,
+    timeOptions: [180, 300, 420, 600],
+    description: 'Master the art of engaging narratives with compelling structure and emotional beats.'
+  },
+  freePractice: {
+    id: 'freePractice',
+    name: 'Free Practice',
+    subtitle: 'Open Session',
+    icon: Mic,
+    color: 'emerald',
+    defaultTime: 600,
+    timeOptions: [300, 600, 900, 1200],
+    description: 'Unstructured practice. Speak freely about anything and focus on articulation.'
+  }
+};
+
+// ============ GUIDES (with quick reference) ============
+
+const GUIDES = {
+  tableTopics: {
+    title: "Table Topics: The Rules",
+    quickRef: {
+      title: "Quick Structure",
+      steps: [
+        { name: "Opening", time: "10-15 sec", tip: "React to the word. State your angle." },
+        { name: "Body", time: "1-2 min", tip: "1-2 examples or stories. Go deep, not wide." },
+        { name: "Closing", time: "10-15 sec", tip: "Circle back. End memorably." }
+      ],
+      tips: [
+        "Pause 2-3 seconds before speaking",
+        "Connect to personal experience if stuck",
+        "Interpret the word creatively"
+      ]
+    },
+    sections: [
+      {
+        heading: "What is Table Topics?",
+        content: "A Toastmasters exercise where you receive a random word or topic and must speak about it immediately, without preparation. It trains you to think clearly under pressure and organize thoughts on the fly."
+      },
+      {
+        heading: "The Goal",
+        content: "Deliver a coherent 1-3 minute response that has a clear beginning, middle, and end. Don't worry about being perfect—worry about being clear and genuine."
+      },
+      {
+        heading: "Quick Structure",
+        list: [
+          "Opening (10-15 sec): React to the word. State your angle or interpretation.",
+          "Body (1-2 min): Give 1-2 examples, stories, or reasons. Go deep on one thing rather than shallow on many.",
+          "Closing (10-15 sec): Circle back. End with a memorable statement or call to action."
+        ]
+      },
+      {
+        heading: "Pro Tips",
+        list: [
+          "Pause before speaking. 2-3 seconds of silence is powerful, not awkward.",
+          "If stuck, connect the word to a personal experience.",
+          "It's okay to interpret the word creatively or metaphorically.",
+          "Avoid starting with \"So...\" or \"Um, I think...\""
+        ]
+      }
+    ]
+  },
+  spokenEssay: {
+    title: "Spoken Essay: The Framework",
+    quickRef: {
+      title: "Essay Structure",
+      steps: [
+        { name: "Hook", time: "30 sec", tip: "Grab attention: question, fact, or bold statement." },
+        { name: "Thesis", time: "30 sec", tip: "State your argument: \"I believe X because Y.\"" },
+        { name: "Point 1", time: "2 min", tip: "Strongest argument with evidence/example." },
+        { name: "Point 2", time: "2 min", tip: "Second angle with different evidence." },
+        { name: "Counter", time: "1 min", tip: "Acknowledge opposition, then rebut." },
+        { name: "Conclusion", time: "1 min", tip: "Restate differently. Broader implications." }
+      ],
+      tips: [
+        "One idea per section",
+        "Signal structure: \"My first point is...\"",
+        "Use specific examples over abstractions"
+      ]
+    },
+    sections: [
+      {
+        heading: "What is a Spoken Essay?",
+        content: "A structured verbal argument that defends a position. Unlike casual conversation, it follows a logical architecture that helps listeners follow your reasoning."
+      },
+      {
+        heading: "The Classic Structure",
+        list: [
+          "HOOK (30 sec): Grab attention with a question, surprising fact, or provocative statement.",
+          "THESIS (30 sec): State your main argument clearly. \"I believe X because Y.\"",
+          "BODY 1 (2 min): Your strongest supporting point with evidence or example.",
+          "BODY 2 (2 min): Second supporting point. Address a different angle.",
+          "COUNTERARGUMENT (1 min): Acknowledge the other side. Then explain why your position still holds.",
+          "CONCLUSION (1 min): Restate thesis differently. End with broader implications or call to action."
+        ]
+      },
+      {
+        heading: "Key Principles",
+        list: [
+          "One idea per section. Don't cram multiple arguments together.",
+          "Signal your structure: \"My first point is...\", \"This brings me to...\", \"Some might argue...\"",
+          "Use specific examples over abstract claims.",
+          "Vary your sentence length. Short sentences punch. Longer ones elaborate and provide nuance."
+        ]
+      },
+      {
+        heading: "Transition Phrases to Use",
+        list: [
+          "\"This brings us to a crucial point...\"",
+          "\"Consider the implications of...\"",
+          "\"What's particularly striking is...\"",
+          "\"Building on this idea...\""
+        ]
+      }
+    ]
+  },
+  storytelling: {
+    title: "Storytelling: The Arc",
+    quickRef: {
+      title: "Story Structure",
+      steps: [
+        { name: "Hook", time: "15 sec", tip: "Drop into action/emotion immediately." },
+        { name: "Setup", time: "45 sec", tip: "Who, where, what's at stake. Just enough." },
+        { name: "Conflict", time: "1-2 min", tip: "The struggle. This is the heart." },
+        { name: "Resolution", time: "45 sec", tip: "What happened? How did it end?" },
+        { name: "Reflection", time: "30 sec", tip: "What you learned. The universal truth." }
+      ],
+      tips: [
+        "Show, don't tell: \"hands shaking\" not \"nervous\"",
+        "Use sensory details",
+        "Slow down at emotional peaks"
+      ]
+    },
+    sections: [
+      {
+        heading: "Why Stories Matter",
+        content: "Stories are how humans make sense of experience. A well-told story creates emotional connection and makes ideas memorable. Facts inform; stories transform."
+      },
+      {
+        heading: "The Five-Beat Structure",
+        list: [
+          "THE HOOK (15 sec): Drop us into the action or emotion. \"I was standing at the edge when...\"",
+          "THE SETUP (45 sec): Give us just enough context. Who, where, what's at stake.",
+          "THE CONFLICT (1-2 min): The struggle, challenge, or turning point. This is the heart.",
+          "THE RESOLUTION (45 sec): What happened? How did it end?",
+          "THE REFLECTION (30 sec): What did you learn? Why does it matter? The universal truth."
+        ]
+      },
+      {
+        heading: "Storytelling Techniques",
+        list: [
+          "Show, don't tell: \"My hands were shaking\" not \"I was nervous\"",
+          "Use sensory details: What did you see, hear, feel?",
+          "Create tension: What could go wrong? What's uncertain?",
+          "Use dialogue sparingly but powerfully",
+          "Vary your pacing: Slow down at emotional peaks"
+        ]
+      },
+      {
+        heading: "Common Pitfalls",
+        list: [
+          "Too much backstory before the action",
+          "No clear stakes or conflict",
+          "Ending with \"And that's my story\" instead of insight",
+          "Rushing through the emotional moments"
+        ]
+      }
+    ]
+  },
+  freePractice: {
+    title: "Free Practice: Guidelines",
+    quickRef: {
+      title: "Focus Areas",
+      steps: [
+        { name: "Clarity", time: "", tip: "Complete your sentences fully." },
+        { name: "Pace", time: "", tip: "Pause instead of using fillers." },
+        { name: "Vocabulary", time: "", tip: "Try power phrases from suggestions." }
+      ],
+      tips: [
+        "Explain something you recently learned",
+        "Summarize a book or article",
+        "Practice introductions"
+      ]
+    },
+    sections: [
+      {
+        heading: "Purpose",
+        content: "This is your sandbox. Practice articulating thoughts clearly without the pressure of following a specific structure. Focus on reducing filler words and speaking with intention."
+      },
+      {
+        heading: "Ideas for Practice",
+        list: [
+          "Explain a concept you recently learned",
+          "Describe your opinion on something you read",
+          "Practice introducing yourself in different contexts",
+          "Summarize a book, movie, or conversation",
+          "Think out loud about a decision you're facing"
+        ]
+      },
+      {
+        heading: "Focus Areas",
+        list: [
+          "Minimize filler words: \"um\", \"like\", \"you know\", \"basically\"",
+          "Practice pausing instead of filling silence",
+          "Work on sentence completion—finish your thoughts",
+          "Experiment with vocabulary from the suggestions panel"
+        ]
+      }
+    ]
+  }
+};
+
+// ============ UTILITIES ============
+
+const formatTime = (seconds) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+const getColorClasses = (color) => ({
+  amber: { bg: 'bg-amber-500', bgLight: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200', ring: 'ring-amber-500' },
+  blue: { bg: 'bg-blue-500', bgLight: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', ring: 'ring-blue-500' },
+  purple: { bg: 'bg-purple-500', bgLight: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200', ring: 'ring-purple-500' },
+  emerald: { bg: 'bg-emerald-500', bgLight: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200', ring: 'ring-emerald-500' }
+})[color];
+
+// Detect filler words in text
+const detectFillers = (text) => {
+  const lowerText = text.toLowerCase();
+  const found = [];
+  FILLER_WORDS.forEach(filler => {
+    const regex = new RegExp(`\\b${filler}\\b`, 'gi');
+    const matches = lowerText.match(regex);
+    if (matches) {
+      found.push({ word: filler, count: matches.length });
+    }
+  });
+  return found;
+};
+
+// ============ COMPONENTS ============
+
+function ModeCard({ mode, onClick }) {
+  const colors = getColorClasses(mode.color);
+  const Icon = mode.icon;
+  
+  return (
+    <button
+      onClick={onClick}
+      className={`group relative w-full text-left p-6 rounded-2xl border-2 ${colors.border} ${colors.bgLight} hover:border-opacity-100 border-opacity-50 transition-all duration-300 hover:shadow-lg active:scale-98`}
+    >
+      <div className={`inline-flex p-3 rounded-xl ${colors.bg} text-white mb-4`}>
+        <Icon size={24} />
+      </div>
+      <h3 className="text-xl font-semibold text-slate-800 mb-1">{mode.name}</h3>
+      <p className={`text-sm ${colors.text} font-medium mb-2`}>{mode.subtitle}</p>
+      <p className="text-sm text-slate-500 leading-relaxed">{mode.description}</p>
+      <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 group-hover:text-slate-500 transition-all" />
+    </button>
+  );
+}
+
+function GuideView({ mode, onStart, onBack, settings, setSettings }) {
+  const guide = GUIDES[mode.id];
+  const colors = getColorClasses(mode.color);
+  const [selectedTime, setSelectedTime] = useState(mode.defaultTime);
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        {/* Header */}
+        <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-700 mb-4 transition-colors">
+          <ChevronLeft size={20} />
+          <span>Back to modes</span>
+        </button>
+        
+        <div className={`inline-flex p-3 rounded-xl ${colors.bg} text-white mb-4`}>
+          {React.createElement(mode.icon, { size: 28 })}
+        </div>
+        
+        <h1 className="text-2xl font-bold text-slate-800 mb-2">{guide.title}</h1>
+        <p className="text-slate-500 mb-6">Read through the guide, then start when ready.</p>
+        
+        {/* Guide Content */}
+        <div className="space-y-4 mb-6">
+          {guide.sections.map((section, idx) => (
+            <div key={idx} className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+              <h2 className="text-base font-semibold text-slate-800 mb-2 flex items-center gap-2">
+                <span className={`w-6 h-6 rounded-full ${colors.bg} text-white text-xs flex items-center justify-center flex-shrink-0`}>
+                  {idx + 1}
+                </span>
+                {section.heading}
+              </h2>
+              {section.content && (
+                <p className="text-slate-600 leading-relaxed text-sm">{section.content}</p>
+              )}
+              {section.list && (
+                <ul className="space-y-1.5">
+                  {section.list.map((item, i) => (
+                    <li key={i} className="flex gap-2 text-slate-600 text-sm">
+                      <span className={`${colors.text} mt-0.5`}>•</span>
+                      <span className="leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+        
+        {/* Settings */}
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 mb-4">
+          <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+            <Settings size={18} className="text-slate-500" />
+            Session Settings
+          </h3>
+          
+          {/* Time Selection */}
+          <div className="mb-4">
+            <label className="text-sm text-slate-600 mb-2 block">Duration</label>
+            <div className="flex flex-wrap gap-2">
+              {mode.timeOptions.map(time => (
+                <button
+                  key={time}
+                  onClick={() => setSelectedTime(time)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    selectedTime === time
+                      ? `${colors.bg} text-white`
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {formatTime(time)}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Filler Word Alert Toggle */}
+          <div className="flex items-center justify-between py-3 border-t border-slate-100">
+            <div className="flex items-center gap-3">
+              {settings.fillerAlerts ? <Bell size={18} className="text-amber-500" /> : <BellOff size={18} className="text-slate-400" />}
+              <div>
+                <p className="text-sm font-medium text-slate-700">Filler Word Alerts</p>
+                <p className="text-xs text-slate-500">Flash warning when you say "um", "like", etc.</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setSettings({ ...settings, fillerAlerts: !settings.fillerAlerts })}
+              className={`w-12 h-7 rounded-full transition-colors ${settings.fillerAlerts ? colors.bg : 'bg-slate-200'}`}
+            >
+              <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${settings.fillerAlerts ? 'translate-x-6' : 'translate-x-1'}`} />
+            </button>
+          </div>
+        </div>
+        
+        {/* Start Button */}
+        <button
+          onClick={() => onStart(selectedTime)}
+          className={`w-full py-4 rounded-xl ${colors.bg} text-white font-semibold text-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-lg`}
+        >
+          Start Practice
+          <ArrowRight size={20} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Quick Reference Panel (expandable during practice)
+function QuickRefPanel({ mode, isExpanded, onToggle }) {
+  const guide = GUIDES[mode.id];
+  const colors = getColorClasses(mode.color);
+  const quickRef = guide.quickRef;
+  
+  if (!quickRef) return null;
+  
+  return (
+    <div className="bg-slate-700/80 rounded-xl overflow-hidden mb-4">
+      <button
+        onClick={onToggle}
+        className="w-full px-4 py-3 flex items-center justify-between text-left"
+      >
+        <span className="text-sm font-medium text-slate-200 flex items-center gap-2">
+          <Info size={16} />
+          {quickRef.title}
+        </span>
+        {isExpanded ? <ChevronUp size={18} className="text-slate-400" /> : <ChevronDown size={18} className="text-slate-400" />}
+      </button>
+      
+      {isExpanded && (
+        <div className="px-4 pb-4 space-y-3">
+          {/* Structure Steps */}
+          <div className="space-y-2">
+            {quickRef.steps.map((step, i) => (
+              <div key={i} className="flex items-start gap-3 text-sm">
+                <span className={`px-2 py-0.5 rounded ${colors.bg} text-white text-xs font-medium flex-shrink-0`}>
+                  {i + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-white">{step.name}</span>
+                    {step.time && <span className="text-slate-400 text-xs">({step.time})</span>}
+                  </div>
+                  <p className="text-slate-300 text-xs">{step.tip}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Quick Tips */}
+          <div className="pt-2 border-t border-slate-600">
+            <p className="text-xs text-slate-400 mb-1">Quick tips:</p>
+            <ul className="space-y-1">
+              {quickRef.tips.map((tip, i) => (
+                <li key={i} className="text-xs text-slate-300 flex gap-2">
+                  <span className="text-slate-500">•</span>
+                  {tip}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Filler Word Alert Component
+function FillerAlert({ show, word }) {
+  if (!show) return null;
+  
+  return (
+    <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-50">
+      <div className="bg-red-500/90 text-white px-8 py-4 rounded-2xl shadow-2xl animate-pulse">
+        <div className="flex items-center gap-3">
+          <AlertTriangle size={28} />
+          <div>
+            <p className="text-lg font-bold">Filler detected!</p>
+            <p className="text-sm opacity-90">"{word}" — try pausing instead</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PracticeView({ mode, duration, onEnd, onBack, settings }) {
+  const colors = getColorClasses(mode.color);
+  const [isActive, setIsActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(duration);
+  const [transcript, setTranscript] = useState('');
+  const [currentPrompt, setCurrentPrompt] = useState('');
+  const [wordCount, setWordCount] = useState(0);
+  const [showQuickRef, setShowQuickRef] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(true);
+  const [manualMode, setManualMode] = useState(false);
+  const [fillerAlert, setFillerAlert] = useState({ show: false, word: '' });
+  const [fillerCount, setFillerCount] = useState(0);
+  const [lastTranscriptLength, setLastTranscriptLength] = useState(0);
+  
+  const recognitionRef = useRef(null);
+  const timerRef = useRef(null);
+  const fillerTimeoutRef = useRef(null);
+  
+  // Initialize prompt
+  useEffect(() => {
+    if (mode.id === 'tableTopics') {
+      setCurrentPrompt(getRandomItem(TABLE_TOPICS));
+    } else if (mode.id === 'storytelling') {
+      setCurrentPrompt(getRandomItem(STORY_PROMPTS));
+    } else if (mode.id === 'spokenEssay') {
+      setCurrentPrompt(getRandomItem(ESSAY_TOPICS));
+    }
+  }, [mode.id]);
+  
+  // Check for filler words in real-time
+  useEffect(() => {
+    if (!settings.fillerAlerts || !isActive || isPaused) return;
+    
+    // Only check new content
+    const newContent = transcript.slice(lastTranscriptLength).toLowerCase();
+    if (newContent.length < 2) return;
+    
+    for (const filler of FILLER_WORDS) {
+      if (newContent.includes(filler)) {
+        setFillerCount(c => c + 1);
+        setFillerAlert({ show: true, word: filler });
+        
+        // Clear alert after 1.5 seconds
+        if (fillerTimeoutRef.current) clearTimeout(fillerTimeoutRef.current);
+        fillerTimeoutRef.current = setTimeout(() => {
+          setFillerAlert({ show: false, word: '' });
+        }, 1500);
+        break;
+      }
+    }
+    
+    setLastTranscriptLength(transcript.length);
+  }, [transcript, settings.fillerAlerts, isActive, isPaused, lastTranscriptLength]);
+  
+  // Speech recognition setup
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      setSpeechSupported(false);
+      return;
+    }
+    
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+    
+    let finalTranscriptAccumulated = '';
+    
+    recognition.onresult = (event) => {
+      let interimTranscript = '';
+      
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        if (result.isFinal) {
+          finalTranscriptAccumulated += result[0].transcript + ' ';
+        } else {
+          interimTranscript += result[0].transcript;
+        }
+      }
+      
+      const fullText = finalTranscriptAccumulated + interimTranscript;
+      setTranscript(fullText);
+      setWordCount(fullText.trim().split(/\s+/).filter(w => w.length > 0).length);
+    };
+    
+    recognition.onerror = (event) => {
+      console.log('Speech recognition error:', event.error);
+      // Don't stop on no-speech errors, just continue
+      if (event.error === 'not-allowed' || event.error === 'service-not-available') {
+        setSpeechSupported(false);
+        setManualMode(true);
+      }
+    };
+    
+    recognition.onend = () => {
+      // Auto-restart if still active and not paused
+      if (isActive && !isPaused && recognitionRef.current) {
+        try {
+          recognition.start();
+        } catch (e) {
+          console.log('Could not restart recognition');
+        }
+      }
+    };
+    
+    recognitionRef.current = recognition;
+    
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+      }
+      if (fillerTimeoutRef.current) {
+        clearTimeout(fillerTimeoutRef.current);
+      }
+    };
+  }, [isActive, isPaused]);
+  
+  // Timer
+  useEffect(() => {
+    if (isActive && !isPaused && timeRemaining > 0) {
+      timerRef.current = setInterval(() => {
+        setTimeRemaining(t => {
+          if (t <= 1) {
+            return 0;
+          }
+          return t - 1;
+        });
+      }, 1000);
+    }
+    
+    return () => clearInterval(timerRef.current);
+  }, [isActive, isPaused]);
+  
+  const startSession = () => {
+    setIsActive(true);
+    setIsPaused(false);
+    
+    if (speechSupported && recognitionRef.current && !manualMode) {
+      try {
+        recognitionRef.current.start();
+      } catch (e) {
+        console.log('Could not start recognition, switching to manual mode');
+        setManualMode(true);
+      }
+    }
+  };
+  
+  const togglePause = () => {
+    if (isPaused) {
+      setIsPaused(false);
+      if (speechSupported && recognitionRef.current && !manualMode) {
+        try {
+          recognitionRef.current.start();
+        } catch (e) {}
+      }
+    } else {
+      setIsPaused(true);
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+      }
+    }
+  };
+  
+  const endSession = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {}
+    }
+    clearInterval(timerRef.current);
+    setIsActive(false);
+    onEnd({ 
+      transcript, 
+      wordCount, 
+      timeUsed: duration - timeRemaining, 
+      prompt: currentPrompt,
+      fillerCount,
+      manualMode 
+    });
+  };
+  
+  const shufflePrompt = () => {
+    if (mode.id === 'tableTopics') {
+      setCurrentPrompt(getRandomItem(TABLE_TOPICS));
+    } else if (mode.id === 'storytelling') {
+      setCurrentPrompt(getRandomItem(STORY_PROMPTS));
+    } else if (mode.id === 'spokenEssay') {
+      setCurrentPrompt(getRandomItem(ESSAY_TOPICS));
+    }
+  };
+  
+  const progress = 1 - (timeRemaining / duration);
+  const isTimeUp = timeRemaining === 0;
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-800 to-slate-900 text-white">
+      {/* Filler Alert Overlay */}
+      <FillerAlert show={fillerAlert.show} word={fillerAlert.word} />
+      
+      <div className="max-w-4xl mx-auto px-4 py-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={onBack} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+            <ChevronLeft size={20} />
+            <span>Exit</span>
+          </button>
+          <div className="flex items-center gap-2">
+            {settings.fillerAlerts && fillerCount > 0 && (
+              <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs rounded-full">
+                {fillerCount} fillers
+              </span>
+            )}
+            <div className={`px-3 py-1 rounded-full ${colors.bgLight} ${colors.text} text-sm font-medium`}>
+              {mode.name}
+            </div>
+          </div>
+        </div>
+        
+        {/* Timer */}
+        <div className="text-center mb-4">
+          <div className={`text-5xl font-mono font-bold ${isTimeUp ? 'text-red-400' : timeRemaining < 30 ? 'text-amber-400' : 'text-white'}`}>
+            {formatTime(timeRemaining)}
+          </div>
+          <div className="mt-2 h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div 
+              className={`h-full ${colors.bg} transition-all duration-1000`}
+              style={{ width: `${progress * 100}%` }}
+            />
+          </div>
+          {isTimeUp && <p className="text-amber-400 mt-2 text-sm">Time's up! Keep going or end session.</p>}
+        </div>
+        
+        {/* Prompt */}
+        {currentPrompt && (
+          <div className={`${colors.bgLight} rounded-xl p-4 mb-4 text-center`}>
+            <p className="text-xs uppercase tracking-wider text-slate-500 mb-1">Your Prompt</p>
+            <p className={`text-xl font-semibold ${colors.text}`}>{currentPrompt}</p>
+            {!isActive && (
+              <button onClick={shufflePrompt} className="mt-2 text-slate-500 hover:text-slate-700 flex items-center gap-1 mx-auto text-sm">
+                <Shuffle size={14} /> New prompt
+              </button>
+            )}
+          </div>
+        )}
+        
+        {/* Quick Reference (expandable) */}
+        <QuickRefPanel 
+          mode={mode} 
+          isExpanded={showQuickRef} 
+          onToggle={() => setShowQuickRef(!showQuickRef)} 
+        />
+        
+        {/* Main Control - Not Started */}
+        {!isActive ? (
+          <div className="text-center py-8">
+            <button
+              onClick={startSession}
+              className={`w-28 h-28 rounded-full ${colors.bg} text-white flex items-center justify-center mx-auto shadow-lg hover:opacity-90 transition-all active:scale-95`}
+            >
+              <Mic size={44} />
+            </button>
+            <p className="mt-4 text-slate-400">Tap to start speaking</p>
+            
+            {!speechSupported && (
+              <div className="mt-4 p-3 bg-amber-500/20 border border-amber-500/30 rounded-xl text-amber-300 text-sm max-w-sm mx-auto">
+                <p className="font-medium">Voice recognition unavailable</p>
+                <p className="text-xs mt-1 text-amber-400">Timer will still work. Focus on practice — you won't get a transcript.</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            {/* Listening Indicator */}
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${isPaused ? 'bg-amber-500/20 text-amber-400' : 'bg-green-500/20 text-green-400'}`}>
+                {isPaused ? <MicOff size={18} /> : <Mic size={18} className="animate-pulse" />}
+                {isPaused ? 'Paused' : manualMode ? 'Timer running' : 'Listening...'}
+              </div>
+              <div className="text-slate-400 text-sm">
+                {wordCount} words
+              </div>
+            </div>
+            
+            {/* Transcript */}
+            <div className="bg-slate-700/50 rounded-xl p-4 mb-4 min-h-[150px] max-h-[200px] overflow-y-auto">
+              {transcript ? (
+                <p className="text-base leading-relaxed text-slate-200">{transcript}</p>
+              ) : (
+                <p className="text-slate-500 italic text-sm">
+                  {manualMode ? "Timer is running — focus on your practice!" : "Your words will appear here..."}
+                </p>
+              )}
+            </div>
+            
+            {/* Controls */}
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={togglePause}
+                className={`p-4 rounded-full ${isPaused ? 'bg-green-500' : 'bg-amber-500'} text-white shadow-lg hover:opacity-90 transition-opacity active:scale-95`}
+              >
+                {isPaused ? <Play size={24} /> : <Pause size={24} />}
+              </button>
+              <button
+                onClick={endSession}
+                className="p-4 rounded-full bg-red-500 text-white shadow-lg hover:opacity-90 transition-opacity active:scale-95"
+              >
+                <Square size={24} />
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ReviewView({ mode, sessionData, onBack, onNewSession }) {
+  const colors = getColorClasses(mode.color);
+  const { transcript, wordCount, timeUsed, prompt, fillerCount, manualMode } = sessionData;
+  
+  // Analyze transcript for vocabulary suggestions
+  const getVocabSuggestions = () => {
+    if (!transcript || transcript.length < 10) return { upgrades: [], fillers: {} };
+    
+    const suggestions = [];
+    const lowerTranscript = transcript.toLowerCase();
+    
+    VOCABULARY_ENHANCEMENTS.transitions.forEach(t => {
+      if (lowerTranscript.includes(t.basic)) {
+        suggestions.push({
+          type: 'upgrade',
+          original: t.basic,
+          alternatives: t.elevated
+        });
+      }
+    });
+    
+    const fillerCounts = {};
+    FILLER_WORDS.forEach(filler => {
+      const regex = new RegExp(`\\b${filler}\\b`, 'gi');
+      const matches = transcript.match(regex);
+      if (matches && matches.length > 0) {
+        fillerCounts[filler] = matches.length;
+      }
+    });
+    
+    return { upgrades: suggestions.slice(0, 5), fillers: fillerCounts };
+  };
+  
+  const vocab = getVocabSuggestions();
+  const hasFillers = Object.keys(vocab.fillers).length > 0;
+  
+  // Save to history
+  useEffect(() => {
+    const history = JSON.parse(localStorage.getItem('voiceStudioHistory') || '[]');
+    history.unshift({
+      id: Date.now(),
+      mode: mode.id,
+      modeName: mode.name,
+      prompt,
+      transcript: transcript || '(no transcript)',
+      wordCount,
+      timeUsed,
+      fillerCount: fillerCount || 0,
+      date: new Date().toISOString()
+    });
+    localStorage.setItem('voiceStudioHistory', JSON.stringify(history.slice(0, 50)));
+  }, []);
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className={`inline-flex p-3 rounded-xl ${colors.bg} text-white mb-3`}>
+            <CheckCircle size={28} />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-800 mb-1">Session Complete!</h1>
+          <p className="text-slate-500 text-sm">Here's how you did</p>
+        </div>
+        
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="bg-white rounded-xl p-3 text-center shadow-sm">
+            <p className="text-2xl font-bold text-slate-800">{wordCount}</p>
+            <p className="text-xs text-slate-500">words</p>
+          </div>
+          <div className="bg-white rounded-xl p-3 text-center shadow-sm">
+            <p className="text-2xl font-bold text-slate-800">{formatTime(timeUsed)}</p>
+            <p className="text-xs text-slate-500">time</p>
+          </div>
+          <div className="bg-white rounded-xl p-3 text-center shadow-sm">
+            <p className={`text-2xl font-bold ${(fillerCount || 0) > 5 ? 'text-red-500' : (fillerCount || 0) > 0 ? 'text-amber-500' : 'text-green-500'}`}>
+              {fillerCount || 0}
+            </p>
+            <p className="text-xs text-slate-500">fillers</p>
+          </div>
+        </div>
+        
+        {/* Prompt Used */}
+        {prompt && (
+          <div className={`${colors.bgLight} rounded-xl p-4 mb-4`}>
+            <p className="text-xs uppercase tracking-wider text-slate-500 mb-1">Prompt</p>
+            <p className={`font-medium ${colors.text}`}>{prompt}</p>
+          </div>
+        )}
+        
+        {/* Transcript */}
+        {transcript && transcript.length > 10 && (
+          <div className="bg-white rounded-xl p-5 shadow-sm mb-4">
+            <h3 className="font-semibold text-slate-800 mb-2 flex items-center gap-2 text-sm">
+              <Volume2 size={16} className="text-slate-500" />
+              Your Transcript
+            </h3>
+            <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-wrap">
+              {transcript}
+            </p>
+          </div>
+        )}
+        
+        {manualMode && (
+          <div className="bg-slate-100 rounded-xl p-4 mb-4 text-center">
+            <p className="text-slate-600 text-sm">Voice recognition wasn't available this session, but you still practiced! That's what counts.</p>
+          </div>
+        )}
+        
+        {/* Vocabulary Suggestions */}
+        {transcript && transcript.length > 10 && (
+          <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
+            <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2 text-sm">
+              <Lightbulb size={16} className="text-amber-500" />
+              Vocabulary Enhancement
+            </h3>
+            
+            {hasFillers && (
+              <div className="mb-4">
+                <p className="text-xs font-medium text-slate-700 mb-2">Filler words detected:</p>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(vocab.fillers).map(([filler, count]) => (
+                    <span key={filler} className="px-2 py-1 bg-red-50 text-red-600 rounded-full text-xs">
+                      "{filler}" × {count}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500 mt-2">Try pausing instead of using filler words.</p>
+              </div>
+            )}
+            
+            {vocab.upgrades.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs font-medium text-slate-700 mb-2">Vocabulary upgrades:</p>
+                <div className="space-y-2">
+                  {vocab.upgrades.map((s, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs flex-wrap">
+                      <span className="px-2 py-1 bg-slate-100 rounded text-slate-600">"{s.original}"</span>
+                      <span className="text-slate-400 py-1">→</span>
+                      <div className="flex flex-wrap gap-1">
+                        {s.alternatives.slice(0, 3).map((alt, j) => (
+                          <span key={j} className={`px-2 py-1 ${colors.bgLight} ${colors.text} rounded`}>
+                            {alt}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Power Phrases */}
+            <div className="pt-3 border-t border-slate-100">
+              <p className="text-xs font-medium text-slate-700 mb-2">Power phrases to try next time:</p>
+              <div className="flex flex-wrap gap-1">
+                {VOCABULARY_ENHANCEMENTS.power_phrases.slice(0, 3).map((phrase, i) => (
+                  <span key={i} className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded text-xs">
+                    {phrase}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Actions */}
+        <div className="flex gap-3">
+          <button
+            onClick={onBack}
+            className="flex-1 py-3 rounded-xl border-2 border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors"
+          >
+            Back to Modes
+          </button>
+          <button
+            onClick={onNewSession}
+            className={`flex-1 py-3 rounded-xl ${colors.bg} text-white font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2`}
+          >
+            <RotateCcw size={18} />
+            Again
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HistoryView({ onBack }) {
+  const [history, setHistory] = useState([]);
+  
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('voiceStudioHistory') || '[]');
+    setHistory(saved);
+  }, []);
+  
+  const clearHistory = () => {
+    if (confirm('Clear all history?')) {
+      localStorage.removeItem('voiceStudioHistory');
+      setHistory([]);
+    }
+  };
+  
+  const deleteEntry = (id) => {
+    const updated = history.filter(h => h.id !== id);
+    localStorage.setItem('voiceStudioHistory', JSON.stringify(updated));
+    setHistory(updated);
+  };
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-700 mb-4 transition-colors">
+          <ChevronLeft size={20} />
+          <span>Back</span>
+        </button>
+        
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-bold text-slate-800">Practice History</h1>
+          {history.length > 0 && (
+            <button onClick={clearHistory} className="text-xs text-red-500 hover:text-red-600">
+              Clear all
+            </button>
+          )}
+        </div>
+        
+        {history.length === 0 ? (
+          <div className="text-center py-12">
+            <History size={48} className="text-slate-300 mx-auto mb-4" />
+            <p className="text-slate-500">No practice sessions yet</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {history.map(session => {
+              const mode = MODES[session.mode];
+              const colors = mode ? getColorClasses(mode.color) : getColorClasses('emerald');
+              return (
+                <div key={session.id} className="bg-white rounded-xl p-4 shadow-sm">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <span className={`px-2 py-0.5 text-xs rounded-full ${colors?.bgLight} ${colors?.text}`}>
+                        {session.modeName}
+                      </span>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {new Date(session.date).toLocaleDateString()} • {new Date(session.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                    <button onClick={() => deleteEntry(session.id)} className="text-slate-300 hover:text-red-500 p-1">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                  {session.prompt && (
+                    <p className="text-sm font-medium text-slate-700 mb-1">"{session.prompt}"</p>
+                  )}
+                  <p className="text-xs text-slate-500 line-clamp-2">{session.transcript}</p>
+                  <div className="flex gap-4 mt-2 text-xs text-slate-400">
+                    <span>{session.wordCount} words</span>
+                    <span>{formatTime(session.timeUsed)}</span>
+                    {session.fillerCount > 0 && (
+                      <span className="text-amber-500">{session.fillerCount} fillers</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============ MAIN APP ============
+
+export default function VoiceStudio() {
+  const [view, setView] = useState('home');
+  const [selectedMode, setSelectedMode] = useState(null);
+  const [sessionDuration, setSessionDuration] = useState(null);
+  const [sessionData, setSessionData] = useState(null);
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem('voiceStudioSettings');
+    return saved ? JSON.parse(saved) : { fillerAlerts: true };
+  });
+  
+  // Save settings
+  useEffect(() => {
+    localStorage.setItem('voiceStudioSettings', JSON.stringify(settings));
+  }, [settings]);
+  
+  const selectMode = (mode) => {
+    setSelectedMode(mode);
+    setView('guide');
+  };
+  
+  const startPractice = (duration) => {
+    setSessionDuration(duration);
+    setView('practice');
+  };
+  
+  const endPractice = (data) => {
+    setSessionData(data);
+    setView('review');
+  };
+  
+  const goHome = () => {
+    setView('home');
+    setSelectedMode(null);
+    setSessionDuration(null);
+    setSessionData(null);
+  };
+  
+  // Home View
+  if (view === 'home') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+        <div className="max-w-2xl mx-auto px-4 py-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white mb-4 shadow-lg">
+              <Volume2 size={32} />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-800 mb-1">Voice Studio</h1>
+            <p className="text-slate-500 text-sm">Practice articulation & public speaking</p>
+          </div>
+          
+          {/* Mode Selection */}
+          <div className="space-y-3 mb-6">
+            {Object.values(MODES).map(mode => (
+              <ModeCard key={mode.id} mode={mode} onClick={() => selectMode(mode)} />
+            ))}
+          </div>
+          
+          {/* History Link */}
+          <button
+            onClick={() => setView('history')}
+            className="w-full py-3 rounded-xl bg-slate-100 text-slate-600 font-medium hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
+          >
+            <History size={18} />
+            View Practice History
+          </button>
+          
+          {/* Browser Support Note */}
+          {!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window) && (
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs">
+              <strong>Note:</strong> Voice recognition works best in Chrome or Edge. Timer will still work in other browsers.
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+  
+  if (view === 'history') {
+    return <HistoryView onBack={goHome} />;
+  }
+  
+  if (view === 'guide' && selectedMode) {
+    return (
+      <GuideView
+        mode={selectedMode}
+        onStart={startPractice}
+        onBack={goHome}
+        settings={settings}
+        setSettings={setSettings}
+      />
+    );
+  }
+  
+  if (view === 'practice' && selectedMode) {
+    return (
+      <PracticeView
+        mode={selectedMode}
+        duration={sessionDuration}
+        onEnd={endPractice}
+        onBack={goHome}
+        settings={settings}
+      />
+    );
+  }
+  
+  if (view === 'review' && selectedMode && sessionData) {
+    return (
+      <ReviewView
+        mode={selectedMode}
+        sessionData={sessionData}
+        onBack={goHome}
+        onNewSession={() => setView('guide')}
+      />
+    );
+  }
+  
+  return null;
+}

@@ -264,6 +264,44 @@
         "tables": ["activity_logs", "pings", "device_state", "time_tracker_settings"]
       },
       "files": ["CLAUDE.md", "mac-app/app.py", "mac-app/afk_detector.py", "mac-app/supabase_client.py", "dashboard/index.html", "supabase/schema.sql", "ios-shortcut/README.md"]
+    },
+    {
+      "id": "writing-challenge",
+      "name": "Writing Challenge App",
+      "description": "Daily writing challenge app with word/character/time goals, pomodoro timers, stats tracking (calendar, weekly, yearly views), Ideas page for future writing topics, and markdown export. React-based with localStorage persistence.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/writing-challenge",
+      "type": "web-app",
+      "created": "2026-01-23",
+      "tags": ["writing", "productivity", "habit-tracker", "pomodoro", "goals", "react", "localstorage"],
+      "status": "active",
+      "access": {
+        "method": "file",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/writing-challenge/index.html",
+        "instructions": "Open directly in browser. All data persists in localStorage. Export/import available in Settings.",
+        "hosted": null,
+        "requiresServer": false
+      },
+      "claudeSessionUrl": "https://claude.ai/chat/4630db9d-7a34-40eb-80ef-6e97da5d9c34",
+      "files": ["index.html", "writing-challenge-app.jsx"]
+    },
+    {
+      "id": "voice-studio",
+      "name": "Voice Studio - Public Speaking Practice",
+      "description": "Public speaking practice app with 4 modes: Table Topics (impromptu), Spoken Essay (structured arguments), Storytelling (narratives), Free Practice. Features Web Speech API for real-time transcription, filler word detection with alerts, vocabulary suggestions, and practice history.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-studio",
+      "type": "web-app",
+      "created": "2026-01-23",
+      "tags": ["public-speaking", "toastmasters", "articulation", "voice", "speech-recognition", "react", "localstorage"],
+      "status": "active",
+      "access": {
+        "method": "file",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-studio/index.html",
+        "instructions": "Open directly in browser (Chrome/Edge recommended for voice recognition). All practice history persists in localStorage.",
+        "hosted": null,
+        "requiresServer": false
+      },
+      "claudeSessionUrl": "https://claude.ai/chat/fd279de2-16d0-4423-b5df-68d869233830",
+      "files": ["index.html", "voice-studio.jsx"]
     }
   ],
   "sharedResources": {
