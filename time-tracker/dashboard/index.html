@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #252542;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0b0;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --border: #333355;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-dot.offline {
+            background: var(--error);
+            animation: none;
+        }
+
+        /* Quick Log Section */
+        .quick-log {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .quick-log h2 {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .log-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .log-input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .log-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .log-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-primary:disabled {
+            background: var(--bg-tertiary);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        /* Tags */
+        .tags-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag-chip {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-chip:hover, .tag-chip.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            margin-bottom: 30px;
+        }
+
+        .timeline-section h2 {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .timeline-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .timeline-time {
+            flex-shrink: 0;
+            width: 70px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-activity {
+            margin-bottom: 4px;
+        }
+
+        .timeline-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .timeline-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .badge-ping { background: var(--accent); color: white; }
+        .badge-manual { background: var(--success); color: white; }
+        .badge-afk { background: var(--warning); color: black; }
+
+        .device-icon {
+            opacity: 0.6;
+        }
+
+        /* Date Divider */
+        .date-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0 16px 0;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .date-divider::before,
+        .date-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 24px;
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 12px 24px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--error); }
+
+        /* Settings Panel */
+        .settings-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .settings-toggle:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 12px; }
+            .input-row { flex-direction: column; }
+            .stats-bar { flex-wrap: wrap; justify-content: center; }
+            .timeline-item { flex-direction: column; gap: 8px; }
+            .timeline-time { width: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <span class="status-dot" id="statusDot"></span>
+                Time Tracker
+            </h1>
+            <button class="settings-toggle" onclick="toggleSettings()" title="Settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Quick Log -->
+        <section class="quick-log">
+            <h2>What are you doing?</h2>
+            <form class="log-form" onsubmit="submitLog(event)">
+                <div class="input-row">
+                    <input type="text" class="log-input" id="activityInput" placeholder="Working on time tracker app..." autocomplete="off" autofocus>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Log</button>
+                </div>
+                <div class="tags-row" id="tagsRow">
+                    <span class="tag-chip" data-tag="work">work</span>
+                    <span class="tag-chip" data-tag="personal">personal</span>
+                    <span class="tag-chip" data-tag="break">break</span>
+                    <span class="tag-chip" data-tag="meeting">meeting</span>
+                    <span class="tag-chip" data-tag="learning">learning</span>
+                </div>
+            </form>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <div class="stat-value" id="todayCount">-</div>
+                <div class="stat-label">Today</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="weekCount">-</div>
+                <div class="stat-label">This Week</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="streakCount">-</div>
+                <div class="stat-label">Day Streak</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="responseRate">-</div>
+                <div class="stat-label">Ping Response</div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="timeline-section">
+            <h2>Activity Timeline</h2>
+            <div id="timeline" class="timeline">
+                <div class="loading"><div class="spinner"></div></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Supabase configuration
+        const SUPABASE_URL = 'https://ydwjzlikslebokuxzwco.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU';
+
+        // State
+        let selectedTags = [];
+        let activities = [];
+        let isOnline = true;
+
+        // API helpers
+        async function supabaseRequest(endpoint, options = {}) {
+            const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
+            const headers = {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': options.prefer || 'return=representation'
+            };
+
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: { ...headers, ...options.headers }
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Supabase error:', error);
+                throw error;
+            }
+        }
+
+        // Load activities
+        async function loadActivities() {
+            try {
+                const data = await supabaseRequest('activity_logs?order=timestamp.desc&limit=50');
+                activities = data;
+                renderTimeline();
+                updateStats();
+                setOnlineStatus(true);
+            } catch (error) {
+                console.error('Failed to load activities:', error);
+                setOnlineStatus(false);
+                showToast('Failed to load activities', 'error');
+            }
+        }
+
+        // Submit new log
+        async function submitLog(event) {
+            event.preventDefault();
+
+            const input = document.getElementById('activityInput');
+            const activityText = input.value.trim();
+
+            if (!activityText) {
+                showToast('Please enter what you are doing', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Logging...';
+
+            try {
+                const newActivity = {
+                    activity_text: activityText,
+                    input_method: 'text',
+                    device: 'web',
+                    entry_type: 'manual',
+                    tags: selectedTags.length > 0 ? selectedTags : null
+                };
+
+                const result = await supabaseRequest('activity_logs', {
+                    method: 'POST',
+                    body: JSON.stringify(newActivity)
+                });
+
+                // Add to local state
+                activities.unshift(result[0]);
+                renderTimeline();
+                updateStats();
+
+                // Clear form
+                input.value = '';
+                selectedTags = [];
+                updateTagSelection();
+
+                showToast('Activity logged!', 'success');
+            } catch (error) {
+                console.error('Failed to log activity:', error);
+                showToast('Failed to log activity', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Log';
+            }
+        }
+
+        // Render timeline
+        function renderTimeline() {
+            const timeline = document.getElementById('timeline');
+
+            if (activities.length === 0) {
+                timeline.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <p>No activities logged yet.</p>
+                        <p>Start tracking what you're doing!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            let lastDate = null;
+
+            activities.forEach(activity => {
+                const date = new Date(activity.timestamp);
+                const dateStr = date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+                const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+                // Add date divider if new day
+                if (dateStr !== lastDate) {
+                    html += `<div class="date-divider">${dateStr}</div>`;
+                    lastDate = dateStr;
+                }
+
+                const badgeClass = activity.entry_type === 'ping_response' ? 'badge-ping' :
+                                   activity.entry_type === 'afk_return' ? 'badge-afk' : 'badge-manual';
+
+                const deviceIcon = activity.device === 'mac' ? '💻' :
+                                   activity.device === 'iphone' ? '📱' : '🌐';
+
+                html += `
+                    <div class="timeline-item">
+                        <div class="timeline-time">${timeStr}</div>
+                        <div class="timeline-content">
+                            <div class="timeline-activity">${escapeHtml(activity.activity_text)}</div>
+                            <div class="timeline-meta">
+                                <span class="timeline-badge ${badgeClass}">${activity.entry_type.replace('_', ' ')}</span>
+                                <span class="device-icon">${deviceIcon} ${activity.device}</span>
+                                ${activity.input_method !== 'text' ? `<span>via ${activity.input_method}</span>` : ''}
+                                ${activity.tags && activity.tags.length > 0 ? `<span>${activity.tags.map(t => '#' + t).join(' ')}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            timeline.innerHTML = html;
+        }
+
+        // Update stats
+        function updateStats() {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+            const todayLogs = activities.filter(a => new Date(a.timestamp) >= today);
+            const weekLogs = activities.filter(a => new Date(a.timestamp) >= weekAgo);
+            const pingResponses = activities.filter(a => a.entry_type === 'ping_response');
+
+            document.getElementById('todayCount').textContent = todayLogs.length;
+            document.getElementById('weekCount').textContent = weekLogs.length;
+
+            // Calculate streak (simplified - consecutive days with logs)
+            let streak = 0;
+            let checkDate = new Date(today);
+            while (true) {
+                const dayStart = new Date(checkDate);
+                const dayEnd = new Date(checkDate.getTime() + 24 * 60 * 60 * 1000);
+                const hasLog = activities.some(a => {
+                    const ts = new Date(a.timestamp);
+                    return ts >= dayStart && ts < dayEnd;
+                });
+                if (hasLog) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            document.getElementById('streakCount').textContent = streak;
+
+            // Response rate (if we have pings)
+            const responseRate = pingResponses.length > 0 ?
+                Math.round((pingResponses.length / Math.max(1, weekLogs.length)) * 100) + '%' : '-';
+            document.getElementById('responseRate').textContent = responseRate;
+        }
+
+        // Tag selection
+        function setupTagChips() {
+            document.querySelectorAll('.tag-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const tag = chip.dataset.tag;
+                    if (selectedTags.includes(tag)) {
+                        selectedTags = selectedTags.filter(t => t !== tag);
+                    } else {
+                        selectedTags.push(tag);
+                    }
+                    updateTagSelection();
+                });
+            });
+        }
+
+        function updateTagSelection() {
+            document.querySelectorAll('.tag-chip').forEach(chip => {
+                chip.classList.toggle('selected', selectedTags.includes(chip.dataset.tag));
+            });
+        }
+
+        // Online status
+        function setOnlineStatus(online) {
+            isOnline = online;
+            const dot = document.getElementById('statusDot');
+            dot.classList.toggle('offline', !online);
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Settings toggle (placeholder)
+        function toggleSettings() {
+            showToast('Settings coming soon!', 'info');
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Realtime subscription for live updates
+        function setupRealtime() {
+            // Using Supabase Realtime via WebSocket
+            // For now, poll every 30 seconds as a simpler approach
+            setInterval(() => {
+                loadActivities();
+            }, 30000);
+        }
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            // Cmd/Ctrl + Enter to submit
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                document.querySelector('.log-form').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupTagChips();
+            loadActivities();
+            setupRealtime();
+
+            // Focus input
+            document.getElementById('activityInput').focus();
+        });
+    </script>
+</body>
+</html>
