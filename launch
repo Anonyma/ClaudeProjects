@@ -39,6 +39,17 @@ PROJECTS=(
 
     ["reading"]="open '$PROJECTS_DIR/reading-dashboard/index.html'"
     ["reading-dashboard"]="open '$PROJECTS_DIR/reading-dashboard/index.html'"
+
+    ["write"]="open '$PROJECTS_DIR/writing-challenge/index.html'"
+    ["writing"]="open '$PROJECTS_DIR/writing-challenge/index.html'"
+    ["writing-challenge"]="open '$PROJECTS_DIR/writing-challenge/index.html'"
+
+    ["speak"]="open '$PROJECTS_DIR/voice-studio/index.html'"
+    ["speaking"]="open '$PROJECTS_DIR/voice-studio/index.html'"
+    ["voice-studio"]="open '$PROJECTS_DIR/voice-studio/index.html'"
+
+    ["time"]="open '$PROJECTS_DIR/time-tracker/dashboard/index.html'"
+    ["time-tracker"]="open '$PROJECTS_DIR/time-tracker/dashboard/index.html'"
 )
 
 # Hosted URLs for quick access
@@ -92,13 +103,16 @@ show_help() {
     echo -e "${YELLOW}Usage:${NC} launch [project-name]"
     echo ""
     echo -e "${GREEN}Local Dashboards:${NC}"
+    echo -e "  ${BLUE}write${NC}, writing           Writing Challenge (daily goals + stats)"
+    echo -e "  ${BLUE}speak${NC}, speaking          Voice Studio (public speaking practice)"
     echo -e "  ${BLUE}voice${NC}, voice-memo        Voice Memo Transcriber (starts server + dashboard)"
     echo -e "  ${BLUE}study${NC}, notebooklm        NotebookLM Study App"
     echo -e "  ${BLUE}substack${NC}                 Substack Reading Dashboard"
     echo -e "  ${BLUE}art${NC}                      Art Discovery App"
     echo -e "  ${BLUE}htgaa${NC}, biobootcamp       HTGAA BioBootcamp Study Guide"
     echo -e "  ${BLUE}command${NC}, projects        Project Command Center"
-    echo -e "  ${BLUE}reading${NC}                  NotebookLM Reading Dashboard"
+    echo -e "  ${BLUE}time${NC}                     Time Tracker Dashboard"
+    echo -e "  ${BLUE}reading${NC}                  NotebookLM Reading Dashboard (deprecated)"
     echo ""
     echo -e "${GREEN}Hosted Versions:${NC} (add -hosted suffix)"
     echo -e "  ${BLUE}study-hosted${NC}             NotebookLM Study App (Netlify)"
