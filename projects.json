@@ -242,6 +242,28 @@
         "tables": ["voice_memos", "voice_transcripts"]
       },
       "files": ["CLAUDE.md", "requirements.txt", "scripts/transcribe.py", "scripts/preprocess.py", "scripts/sync_to_supabase.py", "scripts/batch_process.py", "dashboard/index.html"]
+    },
+    {
+      "id": "time-tracker",
+      "name": "Time Tracker",
+      "description": "Cross-device time awareness app to combat time blindness. Hourly pings, AFK detection, activity logging across Mac and iPhone via Pushover + iOS Shortcuts.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/time-tracker",
+      "type": "python-scripts + web-app",
+      "created": "2026-01-23",
+      "tags": ["time-tracking", "adhd", "productivity", "menu-bar", "pushover", "supabase", "pwa"],
+      "status": "active",
+      "access": {
+        "method": "cli + web",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/time-tracker/dashboard/index.html",
+        "instructions": "Dashboard: open dashboard/index.html. Mac app: /Users/z/miniforge3/bin/python mac-app/app.py",
+        "hosted": null,
+        "requiresServer": false
+      },
+      "supabase": {
+        "projectId": "ydwjzlikslebokuxzwco",
+        "tables": ["activity_logs", "pings", "device_state", "time_tracker_settings"]
+      },
+      "files": ["CLAUDE.md", "mac-app/app.py", "mac-app/afk_detector.py", "mac-app/supabase_client.py", "dashboard/index.html", "supabase/schema.sql", "ios-shortcut/README.md"]
     }
   ],
   "sharedResources": {
@@ -249,7 +271,7 @@
       "url": "https://ydwjzlikslebokuxzwco.supabase.co",
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU",
       "schemaFile": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/supabase-schema.sql",
-      "tables": ["reading_status", "notebooklm_notebooks", "notebooklm_assets", "notebooklm_transcripts", "notebooklm_summaries", "notebooklm_quizzes", "voice_memos", "voice_transcripts"]
+      "tables": ["reading_status", "notebooklm_notebooks", "notebooklm_assets", "notebooklm_transcripts", "notebooklm_summaries", "notebooklm_quizzes", "voice_memos", "voice_transcripts", "activity_logs", "pings", "device_state", "time_tracker_settings"]
     },
     "projectsIndex": {
       "localPath": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/projects.json",
