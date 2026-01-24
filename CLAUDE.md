@@ -19,6 +19,101 @@ git add -A && git commit -m "Add voice-memo-transcriber project"
 
 ---
 
+## CRITICAL: Notify User via Pushover
+
+**ALWAYS notify the user when you need help, complete significant work, or encounter errors.**
+
+### When to Send Notifications
+
+✅ **MUST notify when:**
+- You are **blocked** and need user intervention (missing credentials, permissions, etc.)
+- You have **completed** a significant task (deployment, major feature, bug fix)
+- You encounter **critical errors** that prevent progress
+- You need **user input** or decisions
+
+❌ **Don't spam:**
+- Not for minor edits or routine operations
+- Not for every file change
+- Use judgment - only important updates
+
+### How to Send Notifications
+
+Use Pushover API for instant notifications to user's devices:
+
+#### 🆘 When You Need Help (High Priority)
+```bash
+curl -s -F "token=aabpf2tb7a9p3tnhdw3vzfb6hyxcna" \
+  -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
+  -F "title=🆘 Agent Needs Help" \
+  -F "message=Project: [project-name]
+Issue: [brief description]
+Action needed: [what you need from user]" \
+  -F "priority=1" \
+  -F "sound=persistent" \
+  https://api.pushover.net/1/messages.json
+```
+
+#### ✅ When Work is Completed
+```bash
+curl -s -F "token=aabpf2tb7a9p3tnhdw3vzfb6hyxcna" \
+  -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
+  -F "title=✅ Work Completed" \
+  -F "message=Project: [project-name]
+Completed: [what you did]
+URL: [deployment URL or file path if applicable]" \
+  https://api.pushover.net/1/messages.json
+```
+
+#### ⚠️ When Errors Occur
+```bash
+curl -s -F "token=aabpf2tb7a9p3tnhdw3vzfb6hyxcna" \
+  -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
+  -F "title=⚠️ Error Encountered" \
+  -F "message=Project: [project-name]
+Error: [error description]
+Impact: [what's affected]" \
+  -F "priority=1" \
+  https://api.pushover.net/1/messages.json
+```
+
+#### 📝 Progress Updates (Optional)
+```bash
+curl -s -F "token=aabpf2tb7a9p3tnhdw3vzfb6hyxcna" \
+  -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
+  -F "title=📝 Progress Update" \
+  -F "message=Project: [project-name]
+Status: [brief update]" \
+  https://api.pushover.net/1/messages.json
+```
+
+### Examples
+
+**Blocked on missing credentials:**
+```bash
+curl -s -F "token=aabpf2tb7a9p3tnhdw3vzfb6hyxcna" \
+  -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
+  -F "title=🆘 Agent Needs Help" \
+  -F "message=Project: tg-personal-assistant
+Issue: Railway deployment failing
+Action needed: Add TELEGRAM_BOT_TOKEN to Railway env vars" \
+  -F "priority=1" \
+  -F "sound=persistent" \
+  https://api.pushover.net/1/messages.json
+```
+
+**Deployment completed:**
+```bash
+curl -s -F "token=aabpf2tb7a9p3tnhdw3vzfb6hyxcna" \
+  -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
+  -F "title=✅ Work Completed" \
+  -F "message=Project: writing-challenge
+Completed: Deployed to Netlify
+URL: https://writing-challenge-app.netlify.app" \
+  https://api.pushover.net/1/messages.json
+```
+
+---
+
 ## CRITICAL: Auto-Log Every Project You Create
 
 **EVERY Claude instance (CLI, Browser, Web) MUST log projects immediately after creation or deployment.**

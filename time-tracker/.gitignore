@@ -1,0 +1,9 @@
+.env
+.env.local
+.env.*
+.DS_Store
+node_modules/
+dist/
+build/
+.netlify/
+*.log

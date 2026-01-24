@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Play, Pause, Square, Clock, Target, BarChart3, Lightbulb, Settings, ChevronLeft, ChevronRight, FileText, Calendar, TrendingUp, Timer, Check, X, Edit3, Save, Trash2, Plus } from 'lucide-react';
+import { Play, Pause, Square, Clock, Target, BarChart3, Lightbulb, Settings, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, FileText, Calendar, TrendingUp, Timer, Check, X, Edit3, Save, Trash2, Plus } from 'lucide-react';
 
 // Storage utilities
 const storage = {
@@ -33,13 +33,13 @@ const ClockProgress = ({ progress, size = 120 }) => {
   const center = size / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - Math.min(progress, 1));
-  
+
   // Calculate hand positions
   const minuteAngle = (progress * 360) - 90;
   const minuteHandLength = radius * 0.7;
   const minuteX = center + minuteHandLength * Math.cos(minuteAngle * Math.PI / 180);
   const minuteY = center + minuteHandLength * Math.sin(minuteAngle * Math.PI / 180);
-  
+
   return (
     <svg width={size} height={size} className="transform -rotate-90">
       {/* Background circle */}
@@ -120,11 +120,11 @@ export default function WritingChallengeApp() {
     separateCommonWords: false,
     defaultPomodoro: 25, // minutes
   }));
-  
+
   const [sessions, setSessions] = useState(() => storage.get('writingSessions', []));
   const [ideas, setIdeas] = useState(() => storage.get('writingIdeas', []));
   const [texts, setTexts] = useState(() => storage.get('writingTexts', []));
-  
+
   // Current session state
   const [isWriting, setIsWriting] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -134,30 +134,30 @@ export default function WritingChallengeApp() {
   const [timerTarget, setTimerTarget] = useState(null); // null = count up, number = countdown target
   const [showTitleModal, setShowTitleModal] = useState(false);
   const [pendingTitle, setPendingTitle] = useState('');
-  
+
   const timerRef = useRef(null);
   const textareaRef = useRef(null);
-  
+
   // Save settings to storage
   useEffect(() => {
     storage.set('writingSettings', settings);
   }, [settings]);
-  
+
   // Save sessions to storage
   useEffect(() => {
     storage.set('writingSessions', sessions);
   }, [sessions]);
-  
+
   // Save ideas to storage
   useEffect(() => {
     storage.set('writingIdeas', ideas);
   }, [ideas]);
-  
+
   // Save texts to storage
   useEffect(() => {
     storage.set('writingTexts', texts);
   }, [texts]);
-  
+
   // Timer effect
   useEffect(() => {
     if (isWriting && !isPaused) {
@@ -169,12 +169,12 @@ export default function WritingChallengeApp() {
     }
     return () => clearInterval(timerRef.current);
   }, [isWriting, isPaused]);
-  
+
   // Calculate text stats
   const getTextStats = useCallback((text) => {
     const words = text.trim().split(/\s+/).filter(w => w.length > 0);
     const wordCount = words.length;
-    
+
     let commonWordCount = 0;
     let contentWordCount = 0;
     words.forEach(word => {
@@ -184,7 +184,7 @@ export default function WritingChallengeApp() {
         contentWordCount++;
       }
     });
-    
+
     let charCount = text.length;
     if (!settings.countSpaces) {
       charCount = text.replace(/\s/g, '').length;
@@ -195,7 +195,7 @@ export default function WritingChallengeApp() {
         charCount = text.replace(/[^\w]/g, '').length;
       }
     }
-    
+
     return {
       words: wordCount,
       characters: charCount,
@@ -203,9 +203,9 @@ export default function WritingChallengeApp() {
       contentWords: contentWordCount
     };
   }, [settings]);
-  
+
   const stats = getTextStats(currentText);
-  
+
   // Calculate progress
   const getProgress = useCallback(() => {
     if (settings.goalType === 'words') {
@@ -216,14 +216,14 @@ export default function WritingChallengeApp() {
       return elapsedSeconds / (settings.timeGoal * 60);
     }
   }, [settings, stats, elapsedSeconds]);
-  
+
   const progress = getProgress();
   const goalMet = progress >= 1;
-  
+
   // Timer progress (for pomodoro)
   const timerProgress = timerTarget ? elapsedSeconds / (timerTarget * 60) : 0;
   const pomodoroComplete = timerTarget && elapsedSeconds >= timerTarget * 60;
-  
+
   // Start writing session
   const startSession = () => {
     setIsWriting(true);
@@ -235,12 +235,12 @@ export default function WritingChallengeApp() {
       textareaRef.current.focus();
     }
   };
-  
+
   // Pause/Resume
   const togglePause = () => {
     setIsPaused(!isPaused);
   };
-  
+
   // End session
   const endSession = () => {
     if (currentText.trim().length > 0) {
@@ -250,12 +250,12 @@ export default function WritingChallengeApp() {
       finalizeSession('');
     }
   };
-  
+
   // Finalize and save session
   const finalizeSession = (title) => {
     const endTime = new Date().toISOString();
     const finalStats = getTextStats(currentText);
-    
+
     const session = {
       id: Date.now(),
       startTime: sessionStartTime,
@@ -267,13 +267,13 @@ export default function WritingChallengeApp() {
       commonWords: finalStats.commonWords,
       goalType: settings.goalType,
       goalMet,
-      goalValue: settings.goalType === 'words' ? settings.wordGoal : 
-                 settings.goalType === 'characters' ? settings.characterGoal : 
-                 settings.timeGoal
+      goalValue: settings.goalType === 'words' ? settings.wordGoal :
+        settings.goalType === 'characters' ? settings.characterGoal :
+          settings.timeGoal
     };
-    
+
     setSessions(prev => [...prev, session]);
-    
+
     if (currentText.trim().length > 0) {
       const text = {
         id: Date.now(),
@@ -281,11 +281,14 @@ export default function WritingChallengeApp() {
         content: currentText,
         createdAt: sessionStartTime,
         wordCount: finalStats.words,
-        characterCount: finalStats.characters
+        characterCount: finalStats.characters,
+        duration: elapsedSeconds,
+        goalType: settings.goalType,
+        goalMet
       };
       setTexts(prev => [...prev, text]);
     }
-    
+
     setIsWriting(false);
     setIsPaused(false);
     setCurrentText('');
@@ -294,28 +297,27 @@ export default function WritingChallengeApp() {
     setTimerTarget(null);
     setShowTitleModal(false);
   };
-  
+
   // Set pomodoro timer
   const setPomodoro = (minutes) => {
     setTimerTarget(minutes);
     setElapsedSeconds(0);
   };
-  
+
   // Navigation
   const NavButton = ({ view, icon: Icon, label }) => (
     <button
       onClick={() => setCurrentView(view)}
-      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-        currentView === view 
-          ? 'bg-blue-500 text-white' 
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${currentView === view
+          ? 'bg-blue-500 text-white'
           : 'text-gray-600 hover:bg-gray-100'
-      }`}
+        }`}
     >
       <Icon size={20} />
       <span className="hidden sm:inline">{label}</span>
     </button>
   );
-  
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
@@ -334,7 +336,7 @@ export default function WritingChallengeApp() {
           </div>
         </div>
       </nav>
-      
+
       <main className="max-w-6xl mx-auto p-4">
         {currentView === 'write' && (
           <WritingView
@@ -357,24 +359,24 @@ export default function WritingChallengeApp() {
             textareaRef={textareaRef}
           />
         )}
-        
+
         {currentView === 'stats' && (
           <StatsView sessions={sessions} settings={settings} />
         )}
-        
+
         {currentView === 'texts' && (
           <TextsView texts={texts} setTexts={setTexts} />
         )}
-        
+
         {currentView === 'ideas' && (
           <IdeasView ideas={ideas} setIdeas={setIdeas} />
         )}
-        
+
         {currentView === 'settings' && (
           <SettingsView settings={settings} setSettings={setSettings} />
         )}
       </main>
-      
+
       {/* Title Modal */}
       {showTitleModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -426,7 +428,7 @@ function WritingView({
   startSession, togglePause, endSession, setPomodoro, textareaRef
 }) {
   const [showTimerOptions, setShowTimerOptions] = useState(false);
-  
+
   if (!isWriting) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh]">
@@ -438,7 +440,7 @@ function WritingView({
             {settings.goalType === 'time' && `${settings.timeGoal} minutes`}
           </p>
         </div>
-        
+
         <button
           onClick={startSession}
           className="bg-blue-500 hover:bg-blue-600 text-white text-xl px-8 py-4 rounded-xl shadow-lg transition-all transform hover:scale-105 flex items-center gap-3"
@@ -446,23 +448,23 @@ function WritingView({
           <Play size={24} />
           Start Writing Session
         </button>
-        
+
         <div className="mt-8 text-sm text-gray-500">
           Press to begin your focused writing time
         </div>
       </div>
     );
   }
-  
+
   const goalLabel = settings.goalType === 'words' ? 'words' :
-                    settings.goalType === 'characters' ? 'chars' : 'min';
+    settings.goalType === 'characters' ? 'chars' : 'min';
   const goalTarget = settings.goalType === 'words' ? settings.wordGoal :
-                     settings.goalType === 'characters' ? settings.characterGoal :
-                     settings.timeGoal;
+    settings.goalType === 'characters' ? settings.characterGoal :
+      settings.timeGoal;
   const currentValue = settings.goalType === 'words' ? stats.words :
-                       settings.goalType === 'characters' ? stats.characters :
-                       Math.floor(elapsedSeconds / 60);
-  
+    settings.goalType === 'characters' ? stats.characters :
+      Math.floor(elapsedSeconds / 60);
+
   return (
     <div className="flex flex-col h-[calc(100vh-120px)]">
       {/* Stats Bar */}
@@ -480,15 +482,14 @@ function WritingView({
               </div>
             </div>
           </div>
-          
+
           {/* Timer */}
           <div className="flex items-center gap-4">
             {timerTarget && (
               <div className="relative">
                 <ClockProgress progress={timerProgress} size={60} />
-                <div className={`absolute inset-0 flex items-center justify-center text-xs font-medium ${
-                  pomodoroComplete ? 'text-green-500' : 'text-gray-600'
-                }`}>
+                <div className={`absolute inset-0 flex items-center justify-center text-xs font-medium ${pomodoroComplete ? 'text-green-500' : 'text-gray-600'
+                  }`}>
                   {pomodoroComplete ? '✓' : ''}
                 </div>
               </div>
@@ -501,7 +502,7 @@ function WritingView({
                 {timerTarget ? `${timerTarget} min timer` : 'elapsed time'}
               </div>
             </div>
-            
+
             {/* Timer Options */}
             <div className="relative">
               <button
@@ -539,7 +540,7 @@ function WritingView({
               )}
             </div>
           </div>
-          
+
           {/* Word Stats */}
           <div className="flex gap-4 text-sm">
             <div className="text-center">
@@ -563,16 +564,15 @@ function WritingView({
               <div className="text-gray-500">wpm</div>
             </div>
           </div>
-          
+
           {/* Controls */}
           <div className="flex gap-2">
             <button
               onClick={togglePause}
-              className={`p-3 rounded-lg transition-colors ${
-                isPaused 
-                  ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200' 
+              className={`p-3 rounded-lg transition-colors ${isPaused
+                  ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+                }`}
               title={isPaused ? 'Resume' : 'Pause'}
             >
               {isPaused ? <Play size={20} /> : <Pause size={20} />}
@@ -587,7 +587,7 @@ function WritingView({
           </div>
         </div>
       </div>
-      
+
       {/* Writing Area */}
       <div className="flex-1 bg-white rounded-xl shadow-sm p-4">
         <textarea
@@ -600,7 +600,7 @@ function WritingView({
           disabled={isPaused}
         />
       </div>
-      
+
       {/* Goal Met Notification */}
       {goalMet && (
         <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 animate-bounce">
@@ -616,13 +616,13 @@ function WritingView({
 function StatsView({ sessions, settings }) {
   const [viewMode, setViewMode] = useState('calendar'); // 'calendar', 'weekly', 'yearly'
   const [selectedMonth, setSelectedMonth] = useState(new Date());
-  
+
   // Get sessions for a specific date
   const getSessionsForDate = (date) => {
     const dateStr = date.toISOString().split('T')[0];
     return sessions.filter(s => s.startTime.split('T')[0] === dateStr);
   };
-  
+
   // Calculate daily totals
   const getDailyTotal = (date) => {
     const daySessions = getSessionsForDate(date);
@@ -633,7 +633,7 @@ function StatsView({ sessions, settings }) {
       goalsMet: daySessions.filter(s => s.goalMet).length
     };
   };
-  
+
   // Get week data
   const getWeekData = () => {
     const today = new Date();
@@ -650,7 +650,7 @@ function StatsView({ sessions, settings }) {
     }
     return data;
   };
-  
+
   // Get monthly data for year view
   const getYearData = () => {
     const data = [];
@@ -670,7 +670,7 @@ function StatsView({ sessions, settings }) {
     }
     return data;
   };
-  
+
   // Calculate overall stats
   const overallStats = {
     totalWords: sessions.reduce((sum, s) => sum + s.words, 0),
@@ -680,7 +680,7 @@ function StatsView({ sessions, settings }) {
     avgWordsPerSession: sessions.length > 0 ? Math.round(sessions.reduce((sum, s) => sum + s.words, 0) / sessions.length) : 0,
     avgWPM: sessions.length > 0 ? Math.round(sessions.reduce((sum, s) => sum + (s.words / (s.duration / 60)), 0) / sessions.length) : 0
   };
-  
+
   // Calendar days
   const getCalendarDays = () => {
     const year = selectedMonth.getFullYear();
@@ -688,25 +688,25 @@ function StatsView({ sessions, settings }) {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const days = [];
-    
+
     // Add padding for first week
     for (let i = 0; i < firstDay.getDay(); i++) {
       days.push(null);
     }
-    
+
     // Add days of month
     for (let d = 1; d <= lastDay.getDate(); d++) {
       days.push(new Date(year, month, d));
     }
-    
+
     return days;
   };
-  
+
   const weekData = getWeekData();
   const yearData = getYearData();
   const maxWeekWords = Math.max(...weekData.map(d => d.words), 1);
   const maxYearWords = Math.max(...yearData.map(d => d.words), 1);
-  
+
   return (
     <div className="space-y-6">
       {/* Overview Cards */}
@@ -728,24 +728,23 @@ function StatsView({ sessions, settings }) {
           <div className="text-sm text-gray-500">Avg WPM</div>
         </div>
       </div>
-      
+
       {/* View Toggle */}
       <div className="flex gap-2 justify-center">
         {['calendar', 'weekly', 'yearly'].map(mode => (
           <button
             key={mode}
             onClick={() => setViewMode(mode)}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              viewMode === mode 
-                ? 'bg-blue-500 text-white' 
+            className={`px-4 py-2 rounded-lg transition-colors ${viewMode === mode
+                ? 'bg-blue-500 text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-100'
-            }`}
+              }`}
           >
             {mode.charAt(0).toUpperCase() + mode.slice(1)}
           </button>
         ))}
       </div>
-      
+
       {/* Calendar View */}
       {viewMode === 'calendar' && (
         <div className="bg-white rounded-xl p-6 shadow-sm">
@@ -766,7 +765,7 @@ function StatsView({ sessions, settings }) {
               <ChevronRight size={20} />
             </button>
           </div>
-          
+
           <div className="grid grid-cols-7 gap-1">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
               <div key={day} className="text-center text-sm text-gray-500 py-2">
@@ -779,13 +778,12 @@ function StatsView({ sessions, settings }) {
               const isToday = date.toDateString() === new Date().toDateString();
               const hasActivity = total.sessions > 0;
               const metGoal = total.goalsMet > 0;
-              
+
               return (
                 <div
                   key={date.toISOString()}
-                  className={`aspect-square p-1 rounded-lg text-center relative ${
-                    isToday ? 'ring-2 ring-blue-500' : ''
-                  } ${hasActivity ? (metGoal ? 'bg-green-100' : 'bg-yellow-100') : 'hover:bg-gray-50'}`}
+                  className={`aspect-square p-1 rounded-lg text-center relative ${isToday ? 'ring-2 ring-blue-500' : ''
+                    } ${hasActivity ? (metGoal ? 'bg-green-100' : 'bg-yellow-100') : 'hover:bg-gray-50'}`}
                   title={hasActivity ? `${total.words} words, ${total.minutes} min` : ''}
                 >
                   <div className={`text-sm ${isToday ? 'font-bold' : ''}`}>
@@ -800,7 +798,7 @@ function StatsView({ sessions, settings }) {
               );
             })}
           </div>
-          
+
           <div className="flex gap-4 mt-4 justify-center text-sm">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-green-100 rounded" />
@@ -813,7 +811,7 @@ function StatsView({ sessions, settings }) {
           </div>
         </div>
       )}
-      
+
       {/* Weekly View */}
       {viewMode === 'weekly' && (
         <div className="bg-white rounded-xl p-6 shadow-sm">
@@ -821,10 +819,9 @@ function StatsView({ sessions, settings }) {
           <div className="flex items-end justify-between gap-2 h-48">
             {weekData.map((day, i) => (
               <div key={i} className="flex-1 flex flex-col items-center">
-                <div 
-                  className={`w-full rounded-t-lg transition-all ${
-                    day.goalsMet > 0 ? 'bg-green-400' : day.words > 0 ? 'bg-blue-400' : 'bg-gray-200'
-                  }`}
+                <div
+                  className={`w-full rounded-t-lg transition-all ${day.goalsMet > 0 ? 'bg-green-400' : day.words > 0 ? 'bg-blue-400' : 'bg-gray-200'
+                    }`}
                   style={{ height: `${(day.words / maxWeekWords) * 100}%`, minHeight: day.words > 0 ? '4px' : '0' }}
                   title={`${day.words} words, ${day.minutes} min`}
                 />
@@ -833,7 +830,7 @@ function StatsView({ sessions, settings }) {
               </div>
             ))}
           </div>
-          
+
           {/* Week Summary */}
           <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t">
             <div className="text-center">
@@ -857,7 +854,7 @@ function StatsView({ sessions, settings }) {
           </div>
         </div>
       )}
-      
+
       {/* Yearly View */}
       {viewMode === 'yearly' && (
         <div className="bg-white rounded-xl p-6 shadow-sm">
@@ -865,10 +862,9 @@ function StatsView({ sessions, settings }) {
           <div className="flex items-end justify-between gap-2 h-48">
             {yearData.map((month, i) => (
               <div key={i} className="flex-1 flex flex-col items-center">
-                <div 
-                  className={`w-full rounded-t-lg transition-all ${
-                    month.words > 0 ? 'bg-blue-400' : 'bg-gray-200'
-                  }`}
+                <div
+                  className={`w-full rounded-t-lg transition-all ${month.words > 0 ? 'bg-blue-400' : 'bg-gray-200'
+                    }`}
                   style={{ height: `${(month.words / maxYearWords) * 100}%`, minHeight: month.words > 0 ? '4px' : '0' }}
                   title={`${month.words} words, ${month.sessions} sessions`}
                 />
@@ -876,7 +872,7 @@ function StatsView({ sessions, settings }) {
               </div>
             ))}
           </div>
-          
+
           {/* Year Summary */}
           <div className="grid grid-cols-4 gap-4 mt-6 pt-4 border-t">
             <div className="text-center">
@@ -906,7 +902,7 @@ function StatsView({ sessions, settings }) {
           </div>
         </div>
       )}
-      
+
       {/* Recent Sessions */}
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <h3 className="text-lg font-semibold mb-4">Recent Sessions</h3>
@@ -949,19 +945,42 @@ function TextsView({ texts, setTexts }) {
   const [selectedText, setSelectedText] = useState(null);
   const [editingTitle, setEditingTitle] = useState(null);
   const [newTitle, setNewTitle] = useState('');
-  
+  const [showFullText, setShowFullText] = useState(false);
+  const contentRef = useRef(null);
+  const [isScrollable, setIsScrollable] = useState(false);
+
+  // Check if content is scrollable
+  useEffect(() => {
+    if (contentRef.current) {
+      setIsScrollable(contentRef.current.scrollHeight > contentRef.current.clientHeight);
+    }
+  }, [selectedText, showFullText]);
+
+  // Format duration for display
+  const formatDuration = (seconds) => {
+    if (!seconds) return null;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    if (mins >= 60) {
+      const hrs = Math.floor(mins / 60);
+      const remainingMins = mins % 60;
+      return `${hrs}h ${remainingMins}m`;
+    }
+    return `${mins}m ${secs}s`;
+  };
+
   const deleteText = (id) => {
     if (confirm('Are you sure you want to delete this text?')) {
       setTexts(texts.filter(t => t.id !== id));
       if (selectedText?.id === id) setSelectedText(null);
     }
   };
-  
+
   const updateTitle = (id) => {
     setTexts(texts.map(t => t.id === id ? { ...t, title: newTitle } : t));
     setEditingTitle(null);
   };
-  
+
   const exportText = (text) => {
     const blob = new Blob([`# ${text.title}\n\n${text.content}`], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
@@ -971,7 +990,7 @@ function TextsView({ texts, setTexts }) {
     a.click();
     URL.revokeObjectURL(url);
   };
-  
+
   return (
     <div className="grid md:grid-cols-3 gap-4">
       {/* Text List */}
@@ -985,11 +1004,10 @@ function TextsView({ texts, setTexts }) {
               <div
                 key={text.id}
                 onClick={() => setSelectedText(text)}
-                className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                  selectedText?.id === text.id 
-                    ? 'bg-blue-50 border-blue-200 border' 
+                className={`p-3 rounded-lg cursor-pointer transition-colors ${selectedText?.id === text.id
+                    ? 'bg-blue-50 border-blue-200 border'
                     : 'hover:bg-gray-50 border border-transparent'
-                }`}
+                  }`}
               >
                 {editingTitle === text.id ? (
                   <div className="flex gap-2">
@@ -1019,7 +1037,13 @@ function TextsView({ texts, setTexts }) {
                     <div className="font-medium truncate">{text.title}</div>
                     <div className="text-xs text-gray-500">
                       {formatDate(text.createdAt)} • {text.wordCount} words
+                      {text.duration && ` • ${formatDuration(text.duration)}`}
                     </div>
+                    {text.goalType === 'time' && text.goalMet && (
+                      <div className="text-xs text-green-500 flex items-center gap-1">
+                        <Clock size={10} /> Time goal met
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -1027,7 +1051,7 @@ function TextsView({ texts, setTexts }) {
           </div>
         )}
       </div>
-      
+
       {/* Text Preview */}
       <div className="md:col-span-2 bg-white rounded-xl shadow-sm p-6">
         {selectedText ? (
@@ -1061,19 +1085,101 @@ function TextsView({ texts, setTexts }) {
                 </button>
               </div>
             </div>
-            <div className="text-sm text-gray-500 mb-4">
-              {new Date(selectedText.createdAt).toLocaleString()} • 
-              {selectedText.wordCount} words • 
-              {selectedText.characterCount} characters
+
+            {/* Stats with collapsible more info */}
+            <div className="mb-4">
+              <div className="text-sm text-gray-500 flex flex-wrap items-center gap-x-2">
+                <span>{new Date(selectedText.createdAt).toLocaleString()}</span>
+                <span>•</span>
+                <span className="font-medium text-gray-700">{selectedText.wordCount} words</span>
+                <span>•</span>
+                <span>{selectedText.characterCount} characters</span>
+                {selectedText.duration && (
+                  <>
+                    <span>•</span>
+                    <span className="font-medium text-blue-600 flex items-center gap-1">
+                      <Clock size={14} />
+                      {formatDuration(selectedText.duration)}
+                    </span>
+                  </>
+                )}
+              </div>
+              {selectedText.duration && (
+                <div className="mt-2 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                  <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Timer size={16} className="text-blue-500" />
+                      <span className="text-gray-600">Writing time:</span>
+                      <span className="font-semibold text-gray-800">{formatDuration(selectedText.duration)}</span>
+                    </div>
+                    <div className="text-gray-300">|</div>
+                    <div className="flex items-center gap-2">
+                      <TrendingUp size={16} className="text-green-500" />
+                      <span className="text-gray-600">Speed:</span>
+                      <span className="font-semibold text-gray-800">
+                        {selectedText.duration > 0 ? Math.round(selectedText.wordCount / (selectedText.duration / 60)) : 0} wpm
+                      </span>
+                    </div>
+                    {selectedText.goalMet && (
+                      <>
+                        <div className="text-gray-300">|</div>
+                        <div className="flex items-center gap-1 text-green-600">
+                          <Check size={16} />
+                          <span className="font-medium">Goal met!</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-            <div 
-              className="prose max-w-none max-h-[50vh] overflow-y-auto"
-              style={{ fontFamily: 'Georgia, serif' }}
+
+            {/* Toggle for full text view */}
+            <div className="flex items-center justify-between mb-2">
+              <button
+                onClick={() => setShowFullText(!showFullText)}
+                className="text-sm text-blue-500 hover:text-blue-600 flex items-center gap-1"
+              >
+                {showFullText ? (
+                  <>
+                    <ChevronUp size={16} />
+                    Show less
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown size={16} />
+                    Show full text
+                  </>
+                )}
+              </button>
+              {isScrollable && !showFullText && (
+                <div className="text-xs text-gray-400 flex items-center gap-1 animate-pulse">
+                  <ChevronDown size={14} />
+                  Scroll to see more
+                </div>
+              )}
+            </div>
+
+            {/* Content area */}
+            <div
+              ref={contentRef}
+              className={`prose max-w-none overflow-y-auto transition-all duration-300 ${showFullText ? 'max-h-none' : 'max-h-[40vh]'
+                } ${isScrollable && !showFullText ? 'border-b-4 border-gradient-to-t from-gray-100' : ''}`}
+              style={{
+                fontFamily: 'Georgia, serif',
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#cbd5e1 transparent'
+              }}
             >
               {selectedText.content.split('\n').map((para, i) => (
                 <p key={i} className="mb-4">{para}</p>
               ))}
             </div>
+
+            {/* Fade overlay for scrollable content */}
+            {isScrollable && !showFullText && (
+              <div className="relative -mt-8 pt-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+            )}
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-gray-500">
@@ -1091,7 +1197,7 @@ function IdeasView({ ideas, setIdeas }) {
   const [newIdea, setNewIdea] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
-  
+
   const addIdea = () => {
     if (newIdea.trim()) {
       setIdeas([...ideas, {
@@ -1102,16 +1208,16 @@ function IdeasView({ ideas, setIdeas }) {
       setNewIdea('');
     }
   };
-  
+
   const deleteIdea = (id) => {
     setIdeas(ideas.filter(i => i.id !== id));
   };
-  
+
   const updateIdea = (id) => {
     setIdeas(ideas.map(i => i.id === id ? { ...i, text: editText } : i));
     setEditingId(null);
   };
-  
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -1139,7 +1245,7 @@ function IdeasView({ ideas, setIdeas }) {
           </button>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-xl shadow-sm p-6">
         <h3 className="font-semibold mb-4">Your Ideas ({ideas.length})</h3>
         {ideas.length === 0 ? (
@@ -1218,7 +1324,7 @@ function SettingsView({ settings, setSettings }) {
   const updateSetting = (key, value) => {
     setSettings({ ...settings, [key]: value });
   };
-  
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white rounded-xl shadow-sm p-6 space-y-6">
@@ -1226,7 +1332,7 @@ function SettingsView({ settings, setSettings }) {
           <Settings className="text-gray-500" />
           Challenge Settings
         </h3>
-        
+
         {/* Goal Type */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1241,18 +1347,17 @@ function SettingsView({ settings, setSettings }) {
               <button
                 key={opt.value}
                 onClick={() => updateSetting('goalType', opt.value)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  settings.goalType === opt.value
+                className={`px-4 py-2 rounded-lg transition-colors ${settings.goalType === opt.value
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {opt.label}
               </button>
             ))}
           </div>
         </div>
-        
+
         {/* Word Goal */}
         {settings.goalType === 'words' && (
           <div>
@@ -1272,11 +1377,10 @@ function SettingsView({ settings, setSettings }) {
                   <button
                     key={n}
                     onClick={() => updateSetting('wordGoal', n)}
-                    className={`px-3 py-1 rounded text-sm ${
-                      settings.wordGoal === n
+                    className={`px-3 py-1 rounded text-sm ${settings.wordGoal === n
                         ? 'bg-blue-100 text-blue-600'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
+                      }`}
                   >
                     {n}
                   </button>
@@ -1285,7 +1389,7 @@ function SettingsView({ settings, setSettings }) {
             </div>
           </div>
         )}
-        
+
         {/* Character Goal */}
         {settings.goalType === 'characters' && (
           <>
@@ -1306,11 +1410,10 @@ function SettingsView({ settings, setSettings }) {
                     <button
                       key={n}
                       onClick={() => updateSetting('characterGoal', n)}
-                      className={`px-3 py-1 rounded text-sm ${
-                        settings.characterGoal === n
+                      className={`px-3 py-1 rounded text-sm ${settings.characterGoal === n
                           ? 'bg-blue-100 text-blue-600'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
+                        }`}
                     >
                       {n}
                     </button>
@@ -1318,7 +1421,7 @@ function SettingsView({ settings, setSettings }) {
                 </div>
               </div>
             </div>
-            
+
             <div className="space-y-3">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
@@ -1341,7 +1444,7 @@ function SettingsView({ settings, setSettings }) {
             </div>
           </>
         )}
-        
+
         {/* Time Goal */}
         {settings.goalType === 'time' && (
           <div>
@@ -1361,11 +1464,10 @@ function SettingsView({ settings, setSettings }) {
                   <button
                     key={n}
                     onClick={() => updateSetting('timeGoal', n)}
-                    className={`px-3 py-1 rounded text-sm ${
-                      settings.timeGoal === n
+                    className={`px-3 py-1 rounded text-sm ${settings.timeGoal === n
                         ? 'bg-blue-100 text-blue-600'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
+                      }`}
                   >
                     {n}
                   </button>
@@ -1374,7 +1476,7 @@ function SettingsView({ settings, setSettings }) {
             </div>
           </div>
         )}
-        
+
         {/* Separate Common Words */}
         <div>
           <label className="flex items-center gap-3 cursor-pointer">
@@ -1392,7 +1494,7 @@ function SettingsView({ settings, setSettings }) {
             </div>
           </label>
         </div>
-        
+
         {/* Default Pomodoro */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1408,7 +1510,7 @@ function SettingsView({ settings, setSettings }) {
             />
           </div>
         </div>
-        
+
         {/* Data Management */}
         <div className="pt-6 border-t">
           <h4 className="font-medium text-gray-700 mb-4">Data Management</h4>

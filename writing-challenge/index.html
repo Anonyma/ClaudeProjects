@@ -32,6 +32,8 @@
     const Settings = (p) => <EmojiIcon emoji="⚙️" {...p} />;
     const ChevronLeft = (p) => <EmojiIcon emoji="◀️" {...p} />;
     const ChevronRight = (p) => <EmojiIcon emoji="▶️" {...p} />;
+    const ChevronUp = (p) => <EmojiIcon emoji="🔼" {...p} />;
+    const ChevronDown = (p) => <EmojiIcon emoji="🔽" {...p} />;
     const FileText = (p) => <EmojiIcon emoji="📄" {...p} />;
     const Calendar = (p) => <EmojiIcon emoji="📅" {...p} />;
     const TrendingUp = (p) => <EmojiIcon emoji="📈" {...p} />;
@@ -199,7 +201,8 @@
           const text = {
             id: Date.now(), title: title || `Untitled - ${formatDate(sessionStartTime)}`,
             content: currentText, createdAt: sessionStartTime,
-            wordCount: finalStats.words, characterCount: finalStats.characters
+            wordCount: finalStats.words, characterCount: finalStats.characters,
+            duration: elapsedSeconds, goalType: settings.goalType, goalMet
           };
           setTexts(prev => [...prev, text]);
         }
@@ -427,6 +430,28 @@
 
     function TextsView({ texts, setTexts }) {
       const [selectedText, setSelectedText] = useState(null);
+      const [showFullText, setShowFullText] = useState(false);
+      const contentRef = useRef(null);
+      const [isScrollable, setIsScrollable] = useState(false);
+      
+      useEffect(() => {
+        if (contentRef.current) {
+          setIsScrollable(contentRef.current.scrollHeight > contentRef.current.clientHeight);
+        }
+      }, [selectedText, showFullText]);
+      
+      const formatDuration = (seconds) => {
+        if (!seconds) return null;
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        if (mins >= 60) {
+          const hrs = Math.floor(mins / 60);
+          const remainingMins = mins % 60;
+          return `${hrs}h ${remainingMins}m`;
+        }
+        return `${mins}m ${secs}s`;
+      };
+      
       const deleteText = (id) => { if (confirm('Delete this text?')) { setTexts(texts.filter(t => t.id !== id)); if (selectedText?.id === id) setSelectedText(null); } };
       const exportText = (text) => {
         const blob = new Blob([`# ${text.title}\n\n${text.content}`], { type: 'text/markdown' });
@@ -442,10 +467,18 @@
             {texts.length === 0 ? <p className="text-gray-500 text-center py-8">No texts saved yet.</p> : (
               <div className="space-y-2 max-h-[60vh] overflow-y-auto">
                 {[...texts].reverse().map(text => (
-                  <div key={text.id} onClick={() => setSelectedText(text)}
+                  <div key={text.id} onClick={() => { setSelectedText(text); setShowFullText(false); }}
                     className={`p-3 rounded-lg cursor-pointer transition-colors ${selectedText?.id === text.id ? 'bg-blue-50 border-blue-200 border' : 'hover:bg-gray-50 border border-transparent'}`}>
                     <div className="font-medium truncate">{text.title}</div>
-                    <div className="text-xs text-gray-500">{formatDate(text.createdAt)} - {text.wordCount} words</div>
+                    <div className="text-xs text-gray-500">
+                      {formatDate(text.createdAt)} • {text.wordCount} words
+                      {text.duration && ` • ${formatDuration(text.duration)}`}
+                    </div>
+                    {text.goalType === 'time' && text.goalMet && (
+                      <div className="text-xs text-green-500 flex items-center gap-1">
+                        <Clock size={10} /> Time goal met
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -461,10 +494,87 @@
                     <button onClick={() => deleteText(selectedText.id)} className="p-2 hover:bg-red-100 rounded-lg text-red-500" title="Delete"><Trash2 size={18} /></button>
                   </div>
                 </div>
-                <div className="text-sm text-gray-500 mb-4">{new Date(selectedText.createdAt).toLocaleString()} - {selectedText.wordCount} words</div>
-                <div className="prose max-w-none max-h-[50vh] overflow-y-auto" style={{ fontFamily: 'Georgia, serif' }}>
+                
+                {/* Stats with time info */}
+                <div className="mb-4">
+                  <div className="text-sm text-gray-500 flex flex-wrap items-center gap-x-2">
+                    <span>{new Date(selectedText.createdAt).toLocaleString()}</span>
+                    <span>•</span>
+                    <span className="font-medium text-gray-700">{selectedText.wordCount} words</span>
+                    <span>•</span>
+                    <span>{selectedText.characterCount} characters</span>
+                    {selectedText.duration && (
+                      <>
+                        <span>•</span>
+                        <span className="font-medium text-blue-600 flex items-center gap-1">
+                          <Clock size={14} />
+                          {formatDuration(selectedText.duration)}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  {selectedText.duration && (
+                    <div className="mt-2 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                      <div className="flex items-center gap-4 text-sm flex-wrap">
+                        <div className="flex items-center gap-2">
+                          <Timer size={16} className="text-blue-500" />
+                          <span className="text-gray-600">Writing time:</span>
+                          <span className="font-semibold text-gray-800">{formatDuration(selectedText.duration)}</span>
+                        </div>
+                        <span className="text-gray-300">|</span>
+                        <div className="flex items-center gap-2">
+                          <TrendingUp size={16} className="text-green-500" />
+                          <span className="text-gray-600">Speed:</span>
+                          <span className="font-semibold text-gray-800">
+                            {selectedText.duration > 0 ? Math.round(selectedText.wordCount / (selectedText.duration / 60)) : 0} wpm
+                          </span>
+                        </div>
+                        {selectedText.goalMet && (
+                          <>
+                            <span className="text-gray-300">|</span>
+                            <div className="flex items-center gap-1 text-green-600">
+                              <Check size={16} />
+                              <span className="font-medium">Goal met!</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Toggle for full text view */}
+                <div className="flex items-center justify-between mb-2">
+                  <button
+                    onClick={() => setShowFullText(!showFullText)}
+                    className="text-sm text-blue-500 hover:text-blue-600 flex items-center gap-1"
+                  >
+                    {showFullText ? (
+                      <><ChevronUp size={16} /> Show less</>
+                    ) : (
+                      <><ChevronDown size={16} /> Show full text</>
+                    )}
+                  </button>
+                  {isScrollable && !showFullText && (
+                    <div className="text-xs text-gray-400 flex items-center gap-1 animate-pulse">
+                      <ChevronDown size={14} /> Scroll to see more
+                    </div>
+                  )}
+                </div>
+                
+                {/* Content area */}
+                <div 
+                  ref={contentRef}
+                  className={`prose max-w-none overflow-y-auto transition-all ${showFullText ? '' : 'max-h-[40vh]'}`}
+                  style={{ fontFamily: 'Georgia, serif', scrollbarWidth: 'thin' }}
+                >
                   {selectedText.content.split('\n').map((para, i) => <p key={i} className="mb-4">{para}</p>)}
                 </div>
+                
+                {/* Fade overlay for scrollable content */}
+                {isScrollable && !showFullText && (
+                  <div className="relative -mt-8 pt-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                )}
               </>
             ) : (
               <div className="flex flex-col items-center justify-center h-64 text-gray-500"><FileText size={48} className="mb-4 opacity-50" /><p>Select a text to view</p></div>

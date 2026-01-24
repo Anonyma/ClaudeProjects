@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Activity</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .icon {
+            font-size: 32px;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .hint {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hint kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.75rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-log {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: #fff;
+        }
+
+        .btn-log:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px -10px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-log:active {
+            transform: translateY(0);
+        }
+
+        .dictation-hint {
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dictation-hint p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+        }
+
+        .dictation-hint .keys {
+            display: inline-flex;
+            gap: 4px;
+            margin-left: 4px;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .success-text {
+            color: #22c55e;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .form-content.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-content" id="formContent">
+            <div class="header">
+                <span class="icon">⏱️</span>
+                <div>
+                    <h1>What are you doing?</h1>
+                    <p class="subtitle" id="subtitle">Quick activity log</p>
+                </div>
+            </div>
+
+            <div class="input-wrapper">
+                <textarea
+                    id="activity"
+                    placeholder="Describe what you're working on..."
+                    autofocus
+                ></textarea>
+                <p class="hint">
+                    <span>💡</span>
+                    Press <kbd>⌘</kbd> + <kbd>Enter</kbd> to submit
+                </p>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-cancel" onclick="handleCancel()">Cancel</button>
+                <button class="btn-log" onclick="handleLog()">Log Activity</button>
+            </div>
+
+            <div class="dictation-hint">
+                <p>🎤 Use voice: Press <span class="keys"><kbd>Fn</kbd><kbd>Fn</kbd></span> or use Wispr Flow</p>
+            </div>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✓</div>
+            <p class="success-text">Activity logged!</p>
+        </div>
+    </div>
+
+    <script>
+        // Supabase config
+        const SUPABASE_URL = 'https://ydwjzlikslebokuxzwco.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU';
+
+        // Get ping_id from URL if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const pingId = urlParams.get('ping');
+        const isAFK = urlParams.get('afk');
+        const afkDuration = urlParams.get('duration');
+
+        // Update subtitle based on context
+        if (isAFK && afkDuration) {
+            document.getElementById('subtitle').textContent = `You were away for ${afkDuration}`;
+            document.querySelector('h1').textContent = 'Welcome back!';
+            document.querySelector('.icon').textContent = '👋';
+        } else if (pingId) {
+            document.getElementById('subtitle').textContent = 'Hourly check-in';
+            document.querySelector('.icon').textContent = '🔔';
+        }
+
+        // Focus textarea
+        document.getElementById('activity').focus();
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                handleLog();
+            }
+            if (e.key === 'Escape') {
+                handleCancel();
+            }
+        });
+
+        async function handleLog() {
+            const textarea = document.getElementById('activity');
+            const text = textarea.value.trim();
+
+            if (!text) {
+                textarea.focus();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/activity_logs`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        activity_text: text,
+                        device: 'web',
+                        entry_type: pingId ? 'ping_response' : (isAFK ? 'afk_return' : 'manual'),
+                        ping_id: pingId || null
+                    })
+                });
+
+                if (response.ok) {
+                    // Update ping status if responding to a ping
+                    if (pingId) {
+                        await fetch(`${SUPABASE_URL}/rest/v1/pings?id=eq.${pingId}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                            },
+                            body: JSON.stringify({
+                                status: 'answered',
+                                answered_at: new Date().toISOString(),
+                                answered_by_device: 'web'
+                            })
+                        });
+                    }
+
+                    // Show success
+                    document.getElementById('formContent').classList.add('hidden');
+                    document.getElementById('successMessage').classList.add('show');
+
+                    // Close after delay
+                    setTimeout(() => window.close(), 1000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to log activity. Please try again.');
+            }
+        }
+
+        function handleCancel() {
+            window.close();
+        }
+    </script>
+</body>
+</html>
