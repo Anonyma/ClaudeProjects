@@ -26,6 +26,7 @@ from config import (
 )
 from afk_detector import get_idle_time, format_duration
 from supabase_client import TimeTrackerClient
+from native_dialog import show_activity_dialog_cocoa, show_afk_return_dialog
 
 
 class TimeTrackerApp(rumps.App):
@@ -173,8 +174,8 @@ class TimeTrackerApp(rumps.App):
             return
 
         try:
-            # Link to web dashboard for logging
-            dashboard_url = f"https://time-tracker-zk.netlify.app/?ping={ping_id}"
+            # Link to quick-log page with ping context
+            dashboard_url = f"https://time-tracker-zk.netlify.app/quick-log.html?ping={ping_id}"
 
             requests.post(
                 'https://api.pushover.net/1/messages.json',
@@ -194,110 +195,39 @@ class TimeTrackerApp(rumps.App):
             print(f"Pushover error: {e}")
 
     def _prompt_afk_return(self, duration: timedelta):
-        """Show prompt when user returns from AFK."""
-        minutes = int(duration.total_seconds() / 60)
+        """Show native dialog when user returns from AFK."""
         duration_str = format_duration(duration.total_seconds())
 
-        # Use AppleScript for proper keyboard focus
-        import subprocess
-        script = f'display dialog "You were away for {duration_str}. What were you doing?" default answer "" buttons {{"Skip", "Log"}} default button "Log" with title "Welcome Back!" with icon note'
-        try:
-            result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True, timeout=120)
-            output = result.stdout.strip()
-            if 'button returned:Log' in output and 'text returned:' in output:
-                response_text = output.split('text returned:')[1].strip()
-            else:
-                response_text = ""
+        # Show native macOS dialog
+        response = show_afk_return_dialog(duration_str)
 
-            class Response:
-                def __init__(self, text):
-                    self.clicked = bool(text)
-                    self.text = text
-            response = Response(response_text)
-        except subprocess.TimeoutExpired:
-            self.afk_started_at = None
-            return
-        except Exception as e:
-            print(f"Dialog error: {e}")
-            self.afk_started_at = None
-            return
-
-        if response.clicked and response.text.strip():
+        if response:
             # Log the AFK activity with backdated timestamp
             self.client.log_activity(
-                activity_text=response.text.strip(),
+                activity_text=response,
                 device='mac',
                 entry_type='afk_return',
                 timestamp=self.afk_started_at
             )
-            self._update_last_activity(response.text.strip())
+            self._update_last_activity(response)
 
         self.afk_started_at = None
 
     def prompt_log_activity(self, _):
-        """Show prompt for manual activity logging."""
-        # Use AppleScript for proper keyboard focus
-        import subprocess
-        script = '''
-        display dialog "What are you doing right now?" default answer "" buttons {"Cancel", "Log"} default button "Log" with title "Log Activity" with icon note
-        '''
-        try:
-            result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True, timeout=120)
-            # Parse AppleScript result: "button returned:Log, text returned:user input"
-            output = result.stdout.strip()
-            if 'button returned:Log' in output and 'text returned:' in output:
-                response_text = output.split('text returned:')[1].strip()
-            else:
-                response_text = ""
+        """Show native dialog for manual activity logging."""
+        response = show_activity_dialog_cocoa(
+            title="What are you doing?",
+            subtitle="Log your current activity"
+        )
 
-            class Response:
-                def __init__(self, text):
-                    self.clicked = bool(text)
-                    self.text = text
-            response = Response(response_text)
-        except subprocess.TimeoutExpired:
-            return
-        except Exception as e:
-            print(f"Dialog error: {e}")
-            return
-
-        if response.clicked and response.text.strip():
-            activity_text = response.text.strip()
-
-            # Check if responding to a ping
-            ping_id = self.current_ping_id
-            entry_type = 'ping_response' if ping_id else 'manual'
-
-            result = self.client.log_activity(
-                activity_text=activity_text,
+        if response:
+            # Log the activity
+            self.client.log_activity(
+                activity_text=response,
                 device='mac',
-                entry_type=entry_type,
-                ping_id=ping_id
+                entry_type='manual'
             )
-
-            if result:
-                self._update_last_activity(activity_text)
-                # Clear current ping
-                self.current_ping_id = None
-                try:
-                    rumps.notification(
-                        title="Activity Logged",
-                        subtitle="",
-                        message=activity_text[:50],
-                        sound=False
-                    )
-                except Exception:
-                    pass  # Notification is optional
-            else:
-                try:
-                    rumps.notification(
-                        title="Error",
-                        subtitle="Failed to log activity",
-                        message="Check your internet connection",
-                        sound=True
-                    )
-                except Exception:
-                    pass
+            self._update_last_activity(response)
 
     def manual_ping(self, _):
         """Manually trigger a ping."""
