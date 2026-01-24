@@ -127,12 +127,14 @@ class TimeTrackerApp(rumps.App):
         """Check if it's time to send an hourly ping."""
         now = datetime.now()
 
-        # Only ping on the hour (with 2-minute window)
-        if now.minute > 2:
-            return
+        # Don't ping if we already did recently (less than 55 minutes ago)
+        if self.last_ping_time:
+            time_since_last = (now - self.last_ping_time).total_seconds() / 60
+            if time_since_last < 55:
+                return
 
-        # Don't ping if we already did this hour
-        if self.last_ping_time and self.last_ping_time.hour == now.hour:
+        # Only ping within first 5 minutes of the hour
+        if now.minute > 5:
             return
 
         # Don't ping if recent activity
