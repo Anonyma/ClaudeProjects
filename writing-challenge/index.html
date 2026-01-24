@@ -7,7 +7,6 @@
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; }
@@ -17,7 +16,32 @@
   <div id="root"></div>
   <script type="text/babel" data-type="module">
     const { useState, useEffect, useCallback, useRef } = React;
-    const { Play, Pause, Square, Clock, Target, BarChart3, Lightbulb, Settings, ChevronLeft, ChevronRight, FileText, Calendar, TrendingUp, Timer, Check, X, Edit3, Save, Trash2, Plus } = lucideReact;
+
+    // Simple emoji-based icon components
+    const EmojiIcon = ({ emoji, size = 20, className = '' }) => (
+      <span className={className} style={{ fontSize: size * 0.8, lineHeight: 1 }}>{emoji}</span>
+    );
+
+    const Play = (p) => <EmojiIcon emoji="▶️" {...p} />;
+    const Pause = (p) => <EmojiIcon emoji="⏸️" {...p} />;
+    const Square = (p) => <EmojiIcon emoji="⏹️" {...p} />;
+    const Clock = (p) => <EmojiIcon emoji="🕐" {...p} />;
+    const Target = (p) => <EmojiIcon emoji="🎯" {...p} />;
+    const BarChart3 = (p) => <EmojiIcon emoji="📊" {...p} />;
+    const Lightbulb = (p) => <EmojiIcon emoji="💡" {...p} />;
+    const Settings = (p) => <EmojiIcon emoji="⚙️" {...p} />;
+    const ChevronLeft = (p) => <EmojiIcon emoji="◀️" {...p} />;
+    const ChevronRight = (p) => <EmojiIcon emoji="▶️" {...p} />;
+    const FileText = (p) => <EmojiIcon emoji="📄" {...p} />;
+    const Calendar = (p) => <EmojiIcon emoji="📅" {...p} />;
+    const TrendingUp = (p) => <EmojiIcon emoji="📈" {...p} />;
+    const Timer = (p) => <EmojiIcon emoji="⏱️" {...p} />;
+    const Check = (p) => <EmojiIcon emoji="✓" {...p} />;
+    const X = (p) => <EmojiIcon emoji="✕" {...p} />;
+    const Edit3 = (p) => <EmojiIcon emoji="✏️" {...p} />;
+    const Save = (p) => <EmojiIcon emoji="💾" {...p} />;
+    const Trash2 = (p) => <EmojiIcon emoji="🗑️" {...p} />;
+    const Plus = (p) => <EmojiIcon emoji="➕" {...p} />;
 
     // Storage utilities
     const storage = {
