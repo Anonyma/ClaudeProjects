@@ -1,7 +1,7 @@
 {
   "meta": {
     "description": "Index of all projects created with Claude CLI",
-    "lastUpdated": "2026-01-23",
+    "lastUpdated": "2026-01-24",
     "localPath": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/projects.json",
     "supabaseTable": "claude_projects",
     "dashboardUrl": "https://project-command-center.netlify.app"
@@ -449,10 +449,11 @@
         "localstorage"
       ],
       "status": "active",
+      "statusNote": "Uses lucide-react UMD which has issues - needs emoji icon fix (like writing-challenge) before deploying to Netlify",
       "access": {
         "method": "file",
         "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/voice-studio/index.html",
-        "instructions": "Open directly in browser (Chrome/Edge recommended for voice recognition). All practice history persists in localStorage.",
+        "instructions": "Open directly in browser (Chrome/Edge recommended for voice recognition). All practice history persists in localStorage. Note: lucide-react UMD doesn't work for deployment - use local file or fix icons first.",
         "hosted": null,
         "requiresServer": false
       },
