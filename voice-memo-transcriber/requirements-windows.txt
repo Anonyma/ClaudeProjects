@@ -1,0 +1,29 @@
+# Requirements for Windows
+# Install: pip install -r requirements-windows.txt
+
+# faster-whisper for transcription (CPU or CUDA)
+faster-whisper>=1.0.0
+
+# PyTorch (for GPU detection if NVIDIA GPU available)
+# For CPU-only: pip install torch
+# For CUDA: pip install torch --index-url https://download.pytorch.org/whl/cu118
+torch
+
+# Supabase for persistence (optional)
+supabase>=2.0.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# Progress bars
+tqdm>=4.65.0
+
+# OpenAI API (optional, for cloud transcription fallback)
+openai>=1.0.0
+
+# Audio file handling
+pydub>=0.25.0
+
+# Local server
+flask>=3.0.0
+flask-cors>=4.0.0

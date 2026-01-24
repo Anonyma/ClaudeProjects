@@ -2,6 +2,7 @@
 """
 Local transcription server for Voice Memo Transcriber.
 Provides REST API with real-time progress streaming via SSE.
+Supports both MLX Whisper (Apple Silicon) and faster-whisper (CUDA/CPU).
 """
 
 import os
@@ -13,6 +14,7 @@ import subprocess
 import threading
 import time
 import uuid
+import platform
 from pathlib import Path
 from datetime import datetime
 from flask import Flask, request, jsonify, Response
@@ -23,7 +25,57 @@ from dotenv import load_dotenv
 # Add scripts directory to path
 sys.path.insert(0, str(Path(__file__).parent / "scripts"))
 from preprocess import preprocess_audio, get_audio_duration, estimate_transcription_time
-from transcribe import MLX_MODELS
+
+# Detect platform and available backends
+IS_APPLE_SILICON = platform.processor() == 'arm' and platform.system() == 'Darwin'
+MLX_AVAILABLE = False
+FASTER_WHISPER_AVAILABLE = False
+GPU_AVAILABLE = False
+
+# Try to import MLX Whisper (Apple Silicon only)
+if IS_APPLE_SILICON:
+    try:
+        import mlx_whisper
+        MLX_AVAILABLE = True
+    except ImportError:
+        pass
+
+# Try to import faster-whisper (CUDA/CPU)
+if not MLX_AVAILABLE:
+    try:
+        from faster_whisper import WhisperModel
+        FASTER_WHISPER_AVAILABLE = True
+        # Check for CUDA GPU
+        try:
+            import torch
+            GPU_AVAILABLE = torch.cuda.is_available()
+        except ImportError:
+            GPU_AVAILABLE = False
+    except ImportError:
+        pass
+
+# Import MLX_MODELS if available
+try:
+    from transcribe import MLX_MODELS
+except ImportError:
+    MLX_MODELS = {
+        'tiny': 'mlx-community/whisper-tiny-mlx',
+        'base': 'mlx-community/whisper-base-mlx',
+        'small': 'mlx-community/whisper-small-mlx',
+        'medium': 'mlx-community/whisper-medium-mlx',
+        'large-v3': 'mlx-community/whisper-large-v3-mlx',
+        'large-v3-turbo': 'mlx-community/whisper-large-v3-turbo',
+    }
+
+# faster-whisper model names (same as OpenAI model names)
+FASTER_WHISPER_MODELS = {
+    'tiny': 'tiny',
+    'base': 'base',
+    'small': 'small',
+    'medium': 'medium',
+    'large-v3': 'large-v3',
+    'large-v3-turbo': 'large-v3-turbo',
+}
 
 load_dotenv()
 
@@ -91,10 +143,8 @@ def update_job(job_id: str, **kwargs):
 
 def transcribe_with_mlx_progress(audio_path: str, model: str, job_id: str) -> dict:
     """Transcribe with MLX Whisper, updating job progress."""
-    try:
-        import mlx_whisper
-    except ImportError:
-        raise RuntimeError("mlx-whisper not installed")
+    if not MLX_AVAILABLE:
+        raise RuntimeError("mlx-whisper not available on this platform")
 
     update_job(job_id, status='transcribing', message=f'Loading model: {model}', progress=5)
 
@@ -122,6 +172,7 @@ def transcribe_with_mlx_progress(audio_path: str, model: str, job_id: str) -> di
     progress_estimator.start()
 
     # Run transcription
+    import mlx_whisper
     result = mlx_whisper.transcribe(
         audio_path,
         path_or_hf_repo=model,
@@ -138,6 +189,81 @@ def transcribe_with_mlx_progress(audio_path: str, model: str, job_id: str) -> di
         'transcription_time': elapsed,
         'model': model,
         'method': 'mlx_whisper'
+    }
+
+
+def transcribe_with_faster_whisper_progress(audio_path: str, model: str, job_id: str) -> dict:
+    """Transcribe with faster-whisper (CUDA/CPU), updating job progress."""
+    if not FASTER_WHISPER_AVAILABLE:
+        raise RuntimeError("faster-whisper not installed")
+
+    from faster_whisper import WhisperModel
+
+    update_job(job_id, status='transcribing', message=f'Loading model: {model}', progress=5)
+
+    start_time = time.time()
+    duration = get_audio_duration(audio_path)
+
+    # Determine compute device and type
+    if GPU_AVAILABLE:
+        device = "cuda"
+        compute_type = "float16"
+        update_job(job_id, message=f'Loading model on GPU: {model}', progress=8)
+    else:
+        device = "cpu"
+        compute_type = "int8"
+        update_job(job_id, message=f'Loading model on CPU: {model}', progress=8)
+
+    # Load model
+    whisper_model = WhisperModel(model, device=device, compute_type=compute_type)
+
+    # Expected transcription speed
+    if GPU_AVAILABLE:
+        expected_time = duration * 0.05  # ~20x realtime with GPU
+    else:
+        expected_time = duration * 0.3   # ~3x realtime on CPU
+
+    def progress_thread():
+        """Background thread to estimate and update progress."""
+        while job_id in jobs and jobs[job_id]['status'] == 'transcribing':
+            elapsed = time.time() - start_time
+            estimated_progress = min(95, 10 + (elapsed / expected_time) * 85)
+            gpu_status = " (GPU)" if GPU_AVAILABLE else " (CPU)"
+            update_job(job_id,
+                progress=int(estimated_progress),
+                message=f'Transcribing{gpu_status}... {int(elapsed)}s elapsed'
+            )
+            time.sleep(2)
+
+    # Start progress estimation thread
+    progress_estimator = threading.Thread(target=progress_thread, daemon=True)
+    progress_estimator.start()
+
+    # Run transcription
+    segments, info = whisper_model.transcribe(audio_path, beam_size=5)
+
+    # Collect all segments
+    all_segments = []
+    full_text = []
+    for segment in segments:
+        all_segments.append({
+            'start': segment.start,
+            'end': segment.end,
+            'text': segment.text
+        })
+        full_text.append(segment.text)
+
+    elapsed = time.time() - start_time
+
+    return {
+        'text': ' '.join(full_text),
+        'segments': all_segments,
+        'language': info.language,
+        'duration': duration,
+        'transcription_time': elapsed,
+        'model': model,
+        'method': 'faster_whisper',
+        'device': device
     }
 
 
@@ -234,16 +360,21 @@ def process_transcription(job_id: str, file_path: str, options: dict):
             preprocess_stats.update(pp_stats)
 
         # Transcribe
-        method = options.get('method', 'mlx')
+        method = options.get('method', 'auto')
         model = options.get('model', 'large-v3')
 
         update_job(job_id, status='transcribing', message='Starting transcription...', progress=10)
 
         if method == 'openai':
             result = transcribe_with_openai_progress(current_file, 'whisper-1', job_id)
-        else:
+        elif method == 'mlx' or (method == 'auto' and MLX_AVAILABLE):
             mlx_model = MLX_MODELS.get(model, model)
             result = transcribe_with_mlx_progress(current_file, mlx_model, job_id)
+        elif method == 'faster-whisper' or (method == 'auto' and FASTER_WHISPER_AVAILABLE):
+            fw_model = FASTER_WHISPER_MODELS.get(model, model)
+            result = transcribe_with_faster_whisper_progress(current_file, fw_model, job_id)
+        else:
+            raise RuntimeError("No transcription backend available. Install mlx-whisper or faster-whisper.")
 
         # Build final result
         transcript_text = result.get('text', '').strip()
@@ -301,10 +432,23 @@ def process_transcription(job_id: str, file_path: str, options: dict):
 @app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint."""
+    # Determine backend type
+    if MLX_AVAILABLE:
+        backend_type = 'mlx'
+    elif FASTER_WHISPER_AVAILABLE:
+        backend_type = 'faster-whisper'
+    else:
+        backend_type = 'none'
+
     return jsonify({
         'status': 'ok',
         'service': 'voice-memo-transcriber',
-        'mlx_available': True,
+        'platform': platform.system(),
+        'processor': platform.processor(),
+        'backend_type': backend_type,
+        'mlx_available': MLX_AVAILABLE,
+        'faster_whisper_available': FASTER_WHISPER_AVAILABLE,
+        'gpu_available': GPU_AVAILABLE,
         'openai_available': bool(os.getenv('OPENAI_API_KEY')),
         'active_jobs': len([j for j in jobs.values() if j['status'] in ('preprocessing', 'transcribing')])
     })
@@ -443,12 +587,28 @@ def get_models():
 
 
 if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Voice Memo Transcriber Server')
+    parser.add_argument('--host', default='0.0.0.0', help='Host to bind to')
+    parser.add_argument('--port', type=int, default=5111, help='Port to listen on')
+    args = parser.parse_args()
+
     print("\n" + "="*60)
     print("Voice Memo Transcriber - Local Server")
     print("="*60)
-    print(f"MLX Whisper: Available")
+    print(f"Platform: {platform.system()} ({platform.processor()})")
+
+    if MLX_AVAILABLE:
+        print(f"Backend: MLX Whisper (Apple Silicon)")
+    elif FASTER_WHISPER_AVAILABLE:
+        device = "CUDA GPU" if GPU_AVAILABLE else "CPU"
+        print(f"Backend: faster-whisper ({device})")
+    else:
+        print(f"Backend: None available (install mlx-whisper or faster-whisper)")
+
     print(f"OpenAI API: {'Configured' if os.getenv('OPENAI_API_KEY') else 'Not configured'}")
-    print(f"\nServer running at: http://localhost:5111")
+    print(f"\nServer running at: http://{args.host}:{args.port}")
     print("="*60 + "\n")
 
-    app.run(host='0.0.0.0', port=5111, debug=False, threaded=True)
+    app.run(host=args.host, port=args.port, debug=False, threaded=True)

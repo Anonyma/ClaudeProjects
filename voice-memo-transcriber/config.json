@@ -1,0 +1,42 @@
+{
+  "backends": {
+    "local": {
+      "name": "Mac (Local)",
+      "type": "mlx",
+      "url": "http://localhost:5111",
+      "ssh_host": null,
+      "default_model": "large-v3",
+      "priority": 2,
+      "enabled": true
+    },
+    "asus": {
+      "name": "ASUS (GPU)",
+      "type": "faster-whisper",
+      "url": "http://asus:5111",
+      "ssh_host": "asus",
+      "ssh_user": null,
+      "remote_path": "~/voice-memo-transcriber",
+      "venv_path": "~/whisper-env",
+      "default_model": "large-v3",
+      "priority": 1,
+      "enabled": true
+    },
+    "windows": {
+      "name": "Windows",
+      "type": "faster-whisper",
+      "url": "http://windows:5112",
+      "ssh_host": "windows",
+      "ssh_user": null,
+      "remote_path": "C:/voice-memo-transcriber",
+      "venv_path": "C:/whisper-env",
+      "default_model": "large-v3",
+      "priority": 3,
+      "enabled": true
+    }
+  },
+  "default_backend": "auto",
+  "auto_fallback": true,
+  "health_check_timeout": 5,
+  "ssh_timeout": 30,
+  "transfer_timeout": 300
+}

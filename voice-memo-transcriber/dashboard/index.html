@@ -62,6 +62,20 @@
 
         .status-dot.connected { background: var(--success); }
 
+        .backend-select {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .backend-select option { background: var(--bg-secondary); }
+        .backend-select.connected { border-color: var(--success); }
+        .backend-select.gpu { border-color: var(--warning); }
+
         .notify-btn {
             padding: 0.4rem 0.8rem;
             font-size: 0.75rem;
@@ -535,6 +549,12 @@
         <header>
             <h1>Voice Memo Transcriber</h1>
             <div class="header-right">
+                <select id="backend-select" class="backend-select" onchange="switchBackend()">
+                    <option value="auto">Auto (Best Available)</option>
+                    <option value="local" selected>Mac (Local)</option>
+                    <option value="asus">ASUS (GPU)</option>
+                    <option value="windows">Windows</option>
+                </select>
                 <button class="notify-btn" id="notify-btn" onclick="toggleNotifications()">
                     Notifications: Off
                 </button>
@@ -682,13 +702,21 @@
     <div class="toast-container" id="toast-container"></div>
 
     <script>
-        const LOCAL_SERVER = 'http://localhost:5111';
+        // Backend configuration
+        const BACKENDS = {
+            local: { url: 'http://localhost:5111', name: 'Mac (Local)', type: 'mlx' },
+            asus: { url: 'http://asus:5111', name: 'ASUS (GPU)', type: 'faster-whisper' },
+            windows: { url: 'http://windows:5112', name: 'Windows', type: 'faster-whisper' }
+        };
+
         const SUPABASE_URL = 'https://ydwjzlikslebokuxzwco.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU';
 
         let supabaseClient = null;
         let currentFile = null;
         let currentMethod = 'local';
+        let currentBackend = 'local';
+        let backendStatus = {};  // { backendName: { available, gpu, type } }
         let serverAvailable = false;
         let estimates = null;
         let notificationsEnabled = false;
@@ -696,8 +724,33 @@
         let jobStartTime = null;
         let elapsedInterval = null;
 
+        // Get current server URL
+        function getServerUrl() {
+            if (currentBackend === 'auto') {
+                // Find best available backend
+                for (const [name, status] of Object.entries(backendStatus)) {
+                    if (status.available) {
+                        if (status.gpu) return BACKENDS[name].url;  // Prefer GPU
+                    }
+                }
+                for (const [name, status] of Object.entries(backendStatus)) {
+                    if (status.available) return BACKENDS[name].url;
+                }
+                return BACKENDS.local.url;  // Fallback
+            }
+            return BACKENDS[currentBackend]?.url || BACKENDS.local.url;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // Load preferred backend from localStorage
+            const savedBackend = localStorage.getItem('preferred_backend');
+            if (savedBackend && BACKENDS[savedBackend]) {
+                currentBackend = savedBackend;
+                document.getElementById('backend-select').value = savedBackend;
+            }
+
             setupEventListeners();
             checkServerStatus();
             loadHistory();
@@ -741,24 +794,100 @@
             const statusDot = document.getElementById('status-dot');
             const statusText = document.getElementById('status-text');
             const serverNotice = document.getElementById('server-notice');
+            const backendSelect = document.getElementById('backend-select');
 
-            try {
-                const response = await fetch(`${LOCAL_SERVER}/health`);
-                if (response.ok) {
-                    const data = await response.json();
-                    serverAvailable = true;
-                    statusDot.classList.add('connected');
-                    statusText.textContent = `Connected${data.active_jobs ? ` (${data.active_jobs} active)` : ''}`;
-                    serverNotice.style.display = 'none';
+            // Check all backends
+            backendStatus = {};
+            for (const [name, backend] of Object.entries(BACKENDS)) {
+                try {
+                    const response = await fetch(`${backend.url}/health`, { signal: AbortSignal.timeout(3000) });
+                    if (response.ok) {
+                        const data = await response.json();
+                        backendStatus[name] = {
+                            available: true,
+                            gpu: data.gpu_available || false,
+                            type: data.backend_type || backend.type,
+                            activeJobs: data.active_jobs || 0
+                        };
+                    }
+                } catch (e) {
+                    backendStatus[name] = { available: false };
                 }
-            } catch (e) {
-                serverAvailable = false;
+            }
+
+            // Update backend select options with status
+            for (const option of backendSelect.options) {
+                if (option.value === 'auto') continue;
+                const status = backendStatus[option.value];
+                const backend = BACKENDS[option.value];
+                if (status?.available) {
+                    const gpuLabel = status.gpu ? ' [GPU]' : '';
+                    option.textContent = `${backend.name}${gpuLabel}`;
+                    option.disabled = false;
+                } else {
+                    option.textContent = `${backend.name} (offline)`;
+                    option.disabled = true;
+                }
+            }
+
+            // Check current backend status
+            const currentStatus = backendStatus[currentBackend] || {};
+            serverAvailable = currentStatus.available || false;
+
+            // Find best available for 'auto' mode
+            if (currentBackend === 'auto') {
+                let bestBackend = null;
+                for (const [name, status] of Object.entries(backendStatus)) {
+                    if (status.available) {
+                        if (!bestBackend || status.gpu) bestBackend = name;
+                    }
+                }
+                serverAvailable = !!bestBackend;
+                if (bestBackend) {
+                    const backend = BACKENDS[bestBackend];
+                    const gpuLabel = backendStatus[bestBackend].gpu ? ' [GPU]' : '';
+                    statusText.textContent = `Auto: ${backend.name}${gpuLabel}`;
+                } else {
+                    statusText.textContent = 'No backends available';
+                }
+            } else {
+                if (serverAvailable) {
+                    const gpuLabel = currentStatus.gpu ? ' [GPU]' : '';
+                    const jobsLabel = currentStatus.activeJobs ? ` (${currentStatus.activeJobs} active)` : '';
+                    statusText.textContent = `Connected${gpuLabel}${jobsLabel}`;
+                } else {
+                    statusText.textContent = 'Offline';
+                }
+            }
+
+            // Update UI based on availability
+            if (serverAvailable) {
+                statusDot.classList.add('connected');
+                serverNotice.style.display = 'none';
+                backendSelect.classList.add('connected');
+                if (currentStatus?.gpu || (currentBackend === 'auto' && Object.values(backendStatus).some(s => s.gpu))) {
+                    backendSelect.classList.add('gpu');
+                } else {
+                    backendSelect.classList.remove('gpu');
+                }
+            } else {
                 statusDot.classList.remove('connected');
-                statusText.textContent = 'Offline';
                 serverNotice.style.display = 'block';
+                backendSelect.classList.remove('connected', 'gpu');
                 if (currentMethod === 'local') selectMethod('openai');
                 document.getElementById('card-local').classList.add('disabled');
             }
+
+            // Refresh status every 30 seconds
+            setTimeout(checkServerStatus, 30000);
+        }
+
+        function switchBackend() {
+            const select = document.getElementById('backend-select');
+            currentBackend = select.value;
+            localStorage.setItem('preferred_backend', currentBackend);
+            checkServerStatus();
+            updateTranscribeButton();
         }
 
         function checkNotificationPermission() {
@@ -914,9 +1043,10 @@
             statusPanel.classList.add('visible');
             document.getElementById('status-filename').textContent = currentFile.name;
 
+            const serverUrl = getServerUrl();
             const formData = new FormData();
             formData.append('file', currentFile);
-            formData.append('method', 'mlx');
+            formData.append('method', 'auto');  // Let server choose MLX or faster-whisper
             formData.append('model', document.getElementById('mlx-model').value);
             formData.append('speed', document.getElementById('speed-slider').value);
             formData.append('remove_silence', document.getElementById('remove-silence').checked);
@@ -924,7 +1054,7 @@
 
             try {
                 // Start transcription job
-                const response = await fetch(`${LOCAL_SERVER}/transcribe`, { method: 'POST', body: formData });
+                const response = await fetch(`${serverUrl}/transcribe`, { method: 'POST', body: formData });
                 const data = await response.json();
 
                 if (data.error) throw new Error(data.error);
@@ -940,7 +1070,7 @@
                 }, 1000);
 
                 // Subscribe to SSE for progress updates
-                const eventSource = new EventSource(`${LOCAL_SERVER}/progress/${jobId}`);
+                const eventSource = new EventSource(`${serverUrl}/progress/${jobId}`);
 
                 eventSource.onmessage = (event) => {
                     const job = JSON.parse(event.data);
@@ -966,7 +1096,7 @@
                     eventSource.close();
                     clearInterval(elapsedInterval);
                     // Check job status one more time
-                    fetch(`${LOCAL_SERVER}/job/${jobId}`)
+                    fetch(`${serverUrl}/job/${jobId}`)
                         .then(r => r.json())
                         .then(job => {
                             if (job.status === 'completed') {
