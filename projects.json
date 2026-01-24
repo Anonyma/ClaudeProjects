@@ -96,7 +96,7 @@
         "method": "cli + web",
         "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/notebooklm_scrape/study-app/index.html",
         "instructions": "Scripts: /Users/z/miniforge3/bin/python <script>.py. Study app: open hosted URL or local file. Rich summaries: generate_rich_summaries.py",
-        "hosted": "https://elaborate-beignet-acdd88.netlify.app/",
+        "hosted": "https://notebooklmstudyhub.netlify.app/",
         "deploymentPlatform": "netlify",
         "requiresServer": false
       },
