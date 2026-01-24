@@ -419,10 +419,11 @@
       ],
       "status": "active",
       "access": {
-        "method": "file",
+        "method": "file-or-hosted",
         "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/writing-challenge/index.html",
-        "instructions": "Open directly in browser. All data persists in localStorage. Export/import available in Settings.",
-        "hosted": null,
+        "instructions": "Open hosted URL or local file in browser. All data persists in localStorage. Export/import available in Settings.",
+        "hosted": "https://writing-challenge-app.netlify.app",
+        "deploymentPlatform": "netlify",
         "requiresServer": false
       },
       "claudeSessionUrl": "https://claude.ai/chat/4630db9d-7a34-40eb-80ef-6e97da5d9c34",

@@ -224,6 +224,13 @@
                 '<span class="platform-icon">🐙</span><span>GitHub</span></a>';
         }
 
+        // Localhost command - show copyable run command
+        if (p.localhost_command || p.server_command) {
+            var cmd = p.localhost_command || p.server_command;
+            accessLinks += '<button class="access-link" onclick="event.stopPropagation(); copyToClipboard(\'' + cmd.replace(/'/g, "\\'") + '\')" title="' + cmd + '">' +
+                '<span class="platform-icon">▶️</span><span>Copy Run Command</span></button>';
+        }
+
         var tags = (p.tags || []).map(function(t) { return '<span class="tag">' + t + '</span>'; }).join('');
         var sessionLink = p.claude_session_url ?
             '<a href="' + p.claude_session_url + '" target="_blank" class="session-link">📎 Claude Session</a>' : '';
