@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Writer's Room</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --ink: #2c3e50;
+            --paper: #fdfbf7;
+            --gold: #c0a062;
+            --wood: #3e3226;
+            --faded-ink: #6d7b88;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            background-color: var(--wood);
+            background-image: radial-gradient(#4a3b2e 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--ink);
+        }
+
+        .font-typewriter {
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Paper Effect */
+        .paper-sheet {
+            background-color: var(--paper);
+            background-image: url('paper-texture.png');
+            background-blend-mode: multiply;
+            box-shadow:
+                0 1px 1px rgba(0, 0, 0, 0.15),
+                0 10px 0 -5px #eee,
+                0 10px 1px -4px rgba(0, 0, 0, 0.15),
+                0 20px 0 -10px #e5e5e5,
+                0 20px 1px -9px rgba(0, 0, 0, 0.15),
+                0 30px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        /* Ink Button Style */
+        .btn-ink {
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .btn-ink:hover,
+        .btn-ink.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        /* Typewriter Input */
+        .input-typewriter {
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed var(--faded-ink);
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .input-typewriter:focus {
+            outline: none;
+            border-bottom: 1px solid var(--ink);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #dcdcdc;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c0c0c0;
+        }
+
+        /* Animations */
+        @keyframes typing {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: typing 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen py-8 px-4 flex justify-center items-start">
+    <div id="root" class="w-full max-w-4xl"></div>
+
+    <script type="text/babel" data-type="module">
+        const { useState, useEffect, useCallback, useRef } = React;
+
+        // Icons
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const icons = {
+                play: "▶", pause: "⏸", stop: "⏹", clock: "🕐", target: "◎",
+                chart: "📊", idea: "✦", settings: "⚙", left: "←", right: "→",
+                up: "↑", down: "↓", file: "📄", calendar: "📅", trend: "📈",
+                check: "✓", x: "✕", edit: "✎", save: "💾", trash: "🗑", plus: "+"
+            };
+            return <span className={`inline-block text-center ${className}`} style={{ width: size, fontSize: size * 0.8 }}>{icons[name] || "?"}</span>;
+        };
+
+        // Storage
+        const storage = {
+            get: (key, def) => {
+                try { return JSON.parse(localStorage.getItem(key)) || def; }
+                catch { return def; }
+            },
+            set: (key, val) => localStorage.setItem(key, JSON.stringify(val))
+        };
+
+        const COMMON_WORDS = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by']);
+
+        // Components
+        const InkClock = ({ progress, size = 60 }) => {
+            const r = (size - 4) / 2;
+            const c = 2 * Math.PI * r;
+            return (
+                <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+                    <svg className="transform -rotate-90 w-full h-full">
+                        <circle cx="50%" cy="50%" r={r} fill="none" stroke="#ddd" strokeWidth="2" />
+                        <circle cx="50%" cy="50%" r={r} fill="none" stroke="#c0a062" strokeWidth="3"
+                            strokeDasharray={c} strokeDashoffset={c * (1 - Math.min(progress, 1))}
+                            strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.5s ease' }} />
+                    </svg>
+                </div>
+            );
+        };
+
+        const formatTime = (s) => {
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            return `${m}:${sec.toString().padStart(2, '0')}`;
+        };
+
+        const formatDuration = (s) => {
+            if (!s) return '';
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            return `${m}m ${sec}s`;
+        };
+
+        const formatDate = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+        function WriterApp() {
+            const [view, setView] = useState('write');
+            const [settings, setSettings] = useState(() => storage.get('writingSettings', {
+                goalType: 'words', wordGoal: 500, characterGoal: 2500, timeGoal: 20,
+                separateCommonWords: false
+            }));
+            const [sessions, setSessions] = useState(() => storage.get('writingSessions', []));
+            const [texts, setTexts] = useState(() => storage.get('writingTexts', []));
+            const [ideas, setIdeas] = useState(() => storage.get('writingIdeas', []));
+
+            // Writing State
+            const [isWriting, setIsWriting] = useState(false);
+            const [isPaused, setIsPaused] = useState(false);
+            const [text, setText] = useState('');
+            const [startTime, setStartTime] = useState(null);
+            const [elapsed, setElapsed] = useState(0);
+            const timerRef = useRef(null);
+
+            // Persistence
+            useEffect(() => storage.set('writingSettings', settings), [settings]);
+            useEffect(() => storage.set('writingSessions', sessions), [sessions]);
+            useEffect(() => storage.set('writingTexts', texts), [texts]);
+            useEffect(() => storage.set('writingIdeas', ideas), [ideas]);
+
+            // Timer
+            useEffect(() => {
+                if (isWriting && !isPaused) {
+                    timerRef.current = setInterval(() => setElapsed(p => p + 1), 1000);
+                } else clearInterval(timerRef.current);
+                return () => clearInterval(timerRef.current);
+            }, [isWriting, isPaused]);
+
+            const getStats = useCallback((txt) => {
+                const words = txt.trim().split(/\s+/).filter(w => w.length > 0);
+                return {
+                    words: words.length,
+                    chars: txt.length,
+                    contentWords: words.filter(w => !COMMON_WORDS.has(w.toLowerCase().replace(/[^a-z]/g, ''))).length
+                };
+            }, []);
+
+            const stats = getStats(text);
+
+            const getProgress = () => {
+                if (settings.goalType === 'words') return stats.words / settings.wordGoal;
+                if (settings.goalType === 'characters') return stats.chars / settings.characterGoal;
+                return elapsed / (settings.timeGoal * 60);
+            };
+
+            const progress = getProgress();
+            const goalMet = progress >= 1;
+
+            const saveSession = (title) => {
+                const finalStats = getStats(text);
+                const session = {
+                    id: Date.now(), startTime, duration: elapsed,
+                    ...finalStats, goalMet, goalType: settings.goalType
+                };
+                setSessions(p => [...p, session]);
+                if (text.trim()) {
+                    setTexts(p => [...p, {
+                        id: Date.now(), title: title || `Untitled ${formatDate(new Date())}`,
+                        content: text, createdAt: startTime, ...finalStats, duration: elapsed,
+                        goalType: settings.goalType, goalMet
+                    }]);
+                }
+                setIsWriting(false); setText(''); setElapsed(0);
+            };
+
+            return (
+                <div className="paper-sheet rounded-sm min-h-[85vh] p-8 md:p-12 flex flex-col animate-in">
+                    {/* Header */}
+                    <header className="flex flex-col md:flex-row justify-between items-center mb-12 border-b-2 border-double border-gray-200 pb-6">
+                        <h1 className="font-display text-4xl italic text-[var(--ink)] mb-4 md:mb-0">The Writer's Room</h1>
+                        <nav className="flex gap-6 text-sm font-medium tracking-wide">
+                            {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                                <button
+                                    key={v}
+                                    onClick={() => setView(v)}
+                                    className={`btn-ink uppercase ${view === v ? 'text-[var(--gold)] active' : 'text-gray-500'}`}
+                                >
+                                    {v}
+                                </button>
+                            ))}
+                        </nav>
+                    </header>
+
+                    <main className="flex-1 relative">
+                        {view === 'write' && (
+                            isWriting ? (
+                                <div className="h-full flex flex-col">
+                                    {/* Status Bar */}
+                                    <div className="flex justify-between items-end mb-6 text-sm font-typewriter text-gray-500">
+                                        <div className="flex items-center gap-4">
+                                            <InkClock progress={progress} size={40} />
+                                            <div>
+                                                <div className="text-gray-800 font-bold">
+                                                    {settings.goalType === 'words' ? stats.words : settings.goalType === 'chars' ? stats.chars : Math.floor(elapsed / 60)}
+                                                    <span className="text-gray-400 mx-1">/</span>
+                                                    {settings.goalType === 'words' ? settings.wordGoal : settings.goalType === 'chars' ? settings.characterGoal : settings.timeGoal}
+                                                </div>
+                                                <div className="text-xs uppercase tracking-wider">{settings.goalType}</div>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-[var(--ink)]">{formatTime(elapsed)}</div>
+                                            <div className="flex gap-3 mt-1">
+                                                <button onClick={() => setIsPaused(!isPaused)} className="hover:text-[var(--gold)]">
+                                                    {isPaused ? "RESUME" : "PAUSE"}
+                                                </button>
+                                                <button onClick={() => {
+                                                    const title = prompt("Save as?");
+                                                    if (title !== null) saveSession(title);
+                                                }} className="text-red-800 hover:text-red-600">FINISH</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Typewriter Area */}
+                                    <textarea
+                                        value={text}
+                                        onChange={e => setText(e.target.value)}
+                                        disabled={isPaused}
+                                        className="flex-1 w-full resize-none font-typewriter text-lg leading-relaxed bg-transparent focus:outline-none placeholder-gray-300"
+                                        placeholder="Type your story here..."
+                                        spellCheck="false"
+                                    ></textarea>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-[50vh] text-center">
+                                    <div className="mb-6 font-display text-2xl italic text-gray-500">
+                                        "There is no greater agony than bearing an untold story inside you."
+                                    </div>
+                                    <button
+                                        onClick={() => { setIsWriting(true); setStartTime(new Date().toISOString()); }}
+                                        className="px-8 py-3 border-2 border-[var(--ink)] text-[var(--ink)] hover:bg-[var(--ink)] hover:text-white transition-colors duration-300 font-typewriter tracking-widest uppercase text-sm"
+                                    >
+                                        Start Writing
+                                    </button>
+                                    <div className="mt-4 text-xs font-typewriter text-gray-400">
+                                        Target: {settings.goalType === 'words' ? settings.wordGoal : settings.timeGoal} {settings.goalType}
+                                    </div>
+                                </div>
+                            )
+                        )}
+
+                        {view === 'texts' && (
+                            <div className="grid md:grid-cols-12 gap-8 h-full">
+                                <div className="md:col-span-4 border-r border-gray-200 pr-4 space-y-4 max-h-[60vh] overflow-y-auto">
+                                    <h3 className="font-display italic text-xl mb-4 text-gray-400">Drafts</h3>
+                                    {texts.length === 0 && <p className="font-typewriter text-sm text-gray-400">No manuscripts found.</p>}
+                                    {[...texts].reverse().map(t => (
+                                        <div key={t.id} className="group cursor-pointer p-3 hover:bg-[rgba(0,0,0,0.03)] rounded transition-colors"
+                                            onClick={() => setView(t)}> {/* Using view state to hold selected text temporarily or adding new state */}
+                                            <div className={`font-display font-bold text-lg group-hover:text-[var(--gold)]`}>{t.title}</div>
+                                            <div className="font-typewriter text-xs text-gray-400 mt-1">
+                                                {formatDate(t.createdAt)} • {t.wordCount}w • {formatDuration(t.duration)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="md:col-span-8 h-full overflow-y-auto pl-4">
+                                    {typeof view === 'object' && view.id ? (
+                                        <div className="animate-in">
+                                            <div className="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
+                                                <div>
+                                                    <h2 className="font-display text-3xl text-[var(--ink)] mb-1">{view.title}</h2>
+                                                    <div className="font-typewriter text-xs text-[var(--gold)] tracking-widest uppercase">
+                                                        {formatDate(view.createdAt)} — {view.wordCount} Words — {formatDuration(view.duration)}
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => setView('texts')} className="btn-ink text-xs uppercase px-2">Close</button>
+                                                    <button onClick={() => {
+                                                        if (confirm('Burn this manuscript?')) {
+                                                            setTexts(texts.filter(x => x.id !== view.id));
+                                                            setView('texts');
+                                                        }
+                                                    }} className="btn-ink text-xs uppercase px-2 text-red-400 hover:text-red-600">Delete</button>
+                                                </div>
+                                            </div>
+
+                                            <div className="prose prose-p:font-serif prose-p:leading-loose text-gray-700 max-w-none">
+                                                {view.content.split('\n').map((p, i) => (
+                                                    <p key={i} className="mb-4 text-lg">{p}</p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center h-full text-gray-300">
+                                            <div className="font-display italic text-2xl mb-2">Select a manuscript</div>
+                                            <div className="font-typewriter text-xs">Stories are waiting to be read.</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'stats' && (
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                                {[
+                                    { l: 'Words Written', v: sessions.reduce((a, s) => a + s.words, 0).toLocaleString() },
+                                    { l: 'Time Spent', v: Math.round(sessions.reduce((a, s) => a + s.duration, 0) / 60) + 'm' },
+                                    { l: 'Sessions', v: sessions.length },
+                                    { l: 'Avg WPM', v: Math.round(sessions.reduce((a, s) => a + (s.words / (s.duration / 60) || 0), 0) / sessions.length || 0) }
+                                ].map((s, i) => (
+                                    <div key={i} className="p-6 border border-gray-200">
+                                        <div className="font-display text-3xl font-bold text-[var(--gold)] mb-2">{s.v}</div>
+                                        <div className="font-typewriter text-xs uppercase tracking-widest text-gray-500">{s.l}</div>
+                                    </div>
+                                ))}
+                                {/* Calendar visual could go here */}
+                            </div>
+                        )}
+
+                        {view === 'ideas' && (
+                            <div className="max-w-xl mx-auto">
+                                <h3 className="font-display text-2xl italic text-center mb-8">Fragments & Sparks</h3>
+                                <div className="flex gap-2 mb-8 border-b border-gray-200 pb-2">
+                                    <input
+                                        className="flex-1 bg-transparent font-typewriter focus:outline-none"
+                                        placeholder="Capture a thought..."
+                                        onKeyDown={e => {
+                                            if (e.key === 'Enter' && e.target.value.trim()) {
+                                                setIdeas([...ideas, { id: Date.now(), text: e.target.value, createdAt: new Date() }]);
+                                                e.target.value = '';
+                                            }
+                                        }}
+                                    />
+                                    <button className="text-[var(--gold)] text-xl">+</button>
+                                </div>
+                                <div className="space-y-6">
+                                    {ideas.map(idea => (
+                                        <div key={idea.id} className="relative pl-6 before:content-['*'] before:absolute before:left-0 before:text-[var(--gold)] font-serif italic text-lg text-gray-700">
+                                            {idea.text}
+                                            <button onClick={() => setIdeas(ideas.filter(i => i.id !== idea.id))} className="ml-4 text-xs text-gray-300 hover:text-red-400 not-italic font-sans">del</button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'settings' && (
+                            <div className="max-w-lg mx-auto py-8">
+                                <h3 className="font-display text-xl mb-6 text-center">Configuration</h3>
+                                <div className="space-y-6 font-typewriter text-sm">
+                                    <div className="flex justify-between items-center pb-4 border-b border-dashed border-gray-300">
+                                        <label>Goal Metric</label>
+                                        <select
+                                            value={settings.goalType}
+                                            onChange={e => setSettings({ ...settings, goalType: e.target.value })}
+                                            className="bg-transparent border-b border-[var(--ink)] focus:outline-none"
+                                        >
+                                            <option value="words">Words</option>
+                                            <option value="time">Time</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex justify-between items-center pb-4 border-b border-dashed border-gray-300">
+                                        <label>Daily Target</label>
+                                        <input
+                                            type="number"
+                                            value={settings.goalType === 'words' ? settings.wordGoal : settings.timeGoal}
+                                            onChange={e => {
+                                                const val = parseInt(e.target.value);
+                                                settings.goalType === 'words' ? setSettings({ ...settings, wordGoal: val }) : setSettings({ ...settings, timeGoal: val })
+                                            }}
+                                            className="w-20 text-right bg-transparent border-b border-[var(--ink)] focus:outline-none"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<WriterApp />);
+    </script>
+</body>
+
+</html>
