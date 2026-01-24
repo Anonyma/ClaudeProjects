@@ -153,16 +153,19 @@ class TimeTrackerApp(rumps.App):
         if ping:
             self.current_ping_id = ping['id']
 
-            # Show local notification/prompt
-            rumps.notification(
-                title="What are you doing?",
-                subtitle="Time to log your activity",
-                message="Click to log what you're working on",
-                sound=True
-            )
-
-            # Send Pushover notification if configured
+            # Send Pushover notification first (more reliable)
             self._send_pushover_notification(ping['id'])
+
+            # Try local notification (may fail due to rumps bug)
+            try:
+                rumps.notification(
+                    title="What are you doing?",
+                    subtitle="Time to log your activity",
+                    message="Click to log what you're working on",
+                    sound=True
+                )
+            except Exception as e:
+                print(f"Local notification failed: {e}")
 
     def _send_pushover_notification(self, ping_id: str):
         """Send push notification via Pushover."""
@@ -195,14 +198,29 @@ class TimeTrackerApp(rumps.App):
         minutes = int(duration.total_seconds() / 60)
         duration_str = format_duration(duration.total_seconds())
 
-        response = rumps.Window(
-            title="Welcome Back!",
-            message=f"You were away for {duration_str}.\nWhat were you doing?",
-            default_text="",
-            ok="Log",
-            cancel="Skip",
-            dimensions=(300, 100)
-        ).run()
+        # Use AppleScript for proper keyboard focus
+        import subprocess
+        script = f'display dialog "You were away for {duration_str}. What were you doing?" default answer "" buttons {{"Skip", "Log"}} default button "Log" with title "Welcome Back!" with icon note'
+        try:
+            result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True, timeout=120)
+            output = result.stdout.strip()
+            if 'button returned:Log' in output and 'text returned:' in output:
+                response_text = output.split('text returned:')[1].strip()
+            else:
+                response_text = ""
+
+            class Response:
+                def __init__(self, text):
+                    self.clicked = bool(text)
+                    self.text = text
+            response = Response(response_text)
+        except subprocess.TimeoutExpired:
+            self.afk_started_at = None
+            return
+        except Exception as e:
+            print(f"Dialog error: {e}")
+            self.afk_started_at = None
+            return
 
         if response.clicked and response.text.strip():
             # Log the AFK activity with backdated timestamp
@@ -218,14 +236,30 @@ class TimeTrackerApp(rumps.App):
 
     def prompt_log_activity(self, _):
         """Show prompt for manual activity logging."""
-        response = rumps.Window(
-            title="Log Activity",
-            message="What are you doing right now?",
-            default_text="",
-            ok="Log",
-            cancel="Cancel",
-            dimensions=(300, 100)
-        ).run()
+        # Use AppleScript for proper keyboard focus
+        import subprocess
+        script = '''
+        display dialog "What are you doing right now?" default answer "" buttons {"Cancel", "Log"} default button "Log" with title "Log Activity" with icon note
+        '''
+        try:
+            result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True, timeout=120)
+            # Parse AppleScript result: "button returned:Log, text returned:user input"
+            output = result.stdout.strip()
+            if 'button returned:Log' in output and 'text returned:' in output:
+                response_text = output.split('text returned:')[1].strip()
+            else:
+                response_text = ""
+
+            class Response:
+                def __init__(self, text):
+                    self.clicked = bool(text)
+                    self.text = text
+            response = Response(response_text)
+        except subprocess.TimeoutExpired:
+            return
+        except Exception as e:
+            print(f"Dialog error: {e}")
+            return
 
         if response.clicked and response.text.strip():
             activity_text = response.text.strip()
@@ -243,22 +277,27 @@ class TimeTrackerApp(rumps.App):
 
             if result:
                 self._update_last_activity(activity_text)
-                rumps.notification(
-                    title="Activity Logged",
-                    subtitle="",
-                    message=activity_text[:50],
-                    sound=False
-                )
-
                 # Clear current ping
                 self.current_ping_id = None
+                try:
+                    rumps.notification(
+                        title="Activity Logged",
+                        subtitle="",
+                        message=activity_text[:50],
+                        sound=False
+                    )
+                except Exception:
+                    pass  # Notification is optional
             else:
-                rumps.notification(
-                    title="Error",
-                    subtitle="Failed to log activity",
-                    message="Check your internet connection",
-                    sound=True
-                )
+                try:
+                    rumps.notification(
+                        title="Error",
+                        subtitle="Failed to log activity",
+                        message="Check your internet connection",
+                        sound=True
+                    )
+                except Exception:
+                    pass
 
     def manual_ping(self, _):
         """Manually trigger a ping."""

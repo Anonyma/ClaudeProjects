@@ -91,7 +91,10 @@
       "Bash(npx netlify-cli:*)",
       "Bash(npx netlify:*)",
       "Bash(clawdbot agents:*)",
-      "Bash(# Check if there''s a projects.json or similar tracking file cat /Users/z/Desktop/PersonalProjects/ClaudeProjects/projects.json)"
+      "Bash(# Check if there''s a projects.json or similar tracking file cat /Users/z/Desktop/PersonalProjects/ClaudeProjects/projects.json)",
+      "Bash(osascript:*)",
+      "Bash(echo \"Checking source...\" grep -r \"runError\\\\|onError\" /opt/homebrew/lib/node_modules/clawdbot/dist/agent/*.js)",
+      "Bash(echo:*)"
     ]
   }
 }
