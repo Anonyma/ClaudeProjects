@@ -1,5 +1,46 @@
 [
   {
+    "notebook_id": "b2174995-b404-42b2-93f7-4bf70034e763",
+    "title": "Indian History: Kingdoms, Philosophy, and Spirituality",
+    "description": "Comprehensive history of India from Indus Valley through independence: Maurya, Gupta, Chola, Mughal empires, Hindu/Buddhist/Jain philosophy, yoga and meditation origins, British Raj, and independence movement.",
+    "topic_tags": [
+      "Indian history",
+      "Maurya",
+      "Gupta",
+      "Mughal",
+      "Hinduism",
+      "Buddhism",
+      "yoga",
+      "British Raj",
+      "independence",
+      "philosophy"
+    ],
+    "source_count": 50,
+    "created_display": "21 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-24T01:14:48.156374Z"
+  },
+  {
+    "notebook_id": "a4e02063-78b1-4613-a9f1-d4cde875b099",
+    "title": "Chinese History: Dynasties, Philosophy, and Daily Life",
+    "description": "Comprehensive examination of imperial China from Zhou to Qing dynasties, covering the civil service examination system, Confucianism, Taoism, Buddhism, daily life across social classes, and the transition to modern China.",
+    "topic_tags": [
+      "Chinese history",
+      "dynasties",
+      "Confucianism",
+      "Taoism",
+      "Buddhism",
+      "civil service",
+      "imperial China",
+      "Qing dynasty",
+      "social classes"
+    ],
+    "source_count": 59,
+    "created_display": "21 Jan 2026",
+    "updated_display": null,
+    "first_seen_at": "2026-01-24T01:14:48.156139Z"
+  },
+  {
     "notebook_id": "a8e34a7e-bb2d-47b3-8356-3228b22464dd",
     "title": "Work, Wealth, and Automation: Navigating the New Social Question",
     "description": "These sources examine the complex intersection of artificial intelligence, automation, and the future of global labour markets. Research indicates that while AI can significantly boost productivity, it also risks displacing workers across both routine and high-skilled occupations, potentially necessitating radical shifts in social policy. Proposed solutions include Universal Basic Income (UBI), Negative Income Tax, and job guarantees, though these face significant hurdles regarding financing, political feasibility, and administrative implementation.",
@@ -81,7 +122,7 @@
   },
   {
     "notebook_id": "cdfce2fe-1e01-4f64-ae89-91b316865770",
-    "title": "Power and Prestige of the Ancien Régime",
+    "title": "Power and Prestige of the Ancien R\u00e9gime",
     "description": "The sources examine the history and cultural evolution of the French monarchy, with a particular focus on the Palace of Versailles and the reigns of Louis XIV and Louis XVI. Topics include rigid etiquette and absolute power, influential roles of royal mistresses and Marie Antoinette, socio-political causes of the French Revolution, and the modern legacy of luxury and French heritage.",
     "topic_tags": [
       "French monarchy",

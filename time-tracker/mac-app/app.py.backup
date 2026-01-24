@@ -127,14 +127,12 @@ class TimeTrackerApp(rumps.App):
         """Check if it's time to send an hourly ping."""
         now = datetime.now()
 
-        # Don't ping if we already did recently (less than 55 minutes ago)
-        if self.last_ping_time:
-            time_since_last = (now - self.last_ping_time).total_seconds() / 60
-            if time_since_last < 55:
-                return
+        # Only ping on the hour (with 2-minute window)
+        if now.minute > 2:
+            return
 
-        # Only ping within first 5 minutes of the hour
-        if now.minute > 5:
+        # Don't ping if we already did this hour
+        if self.last_ping_time and self.last_ping_time.hour == now.hour:
             return
 
         # Don't ping if recent activity
@@ -170,8 +168,8 @@ class TimeTrackerApp(rumps.App):
             return
 
         try:
-            # Link to web dashboard for logging
-            dashboard_url = f"https://time-tracker-zk.netlify.app/?ping={ping_id}"
+            # Create deep link to iOS Shortcut
+            shortcut_url = f"shortcuts://run-shortcut?name=Log%20Activity&input=text&text={ping_id}"
 
             requests.post(
                 'https://api.pushover.net/1/messages.json',
@@ -179,9 +177,9 @@ class TimeTrackerApp(rumps.App):
                     'token': PUSHOVER_API_TOKEN,
                     'user': PUSHOVER_USER_KEY,
                     'title': 'What are you doing?',
-                    'message': 'Hourly check-in: log your current activity',
-                    'url': dashboard_url,
-                    'url_title': 'Open Time Tracker',
+                    'message': 'Tap to log your activity',
+                    'url': shortcut_url,
+                    'url_title': 'Log Activity',
                     'priority': 0,
                     'sound': 'pushover'
                 },
@@ -195,6 +193,7 @@ class TimeTrackerApp(rumps.App):
         minutes = int(duration.total_seconds() / 60)
         duration_str = format_duration(duration.total_seconds())
 
+        # Use rumps window for input
         response = rumps.Window(
             title="Welcome Back!",
             message=f"You were away for {duration_str}.\nWhat were you doing?",

@@ -1,5 +1,24 @@
 [
   {
+    "notebook_id": "a4e02063-78b1-4613-a9f1-d4cde875b099",
+    "asset_title": "The Operating Principles of Imperial China",
+    "asset_type": "audio",
+    "description": "Deep dive into Chinese history - dynasties, philosophy, daily life",
+    "play_or_download_target": null,
+    "topics_inferred": [
+      "Chinese history",
+      "dynasties",
+      "Confucianism",
+      "civil service"
+    ],
+    "related_sources_titles": [
+      "59 sources"
+    ],
+    "created_display": "2d ago",
+    "updated_display": null,
+    "first_seen_at": "2026-01-24T02:15:19.299876Z"
+  },
+  {
     "notebook_id": "a8e34a7e-bb2d-47b3-8356-3228b22464dd",
     "asset_title": "Automation Shock and the Post-Work Transition",
     "asset_type": "audio",
