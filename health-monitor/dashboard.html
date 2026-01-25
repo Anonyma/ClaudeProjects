@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Health Monitor</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.warning { background: #f59e0b; }
+        .status-dot.critical { background: #ef4444; }
+        .status-dot.offline { background: #666; animation: none; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #16161f 0%, #12121a 100%);
+            border: 1px solid #2a2a3a;
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-value.warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .card-value.critical {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .meter-container {
+            margin-top: 16px;
+        }
+
+        .meter {
+            height: 8px;
+            background: #1a1a25;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .meter-fill.warning {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .meter-fill.critical {
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .meter-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .process-list {
+            margin-top: 12px;
+        }
+
+        .process-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1a1a25;
+        }
+
+        .process-item:last-child {
+            border-bottom: none;
+        }
+
+        .process-name {
+            font-size: 13px;
+            color: #ccc;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .process-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+        }
+
+        .process-stat {
+            color: #888;
+        }
+
+        .process-stat span {
+            color: #22c55e;
+            font-weight: 500;
+        }
+
+        .process-stat.high span {
+            color: #f59e0b;
+        }
+
+        .process-stat.critical span {
+            color: #ef4444;
+        }
+
+        .chart-container {
+            height: 120px;
+            margin-top: 16px;
+            position: relative;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .alerts-container {
+            grid-column: 1 / -1;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #1a1a25;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .alert-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .alert-icon {
+            font-size: 16px;
+        }
+
+        .alert-time {
+            color: #666;
+            margin-left: auto;
+            font-size: 12px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-data h2 {
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .refresh-info {
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+            margin-top: 32px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>System Health Monitor</h1>
+        <div class="status-indicator">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="lastUpdate">Loading...</span>
+        </div>
+    </div>
+
+    <div id="content">
+        <div class="no-data">
+            <h2>Loading metrics...</h2>
+            <p>Make sure health-monitor.sh has run at least once.</p>
+        </div>
+    </div>
+
+    <div class="refresh-info">
+        Auto-refreshes every 30 seconds
+    </div>
+
+    <script>
+        const DATA_DIR = '~/.health-monitor';
+        let metricsData = null;
+        let historyData = [];
+
+        // Since we can't read local files directly from browser,
+        // we'll use a workaround with file:// protocol and fetch
+        async function loadMetrics() {
+            try {
+                // Try fetching from the expected location
+                // Note: This requires the file to be accessible
+                const homeDir = '/Users/z';
+                const metricsPath = `${homeDir}/.health-monitor/metrics.json`;
+                const historyPath = `${homeDir}/.health-monitor/history.json`;
+
+                // For file:// protocol, we need to use XMLHttpRequest
+                const loadFile = (path) => {
+                    return new Promise((resolve, reject) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('GET', `file://${path}`, true);
+                        xhr.onload = () => {
+                            if (xhr.status === 200 || xhr.status === 0) {
+                                try {
+                                    resolve(JSON.parse(xhr.responseText));
+                                } catch (e) {
+                                    reject(e);
+                                }
+                            } else {
+                                reject(new Error(`HTTP ${xhr.status}`));
+                            }
+                        };
+                        xhr.onerror = reject;
+                        xhr.send();
+                    });
+                };
+
+                metricsData = await loadFile(metricsPath);
+                try {
+                    historyData = await loadFile(historyPath);
+                } catch (e) {
+                    historyData = [];
+                }
+
+                renderDashboard();
+            } catch (error) {
+                console.error('Failed to load metrics:', error);
+                showError();
+            }
+        }
+
+        function showError() {
+            document.getElementById('statusDot').className = 'status-dot offline';
+            document.getElementById('lastUpdate').textContent = 'Data unavailable';
+            document.getElementById('content').innerHTML = `
+                <div class="no-data">
+                    <h2>Cannot load metrics</h2>
+                    <p>Run the health monitor script first:</p>
+                    <code style="display: block; margin-top: 16px; padding: 12px; background: #1a1a25; border-radius: 8px; font-size: 13px;">
+                        ~/.health-monitor/health-monitor.sh
+                    </code>
+                </div>
+            `;
+        }
+
+        function getStatusClass(value, warningThreshold, criticalThreshold) {
+            if (value >= criticalThreshold) return 'critical';
+            if (value >= warningThreshold) return 'warning';
+            return '';
+        }
+
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function formatTimeAgo(isoString) {
+            const date = new Date(isoString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins === 1) return '1 minute ago';
+            if (diffMins < 60) return `${diffMins} minutes ago`;
+
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours === 1) return '1 hour ago';
+            return `${diffHours} hours ago`;
+        }
+
+        function renderDashboard() {
+            if (!metricsData) return;
+
+            const data = metricsData;
+            const loadStatus = getStatusClass(data.load.avg_1m, 5, 10);
+            const memoryStatus = getStatusClass(data.memory.used_pct, 75, 90);
+
+            // Update status indicator
+            const overallStatus = data.alerts.some(a => a.includes('critical')) ? 'critical' :
+                                 data.alerts.length > 0 ? 'warning' : '';
+            document.getElementById('statusDot').className = `status-dot ${overallStatus}`;
+            document.getElementById('lastUpdate').textContent = `Updated ${formatTimeAgo(data.timestamp)}`;
+
+            document.getElementById('content').innerHTML = `
+                <div class="grid">
+                    <!-- Load Average -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Load Average (1m)</span>
+                        </div>
+                        <div class="card-value ${loadStatus}">${data.load.avg_1m.toFixed(2)}</div>
+                        <div class="card-subtitle">5m: ${data.load.avg_5m.toFixed(2)} / 15m: ${data.load.avg_15m.toFixed(2)}</div>
+                        <div class="chart-container">
+                            <canvas id="loadChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Memory -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Memory Usage</span>
+                        </div>
+                        <div class="card-value ${memoryStatus}">${data.memory.used_pct}%</div>
+                        <div class="card-subtitle">${(data.memory.used_mb / 1024).toFixed(1)} GB of ${(data.memory.total_mb / 1024).toFixed(0)} GB used</div>
+                        <div class="meter-container">
+                            <div class="meter">
+                                <div class="meter-fill ${memoryStatus}" style="width: ${data.memory.used_pct}%"></div>
+                            </div>
+                            <div class="meter-labels">
+                                <span>0%</span>
+                                <span>Available: ${(data.memory.available_mb / 1024).toFixed(1)} GB</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Disk -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Disk Usage</span>
+                        </div>
+                        <div class="card-value ${getStatusClass(data.disk.used_pct, 80, 95)}">${data.disk.used_pct}%</div>
+                        <div class="card-subtitle">${data.disk.available} available</div>
+                        <div class="meter-container">
+                            <div class="meter">
+                                <div class="meter-fill ${getStatusClass(data.disk.used_pct, 80, 95)}" style="width: ${data.disk.used_pct}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Processes -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Processes</span>
+                        </div>
+                        <div class="card-value">${data.processes.count}</div>
+                        <div class="card-subtitle">Active processes</div>
+                        <div class="chart-container">
+                            <canvas id="memoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top Processes by Memory -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Top Processes by Memory</span>
+                        </div>
+                        <div class="process-list">
+                            ${data.processes.top_by_memory.slice(0, 5).map(proc => `
+                                <div class="process-item">
+                                    <span class="process-name">${proc.name.split('/').pop()}</span>
+                                    <div class="process-stats">
+                                        <span class="process-stat ${proc.memory_pct > 20 ? 'high' : ''} ${proc.memory_pct > 40 ? 'critical' : ''}">
+                                            MEM: <span>${proc.memory_pct.toFixed(1)}%</span>
+                                        </span>
+                                        <span class="process-stat ${proc.cpu_pct > 50 ? 'high' : ''} ${proc.cpu_pct > 80 ? 'critical' : ''}">
+                                            CPU: <span>${proc.cpu_pct.toFixed(1)}%</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Top Processes by CPU -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Top Processes by CPU</span>
+                        </div>
+                        <div class="process-list">
+                            ${data.processes.top_by_cpu.map(proc => `
+                                <div class="process-item">
+                                    <span class="process-name">${proc.name.split('/').pop()}</span>
+                                    <div class="process-stats">
+                                        <span class="process-stat ${proc.cpu_pct > 50 ? 'high' : ''} ${proc.cpu_pct > 80 ? 'critical' : ''}">
+                                            CPU: <span>${proc.cpu_pct.toFixed(1)}%</span>
+                                        </span>
+                                        <span class="process-stat ${proc.memory_pct > 20 ? 'high' : ''}">
+                                            MEM: <span>${proc.memory_pct.toFixed(1)}%</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Alerts -->
+                    ${data.alerts.length > 0 ? `
+                        <div class="card alerts-container">
+                            <div class="card-header">
+                                <span class="card-title">Active Alerts</span>
+                            </div>
+                            ${data.alerts.map(alert => {
+                                const isCritical = alert.includes('critical');
+                                const isWarning = alert.includes('warning');
+                                const icon = isCritical ? '🚨' : isWarning ? '⚠️' : 'ℹ️';
+                                return `
+                                    <div class="alert-item">
+                                        <span class="alert-icon">${icon}</span>
+                                        <span>${alert.replace(/"/g, '')}</span>
+                                        <span class="alert-time">${formatTime(data.timestamp)}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Render charts
+            renderCharts();
+        }
+
+        function renderCharts() {
+            if (historyData.length < 2) return;
+
+            // Load chart
+            const loadCanvas = document.getElementById('loadChart');
+            if (loadCanvas) {
+                const ctx = loadCanvas.getContext('2d');
+                const data = historyData.slice(-24).map(h => h.load.avg_1m);
+                drawSparkline(ctx, data, '#22c55e');
+            }
+
+            // Memory chart
+            const memCanvas = document.getElementById('memoryChart');
+            if (memCanvas) {
+                const ctx = memCanvas.getContext('2d');
+                const data = historyData.slice(-24).map(h => h.memory.used_pct);
+                drawSparkline(ctx, data, '#3b82f6');
+            }
+        }
+
+        function drawSparkline(ctx, data, color) {
+            const canvas = ctx.canvas;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * 2;
+            canvas.height = rect.height * 2;
+            ctx.scale(2, 2);
+
+            const width = rect.width;
+            const height = rect.height;
+            const padding = 4;
+
+            if (data.length < 2) return;
+
+            const max = Math.max(...data) * 1.1;
+            const min = Math.min(...data) * 0.9;
+            const range = max - min || 1;
+
+            const stepX = (width - padding * 2) / (data.length - 1);
+
+            // Draw gradient fill
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+
+            data.forEach((value, i) => {
+                const x = padding + i * stepX;
+                const y = height - padding - ((value - min) / range) * (height - padding * 2);
+                if (i === 0) {
+                    ctx.lineTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.lineTo(padding + (data.length - 1) * stepX, height - padding);
+            ctx.closePath();
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, color + '40');
+            gradient.addColorStop(1, color + '05');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Draw line
+            ctx.beginPath();
+            data.forEach((value, i) => {
+                const x = padding + i * stepX;
+                const y = height - padding - ((value - min) / range) * (height - padding * 2);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+
+            // Draw current value dot
+            const lastX = padding + (data.length - 1) * stepX;
+            const lastY = height - padding - ((data[data.length - 1] - min) / range) * (height - padding * 2);
+            ctx.beginPath();
+            ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        // Initial load
+        loadMetrics();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadMetrics, 30000);
+    </script>
+</body>
+</html>
