@@ -19,7 +19,7 @@ git add -A && git commit -m "Add voice-memo-transcriber project"
 
 ---
 
-## CRITICAL: Notify User When Blocked/Completed/Error
+## CRITICAL: Notify User via BabyClaw (Telegram)
 
 **ALWAYS notify the user when you need help, complete significant work, or encounter errors.**
 
@@ -32,53 +32,30 @@ git add -A && git commit -m "Add voice-memo-transcriber project"
 
 ❌ **Don't spam:** Not for minor edits or routine operations.
 
-### How to Notify (Use log-status endpoint)
-
-This automatically sends Pushover notifications to user's phone AND laptop:
+### How to Notify (Use clawdbot gateway wake)
 
 ```bash
-curl -s -X POST 'https://ydwjzlikslebokuxzwco.supabase.co/functions/v1/log-status' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU' \
-  -d '{
-    "session_id": "claude-[type]-[date]",
-    "session_type": "cli",
-    "current_task": "What you are working on",
-    "project_id": "project-slug",
-    "status": "blocked",
-    "blocked_on": "What is blocking you",
-    "progress_notes": "Additional context"
-  }'
+clawdbot gateway call wake --params '{"text": "Your message here", "mode": "now"}'
 ```
 
-### Status Values (triggers different notifications)
-
-| Status | Notification | Priority |
-|--------|--------------|----------|
-| `blocked` | 🆘 Agent Blocked | High (bypasses quiet hours) |
-| `error` | ⚠️ Agent Error | High |
-| `completed` | ✅ Task Completed | Normal |
-| `active` | No notification | - |
-
-### Quick Examples
+### Examples
 
 **When blocked:**
 ```bash
-curl -s -X POST 'https://ydwjzlikslebokuxzwco.supabase.co/functions/v1/log-status' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU' \
-  -d '{"session_id": "cli-2026-01-25", "session_type": "cli", "current_task": "Deploy bot", "project_id": "tg-bot", "status": "blocked", "blocked_on": "Missing TELEGRAM_BOT_TOKEN in Railway"}'
+clawdbot gateway call wake --params '{"text": "🆘 Blocked: [project] - [issue]. Need: [what you need]", "mode": "now"}'
 ```
 
 **When completed:**
 ```bash
-curl -s -X POST 'https://ydwjzlikslebokuxzwco.supabase.co/functions/v1/log-status' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU' \
-  -d '{"session_id": "cli-2026-01-25", "session_type": "cli", "current_task": "Deployed to Netlify", "project_id": "writing-challenge", "status": "completed", "progress_notes": "Live at https://writing-challenge-app.netlify.app"}'
+clawdbot gateway call wake --params '{"text": "✅ Done: [project] - [what you completed]", "mode": "now"}'
 ```
 
-### Fallback: Direct Pushover (if log-status fails)
+**When error:**
+```bash
+clawdbot gateway call wake --params '{"text": "⚠️ Error: [project] - [error description]", "mode": "now"}'
+```
+
+### Fallback: Direct Pushover (if clawdbot unavailable)
 
 ```bash
 curl -s -F "token=aabpf2tb7a9p3tnhdw3vzfb6hyxcna" \
