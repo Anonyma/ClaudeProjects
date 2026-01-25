@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe SEO - nirvex.es</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-deep: #0f0f23;
+            --navy: #1a1a2e;
+            --navy-light: #252547;
+            --coral: #ff6b6b;
+            --coral-light: #ff8787;
+            --mint: #4ecdc4;
+            --gold: #ffd93d;
+            --purple: #a855f7;
+            --purple-light: #c084fc;
+            --amber: #f59e0b;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-500: #6c757d;
+            --gray-700: #495057;
+            --success: #2ecc71;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gray-100);
+            color: var(--navy);
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .report {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: var(--white);
+            box-shadow: 0 25px 100px rgba(0,0,0,0.15);
+        }
+
+        /* Cover Page */
+        .cover {
+            min-height: 297mm;
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 50%, var(--navy-light) 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            page-break-after: always;
+        }
+
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(ellipse at center, rgba(255,107,107,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--coral) 0%, var(--mint) 50%, var(--gold) 100%);
+        }
+
+        .cover-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--coral);
+            margin-bottom: 30px;
+        }
+
+        .cover h1 {
+            font-size: 52px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .cover h1 span {
+            display: block;
+            font-weight: 300;
+            font-size: 36px;
+            color: var(--gray-300);
+        }
+
+        .cover-domain {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            color: var(--coral);
+            margin-bottom: 40px;
+        }
+
+        .cover-meta {
+            display: flex;
+            gap: 40px;
+            margin-top: auto;
+            padding-top: 60px;
+        }
+
+        .cover-meta-item {
+            color: var(--gray-300);
+        }
+
+        .cover-meta-item strong {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            margin-bottom: 5px;
+        }
+
+        .geometric-accent {
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 200px;
+            height: 200px;
+            opacity: 0.1;
+        }
+
+        .geometric-accent svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Section Pages */
+        .page {
+            min-height: 297mm;
+            padding: 50px;
+            page-break-after: always;
+            position: relative;
+        }
+
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--coral) 0%, var(--navy) 100%);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .page-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: var(--gray-500);
+            background: var(--gray-100);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: var(--navy);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--coral);
+        }
+
+        .kpi-card.success::before { background: var(--success); }
+        .kpi-card.warning::before { background: var(--warning); }
+        .kpi-card.needs-work::before { background: var(--purple); }
+
+        .kpi-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            margin-bottom: 12px;
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1;
+        }
+
+        .kpi-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .kpi-status.good { background: rgba(46,204,113,0.2); color: var(--success); }
+        .kpi-status.warning { background: rgba(245,158,11,0.2); color: var(--warning); }
+        .kpi-status.needs-work { background: rgba(168,85,247,0.2); color: var(--purple-light); }
+
+        /* Health Score */
+        .health-score {
+            grid-column: span 4;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            padding: 30px 40px;
+            border-radius: 16px;
+        }
+
+        .health-circle {
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+
+        .health-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .health-circle-bg {
+            fill: none;
+            stroke: var(--navy-deep);
+            stroke-width: 8;
+        }
+
+        .health-circle-progress {
+            fill: none;
+            stroke: var(--warning);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 251.2;
+            stroke-dashoffset: calc(251.2 - (251.2 * 62 / 100));
+        }
+
+        .health-circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .health-info h3 {
+            color: var(--white);
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .health-info p {
+            color: var(--gray-500);
+            font-size: 14px;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .data-table th {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            text-align: left;
+            padding: 12px 16px;
+            background: var(--gray-100);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 13px;
+        }
+
+        .data-table tr:hover {
+            background: var(--gray-100);
+        }
+
+        .data-table .url {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--navy);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .data-table .number {
+            font-family: 'Space Mono', monospace;
+            font-weight: 600;
+        }
+
+        .data-table .ctr-good { color: var(--success); }
+        .data-table .ctr-warning { color: var(--warning); }
+        .data-table .ctr-needs-work { color: var(--purple); }
+
+        /* Findings Section */
+        .findings-section {
+            background: linear-gradient(135deg, rgba(255,107,107,0.05) 0%, rgba(78,205,196,0.05) 100%);
+            border: 1px solid rgba(255,107,107,0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .findings-section .section-icon {
+            background: var(--coral);
+        }
+
+        .finding-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,107,107,0.1);
+        }
+
+        .finding-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .finding-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--coral);
+            border-radius: 50%;
+            color: var(--white);
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .finding-icon.success { background: var(--success); }
+        .finding-icon.warning { background: var(--warning); }
+        .finding-icon.needs-work { background: var(--purple); }
+
+        .finding-item h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .finding-item p {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        /* Issue Cards */
+        .issues-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .issue-card {
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
+            gap: 20px;
+            align-items: center;
+            padding: 20px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            border-left: 4px solid var(--purple);
+        }
+
+        .issue-number {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--navy);
+            color: var(--white);
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+        }
+
+        .issue-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .issue-content p {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .badge-high { background: rgba(168,85,247,0.1); color: var(--purple); }
+        .badge-medium { background: rgba(245,158,11,0.1); color: var(--warning); }
+        .badge-low { background: rgba(46,204,113,0.1); color: var(--success); }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--coral);
+            border-radius: 10px;
+            color: var(--white);
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Success Section */
+        .success-section {
+            background: linear-gradient(135deg, rgba(46,204,113,0.05) 0%, rgba(78,205,196,0.05) 100%);
+            border: 1px solid rgba(46,204,113,0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .success-section .section-icon {
+            background: var(--success);
+        }
+
+        .success-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(46,204,113,0.1);
+        }
+
+        .success-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .success-check {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--success);
+            border-radius: 50%;
+            color: var(--white);
+            flex-shrink: 0;
+        }
+
+        .success-item h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .success-item p {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        /* Action Plan */
+        .action-list {
+            counter-reset: action;
+        }
+
+        .action-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
+            gap: 20px;
+            align-items: center;
+            padding: 20px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .action-item:hover {
+            border-color: var(--coral);
+            box-shadow: 0 4px 20px rgba(255,107,107,0.1);
+        }
+
+        .action-number {
+            counter-increment: action;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--coral-light) 100%);
+            color: var(--white);
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 10px;
+        }
+
+        .action-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: var(--gray-100);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--gray-500);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 150px;
+        }
+
+        /* Distribution Charts */
+        .distribution-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .distribution-card {
+            background: var(--gray-100);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .distribution-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .distribution-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .distribution-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 50px;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .distribution-label {
+            font-size: 12px;
+            color: var(--gray-700);
+        }
+
+        .distribution-bar-bg {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .distribution-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .distribution-bar.geo { background: linear-gradient(90deg, var(--coral) 0%, var(--coral-light) 100%); }
+        .distribution-bar.device { background: linear-gradient(90deg, var(--mint) 0%, #7ed9d3 100%); }
+
+        .distribution-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Footer */
+        .page-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 50px;
+            right: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .footer-brand {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--gray-500);
+        }
+
+        .footer-confidence {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        .confidence-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            background: rgba(46,204,113,0.1);
+            color: var(--success);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            .report {
+                box-shadow: none;
+            }
+            .page {
+                page-break-after: always;
+                page-break-inside: avoid;
+            }
+            .cover {
+                page-break-after: always;
+            }
+        }
+
+        /* Watermark */
+        .watermark {
+            position: absolute;
+            bottom: 80px;
+            right: 50px;
+            font-family: 'Space Mono', monospace;
+            font-size: 100px;
+            font-weight: 700;
+            color: var(--gray-100);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Two Column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="report">
+        <!-- Cover Page -->
+        <div class="cover">
+            <div class="geometric-accent">
+                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="100" r="80" stroke="white" stroke-width="2"/>
+                    <circle cx="100" cy="100" r="60" stroke="white" stroke-width="2"/>
+                    <circle cx="100" cy="100" r="40" stroke="white" stroke-width="2"/>
+                    <line x1="20" y1="100" x2="180" y2="100" stroke="white" stroke-width="2"/>
+                    <line x1="100" y1="20" x2="100" y2="180" stroke="white" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="cover-badge">Informe de Rendimiento SEO</div>
+            <h1>
+                Auditoría SEO
+                <span>Análisis de Google Search Console</span>
+            </h1>
+            <div class="cover-domain">nirvex.es</div>
+            <div class="cover-meta">
+                <div class="cover-meta-item">
+                    <strong>Período</strong>
+                    24 Oct 2025 — 23 Ene 2026
+                </div>
+                <div class="cover-meta-item">
+                    <strong>Generado</strong>
+                    25 de Enero, 2026
+                </div>
+                <div class="cover-meta-item">
+                    <strong>Tipo de Análisis</strong>
+                    Auditoría SEO Completa
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 1: Executive Summary -->
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">Resumen Ejecutivo</h1>
+                <span class="page-number">01 / 05</span>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card success">
+                    <div class="kpi-label">Impresiones Totales</div>
+                    <div class="kpi-value">114.3K</div>
+                    <div class="kpi-status good">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                        Buena visibilidad
+                    </div>
+                </div>
+                <div class="kpi-card warning">
+                    <div class="kpi-label">Clics Totales</div>
+                    <div class="kpi-value">277</div>
+                    <div class="kpi-status warning">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 8v4M12 16h.01"/>
+                        </svg>
+                        Necesita crecer
+                    </div>
+                </div>
+                <div class="kpi-card needs-work">
+                    <div class="kpi-label">CTR Promedio</div>
+                    <div class="kpi-value">0.24%</div>
+                    <div class="kpi-status needs-work">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+                        </svg>
+                        Por debajo del promedio
+                    </div>
+                </div>
+                <div class="kpi-card needs-work">
+                    <div class="kpi-label">Posición Media</div>
+                    <div class="kpi-value">25.4</div>
+                    <div class="kpi-status needs-work">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                        </svg>
+                        Página 3 promedio
+                    </div>
+                </div>
+            </div>
+
+            <div class="health-score">
+                <div class="health-circle">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle class="health-circle-bg" cx="50" cy="50" r="40"/>
+                        <circle class="health-circle-progress" cx="50" cy="50" r="40"/>
+                    </svg>
+                    <div class="health-circle-text">62</div>
+                </div>
+                <div class="health-info">
+                    <h3>Puntuación de Salud SEO</h3>
+                    <p>Basado en el análisis de datos de GSC. Se recomienda una auditoría técnica completa con crawl para una evaluación más detallada.</p>
+                </div>
+            </div>
+
+            <!-- Key Findings -->
+            <div class="findings-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h2>Hallazgos Clave</h2>
+                </div>
+                <div class="finding-item">
+                    <div class="finding-icon success">✓</div>
+                    <div>
+                        <h4>Excelente CTR de marca "nirvex"</h4>
+                        <p>La keyword de marca tiene un CTR destacado del 17.4% con posición 4.1, indicando fuerte reconocimiento de marca.</p>
+                    </div>
+                </div>
+                <div class="finding-item">
+                    <div class="finding-icon needs-work">!</div>
+                    <div>
+                        <h4>Keywords de alto volumen con CTR 0%</h4>
+                        <p>"agencia seo valencia" tiene 5,972 impresiones pero CTR de solo 0.07% — oportunidad significativa de optimización.</p>
+                    </div>
+                </div>
+                <div class="finding-item">
+                    <div class="finding-icon warning">!</div>
+                    <div>
+                        <h4>Homepage domina pero con CTR bajo</h4>
+                        <p>La página principal recibe 165 clics (59% del total) pero su CTR de 0.36% está por debajo del benchmark.</p>
+                    </div>
+                </div>
+                <div class="finding-item">
+                    <div class="finding-icon success">✓</div>
+                    <div>
+                        <h4>Blog de "organigrama marketing" rinde bien</h4>
+                        <p>Posición 11.47 con 58 clics — el mejor contenido no-marca, modelo a replicar.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Pages Table -->
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+                <h2>Páginas con Mejor Rendimiento</h2>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Página</th>
+                        <th>Clics</th>
+                        <th>Impresiones</th>
+                        <th>CTR</th>
+                        <th>Posición</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="url">/</td>
+                        <td class="number">165</td>
+                        <td class="number">45,720</td>
+                        <td class="number ctr-warning">0.36%</td>
+                        <td class="number">25.98</td>
+                    </tr>
+                    <tr>
+                        <td class="url">/blog/organigrama-departamento-marketing</td>
+                        <td class="number">58</td>
+                        <td class="number">9,012</td>
+                        <td class="number ctr-warning">0.64%</td>
+                        <td class="number">11.47</td>
+                    </tr>
+                    <tr>
+                        <td class="url">/recurso/calculadora-de-kpis</td>
+                        <td class="number">16</td>
+                        <td class="number">308</td>
+                        <td class="number ctr-good">5.19%</td>
+                        <td class="number">20.49</td>
+                    </tr>
+                    <tr>
+                        <td class="url">/agencia-seo-valencia</td>
+                        <td class="number">6</td>
+                        <td class="number">31,073</td>
+                        <td class="number ctr-needs-work">0.02%</td>
+                        <td class="number">27.42</td>
+                    </tr>
+                    <tr>
+                        <td class="url">/blog/pipeline-de-ventas</td>
+                        <td class="number">4</td>
+                        <td class="number">3,281</td>
+                        <td class="number ctr-needs-work">0.12%</td>
+                        <td class="number">34.09</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="page-footer">
+                <span class="footer-brand">NIRVEX · ANÁLISIS SEO</span>
+                <div class="footer-confidence">
+                    Nivel de Confianza: <span class="confidence-badge">Alto</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Keywords Analysis -->
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">Análisis de Palabras Clave</h1>
+                <span class="page-number">02 / 05</span>
+            </div>
+
+            <div class="two-col" style="margin-bottom: 30px;">
+                <div>
+                    <div class="section-header">
+                        <div class="section-icon" style="background: var(--mint)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                        </div>
+                        <h2>Top 10 por Clics</h2>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Clics</th>
+                                <th>CTR</th>
+                                <th>Pos.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>nirvex</strong></td>
+                                <td class="number">67</td>
+                                <td class="number ctr-good">17.4%</td>
+                                <td class="number">4.1</td>
+                            </tr>
+                            <tr>
+                                <td>agencia de marketing valencia</td>
+                                <td class="number">8</td>
+                                <td class="number">0.54%</td>
+                                <td class="number">13.0</td>
+                            </tr>
+                            <tr>
+                                <td>agencias de marketing valencia</td>
+                                <td class="number">7</td>
+                                <td class="number">0.56%</td>
+                                <td class="number">11.9</td>
+                            </tr>
+                            <tr>
+                                <td>agencia marketing valencia</td>
+                                <td class="number">5</td>
+                                <td class="number">0.37%</td>
+                                <td class="number">12.7</td>
+                            </tr>
+                            <tr>
+                                <td>agencias de marketing en valencia</td>
+                                <td class="number">5</td>
+                                <td class="number ctr-warning">1.44%</td>
+                                <td class="number">8.9</td>
+                            </tr>
+                            <tr>
+                                <td>agencia seo valencia</td>
+                                <td class="number">4</td>
+                                <td class="number ctr-needs-work">0.07%</td>
+                                <td class="number">14.6</td>
+                            </tr>
+                            <tr>
+                                <td>agencia de marketing b2b</td>
+                                <td class="number">4</td>
+                                <td class="number">0.22%</td>
+                                <td class="number">12.1</td>
+                            </tr>
+                            <tr>
+                                <td>agencia seo b2b</td>
+                                <td class="number">4</td>
+                                <td class="number ctr-warning">0.97%</td>
+                                <td class="number">14.6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div>
+                    <div class="section-header">
+                        <div class="section-icon" style="background: var(--gold)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                            </svg>
+                        </div>
+                        <h2>Top por Impresiones</h2>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Impr.</th>
+                                <th>CTR</th>
+                                <th>Pos.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>agencia seo valencia</td>
+                                <td class="number">5.9K</td>
+                                <td class="number ctr-needs-work">0.07%</td>
+                                <td class="number">14.6</td>
+                            </tr>
+                            <tr>
+                                <td>agencia facebook ads</td>
+                                <td class="number">4.1K</td>
+                                <td class="number ctr-needs-work">0%</td>
+                                <td class="number">27.4</td>
+                            </tr>
+                            <tr>
+                                <td>agencia meta ads</td>
+                                <td class="number">2.7K</td>
+                                <td class="number ctr-needs-work">0.07%</td>
+                                <td class="number">20.6</td>
+                            </tr>
+                            <tr>
+                                <td>posicionamiento seo valencia</td>
+                                <td class="number">2.5K</td>
+                                <td class="number ctr-needs-work">0%</td>
+                                <td class="number">29.6</td>
+                            </tr>
+                            <tr>
+                                <td>posicionamiento web valencia</td>
+                                <td class="number">2.4K</td>
+                                <td class="number ctr-needs-work">0%</td>
+                                <td class="number">34.0</td>
+                            </tr>
+                            <tr>
+                                <td>agencia marketing b2b</td>
+                                <td class="number">2.4K</td>
+                                <td class="number ctr-needs-work">0.13%</td>
+                                <td class="number">14.9</td>
+                            </tr>
+                            <tr>
+                                <td>seo valencia</td>
+                                <td class="number">2.0K</td>
+                                <td class="number ctr-needs-work">0%</td>
+                                <td class="number">31.9</td>
+                            </tr>
+                            <tr>
+                                <td>agencia de marketing b2b</td>
+                                <td class="number">1.9K</td>
+                                <td class="number">0.22%</td>
+                                <td class="number">12.1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-icon" style="background: var(--purple)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                </div>
+                <h2>Oportunidades Quick Win (Alto volumen, CTR bajo)</h2>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Impresiones</th>
+                        <th>CTR Actual</th>
+                        <th>Posición</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>agencia seo valencia</strong></td>
+                        <td class="number">5,972</td>
+                        <td class="number ctr-needs-work">0.07%</td>
+                        <td class="number">14.6</td>
+                        <td><span class="badge badge-high">Optimizar title + meta</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>agencia facebook ads</strong></td>
+                        <td class="number">4,056</td>
+                        <td class="number ctr-needs-work">0%</td>
+                        <td class="number">27.4</td>
+                        <td><span class="badge badge-high">Crear landing dedicada</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>agencia meta ads</strong></td>
+                        <td class="number">2,681</td>
+                        <td class="number ctr-needs-work">0.07%</td>
+                        <td class="number">20.6</td>
+                        <td><span class="badge badge-medium">Mejorar posición</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>posicionamiento seo valencia</strong></td>
+                        <td class="number">2,535</td>
+                        <td class="number ctr-needs-work">0%</td>
+                        <td class="number">29.6</td>
+                        <td><span class="badge badge-high">Optimizar página SEO</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>agencia marketing b2b</strong></td>
+                        <td class="number">2,380</td>
+                        <td class="number ctr-needs-work">0.13%</td>
+                        <td class="number">14.9</td>
+                        <td><span class="badge badge-medium">Mejorar a top 10</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="success-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <h2>Lo Que Funciona Bien</h2>
+                </div>
+                <div class="success-item">
+                    <div class="success-check">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4>/blog/organigrama-departamento-marketing</h4>
+                        <p>58 clics — Mejor contenido no-marca, posición 11.47. Modelo de contenido informativo exitoso.</p>
+                    </div>
+                </div>
+                <div class="success-item">
+                    <div class="success-check">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4>/recurso/calculadora-de-kpis</h4>
+                        <p>5.19% CTR — Las herramientas interactivas generan alto engagement y buenas métricas.</p>
+                    </div>
+                </div>
+                <div class="success-item">
+                    <div class="success-check">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4>Búsqueda de marca "nirvex"</h4>
+                        <p>67 clics, 17.4% CTR, posición 4.1 — Fuerte reconocimiento de marca establecido.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span class="footer-brand">NIRVEX · ANÁLISIS SEO</span>
+                <div class="footer-confidence">
+                    Nivel de Confianza: <span class="confidence-badge">Alto</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 3: Strategic Positioning -->
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">Posicionamiento Estratégico</h1>
+                <span class="page-number">03 / 05</span>
+            </div>
+
+            <p style="font-size: 14px; color: var(--gray-500); margin-bottom: 30px;">
+                Solo las keywords que importan: transaccionales, generadoras de leads, y posiciones clave. Máximo 20 keywords estratégicas.
+            </p>
+
+            <div class="two-col" style="margin-bottom: 30px;">
+                <div>
+                    <div class="section-header">
+                        <div class="section-icon" style="background: var(--coral)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8M8 8l8 8"/>
+                            </svg>
+                        </div>
+                        <h2>Keywords Transaccionales</h2>
+                    </div>
+                    <p style="font-size: 12px; color: var(--gray-500); margin-bottom: 16px;">Intención de compra/contratación directa</p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Pos.</th>
+                                <th>Impr.</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>agencia seo valencia</td>
+                                <td class="number">14.6</td>
+                                <td class="number">5,972</td>
+                                <td><span class="badge badge-medium">Página 2</span></td>
+                            </tr>
+                            <tr>
+                                <td>agencia facebook ads</td>
+                                <td class="number">27.4</td>
+                                <td class="number">4,056</td>
+                                <td><span class="badge badge-high">Página 3</span></td>
+                            </tr>
+                            <tr>
+                                <td>agencia marketing valencia</td>
+                                <td class="number">12.7</td>
+                                <td class="number">1,339</td>
+                                <td><span class="badge badge-medium">Página 2</span></td>
+                            </tr>
+                            <tr>
+                                <td>agencia de marketing b2b</td>
+                                <td class="number">12.1</td>
+                                <td class="number">1,860</td>
+                                <td><span class="badge badge-medium">Página 2</span></td>
+                            </tr>
+                            <tr>
+                                <td>agencia seo b2b</td>
+                                <td class="number">14.6</td>
+                                <td class="number">411</td>
+                                <td><span class="badge badge-medium">Página 2</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div>
+                    <div class="section-header">
+                        <div class="section-icon" style="background: var(--mint)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <h2>Keywords de Lead Generation</h2>
+                    </div>
+                    <p style="font-size: 12px; color: var(--gray-500); margin-bottom: 16px;">Usuarios buscando información pre-compra</p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Pos.</th>
+                                <th>Impr.</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>organigrama departamento marketing</td>
+                                <td class="number ctr-good">11.5</td>
+                                <td class="number">9,012</td>
+                                <td><span class="badge badge-low">Top 15</span></td>
+                            </tr>
+                            <tr>
+                                <td>pipeline de ventas</td>
+                                <td class="number">34.1</td>
+                                <td class="number">3,281</td>
+                                <td><span class="badge badge-high">Página 3+</span></td>
+                            </tr>
+                            <tr>
+                                <td>mqls sqls</td>
+                                <td class="number ctr-good">8.3</td>
+                                <td class="number">752</td>
+                                <td><span class="badge badge-low">Top 10</span></td>
+                            </tr>
+                            <tr>
+                                <td>calculadora de kpis</td>
+                                <td class="number">20.5</td>
+                                <td class="number">308</td>
+                                <td><span class="badge badge-medium">Página 2</span></td>
+                            </tr>
+                            <tr>
+                                <td>organigrama de marketing</td>
+                                <td class="number ctr-good">4.2</td>
+                                <td class="number">174</td>
+                                <td><span class="badge badge-low">Top 5</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-icon" style="background: var(--success)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                </div>
+                <h2>Keywords en Top 10 (Posiciones Clave)</h2>
+            </div>
+            <p style="font-size: 12px; color: var(--gray-500); margin-bottom: 16px;">Las keywords donde ya tienes visibilidad real en página 1</p>
+
+            <table class="data-table" style="margin-bottom: 30px;">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Posición</th>
+                        <th>Clics</th>
+                        <th>Impresiones</th>
+                        <th>CTR</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: rgba(46,204,113,0.05);">
+                        <td><strong>nirvex</strong></td>
+                        <td class="number" style="color: var(--success);">4.1</td>
+                        <td class="number">67</td>
+                        <td class="number">385</td>
+                        <td class="number ctr-good">17.4%</td>
+                        <td><span class="badge badge-low">Marca</span></td>
+                    </tr>
+                    <tr style="background: rgba(46,204,113,0.05);">
+                        <td><strong>organigrama de marketing</strong></td>
+                        <td class="number" style="color: var(--success);">4.2</td>
+                        <td class="number">1</td>
+                        <td class="number">174</td>
+                        <td class="number">0.57%</td>
+                        <td><span class="badge badge-medium">Informacional</span></td>
+                    </tr>
+                    <tr style="background: rgba(46,204,113,0.05);">
+                        <td><strong>organigrama empresa marketing</strong></td>
+                        <td class="number" style="color: var(--success);">3.6</td>
+                        <td class="number">1</td>
+                        <td class="number">9</td>
+                        <td class="number ctr-good">11.1%</td>
+                        <td><span class="badge badge-medium">Informacional</span></td>
+                    </tr>
+                    <tr style="background: rgba(46,204,113,0.05);">
+                        <td><strong>agencias de marketing en valencia</strong></td>
+                        <td class="number" style="color: var(--success);">8.9</td>
+                        <td class="number">5</td>
+                        <td class="number">348</td>
+                        <td class="number ctr-warning">1.44%</td>
+                        <td><span class="badge badge-high">Transaccional</span></td>
+                    </tr>
+                    <tr style="background: rgba(46,204,113,0.05);">
+                        <td><strong>empresas de marketing valencia</strong></td>
+                        <td class="number" style="color: var(--success);">8.9</td>
+                        <td class="number">3</td>
+                        <td class="number">141</td>
+                        <td class="number ctr-warning">2.13%</td>
+                        <td><span class="badge badge-high">Transaccional</span></td>
+                    </tr>
+                    <tr style="background: rgba(46,204,113,0.05);">
+                        <td><strong>como transformar mqls en sqls</strong></td>
+                        <td class="number" style="color: var(--success);">8.3</td>
+                        <td class="number">4</td>
+                        <td class="number">752</td>
+                        <td class="number">0.53%</td>
+                        <td><span class="badge badge-medium">Lead Gen</span></td>
+                    </tr>
+                    <tr style="background: rgba(46,204,113,0.05);">
+                        <td><strong>agencia ecommerce valencia</strong></td>
+                        <td class="number" style="color: var(--success);">7.6</td>
+                        <td class="number">1</td>
+                        <td class="number">489</td>
+                        <td class="number">0.20%</td>
+                        <td><span class="badge badge-high">Transaccional</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="two-col">
+                <div class="distribution-card" style="background: linear-gradient(135deg, rgba(46,204,113,0.1) 0%, rgba(78,205,196,0.05) 100%); border: 1px solid rgba(46,204,113,0.2);">
+                    <h3 style="color: var(--success);">🎯 Resumen de Posicionamiento</h3>
+                    <div style="margin-top: 16px; font-size: 13px; line-height: 1.8;">
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(46,204,113,0.1);">
+                            <span>Keywords en Top 3</span>
+                            <strong>3</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(46,204,113,0.1);">
+                            <span>Keywords en Top 10</span>
+                            <strong>15</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(46,204,113,0.1);">
+                            <span>Keywords en Top 20</span>
+                            <strong>~80</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                            <span>Keywords transaccionales en Top 10</span>
+                            <strong style="color: var(--success);">4</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="distribution-card" style="background: linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(245,158,11,0.05) 100%); border: 1px solid rgba(168,85,247,0.2);">
+                    <h3 style="color: var(--purple);">⚠️ Keywords a Vigilar</h3>
+                    <div style="margin-top: 16px; font-size: 12px; color: var(--gray-700);">
+                        <p style="margin-bottom: 12px;"><strong>Cerca de Top 10:</strong></p>
+                        <ul style="list-style: none; line-height: 1.8;">
+                            <li>• agencia seo valencia (pos. 14.6)</li>
+                            <li>• agencia de marketing b2b (pos. 12.1)</li>
+                            <li>• organigrama dpto marketing (pos. 11.5)</li>
+                            <li>• agencia marketing valencia (pos. 12.7)</li>
+                        </ul>
+                        <p style="margin-top: 12px; font-size: 11px; color: var(--gray-500);">
+                            Con optimización on-page podrían entrar en Top 10 y multiplicar clics.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span class="footer-brand">NIRVEX · ANÁLISIS SEO</span>
+                <div class="footer-confidence">
+                    Nivel de Confianza: <span class="confidence-badge">Alto</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4: Distribution & Issues -->
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">Distribución y Problemas Críticos</h1>
+                <span class="page-number">04 / 05</span>
+            </div>
+
+            <div class="distribution-grid">
+                <div class="distribution-card">
+                    <h3>Distribución Geográfica (por Clics)</h3>
+                    <div class="distribution-bars">
+                        <div class="distribution-row">
+                            <span class="distribution-label">España</span>
+                            <div class="distribution-bar-bg">
+                                <div class="distribution-bar geo" style="width: 78%"></div>
+                            </div>
+                            <span class="distribution-value">77.6%</span>
+                        </div>
+                        <div class="distribution-row">
+                            <span class="distribution-label">México</span>
+                            <div class="distribution-bar-bg">
+                                <div class="distribution-bar geo" style="width: 8%"></div>
+                            </div>
+                            <span class="distribution-value">7.9%</span>
+                        </div>
+                        <div class="distribution-row">
+                            <span class="distribution-label">Colombia</span>
+                            <div class="distribution-bar-bg">
+                                <div class="distribution-bar geo" style="width: 3%"></div>
+                            </div>
+                            <span class="distribution-value">2.9%</span>
+                        </div>
+                        <div class="distribution-row">
+                            <span class="distribution-label">Perú</span>
+                            <div class="distribution-bar-bg">
+                                <div class="distribution-bar geo" style="width: 2%"></div>
+                            </div>
+                            <span class="distribution-value">1.8%</span>
+                        </div>
+                        <div class="distribution-row">
+                            <span class="distribution-label">Otros</span>
+                            <div class="distribution-bar-bg">
+                                <div class="distribution-bar geo" style="width: 10%"></div>
+                            </div>
+                            <span class="distribution-value">9.8%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="distribution-card">
+                    <h3>Distribución por Dispositivo (por Clics)</h3>
+                    <div class="distribution-bars">
+                        <div class="distribution-row">
+                            <span class="distribution-label">Ordenador</span>
+                            <div class="distribution-bar-bg">
+                                <div class="distribution-bar device" style="width: 80%"></div>
+                            </div>
+                            <span class="distribution-value">80.1%</span>
+                        </div>
+                        <div class="distribution-row">
+                            <span class="distribution-label">Móvil</span>
+                            <div class="distribution-bar-bg">
+                                <div class="distribution-bar device" style="width: 19%"></div>
+                            </div>
+                            <span class="distribution-value">19.5%</span>
+                        </div>
+                        <div class="distribution-row">
+                            <span class="distribution-label">Tablet</span>
+                            <div class="distribution-bar-bg">
+                                <div class="distribution-bar device" style="width: 1%"></div>
+                            </div>
+                            <span class="distribution-value">0.4%</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 16px; font-size: 12px; color: var(--gray-500);">
+                        <strong>Nota:</strong> El tráfico B2B suele ser principalmente desde ordenador, lo cual es normal para este sector.
+                    </p>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-icon" style="background: var(--purple)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <h2>Problemas Críticos a Resolver</h2>
+            </div>
+
+            <div class="issues-grid">
+                <div class="issue-card">
+                    <div class="issue-number">1</div>
+                    <div class="issue-content">
+                        <h4>CTR extremadamente bajo en páginas de servicio</h4>
+                        <p>/agencia-seo-valencia muestra 0.02% CTR a pesar de 31K impresiones — necesita optimización urgente de title y meta.</p>
+                    </div>
+                    <span class="badge badge-high">Alto Impacto</span>
+                    <span class="badge badge-low">Bajo Esfuerzo</span>
+                </div>
+                <div class="issue-card">
+                    <div class="issue-number">2</div>
+                    <div class="issue-content">
+                        <h4>Rankings pobres en keywords transaccionales</h4>
+                        <p>La mayoría de páginas de servicio rankean en posiciones 25-40 (Página 3+), lejos de la visibilidad óptima.</p>
+                    </div>
+                    <span class="badge badge-high">Alto Impacto</span>
+                    <span class="badge badge-medium">Med Esfuerzo</span>
+                </div>
+                <div class="issue-card">
+                    <div class="issue-number">3</div>
+                    <div class="issue-content">
+                        <h4>Homepage rankea en posición 26</h4>
+                        <p>A pesar de recibir 45K impresiones, la posición promedio de 25.98 limita severamente el tráfico potencial.</p>
+                    </div>
+                    <span class="badge badge-high">Alto Impacto</span>
+                    <span class="badge badge-medium">Med Esfuerzo</span>
+                </div>
+                <div class="issue-card">
+                    <div class="issue-number">4</div>
+                    <div class="issue-content">
+                        <h4>50+ keywords con 0 clics</h4>
+                        <p>Keywords con alto volumen de impresiones pero sin clics debido a posiciones fuera de página 1.</p>
+                    </div>
+                    <span class="badge badge-high">Alto Impacto</span>
+                    <span class="badge badge-high">Alto Esfuerzo</span>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-icon" style="background: var(--warning)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </div>
+                <h2>Content Gaps (Keywords con 0 Clics)</h2>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Impresiones</th>
+                        <th>Posición</th>
+                        <th>Prioridad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>agencia facebook ads</strong></td>
+                        <td class="number">4,056</td>
+                        <td class="number ctr-needs-work">27.38</td>
+                        <td><span class="badge badge-high">Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>posicionamiento seo valencia</strong></td>
+                        <td class="number">2,535</td>
+                        <td class="number ctr-needs-work">29.60</td>
+                        <td><span class="badge badge-high">Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>posicionamiento web valencia</strong></td>
+                        <td class="number">2,436</td>
+                        <td class="number ctr-needs-work">34.04</td>
+                        <td><span class="badge badge-high">Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>seo valencia</strong></td>
+                        <td class="number">1,992</td>
+                        <td class="number ctr-needs-work">31.94</td>
+                        <td><span class="badge badge-high">Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>agencia inbound marketing valencia</strong></td>
+                        <td class="number">1,038</td>
+                        <td class="number ctr-warning">15.19</td>
+                        <td><span class="badge badge-medium">Media</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="page-footer">
+                <span class="footer-brand">NIRVEX · ANÁLISIS SEO</span>
+                <div class="footer-confidence">
+                    Nivel de Confianza: <span class="confidence-badge">Alto</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4: Action Plan -->
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">Plan de Acción Prioritario</h1>
+                <span class="page-number">05 / 05</span>
+            </div>
+
+            <div class="action-list">
+                <div class="action-item">
+                    <div class="action-number">1</div>
+                    <div class="action-content">
+                        <h4>Reescribir titles y meta descriptions de páginas de servicio</h4>
+                        <p style="color: var(--gray-500); font-size: 12px;">Foco en /agencia-seo-valencia — añadir copy atractivo con propuesta de valor clara y CTA.</p>
+                    </div>
+                    <span class="badge badge-high">Alto Impacto</span>
+                    <span class="badge badge-low">Bajo Esfuerzo</span>
+                </div>
+                <div class="action-item">
+                    <div class="action-number">2</div>
+                    <div class="action-content">
+                        <h4>Crear/optimizar página dedicada para "agencia facebook ads"</h4>
+                        <p style="color: var(--gray-500); font-size: 12px;">4,056 impresiones con 0 clics — oportunidad masiva de captura de tráfico.</p>
+                    </div>
+                    <span class="badge badge-high">Alto Impacto</span>
+                    <span class="badge badge-medium">Med Esfuerzo</span>
+                </div>
+                <div class="action-item">
+                    <div class="action-number">3</div>
+                    <div class="action-content">
+                        <h4>Mejorar contenido y enlaces internos de la homepage</h4>
+                        <p style="color: var(--gray-500); font-size: 12px;">Añadir más texto, mejorar estructura de enlaces internos, implementar schema markup.</p>
+                    </div>
+                    <span class="badge badge-high">Alto Impacto</span>
+                    <span class="badge badge-medium">Med Esfuerzo</span>
+                </div>
+                <div class="action-item">
+                    <div class="action-number">4</div>
+                    <div class="action-content">
+                        <h4>Construir 5-10 backlinks locales de Valencia</h4>
+                        <p style="color: var(--gray-500); font-size: 12px;">Directorios locales, guest posts en blogs de negocios de Valencia, cámara de comercio.</p>
+                    </div>
+                    <span class="badge badge-high">Alto Impacto</span>
+                    <span class="badge badge-medium">Med Esfuerzo</span>
+                </div>
+                <div class="action-item">
+                    <div class="action-number">5</div>
+                    <div class="action-content">
+                        <h4>Crear más contenido informativo para el blog</h4>
+                        <p style="color: var(--gray-500); font-size: 12px;">Replicar éxito de "organigrama" — buscar keywords informacionales similares con buen volumen.</p>
+                    </div>
+                    <span class="badge badge-medium">Med Impacto</span>
+                    <span class="badge badge-medium">Med Esfuerzo</span>
+                </div>
+                <div class="action-item">
+                    <div class="action-number">6</div>
+                    <div class="action-content">
+                        <h4>Añadir FAQ schema a todas las páginas de servicio</h4>
+                        <p style="color: var(--gray-500); font-size: 12px;">Mejorar visibilidad en SERPs con rich snippets y aumentar CTR.</p>
+                    </div>
+                    <span class="badge badge-medium">Med Impacto</span>
+                    <span class="badge badge-low">Bajo Esfuerzo</span>
+                </div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); border-radius: 16px; padding: 30px; margin-top: 30px; color: var(--white);">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Recomendaciones para Auditoría Completa</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; font-size: 13px;">
+                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                        <div style="width: 32px; height: 32px; background: rgba(255,107,107,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">Crawl Técnico</div>
+                            <div style="color: var(--gray-500); font-size: 11px;">Análisis con Screaming Frog</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                        <div style="width: 32px; height: 32px; background: rgba(78,205,196,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">Perfil de Backlinks</div>
+                            <div style="color: var(--gray-500); font-size: 11px;">Análisis con Ahrefs/Semrush</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                        <div style="width: 32px; height: 32px; background: rgba(255,217,61,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">Gap de Competidores</div>
+                            <div style="color: var(--gray-500); font-size: 11px;">Análisis de keyword gap</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; padding: 24px; background: var(--gray-100); border-radius: 16px; border-left: 4px solid var(--coral);">
+                <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--navy);">Resumen de Datos del Período</h4>
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; font-size: 12px;">
+                    <div>
+                        <div style="color: var(--gray-500); margin-bottom: 4px;">Período</div>
+                        <div style="font-weight: 600;">92 días</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray-500); margin-bottom: 4px;">Keywords Únicas</div>
+                        <div style="font-weight: 600;">1,001</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray-500); margin-bottom: 4px;">Países</div>
+                        <div style="font-weight: 600;">144</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray-500); margin-bottom: 4px;">Páginas Indexadas</div>
+                        <div style="font-weight: 600;">40</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray-500); margin-bottom: 4px;">Fuente</div>
+                        <div style="font-weight: 600;">GSC</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span class="footer-brand">NIRVEX · ANÁLISIS SEO</span>
+                <div class="footer-confidence">
+                    Nivel de Confianza: <span class="confidence-badge">Alto</span>
+                </div>
+            </div>
+
+            <div class="watermark">SEO</div>
+        </div>
+    </div>
+</body>
+</html>
