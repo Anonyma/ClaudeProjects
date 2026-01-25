@@ -98,7 +98,8 @@
       "Bash(# Check the .env file for clawdbot cat /Users/z/.clawdbot/.env)",
       "Bash(# Search for where openrouter key should go grep -r \"\"OPENROUTER\"\" /opt/homebrew/lib/node_modules/clawdbot --include=\"\"*.js\"\")",
       "Bash(clawdbot wake:*)",
-      "WebFetch(domain:notebooklmstudyhub.netlify.app)"
+      "WebFetch(domain:notebooklmstudyhub.netlify.app)",
+      "WebFetch(domain:iso.pop-os.org)"
     ]
   }
 }

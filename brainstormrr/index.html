@@ -1187,14 +1187,18 @@
 
       const handleMouseUp = useCallback((e) => {
         if (dragRef.current) {
+          // Capture drag info before any state updates
+          const draggedIds = new Set(dragRef.current.ids);
+
           // Check if task was dropped into a category zone
           const rect = svgRef.current?.getBoundingClientRect();
+          let droppedCategory = null;
+
           if (rect) {
             const mouseX = (e.clientX - rect.width / 2 - camera.x) / camera.zoom;
             const mouseY = (e.clientY - rect.height / 2 - camera.y) / camera.zoom;
 
             // Find if we're inside any category zone
-            let droppedCategory = null;
             for (const [catKey, cat] of Object.entries(categories)) {
               const dist = Math.sqrt(
                 Math.pow(mouseX - cat.position.x, 2) +
@@ -1206,25 +1210,19 @@
                 break;
               }
             }
-
-            // Update nodes: set layoutMode to manual, and optionally assign category
-            setNodes(n => n.map(node => {
-              if (dragRef.current.ids.has(node.id)) {
-                const updates = { layoutMode: 'manual' };
-                if (droppedCategory) {
-                  updates.category = droppedCategory;
-                }
-                return { ...node, ...updates };
-              }
-              return node;
-            }));
-          } else {
-            setNodes(n => n.map(node =>
-              dragRef.current.ids.has(node.id)
-                ? { ...node, layoutMode: 'manual' }
-                : node
-            ));
           }
+
+          // Update nodes: set layoutMode to manual, and optionally assign category
+          setNodes(n => n.map(node => {
+            if (draggedIds.has(node.id)) {
+              const updates = { layoutMode: 'manual' };
+              if (droppedCategory) {
+                updates.category = droppedCategory;
+              }
+              return { ...node, ...updates };
+            }
+            return node;
+          }));
         }
         if (categoryDragRef.current) {
           setDraggingCategory(null);
