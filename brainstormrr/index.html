@@ -1159,27 +1159,36 @@
         if (panRef.current) {
           const dx = e.clientX - panRef.current.startX;
           const dy = e.clientY - panRef.current.startY;
-          setCamera(c => ({ ...c, x: panRef.current.origX + dx, y: panRef.current.origY + dy }));
+          // Capture refs before setState callback to avoid null access
+          const origX = panRef.current.origX;
+          const origY = panRef.current.origY;
+          setCamera(c => ({ ...c, x: origX + dx, y: origY + dy }));
         } else if (categoryDragRef.current) {
           const dx = (e.clientX - categoryDragRef.current.startX) / camera.zoom;
           const dy = (e.clientY - categoryDragRef.current.startY) / camera.zoom;
+          // Capture refs before setState callback to avoid null access
           const key = categoryDragRef.current.key;
+          const origX = categoryDragRef.current.origX;
+          const origY = categoryDragRef.current.origY;
           setCategories(c => ({
             ...c,
             [key]: {
               ...c[key],
               position: {
-                x: categoryDragRef.current.origX + dx,
-                y: categoryDragRef.current.origY + dy
+                x: origX + dx,
+                y: origY + dy
               }
             }
           }));
         } else if (dragRef.current) {
           const dx = (e.clientX - dragRef.current.startX) / camera.zoom;
           const dy = (e.clientY - dragRef.current.startY) / camera.zoom;
+          // Capture refs before setState callback to avoid null access
+          const draggedIds = dragRef.current.ids;
+          const origPositions = dragRef.current.orig;
           setNodes(n => n.map(node =>
-            dragRef.current.ids.has(node.id)
-              ? { ...node, x: dragRef.current.orig[node.id].x + dx, y: dragRef.current.orig[node.id].y + dy }
+            draggedIds.has(node.id)
+              ? { ...node, x: origPositions[node.id].x + dx, y: origPositions[node.id].y + dy }
               : node
           ));
         }
