@@ -2,6 +2,47 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## CRITICAL: Report Agent Status
+
+**ALWAYS report your status to the Agent Hub when starting, getting blocked, completing, or encountering errors.**
+
+### When to Report
+
+| Event | Command |
+|-------|---------|
+| Starting work | `report-status --name [agent-name] running "Starting: [task description]"` |
+| Making progress | `report-status --name [agent-name] running "[current task]"` |
+| Blocked/need help | `report-status --name [agent-name] blocked "[what you need]"` |
+| Task completed | `report-status --name [agent-name] completed "[what was done]"` |
+| Error occurred | `report-status --name [agent-name] error "[error description]"` |
+
+### Agent Naming
+- Use a short, descriptive name: `deploy-bot`, `scraper`, `refactor-auth`, `fix-bug-123`
+- If working on a specific project, include it: `brainstormrr-fixes`, `time-tracker-deploy`
+- The `--name` flag is optional; defaults to current directory name
+
+### Examples
+
+```bash
+# Starting a task
+report-status --name feature-auth running "Implementing OAuth login flow"
+
+# When blocked
+report-status --name feature-auth blocked "Need OAuth client credentials for Google"
+
+# On completion
+report-status --name feature-auth completed "OAuth login working, deployed to staging"
+
+# On error
+report-status --name feature-auth error "Build failed: missing @auth/core dependency"
+```
+
+### Dashboard Access
+- **Terminal:** Run `agent-status` or `agents`
+- **Web:** Open http://localhost:8766/dashboard.html or run `agent-dashboard`
+
+---
+
 ## CRITICAL: Git Commits
 
 **After creating or modifying files in this repository, ALWAYS commit the changes.**

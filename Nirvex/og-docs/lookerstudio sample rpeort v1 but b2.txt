@@ -1,0 +1,132 @@
+Fresh People - SEO Results Report (Informe de resultados)
+Report Metadata
+Report Title: Fresh People - Informe de resultados
+Subtitle: Informe SEO y próximas acciones (SEO Report and Next Actions)
+Platform: Google Looker Studio
+Data Last Updated: 25/01/2026 21:52:48
+Date Range Filter: 24 Dec 2025 - 23 Jan 2026
+Report Structure (4 Pages)
+Page 1: Portada (Cover)
+Dark blue/navy gradient design with curved white element
+Title: "Informe SEO y próximas acciones"
+Company branding: Fresh People
+Page 2: Resumen ejecutivo (Executive Summary) - 30 días
+Key Metrics (30-day period):
+
+Metric	Value	Change vs Previous Period
+Impresiones (Impressions)	453,006	-5.5% ↓
+Clicks	1,691	-16.9% ↓
+Palabras clave (Keywords)	15,162	-15.0% ↓
+Narrative Analysis: "Las impresiones y los clics del periodo muestran una tendencia ascendente ligera pero sostenida. La caída mínima del inventario de palabras clave (–0,7%) entra dentro del comportamiento normal tras la limpieza técnica."
+
+Translation: Impressions and clicks for the period show a slight but sustained upward trend. The minimal decrease in keyword inventory (-0.7%) falls within normal behavior after technical cleanup.
+
+Visual Elements:
+
+Three KPI cards with time series line charts
+Dark line = current period performance
+Gray line = comparison/previous period
+Charts show daily fluctuations across the 30-day window
+Page 3: Evolución del proyecto (Project Evolution) - 120 días
+Key Metrics (120-day period):
+
+Metric	Value	Change
+Impresiones (Impressions)	453,006	-5.5% ↓
+Clicks	1,691	-16.9% ↓
+Palabras clave (Keywords)	31,835	+8.6% ↑
+Narrative Analysis: "La visibilidad orgánica mantiene una tendencia positiva en el ciclo de 120 días. Crece tanto alcance (impresiones) como tráfico cualificado (clics), lo que indica consolidación del posicionamiento. Además el 13 de septiembre hubo una caída global en todas las cuentas SEO por una actualización en el algoritmo de Google."
+
+Translation: Organic visibility maintains a positive trend over the 120-day cycle. Both reach (impressions) and qualified traffic (clicks) are growing, indicating consolidation of positioning. Additionally, on September 13th there was a global drop across all SEO accounts due to a Google algorithm update.
+
+Visual Elements:
+
+Three KPI cards with extended 120-day time series
+Time axis: Sept 25, 2025 → Jan 23, 2026
+Charts show longer-term trend patterns
+Page 4: Cambios en palabras clave (Keyword Changes) - 30 días
+Section Title: Palabras clave destacadas (Featured Keywords)
+
+Narrative Analysis: "Durante el periodo analizado destacan fuertes movimientos en keywords informacionales. Las subidas más relevantes se producen en 'equipos de alto rendimiento' y 'talent booster', mientras que las caídas se concentran en las búsquedas sobre 'misión, visión y valores'."
+
+Translation: During the analyzed period, strong movements stand out in informational keywords. The most relevant increases occur in "high-performance teams" and "talent booster," while decreases are concentrated in searches about "mission, vision and values."
+
+Top 10 Keywords by Impressions:
+
+Rank	Keyword	Impressions	% Change
+1	recruiting	48.4k	+85.0% ↑
+2	recursos humanos	27.4k	-8.0% ↓
+3	rrhh	13.3k	-9.3% ↓
+4	equipo	4.9k	+0.2% ↑
+5	squad	4.4k	+47.0% ↑
+6	team leader	4.1k	+2.5% ↑
+7	habilidades laborales	3.8k	+30.8% ↑
+8	que es recursos humanos	3.7k	+28.8% ↑
+9	mision vision y valores	3.7k	-13.9% ↓
+10	rrhh que es	3k	+53.4% ↑
+Top 10 Keywords by Clicks:
+
+Rank	Keyword	Clicks	% Change
+1	mision vision y valores	188	+89.3% ↑
+2	mision vision y valores de una empresa	62	+40.9% ↑
+3	talent booster	48	+0.0% —
+4	equipos de alto rendimiento	32	-38.5% ↓
+5	tipos de cultura organizacional	29	-49.1% ↓
+6	misión visión y valores	25	+108.3% ↑
+7	misión y visión ejemplos	25	-24.2% ↓
+8	trabajo en equipo	18	+800.0% ↑
+9	ejemplos de mision y vision	17	-10.5% ↓
+10	equipo de alto rendimiento	17	-29.2% ↓
+Design & Visual Elements
+Color Scheme:
+
+Primary background: Dark navy/black (
+#0a0a23 approximate)
+Accent: Blue gradient header area
+KPI cards: Navy blue cards with white text
+Positive indicators: Green with up arrow
+Negative indicators: Orange/amber with down arrow
+Bar charts: Yellow/gold bars
+Typography:
+
+Large white numbers for KPIs
+Clean sans-serif font
+Rounded pill badges for time period indicators (e.g., "30 días", "120 días")
+Chart Types:
+
+Time series line charts (dual line - current vs. previous period)
+Horizontal bar charts with percentage change indicators
+Data tables with ranking numbers
+Navigation:
+
+Left sidebar with collapsible page navigation
+Date range filter at top (calendar dropdown)
+Page numbers (1, 2, 3, 4) visible when sidebar collapsed
+Summary for AI Recreation
+To recreate this report, an AI would need:
+
+Data Sources:
+Google Search Console or similar SEO data (impressions, clicks, keywords)
+Historical data spanning at least 120 days
+Period-over-period comparison capability
+Metrics to Calculate:
+Total impressions with % change
+Total clicks with % change
+Keyword count/inventory with % change
+Individual keyword performance (impressions + clicks)
+Percentage changes for each metric
+Visualizations Required:
+Cover page with branding
+KPI scorecard cards with sparkline charts
+Dual-line time series (current vs. previous period)
+Horizontal bar charts ranked by volume
+Data tables with change indicators
+Narrative Elements:
+Auto-generated or templated analysis text for each section
+Insights about trends (positive/negative)
+Notable events (like algorithm updates)
+Keyword movement analysis
+Time Periods:
+30-day view for executive summary and keyword changes
+120-day view for project evolution/long-term trends
+
+

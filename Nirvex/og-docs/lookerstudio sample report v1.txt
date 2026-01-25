@@ -1,0 +1,171 @@
+Fresh People - Informe de Resultados: Complete Report Capture
+Report Overview
+Report Name: Fresh People - Informe de resultados (Fresh People - Results Report)
+
+Report Type: SEO Performance Dashboard
+
+Data Last Updated: 25/01/2026 21:52:48
+
+Analysis Period: 24 Dec 2025 - 23 Jan 2026 (default)
+
+Report Structure
+The report contains 4 pages:
+
+Portada (Cover page) - Title page
+
+Resumen ejecutivo (Executive Summary) - 30-day overview
+
+Evolución del proyecto (Project Evolution) - 120-day trend analysis
+
+Cambios en palabras clave (Keyword Changes) - Detailed keyword performance with rankings
+
+Page 1: Portada (Cover Page)
+A decorative title page with:
+
+Report title: "Fresh People - Informe SEO y próximas acciones"
+
+Blue gradient design background
+
+Standard report header with date range filter
+
+Page 2: Resumen Ejecutivo (Executive Summary)
+Time Period: 30 days
+
+Key Metrics:
+Impresiones (Impressions)
+
+Value: 453,006
+
+Change: -5.5%
+
+Chart: Line chart showing impressions trend over 30 days (Y-axis: 0-30k)
+
+Clicks
+
+Value: 1,691
+
+Change: -16.9%
+
+Chart: Line chart showing clicks trend over 30 days (Y-axis: 0-200)
+
+Palabras clave (Keywords)
+
+Value: 15,162
+
+Change: -15.0%
+
+Chart: Line chart showing keywords trend over 30 days (Y-axis: 0-6k)
+
+Analysis Summary:
+"Las impresiones y los clics del periodo muestran una tendencia ascendente ligera pero sostenida. La caída mínima del inventario de palabras clave (–0,7%) entra dentro del comportamiento normal tras la limpieza técnica."
+
+Translation: "The impressions and clicks in the period show a slight but sustained upward trend. The minimal drop in keyword inventory (–0.7%) is within normal behavior after technical cleanup."
+
+Page 3: Evolución del Proyecto (Project Evolution)
+Time Period: 120 days
+Date Range: 25 Sept 2025 - 23 Jan 2026
+
+Key Metrics:
+Impresiones (Impressions)
+
+Value: 453,006
+
+Change: -5.5%
+
+Chart: Line/area chart with date axis from Sept 25, 2025 to Jan 23, 2026
+
+Y-axis range: 0 to 30,000
+
+Key date markers: 25 Sept 2025, 15 Oct 2025, 4 Nov 2025, 24 Nov 2025, 14 Dec 2025, 3 Jan 2026, 23 Jan 2026
+
+Clicks
+
+Value: 1,691
+
+Change: -16.9%
+
+Chart: Line chart over 120-day period
+
+Y-axis range: 0 to 200
+
+Palabras clave (Keywords)
+
+Value: 31,835
+
+Change: +8.6%
+
+Chart: Line chart over 120-day period
+
+Y-axis range: 0 to 6,000
+
+Analysis Summary:
+"La visibilidad orgánica mantiene una tendencia positiva en el ciclo de 120 días. Crece tanto alcance (impresiones) como tráfico cualificado (clics), lo que indica consolidación del posicionamiento. Además el 13 de septiembre hubo una caída global en todas las cuentas SEO por una actualización en el algoritmo de Google."
+
+Translation: "Organic visibility maintains a positive trend over the 120-day cycle. Both reach (impressions) and qualified traffic (clicks) are growing, indicating consolidation of positioning. Additionally, on September 13 there was a global drop in all SEO accounts due to a Google algorithm update."
+
+Page 4: Cambios en Palabras Clave (Keyword Changes)
+Time Period: 30 days
+
+Overview:
+"Durante el periodo analizado destacan fuertes movimientos en keywords informacionales. Las subidas más relevantes se producen en 'equipos de alto rendimiento' y 'talent booster', mientras que las caídas se concentran en las búsquedas sobre 'misión, visión y valores'."
+
+Translation: "During the analyzed period, strong movements in informational keywords stand out. The most relevant increases occur in 'high-performance teams' and 'talent booster', while decreases are concentrated in searches about 'mission, vision and values'."
+
+Top Keywords by Impressions:
+Rank	Keyword	Impressions	Change
+1	recruiting	48.4k	+85.0%
+2	recursos humanos	27.4k	-8.0%
+3	rrhh	13.3k	-9.3%
+4	equipo	4.9k	+0.2%
+5	squad	4.4k	+47.0%
+6	team leader	4.1k	+2.5%
+7	habilidades laborales	3.8k	+30.8%
+8	que es recursos humanos	3.7k	+28.8%
+9	mision vision y valores	3.7k	-13.9%
+10	rrhh que es	3.0k	+53.4%
+Top Keywords by Clicks:
+Rank	Keyword	Clicks	Change
+1	mision vision y valores	188	+9.3%
+2	mision vision y valores de una empresa	62	+40.9%
+3	talent booster	48	0.0%
+4	equipos de alto rendimiento	32	-38.5%
+5	tipos de cultura organizacional	29	-49.1%
+6	misión visión y valores	25	+108.3%
+7	misión y visión ejemplos	25	-24.2%
+8	trabajo en equipo	18	+800.0%
+9	ejemplos de mision y vision	17	-10.5%
+10	equipo de alto rendimiento	17	-29.2%
+Data Structure for AI Regeneration
+Required Data Fields:
+Metrics: Impressions, Clicks, Keywords Count
+
+Dimensions: Date (daily granularity recommended), Keyword
+
+Aggregations: Sum of impressions, sum of clicks, count of distinct keywords
+
+Calculations: Period-over-period change percentages, trend indicators
+
+Key Visualizations to Recreate:
+Metric Cards: Display current value + percentage change (up/down indicators)
+
+Time Series Line Charts: For impressions, clicks, and keywords over 120-day period
+
+Data Tables: Ranked keyword performance with sort capabilities
+
+Scorecard Indicators: "30 días" and "120 días" period selectors
+
+Narrative Text Blocks: Contextual analysis of trends and significant events
+
+Filter Options:
+Date range selector (default: last 30 days or custom range)
+
+Period comparison (30-day vs 120-day views)
+
+Metadata:
+Source: Google Search Console or similar SEO platform
+
+Account: Fresh People (HR/recruitment focused)
+
+Language: Spanish
+
+Update frequency: Daily (last updated timestamp included in report)
