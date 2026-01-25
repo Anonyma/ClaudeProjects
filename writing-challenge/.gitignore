@@ -4,3 +4,4 @@ dist/
 build/
 .netlify/
 *.log
+.env*

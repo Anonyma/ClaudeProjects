@@ -15,8 +15,6 @@
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             loadProjects();
             setupEventListeners();
-
-            // Set initial global time
             updateGlobalTime();
 
             setInterval(function () {
@@ -28,13 +26,7 @@
 
     function updateGlobalTime() {
         var now = new Date();
-        // Format: YYYY-MM-DD HH:MM:SS
-        var timeStr = now.getFullYear() + '-' +
-            String(now.getMonth() + 1).padStart(2, '0') + '-' +
-            String(now.getDate()).padStart(2, '0') + ' ' +
-            String(now.getHours()).padStart(2, '0') + ':' +
-            String(now.getMinutes()).padStart(2, '0');
-
+        var timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const el = document.getElementById('globalTimestamp');
         if (el) el.innerHTML = 'LAST UPDATE: ' + timeStr;
     }
@@ -50,17 +42,16 @@
                 setTimeout(check, 100);
             } else {
                 document.getElementById('projectsGrid').innerHTML =
-                    '<div class="empty-state">SYSTEM ERROR: Supabase library offline</div>';
+                    '<div style="text-align:center; padding:40px; color:var(--neon-red);">SYSTEM ERROR: Supabase connection failed</div>';
             }
         }
         check();
     }
 
     function loadProjects() {
-        // Show loading state if empty
         const grid = document.getElementById('projectsGrid');
         if (allProjects.length === 0) {
-            grid.innerHTML = '<div style="padding:20px; color:var(--text-dim);">SCANNING SECTOR...</div>';
+            grid.innerHTML = '<div style="padding:40px; color:var(--text-dim); text-align:center;">SCANNING SECTOR...</div>';
         }
 
         supabaseClient
@@ -70,35 +61,57 @@
             .then(function (result) {
                 if (result.error) {
                     console.error('Error loading projects:', result.error);
-                    grid.innerHTML = '<div class="empty-state">COMMUNICATION ERROR</div>';
+                    grid.innerHTML = '<div style="text-align:center; padding:40px; color:var(--neon-red);">COMMUNICATION ERROR</div>';
                     return;
                 }
                 allProjects = result.data || [];
                 updateStats();
                 renderProjects();
-                updateGlobalTime(); // Update time on successful fetch
+                updateGlobalTime();
             });
     }
 
-    function getProjectIcon(project) {
+    function getProjectIconInfo(project) {
         const text = (project.name + ' ' + (project.description || '') + ' ' + (project.tags || []).join(' ')).toLowerCase();
 
-        // Priority 1: Biology/Science
-        if (text.includes('bio') || text.includes('gene') || text.includes('dna') || text.includes('crispr') || text.includes('molecular')) return 'assets/icon_bio.png';
+        // Return object: { src: string, variantClass: string }
 
-        // Priority 2: Knowledge/Writing/Dashboard (This captures "Writing Challenge")
-        if (text.includes('writing') || text.includes('study') || text.includes('read') || text.includes('book') || text.includes('article') || text.includes('dashboard') || text.includes('learn')) return 'assets/icon_knowledge.png';
+        // Writing Challenge - prioritize specifically to distinguish from generic knowledge
+        if (text.includes('writing challenge') || text.includes('habit-tracker')) {
+            return { src: 'assets/icon_knowledge.png', variantClass: 'variant-gold' };
+        }
 
-        // Priority 3: Media/Art/Voice
-        if (text.includes('art') || text.includes('voice') || text.includes('audio') || text.includes('speak') || text.includes('studio') || text.includes('music')) return 'assets/icon_media.png';
+        // Voice/Music
+        if (text.includes('voice') || text.includes('audio') || text.includes('speak') || text.includes('transcription')) {
+            // Voice memo vs generic media
+            if (text.includes('memo') || text.includes('record')) {
+                return { src: 'assets/icon_media.png', variantClass: 'variant-green' };
+            }
+            return { src: 'assets/icon_media.png', variantClass: '' };
+        }
 
-        // Priority 4: Time/Schedule (Captures tracker only if not captured by above)
-        if (text.includes('time') || text.includes('tracker') || text.includes('schedule') || text.includes('clock') || text.includes('pomodoro')) return 'assets/icon_chrono.png';
+        // Biology
+        if (text.includes('bio') || text.includes('gene') || text.includes('dna')) {
+            return { src: 'assets/icon_bio.png', variantClass: '' };
+        }
 
-        // Priority 5: Technical/Bot/Command
-        if (text.includes('bot') || text.includes('assistant') || text.includes('command') || text.includes('meta') || text.includes('cli') || text.includes('telegram')) return 'assets/icon_core.png';
+        // NotebookLM (Knowledge)
+        if (text.includes('notebooklm') || text.includes('study') || text.includes('learn')) {
+            return { src: 'assets/icon_knowledge.png', variantClass: '' }; // Default blue knowledge
+        }
 
-        return 'assets/icon_knowledge.png'; // Default
+        // Time
+        if (text.includes('time') || text.includes('clock') || text.includes('schedule')) {
+            return { src: 'assets/icon_chrono.png', variantClass: '' };
+        }
+
+        // Core/Bot
+        if (text.includes('bot') || text.includes('command') || text.includes('meta')) {
+            return { src: 'assets/icon_core.png', variantClass: '' };
+        }
+
+        // Fallback
+        return { src: 'assets/icon_knowledge.png', variantClass: '' };
     }
 
     function updateStats() {
@@ -107,7 +120,6 @@
         const deployedCount = allProjects.filter(p => p.hosted_url).length;
         const criticalCount = allProjects.filter(p => p.status === 'needs-fix').length;
 
-        // Update HUD stats
         setText('stat-total', totalCount.toString().padStart(2, '0'));
         setText('stat-active', activeCount.toString().padStart(2, '0'));
         setText('stat-deployed', deployedCount.toString().padStart(2, '0'));
@@ -118,7 +130,6 @@
             criticalEl.parentElement.style.color = criticalCount > 0 ? 'var(--neon-red)' : 'var(--neon-blue)';
         }
 
-        // System Status text
         const statusText = criticalCount > 0 ? 'ATTENTION REQUIRED' : 'SYSTEMS ONLINE';
         const systemStatus = document.getElementById('system-status-text');
         if (systemStatus) {
@@ -126,7 +137,6 @@
             systemStatus.className = criticalCount > 0 ? 'status-text warning' : 'status-text safe';
         }
 
-        // Render logs
         renderLogs();
     }
 
@@ -142,7 +152,6 @@
         let html = '';
         const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 
-        // Attention items
         const attentionProjects = allProjects.filter(p => p.status === 'needs-fix' || p.status === 'wip');
 
         if (attentionProjects.length > 0) {
@@ -179,7 +188,7 @@
         }
 
         if (filtered.length === 0) {
-            grid.innerHTML = '<div style="padding:20px; color:var(--text-dim); border:1px solid rgba(255,255,255,0.1); grid-column:1/-1; text-align:center;">NO MODULES FOUND IN THIS SECTOR</div>';
+            grid.innerHTML = '<div style="padding:40px; color:var(--text-dim); text-align:center; grid-column:1/-1;">NO MODULES FOUND IN THIS SECTOR</div>';
             return;
         }
 
@@ -187,7 +196,7 @@
     }
 
     function renderProjectCard(p) {
-        const iconSrc = getProjectIcon(p);
+        const iconInfo = getProjectIconInfo(p);
         const statusClass = 'status-' + (p.status || 'active');
 
         let actions = '';
@@ -198,40 +207,41 @@
             actions += `<button onclick="copyToClipboard('${p.path.replace(/'/g, "\\'")}')" class="hud-btn secondary">COPY PATH</button>`;
         }
 
-        // Tags
         const tags = (p.tags || []).slice(0, 3).map(t => `<span class="hud-tag">${t}</span>`).join('');
 
-        // Formatted timestamp with time
         let updateTime = 'Unknown';
         if (p.updated_at || p.created) {
             const date = new Date(p.updated_at || p.created);
-            // Example: 01/24 23:45
-            updateTime = date.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' }) + ' ' +
-                date.toLocaleTimeString(undefined, { hour12: false, hour: '2-digit', minute: '2-digit' });
+            // Format: DD/MM HH:MM
+            updateTime = date.getDate().toString().padStart(2, '0') + '/' +
+                (date.getMonth() + 1).toString().padStart(2, '0') + ' ' +
+                date.getHours().toString().padStart(2, '0') + ':' +
+                date.getMinutes().toString().padStart(2, '0');
         }
 
-        // Status Message for Needs Fix
         let statusMsgHTML = '';
         if (p.status === 'needs-fix' && (p.status_note || p.last_error)) {
             statusMsgHTML = `<div class="status-msg-box">
-                <span style="font-size:16px">⚠️</span>
+                <span style="font-size:18px">⚠️</span>
                 <span>${p.status_note || p.last_error}</span>
             </div>`;
-        } else if (p.status === 'wip') {
-            // Optional WIP indicator
-            statusMsgHTML = `<div style="color:var(--neon-green); font-size:12px; margin-bottom:10px; font-weight:bold;">// WORK IN PROGRESS</div>`;
         }
 
         return `
         <div class="hud-card ${statusClass}">
             <div class="card-icon-container">
-                <img src="${iconSrc}" class="card-icon" alt="icon">
+                <img src="${iconInfo.src}" class="card-icon ${iconInfo.variantClass}" alt="icon">
             </div>
             <div class="card-content">
                 <div class="card-header">
                     <h3 class="card-title">${p.name}</h3>
                 </div>
-                <div class="card-type">TYPE: ${p.type || 'UNKNOWN'} // UPD: ${updateTime}</div>
+                
+                <div class="card-meta-line">
+                    <span class="meta-tag">${p.type || 'UNKNOWN'}</span>
+                    <span class="meta-time">UPD: ${updateTime}</span>
+                </div>
+
                 ${statusMsgHTML}
                 <div class="card-desc">${p.description || 'No data available'}</div>
                 <div class="card-tags">${tags}</div>

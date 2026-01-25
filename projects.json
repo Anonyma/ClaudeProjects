@@ -43,37 +43,6 @@
       ]
     },
     {
-      "id": "reading-dashboard",
-      "name": "NotebookLM Reading Dashboard",
-      "description": "Dashboard for NotebookLM sources. Original version before Substack dashboard was created separately.",
-      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard",
-      "type": "web-app",
-      "created": "2025-01-19",
-      "tags": [
-        "dashboard",
-        "notebooklm",
-        "reading-tracker"
-      ],
-      "status": "deprecated",
-      "access": {
-        "method": "file-or-localhost",
-        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard/index.html",
-        "instructions": "Can open directly (uses embedded-data.js). For full functionality run: cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard && ./start-server.sh then open http://localhost:8000",
-        "hosted": null,
-        "requiresServer": false,
-        "serverCommand": "cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/reading-dashboard && python3 -m http.server 8000"
-      },
-      "github": {
-        "repo": "https://github.com/Anonyma/reading-dashboard"
-      },
-      "files": [
-        "index.html",
-        "embedded-data.js",
-        "start-server.sh",
-        "SETUP.md"
-      ]
-    },
-    {
       "id": "notebooklm-scrape",
       "name": "NotebookLM Study System",
       "description": "Complete pipeline: Playwright scrapes NotebookLM audio \u2192 Whisper transcribes \u2192 GPT generates rich article-style summaries/quizzes \u2192 Supabase stores \u2192 Web app serves. Supports rich summaries with learning resources and Claude reference format for AI continuity.",
@@ -485,24 +454,35 @@
       ]
     },
     {
-      "id": "test-project-cli",
-      "name": "Test Project Updated",
-      "description": null,
-      "path": null,
+      "id": "brainstormrr",
+      "name": "Brainstormrr - Spatial Task Canvas",
+      "description": "2D spatial canvas for task visualization. Tasks exist as draggable circles with soft physics clustering toward category zones. Visual encoding: size=importance, color=category, opacity=status. Brain-dump mode for quick multi-task entry. Designed for parallel-thinking minds who get analysis paralysis from linear lists.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/brainstormrr",
       "type": "web-app",
-      "created": "2026-01-23",
-      "tags": [],
-      "status": "archived",
+      "created": "2026-01-25",
+      "tags": [
+        "task-management",
+        "spatial-canvas",
+        "visualization",
+        "productivity",
+        "brain-dump",
+        "react",
+        "localstorage"
+      ],
+      "status": "active",
       "access": {
-        "method": null,
-        "url": null,
+        "method": "file-or-hosted",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/brainstormrr/index.html",
+        "instructions": "Open directly in browser. Pan with drag, zoom with scroll wheel. Click canvas to add tasks. Brain dump with Cmd+Shift+N. All data persists in localStorage.",
         "hosted": null,
         "requiresServer": false
       },
       "github": {
-        "repo": "https://github.com/test/repo",
-        "branch": null
-      }
+        "repo": null
+      },
+      "files": [
+        "index.html"
+      ]
     }
   ],
   "sharedResources": {
