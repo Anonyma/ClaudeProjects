@@ -19,6 +19,51 @@ git add -A && git commit -m "Add voice-memo-transcriber project"
 
 ---
 
+## CRITICAL: Always Provide Access Instructions
+
+**At the end of EVERY response where you create, modify, or complete work on a project, ALWAYS provide the user with a way to test or access the changes.**
+
+### What to Include:
+
+For **local web apps**:
+```
+**To test:** Open in browser:
+file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/[project]/index.html
+```
+
+For **apps requiring a server**:
+```
+**To test:** Run this command, then open http://localhost:8000
+cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/[project] && python3 -m http.server 8000
+```
+
+For **deployed apps**:
+```
+**Live at:** https://[project].netlify.app
+```
+
+For **scripts/CLI tools**:
+```
+**To run:**
+python3 /path/to/script.py [args]
+```
+
+For **test files**:
+```
+**To run tests:** Open in browser:
+file:///path/to/test.html
+```
+
+### Examples:
+
+✅ Good ending:
+> "Fixed the crash bug and added category management. **To test:** Open `file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/brainstormrr/index.html` in your browser."
+
+❌ Bad ending:
+> "Fixed the crash bug and added category management." (no access instructions)
+
+---
+
 ## CRITICAL: Notify User via BabyClaw (Telegram)
 
 **ALWAYS notify the user when you need help, complete significant work, or encounter errors.**
