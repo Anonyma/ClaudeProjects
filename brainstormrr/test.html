@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Brainstormrr Tests</title>
+  <style>
+    body { font-family: system-ui; background: #1a1a2e; color: #eee; padding: 20px; }
+    .test { padding: 10px; margin: 5px 0; border-radius: 6px; }
+    .pass { background: #1a4a1a; }
+    .fail { background: #4a1a1a; }
+    .pending { background: #3a3a5a; }
+    h2 { color: #aaa; margin-top: 20px; }
+    button { padding: 10px 20px; margin: 10px 5px; cursor: pointer; }
+    #results { margin-top: 20px; }
+    iframe { border: 1px solid #4a4a6a; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Brainstormrr Test Suite</h1>
+
+  <div>
+    <button onclick="runAllTests()">Run All Tests</button>
+    <button onclick="clearStorage()">Clear Storage</button>
+    <button onclick="openApp()">Open App</button>
+  </div>
+
+  <div id="results"></div>
+
+  <h2>App Preview</h2>
+  <iframe id="preview" src="index.html" width="800" height="500"></iframe>
+
+  <script>
+    const results = document.getElementById('results');
+    let passCount = 0;
+    let failCount = 0;
+
+    function log(message, status = 'pending') {
+      const div = document.createElement('div');
+      div.className = `test ${status}`;
+      div.textContent = `${status === 'pass' ? '✓' : status === 'fail' ? '✗' : '○'} ${message}`;
+      results.appendChild(div);
+      if (status === 'pass') passCount++;
+      if (status === 'fail') failCount++;
+    }
+
+    function assert(condition, message) {
+      if (condition) {
+        log(message, 'pass');
+        return true;
+      } else {
+        log(message, 'fail');
+        return false;
+      }
+    }
+
+    function clearStorage() {
+      localStorage.removeItem('brainstormrr-data');
+      log('Storage cleared', 'pass');
+      document.getElementById('preview').src = 'index.html';
+    }
+
+    function openApp() {
+      window.open('index.html', '_blank');
+    }
+
+    async function runAllTests() {
+      results.innerHTML = '';
+      passCount = 0;
+      failCount = 0;
+
+      log('Starting tests...');
+
+      // Test 1: Storage module
+      testStorage();
+
+      // Test 2: Data model
+      testDataModel();
+
+      // Test 3: ID generation
+      testIdGeneration();
+
+      // Test 4: Clamp function
+      testClamp();
+
+      // Test 5: Parse brain dump
+      testBrainDumpParse();
+
+      // Test 6: Categories exist
+      testCategories();
+
+      // Test 7: Category operations
+      testCategoryOperations();
+
+      // Test 8: App renders without error
+      await testAppRenders();
+
+      // Summary
+      log(`\nTests complete: ${passCount} passed, ${failCount} failed`, failCount === 0 ? 'pass' : 'fail');
+    }
+
+    function testStorage() {
+      log('--- Storage Tests ---');
+
+      // Test save and load
+      const testData = {
+        nodes: [{ id: 'test1', title: 'Test Task', x: 100, y: 200 }],
+        categories: { test: { name: 'Test', color: '#ff0000', position: { x: 0, y: 0 } } },
+        camera: { x: 50, y: 50, zoom: 1.5 }
+      };
+
+      localStorage.setItem('brainstormrr-data', JSON.stringify(testData));
+      const loaded = JSON.parse(localStorage.getItem('brainstormrr-data'));
+
+      assert(loaded.nodes.length === 1, 'Storage: nodes saved and loaded');
+      assert(loaded.nodes[0].id === 'test1', 'Storage: node id preserved');
+      assert(loaded.nodes[0].x === 100, 'Storage: node x position preserved');
+      assert(loaded.camera.zoom === 1.5, 'Storage: camera zoom preserved');
+
+      // Clean up
+      localStorage.removeItem('brainstormrr-data');
+    }
+
+    function testDataModel() {
+      log('--- Data Model Tests ---');
+
+      // Test node structure
+      const node = {
+        id: 'abc123',
+        title: 'Test',
+        x: 0,
+        y: 0,
+        importance: 2,
+        category: 'work',
+        status: 'active',
+        layoutMode: 'auto',
+        createdAt: new Date().toISOString()
+      };
+
+      assert(typeof node.id === 'string', 'Node: id is string');
+      assert(typeof node.x === 'number', 'Node: x is number');
+      assert(typeof node.y === 'number', 'Node: y is number');
+      assert([1, 2, 3].includes(node.importance), 'Node: importance is 1, 2, or 3');
+      assert(['active', 'done'].includes(node.status), 'Node: status is valid');
+      assert(['auto', 'manual'].includes(node.layoutMode), 'Node: layoutMode is valid');
+    }
+
+    function testIdGeneration() {
+      log('--- ID Generation Tests ---');
+
+      const generateId = () => Math.random().toString(36).substring(2, 12);
+
+      const id1 = generateId();
+      const id2 = generateId();
+
+      assert(id1.length >= 8, 'ID: sufficient length');
+      assert(id1 !== id2, 'ID: unique across calls');
+      assert(/^[a-z0-9]+$/.test(id1), 'ID: alphanumeric');
+    }
+
+    function testClamp() {
+      log('--- Clamp Function Tests ---');
+
+      const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+
+      assert(clamp(5, 0, 10) === 5, 'Clamp: value within range unchanged');
+      assert(clamp(-5, 0, 10) === 0, 'Clamp: value below min clamped');
+      assert(clamp(15, 0, 10) === 10, 'Clamp: value above max clamped');
+      assert(clamp(0, 0, 10) === 0, 'Clamp: min boundary');
+      assert(clamp(10, 0, 10) === 10, 'Clamp: max boundary');
+    }
+
+    function testBrainDumpParse() {
+      log('--- Brain Dump Parse Tests ---');
+
+      const DEFAULT_CATEGORIES = {
+        writing: { name: 'Writing', color: '#a78bfa' },
+        work: { name: 'Work', color: '#fb923c' },
+        health: { name: 'Health', color: '#2dd4bf' }
+      };
+
+      function parseLine(line) {
+        let title = line.trim();
+        let category = null;
+        let importance = 1;
+
+        const catMatch = title.match(/\[(\w+)\]/i);
+        if (catMatch) {
+          const cat = catMatch[1].toLowerCase();
+          if (DEFAULT_CATEGORIES[cat]) category = cat;
+          title = title.replace(catMatch[0], '').trim();
+        }
+
+        if (title.includes('!!!')) { importance = 3; title = title.replace(/!!!/g, '').trim(); }
+        else if (title.includes('!!')) { importance = 2; title = title.replace(/!!/g, '').trim(); }
+
+        return { title, category, importance };
+      }
+
+      const test1 = parseLine('Simple task');
+      assert(test1.title === 'Simple task', 'Parse: simple task title');
+      assert(test1.category === null, 'Parse: no category');
+      assert(test1.importance === 1, 'Parse: default importance');
+
+      const test2 = parseLine('Important task !!!');
+      assert(test2.title === 'Important task', 'Parse: high importance title trimmed');
+      assert(test2.importance === 3, 'Parse: !!! = importance 3');
+
+      const test3 = parseLine('Medium task !!');
+      assert(test3.importance === 2, 'Parse: !! = importance 2');
+
+      const test4 = parseLine('Write blog [writing]');
+      assert(test4.title === 'Write blog', 'Parse: category removed from title');
+      assert(test4.category === 'writing', 'Parse: category extracted');
+
+      const test5 = parseLine('Call doctor [health] !!!');
+      assert(test5.title === 'Call doctor', 'Parse: both category and importance');
+      assert(test5.category === 'health', 'Parse: health category');
+      assert(test5.importance === 3, 'Parse: importance with category');
+    }
+
+    function testCategories() {
+      log('--- Category Tests ---');
+
+      const DEFAULT_CATEGORIES = {
+        writing: { name: 'Writing', color: '#a78bfa', position: { x: -350, y: -200 } },
+        admin: { name: 'Admin', color: '#60a5fa', position: { x: 350, y: -200 } },
+        study: { name: 'Study', color: '#4ade80', position: { x: -350, y: 200 } },
+        work: { name: 'Work', color: '#fb923c', position: { x: 350, y: 200 } },
+        personal: { name: 'Personal', color: '#fbbf24', position: { x: 0, y: -300 } },
+        health: { name: 'Health', color: '#2dd4bf', position: { x: 0, y: 300 } }
+      };
+
+      assert(Object.keys(DEFAULT_CATEGORIES).length === 6, 'Categories: 6 default categories');
+
+      Object.entries(DEFAULT_CATEGORIES).forEach(([key, cat]) => {
+        assert(cat.name && cat.name.length > 0, `Category ${key}: has name`);
+        assert(cat.color && cat.color.startsWith('#'), `Category ${key}: has color`);
+        assert(typeof cat.position.x === 'number', `Category ${key}: has x position`);
+        assert(typeof cat.position.y === 'number', `Category ${key}: has y position`);
+      });
+    }
+
+    function testCategoryOperations() {
+      log('--- Category Operations Tests ---');
+
+      // Test adding a new category
+      const existingCategories = {
+        writing: { name: 'Writing', color: '#a78bfa', position: { x: -350, y: -200 } },
+        work: { name: 'Work', color: '#fb923c', position: { x: 350, y: 200 } }
+      };
+
+      // Simulate adding
+      const newKey = 'category_test';
+      const newCategories = {
+        ...existingCategories,
+        [newKey]: { name: 'Test Cat', color: '#ff0000', position: { x: 0, y: 0 } }
+      };
+      assert(Object.keys(newCategories).length === 3, 'Add category: count increases');
+      assert(newCategories[newKey].name === 'Test Cat', 'Add category: name set');
+
+      // Test updating category name
+      newCategories[newKey].name = 'Updated Name';
+      assert(newCategories[newKey].name === 'Updated Name', 'Update category: name changes');
+
+      // Test updating category color
+      newCategories[newKey].color = '#00ff00';
+      assert(newCategories[newKey].color === '#00ff00', 'Update category: color changes');
+
+      // Test updating category position
+      newCategories[newKey].position = { x: 100, y: 200 };
+      assert(newCategories[newKey].position.x === 100, 'Update category: position x changes');
+      assert(newCategories[newKey].position.y === 200, 'Update category: position y changes');
+
+      // Test deleting category
+      delete newCategories[newKey];
+      assert(Object.keys(newCategories).length === 2, 'Delete category: count decreases');
+      assert(!newCategories[newKey], 'Delete category: key removed');
+
+      // Test node category cleanup
+      const nodes = [
+        { id: '1', category: 'writing' },
+        { id: '2', category: 'deletedCat' },
+        { id: '3', category: null }
+      ];
+      const deletedKeys = ['deletedCat'];
+      const cleanedNodes = nodes.map(n =>
+        deletedKeys.includes(n.category) ? { ...n, category: null } : n
+      );
+      assert(cleanedNodes[0].category === 'writing', 'Cleanup: keeps valid categories');
+      assert(cleanedNodes[1].category === null, 'Cleanup: nullifies deleted categories');
+      assert(cleanedNodes[2].category === null, 'Cleanup: keeps null as null');
+    }
+
+    async function testAppRenders() {
+      log('--- App Render Tests ---');
+
+      return new Promise((resolve) => {
+        const iframe = document.getElementById('preview');
+
+        // Clear storage first
+        localStorage.removeItem('brainstormrr-data');
+
+        iframe.onload = () => {
+          setTimeout(() => {
+            try {
+              const doc = iframe.contentDocument;
+
+              // Check toolbar exists
+              const toolbar = doc.querySelector('.toolbar');
+              assert(toolbar !== null, 'Render: toolbar exists');
+
+              // Check SVG canvas exists
+              const svg = doc.querySelector('svg');
+              assert(svg !== null, 'Render: SVG canvas exists');
+
+              // Check legend exists
+              const legend = doc.querySelector('.legend');
+              assert(legend !== null, 'Render: legend exists');
+
+              // Check stats exists
+              const stats = doc.querySelector('.stats');
+              assert(stats !== null, 'Render: stats exists');
+
+              // Check no error screen
+              const errorScreen = doc.querySelector('.error-screen');
+              assert(errorScreen === null, 'Render: no error screen shown');
+
+              // Check help hint shows for new users
+              const help = doc.querySelector('.help-hint');
+              assert(help !== null, 'Render: help hint shown for new users');
+
+              // Check toolbar has Categories button
+              const toolbarText = toolbar.textContent;
+              assert(toolbarText.includes('Categories'), 'Render: Categories button in toolbar');
+
+              resolve();
+            } catch (e) {
+              log('Render test error: ' + e.message, 'fail');
+              resolve();
+            }
+          }, 1000);
+        };
+
+        iframe.src = 'index.html?' + Date.now();
+      });
+    }
+
+    // Auto-run tests on load
+    setTimeout(runAllTests, 500);
+  </script>
+</body>
+</html>

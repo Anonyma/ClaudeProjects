@@ -7,7 +7,6 @@
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -15,8 +14,8 @@
       padding: 0;
       overflow: hidden;
       font-family: system-ui, -apple-system, sans-serif;
-      background: #0d1117;
-      color: #e6edf3;
+      background: #1a1a2e;
+      color: #eee;
     }
     #root { width: 100vw; height: 100vh; }
     ::-webkit-scrollbar { display: none; }
@@ -24,23 +23,25 @@
     .task-text { user-select: none; pointer-events: none; }
 
     .task-input {
-      background: transparent;
-      border: none;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 4px;
       outline: none;
-      color: inherit;
-      font-size: inherit;
+      color: #fff;
+      font-size: 12px;
       text-align: center;
       width: 100%;
+      padding: 2px 4px;
     }
 
     .context-menu {
       position: fixed;
-      background: #161b22;
-      border: 1px solid #30363d;
+      background: #2a2a4a;
+      border: 1px solid #4a4a6a;
       border-radius: 8px;
       padding: 4px;
-      min-width: 160px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      min-width: 180px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
       z-index: 1000;
     }
 
@@ -49,23 +50,24 @@
       align-items: center;
       gap: 8px;
       width: 100%;
-      padding: 8px 12px;
+      padding: 10px 12px;
       border: none;
       background: transparent;
-      color: #e6edf3;
+      color: #eee;
       font-size: 14px;
       cursor: pointer;
       border-radius: 4px;
       text-align: left;
     }
 
-    .context-menu button:hover { background: #21262d; }
-    .context-menu .divider { height: 1px; background: #30363d; margin: 4px 0; }
+    .context-menu button:hover { background: #3a3a5a; }
+    .context-menu .divider { height: 1px; background: #4a4a6a; margin: 4px 0; }
+    .context-menu .section-label { padding: 6px 12px; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
 
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.8);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -73,8 +75,8 @@
     }
 
     .modal {
-      background: #161b22;
-      border: 1px solid #30363d;
+      background: #2a2a4a;
+      border: 1px solid #4a4a6a;
       border-radius: 12px;
       padding: 24px;
       width: 90%;
@@ -83,80 +85,119 @@
       overflow: auto;
     }
 
+    .modal h2 { margin: 0 0 16px; font-size: 20px; color: #fff; }
+    .modal p { margin: 0 0 16px; font-size: 14px; color: #aaa; }
+
     .modal textarea {
       width: 100%;
       min-height: 200px;
-      background: #0d1117;
-      border: 1px solid #30363d;
+      background: #1a1a2e;
+      border: 1px solid #4a4a6a;
       border-radius: 8px;
       padding: 12px;
-      color: #e6edf3;
+      color: #eee;
       font-size: 14px;
       font-family: inherit;
       resize: vertical;
     }
 
-    .modal textarea:focus { outline: none; border-color: #58a6ff; }
+    .modal textarea:focus { outline: none; border-color: #6a6aff; }
+    .modal textarea::placeholder { color: #666; }
+
+    .modal code {
+      background: #1a1a2e;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn-primary { background: #4a4aff; color: #fff; }
+    .btn-primary:hover { background: #5a5aff; }
+    .btn-primary:disabled { background: #3a3a5a; color: #666; cursor: not-allowed; }
+    .btn-secondary { background: transparent; border: 1px solid #4a4a6a; color: #aaa; }
+    .btn-secondary:hover { background: #3a3a5a; color: #fff; }
 
     .toolbar {
       position: fixed;
       top: 16px;
       left: 50%;
       transform: translateX(-50%);
-      background: #161b22;
-      border: 1px solid #30363d;
+      background: #2a2a4a;
+      border: 1px solid #4a4a6a;
       border-radius: 12px;
-      padding: 8px 16px;
+      padding: 8px 12px;
       display: flex;
-      gap: 12px;
+      gap: 8px;
       align-items: center;
       z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .toolbar button {
       background: transparent;
       border: none;
-      color: #8b949e;
+      color: #aaa;
       cursor: pointer;
-      padding: 8px;
+      padding: 8px 12px;
       border-radius: 6px;
       display: flex;
       align-items: center;
       gap: 6px;
       font-size: 14px;
+      white-space: nowrap;
     }
 
-    .toolbar button:hover { background: #21262d; color: #e6edf3; }
+    .toolbar button:hover { background: #3a3a5a; color: #fff; }
+    .toolbar .divider { width: 1px; height: 24px; background: #4a4a6a; }
 
     .legend {
       position: fixed;
       bottom: 16px;
       left: 16px;
-      background: #161b22;
-      border: 1px solid #30363d;
+      background: #2a2a4a;
+      border: 1px solid #4a4a6a;
       border-radius: 12px;
       padding: 12px 16px;
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 16px;
       z-index: 100;
       max-width: calc(100vw - 32px);
     }
 
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #8b949e; cursor: pointer; }
-    .legend-item:hover { color: #e6edf3; }
-    .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #ccc;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .legend-item:hover { background: #3a3a5a; color: #fff; }
+    .legend-item.active { background: #3a3a5a; }
+    .legend-dot { width: 14px; height: 14px; border-radius: 50%; }
 
     .stats {
       position: fixed;
       bottom: 16px;
       right: 16px;
-      background: #161b22;
-      border: 1px solid #30363d;
+      background: #2a2a4a;
+      border: 1px solid #4a4a6a;
       border-radius: 12px;
       padding: 12px 16px;
-      font-size: 12px;
-      color: #8b949e;
+      font-size: 13px;
+      color: #aaa;
       z-index: 100;
     }
 
@@ -165,14 +206,13 @@
       top: 80px;
       left: 50%;
       transform: translateX(-50%);
-      background: #161b22;
-      border: 1px solid #30363d;
+      background: #2a2a4a;
+      border: 1px solid #4a4a6a;
       border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 12px;
-      color: #8b949e;
+      padding: 12px 20px;
+      font-size: 13px;
+      color: #ccc;
       z-index: 100;
-      opacity: 0.8;
     }
 
     .search-overlay {
@@ -180,100 +220,236 @@
       top: 100px;
       left: 50%;
       transform: translateX(-50%);
-      background: #161b22;
-      border: 1px solid #30363d;
+      background: #2a2a4a;
+      border: 1px solid #4a4a6a;
       border-radius: 12px;
       padding: 8px;
       width: 90%;
       max-width: 400px;
       z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
 
     .search-input {
       width: 100%;
-      background: #0d1117;
-      border: 1px solid #30363d;
+      background: #1a1a2e;
+      border: 1px solid #4a4a6a;
       border-radius: 8px;
       padding: 12px;
-      color: #e6edf3;
+      color: #eee;
       font-size: 14px;
     }
 
-    .search-input:focus { outline: none; border-color: #58a6ff; }
+    .search-input:focus { outline: none; border-color: #6a6aff; }
+    .search-input::placeholder { color: #666; }
 
     .search-results { margin-top: 8px; max-height: 300px; overflow-y: auto; }
 
-    .search-result {
+    .category-editor {
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #1a1a2e;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .category-editor input[type="text"] {
+      flex: 1;
+      background: #2a2a4a;
+      border: 1px solid #4a4a6a;
+      border-radius: 6px;
       padding: 8px 12px;
+      color: #eee;
+      font-size: 14px;
+    }
+    .category-editor input[type="text"]:focus { outline: none; border-color: #6a6aff; }
+    .category-editor input[type="color"] {
+      width: 40px;
+      height: 36px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: transparent;
+    }
+    .category-editor input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    .category-editor input[type="color"]::-webkit-color-swatch { border-radius: 6px; border: 2px solid #4a4a6a; }
+    .category-editor .delete-btn {
+      background: transparent;
+      border: 1px solid #ff6b6b;
+      color: #ff6b6b;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .category-editor .delete-btn:hover { background: rgba(255, 107, 107, 0.15); }
+    .category-editor .delete-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .position-label { font-size: 12px; color: #888; white-space: nowrap; }
+    .position-inputs { display: flex; gap: 8px; align-items: center; }
+    .position-inputs input[type="number"] {
+      width: 60px;
+      background: #2a2a4a;
+      border: 1px solid #4a4a6a;
+      border-radius: 4px;
+      padding: 6px 8px;
+      color: #eee;
+      font-size: 12px;
+    }
+    .position-inputs input[type="number"]:focus { outline: none; border-color: #6a6aff; }
+    .add-category-btn {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 2px dashed #4a4a6a;
+      border-radius: 8px;
+      color: #888;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    .add-category-btn:hover { border-color: #6a6aff; color: #aaa; }
+
+    .search-result {
+      padding: 10px 12px;
       border-radius: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      color: #ccc;
     }
 
-    .search-result:hover, .search-result.selected { background: #21262d; }
+    .search-result:hover, .search-result.selected { background: #3a3a5a; color: #fff; }
+
+    .error-screen {
+      position: fixed;
+      inset: 0;
+      background: #1a1a2e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      color: #eee;
+      padding: 20px;
+      text-align: center;
+    }
+    .error-screen h1 { color: #ff6b6b; margin-bottom: 16px; }
+    .error-screen pre { background: #2a2a4a; padding: 16px; border-radius: 8px; max-width: 600px; overflow: auto; text-align: left; font-size: 12px; color: #aaa; }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useEffect, useCallback, useRef, useMemo } = React;
+    const { useState, useEffect, useCallback, useRef, useMemo, Component } = React;
+
+    // ============ ERROR BOUNDARY ============
+    class ErrorBoundary extends Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+      }
+
+      static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+      }
+
+      componentDidCatch(error, errorInfo) {
+        console.error('Brainstormrr Error:', error, errorInfo);
+      }
+
+      render() {
+        if (this.state.hasError) {
+          return (
+            <div className="error-screen">
+              <h1>Something went wrong</h1>
+              <p>The app encountered an error. Your data is safe in localStorage.</p>
+              <pre>{this.state.error?.toString()}</pre>
+              <button
+                className="btn btn-primary"
+                style={{ marginTop: 20 }}
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.reload();
+                }}
+              >
+                Reload App
+              </button>
+              <button
+                className="btn btn-secondary"
+                style={{ marginTop: 10 }}
+                onClick={() => {
+                  if (confirm('This will clear all your tasks. Are you sure?')) {
+                    localStorage.removeItem('brainstormrr-data');
+                    window.location.reload();
+                  }
+                }}
+              >
+                Clear Data & Reload
+              </button>
+            </div>
+          );
+        }
+        return this.props.children;
+      }
+    }
 
     // ============ CONSTANTS ============
 
     const SCHEMA_VERSION = 1;
 
-    const CATEGORIES = {
-      writing: { name: 'Writing', color: '#a371f7', position: { x: -400, y: -200 } },
-      admin: { name: 'Admin', color: '#58a6ff', position: { x: 400, y: -200 } },
-      study: { name: 'Study', color: '#3fb950', position: { x: -400, y: 200 } },
-      work: { name: 'Work', color: '#db6d28', position: { x: 400, y: 200 } },
-      personal: { name: 'Personal', color: '#d29922', position: { x: 0, y: -350 } },
-      health: { name: 'Health', color: '#3ddbd9', position: { x: 0, y: 350 } },
-      uncategorized: { name: 'Uncategorized', color: '#8b949e', position: { x: 0, y: 0 } }
+    const DEFAULT_CATEGORIES = {
+      writing: { name: 'Writing', color: '#a78bfa', position: { x: -350, y: -200 } },
+      admin: { name: 'Admin', color: '#60a5fa', position: { x: 350, y: -200 } },
+      study: { name: 'Study', color: '#4ade80', position: { x: -350, y: 200 } },
+      work: { name: 'Work', color: '#fb923c', position: { x: 350, y: 200 } },
+      personal: { name: 'Personal', color: '#fbbf24', position: { x: 0, y: -300 } },
+      health: { name: 'Health', color: '#2dd4bf', position: { x: 0, y: 300 } },
     };
 
-    const IMPORTANCE_SIZES = { 1: 50, 2: 70, 3: 100 };
-    const CLUSTER_DURATION = 1200; // ms for auto-cluster animation
-    const SAVE_DEBOUNCE = 500; // ms
+    const IMPORTANCE_SIZES = { 1: 60, 2: 85, 3: 115 };
+    const CLUSTER_DURATION = 1000;
+    const SAVE_DEBOUNCE = 300;
 
-    // ============ STORAGE ABSTRACTION ============
-    // Schema-versioned for future migration support
+    // ============ STORAGE ============
 
     const Storage = {
       _key: 'brainstormrr-data',
-
-      _migrate(data) {
-        // Future migrations go here
-        // if (data.schemaVersion === 1) { migrate to 2 }
-        return data;
-      },
 
       load() {
         try {
           const raw = localStorage.getItem(this._key);
           if (!raw) return this._defaultData();
           const data = JSON.parse(raw);
-          return this._migrate(data);
-        } catch {
+          // Ensure categories exist
+          if (!data.categories) {
+            data.categories = { ...DEFAULT_CATEGORIES };
+          }
+          return data;
+        } catch (e) {
+          console.error('Storage load error:', e);
           return this._defaultData();
         }
       },
 
       save(data) {
-        localStorage.setItem(this._key, JSON.stringify({
-          ...data,
-          schemaVersion: SCHEMA_VERSION,
-          lastModified: new Date().toISOString()
-        }));
+        try {
+          localStorage.setItem(this._key, JSON.stringify({
+            ...data,
+            schemaVersion: SCHEMA_VERSION,
+            lastModified: new Date().toISOString()
+          }));
+        } catch (e) {
+          console.error('Storage save error:', e);
+        }
       },
 
       _defaultData() {
         return {
           schemaVersion: SCHEMA_VERSION,
           nodes: [],
+          categories: { ...DEFAULT_CATEGORIES },
           camera: { x: 0, y: 0, zoom: 1 },
           lastModified: null
         };
@@ -295,16 +471,10 @@
           reader.onload = (e) => {
             try {
               const data = JSON.parse(e.target.result);
-              if (!data.schemaVersion && !data.nodes) {
-                // Try legacy format
-                if (Array.isArray(data.tasks)) {
-                  resolve({ nodes: data.tasks, camera: { x: 0, y: 0, zoom: 1 }, schemaVersion: SCHEMA_VERSION });
-                  return;
-                }
-                reject(new Error('Invalid file format'));
-                return;
-              }
-              resolve(this._migrate(data));
+              if (!data.nodes) data.nodes = [];
+              if (!data.categories) data.categories = { ...DEFAULT_CATEGORIES };
+              if (!data.camera) data.camera = { x: 0, y: 0, zoom: 1 };
+              resolve(data);
             } catch (err) {
               reject(err);
             }
@@ -317,14 +487,15 @@
 
     // ============ UTILITIES ============
 
-    const generateId = () => Math.random().toString(36).substring(2, 15);
+    const generateId = () => Math.random().toString(36).substring(2, 12);
     const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
-    // ============ TASK NODE COMPONENT ============
+    // ============ TASK NODE ============
 
     const TaskNode = ({
       node,
+      categories,
       isSelected,
       isEditing,
       dimmed,
@@ -334,9 +505,9 @@
       onTitleChange,
       onTitleSubmit
     }) => {
-      const size = IMPORTANCE_SIZES[node.importance] || 70;
-      const category = CATEGORIES[node.category] || CATEGORIES.uncategorized;
-      const opacity = node.status === 'done' ? 0.2 : dimmed ? 0.3 : 1;
+      const size = IMPORTANCE_SIZES[node.importance] || 85;
+      const category = categories[node.category] || { color: '#888', name: 'Unknown' };
+      const opacity = node.status === 'done' ? 0.35 : dimmed ? 0.4 : 1;
       const inputRef = useRef(null);
 
       useEffect(() => {
@@ -363,18 +534,27 @@
           onDoubleClick={(e) => { e.stopPropagation(); onDoubleClick(node.id); }}
           onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); onContextMenu(node.id, e); }}
         >
+          {/* Selection glow */}
           {isSelected && (
-            <circle r={size / 2 + 8} fill="none" stroke={category.color} strokeWidth="2" opacity="0.5" />
+            <circle r={size / 2 + 10} fill="none" stroke={category.color} strokeWidth="3" opacity="0.6" />
           )}
+          {/* Outer ring */}
           <circle
             r={size / 2}
             fill={category.color}
-            fillOpacity="0.15"
+            fillOpacity="0.25"
             stroke={category.color}
-            strokeWidth="2"
+            strokeWidth="3"
           />
+          {/* Inner fill */}
+          <circle
+            r={size / 2 - 6}
+            fill={category.color}
+            fillOpacity="0.15"
+          />
+          {/* Title */}
           {isEditing ? (
-            <foreignObject x={-size / 2 + 5} y={-12} width={size - 10} height={24}>
+            <foreignObject x={-size / 2 + 8} y={-10} width={size - 16} height={20}>
               <input
                 ref={inputRef}
                 className="task-input"
@@ -382,7 +562,6 @@
                 onChange={(e) => onTitleChange(node.id, e.target.value)}
                 onKeyDown={handleKeyDown}
                 onBlur={() => onTitleSubmit(node.id)}
-                style={{ color: category.color }}
               />
             </foreignObject>
           ) : (
@@ -390,85 +569,135 @@
               className="task-text"
               textAnchor="middle"
               dominantBaseline="middle"
-              fill={category.color}
-              fontSize={Math.max(11, Math.min(14, size / 5))}
+              fill="#fff"
+              fontSize={Math.max(12, Math.min(15, size / 5.5))}
               fontWeight="500"
             >
-              {node.title.length > 15 ? node.title.substring(0, 15) + '...' : node.title}
+              {node.title.length > 18 ? node.title.substring(0, 18) + '...' : node.title}
             </text>
           )}
+          {/* Done indicator */}
           {node.status === 'done' && (
-            <text y={size / 4} textAnchor="middle" fill={category.color} fontSize="16">✓</text>
+            <text y={size / 3.5} textAnchor="middle" fill="#4ade80" fontSize="18" fontWeight="bold">✓</text>
           )}
-          {/* Pin indicator for manually positioned nodes */}
+          {/* Pin indicator */}
           {node.layoutMode === 'manual' && (
-            <circle cx={size / 2 - 6} cy={-size / 2 + 6} r="4" fill="#8b949e" opacity="0.6" />
+            <circle cx={size / 2 - 8} cy={-size / 2 + 8} r="5" fill="#fff" opacity="0.5" />
           )}
+        </g>
+      );
+    };
+
+    // ============ CATEGORY ZONE ============
+
+    const CategoryZone = ({ catKey, category, dimmed, onMouseDown, isDragging }) => {
+      return (
+        <g
+          transform={`translate(${category.position.x}, ${category.position.y})`}
+          opacity={dimmed ? 0.2 : 0.6}
+          style={{ cursor: 'move' }}
+          onMouseDown={(e) => { e.stopPropagation(); onMouseDown(e, catKey); }}
+        >
+          {/* Zone circle */}
+          <circle
+            r="140"
+            fill={category.color}
+            fillOpacity={isDragging ? 0.2 : 0.12}
+            stroke={category.color}
+            strokeWidth={isDragging ? 3 : 2}
+            strokeDasharray="8,4"
+          />
+          {/* Label */}
+          <text
+            y="160"
+            textAnchor="middle"
+            fill={category.color}
+            fontSize="14"
+            fontWeight="600"
+            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)', pointerEvents: 'none' }}
+          >
+            {category.name}
+          </text>
+          {/* Drag hint */}
+          <text
+            y="-120"
+            textAnchor="middle"
+            fill={category.color}
+            fontSize="11"
+            opacity={isDragging ? 1 : 0.4}
+            style={{ pointerEvents: 'none' }}
+          >
+            drag to reposition
+          </text>
         </g>
       );
     };
 
     // ============ CONTEXT MENU ============
 
-    const ContextMenu = ({ x, y, node, onClose, onAction }) => {
+    const ContextMenu = ({ x, y, node, categories, onClose, onAction }) => {
       const menuRef = useRef(null);
 
       useEffect(() => {
         const handleClickOutside = (e) => {
           if (menuRef.current && !menuRef.current.contains(e.target)) onClose();
         };
+        const handleEscape = (e) => { if (e.key === 'Escape') onClose(); };
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleEscape);
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+          document.removeEventListener('keydown', handleEscape);
+        };
       }, [onClose]);
 
       if (!node) return null;
-      const category = CATEGORIES[node.category] || CATEGORIES.uncategorized;
+      const category = categories[node.category] || { color: '#888' };
+
+      // Adjust position to stay on screen
+      const adjustedX = Math.min(x, window.innerWidth - 200);
+      const adjustedY = Math.min(y, window.innerHeight - 400);
 
       return (
-        <div ref={menuRef} className="context-menu" style={{ left: x, top: y }}>
-          <div style={{ padding: '4px 12px', fontSize: '11px', color: '#8b949e', textTransform: 'uppercase' }}>
-            Importance
-          </div>
+        <div ref={menuRef} className="context-menu" style={{ left: adjustedX, top: adjustedY }}>
+          <div className="section-label">Size</div>
           {[1, 2, 3].map(imp => (
             <button key={imp} onClick={() => onAction('importance', imp)}>
               <span style={{
-                width: 16, height: 16, borderRadius: '50%',
-                background: node.importance === imp ? category.color : '#30363d',
+                width: imp === 1 ? 12 : imp === 2 ? 16 : 20,
+                height: imp === 1 ? 12 : imp === 2 ? 16 : 20,
+                borderRadius: '50%',
+                background: node.importance === imp ? category.color : '#4a4a6a',
                 display: 'inline-block'
               }} />
-              {imp === 1 ? 'Low' : imp === 2 ? 'Medium' : 'High'}
-              {node.importance === imp && ' ✓'}
+              {imp === 1 ? 'Small' : imp === 2 ? 'Medium' : 'Large'}
+              {node.importance === imp && <span style={{ marginLeft: 'auto', color: '#4ade80' }}>✓</span>}
             </button>
           ))}
 
           <div className="divider" />
-
-          <div style={{ padding: '4px 12px', fontSize: '11px', color: '#8b949e', textTransform: 'uppercase' }}>
-            Category
-          </div>
-          {Object.entries(CATEGORIES).map(([key, cat]) => (
+          <div className="section-label">Category</div>
+          {Object.entries(categories).map(([key, cat]) => (
             <button key={key} onClick={() => onAction('category', key)}>
-              <span style={{ width: 12, height: 12, borderRadius: '50%', background: cat.color, display: 'inline-block' }} />
+              <span style={{ width: 14, height: 14, borderRadius: '50%', background: cat.color, display: 'inline-block' }} />
               {cat.name}
-              {node.category === key && ' ✓'}
+              {node.category === key && <span style={{ marginLeft: 'auto', color: '#4ade80' }}>✓</span>}
             </button>
           ))}
 
           <div className="divider" />
-
           <button onClick={() => onAction('status', node.status === 'done' ? 'active' : 'done')}>
-            {node.status === 'done' ? '↩️ Mark Active' : '✓ Mark Done'}
+            {node.status === 'done' ? '↩️ Mark Active' : '✅ Mark Done'}
           </button>
 
           {node.layoutMode === 'manual' && (
             <button onClick={() => onAction('unpin')}>
-              🔓 Auto-arrange
+              🔓 Unpin (allow auto-arrange)
             </button>
           )}
 
           <div className="divider" />
-
-          <button onClick={() => onAction('delete')} style={{ color: '#f85149' }}>
+          <button onClick={() => onAction('delete')} style={{ color: '#ff6b6b' }}>
             🗑️ Delete
           </button>
         </div>
@@ -477,41 +706,29 @@
 
     // ============ BRAIN DUMP MODAL ============
 
-    const BrainDumpModal = ({ isOpen, onClose, onSubmit }) => {
+    const BrainDumpModal = ({ isOpen, onClose, onSubmit, categories }) => {
       const [text, setText] = useState('');
       const textareaRef = useRef(null);
 
       useEffect(() => {
-        if (isOpen && textareaRef.current) {
-          textareaRef.current.focus();
+        if (isOpen) {
+          setText('');
+          setTimeout(() => textareaRef.current?.focus(), 100);
         }
       }, [isOpen]);
 
       if (!isOpen) return null;
 
-      const handleSubmit = () => {
-        if (text.trim()) {
-          onSubmit(text);
-          setText('');
-          onClose();
-        }
-      };
-
-      const handleKeyDown = (e) => {
-        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit();
-        else if (e.key === 'Escape') onClose();
-      };
-
       const parsePreview = () => {
         return text.split('\n').filter(l => l.trim()).map(line => {
           let title = line.trim();
-          let category = 'uncategorized';
+          let category = null;
           let importance = 1;
 
           const catMatch = title.match(/\[(\w+)\]/i);
           if (catMatch) {
             const cat = catMatch[1].toLowerCase();
-            if (CATEGORIES[cat]) category = cat;
+            if (categories[cat]) category = cat;
             title = title.replace(catMatch[0], '').trim();
           }
 
@@ -519,7 +736,24 @@
           else if (title.includes('!!')) { importance = 2; title = title.replace(/!!/g, '').trim(); }
 
           return { title, category, importance };
-        });
+        }).filter(t => t.title);
+      };
+
+      const handleSubmit = () => {
+        const tasks = parsePreview();
+        if (tasks.length > 0) {
+          onSubmit(tasks);
+          setText('');
+          onClose();
+        }
+      };
+
+      const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          handleSubmit();
+        }
+        if (e.key === 'Escape') onClose();
       };
 
       const preview = parsePreview();
@@ -527,64 +761,213 @@
       return (
         <div className="modal-overlay" onClick={onClose}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2 style={{ margin: '0 0 16px', fontSize: '18px', fontWeight: '600' }}>Brain Dump</h2>
-            <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#8b949e' }}>
-              One task per line. Use <code style={{ background: '#21262d', padding: '2px 4px', borderRadius: '4px' }}>[category]</code> and <code style={{ background: '#21262d', padding: '2px 4px', borderRadius: '4px' }}>!!!</code> for high importance.
+            <h2>Brain Dump</h2>
+            <p>
+              One task per line. Use <code>[category]</code> for category and <code>!!!</code> for high importance.
             </p>
             <textarea
               ref={textareaRef}
               value={text}
               onChange={e => setText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Draft blog post [writing]&#10;Call dentist [health] !!!&#10;Review quarterly report [work]&#10;Learn React hooks [study] !!"
+              placeholder={"Draft blog post [writing]\nCall dentist [health] !!!\nReview report [work]\nLearn React [study] !!"}
             />
 
             {preview.length > 0 && (
-              <div style={{ marginTop: '16px' }}>
-                <div style={{ fontSize: '12px', color: '#8b949e', marginBottom: '8px' }}>
-                  Preview ({preview.length} tasks):
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
+                  Preview: {preview.length} task{preview.length !== 1 ? 's' : ''}
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {preview.slice(0, 8).map((t, i) => (
-                    <span key={i} style={{
-                      background: CATEGORIES[t.category].color + '22',
-                      color: CATEGORIES[t.category].color,
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                      border: `1px solid ${CATEGORIES[t.category].color}44`
-                    }}>
-                      {t.title.substring(0, 20)}{t.title.length > 20 ? '...' : ''}
-                      {t.importance > 1 && ' ' + '!'.repeat(t.importance)}
-                    </span>
-                  ))}
-                  {preview.length > 8 && (
-                    <span style={{ fontSize: '12px', color: '#8b949e' }}>+{preview.length - 8} more</span>
-                  )}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {preview.slice(0, 6).map((t, i) => {
+                    const cat = categories[t.category] || { color: '#888' };
+                    return (
+                      <span key={i} style={{
+                        background: cat.color + '33',
+                        color: cat.color,
+                        padding: '6px 10px',
+                        borderRadius: 6,
+                        fontSize: 13,
+                        border: `1px solid ${cat.color}66`
+                      }}>
+                        {t.title.substring(0, 25)}{t.title.length > 25 ? '...' : ''}
+                        {t.importance > 1 && ' ' + '!'.repeat(t.importance)}
+                      </span>
+                    );
+                  })}
+                  {preview.length > 6 && <span style={{ fontSize: 13, color: '#888', padding: '6px 10px' }}>+{preview.length - 6} more</span>}
                 </div>
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '12px', marginTop: '20px', justifyContent: 'flex-end' }}>
-              <button onClick={onClose} style={{
-                padding: '8px 16px', background: 'transparent', border: '1px solid #30363d',
-                borderRadius: '6px', color: '#8b949e', cursor: 'pointer'
-              }}>Cancel</button>
-              <button onClick={handleSubmit} disabled={preview.length === 0} style={{
-                padding: '8px 16px', background: preview.length > 0 ? '#238636' : '#21262d',
-                border: 'none', borderRadius: '6px',
-                color: preview.length > 0 ? '#fff' : '#8b949e',
-                cursor: preview.length > 0 ? 'pointer' : 'not-allowed', fontWeight: '500'
-              }}>Add {preview.length} Task{preview.length !== 1 ? 's' : ''} (⌘↵)</button>
+            <div style={{ display: 'flex', gap: 12, marginTop: 24, justifyContent: 'flex-end' }}>
+              <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleSubmit} disabled={preview.length === 0}>
+                Add {preview.length || 0} Task{preview.length !== 1 ? 's' : ''} (⌘↵)
+              </button>
             </div>
           </div>
         </div>
       );
     };
 
-    // ============ SEARCH OVERLAY (Cmd+K to jump) ============
+    // ============ CATEGORY MANAGER MODAL ============
 
-    const SearchOverlay = ({ isOpen, onClose, nodes, onSelect }) => {
+    const CategoryManagerModal = ({ isOpen, onClose, categories, onUpdate, nodes }) => {
+      const [editedCategories, setEditedCategories] = useState({});
+
+      useEffect(() => {
+        if (isOpen) {
+          setEditedCategories({ ...categories });
+        }
+      }, [isOpen, categories]);
+
+      if (!isOpen) return null;
+
+      const handleNameChange = (key, name) => {
+        setEditedCategories(c => ({
+          ...c,
+          [key]: { ...c[key], name }
+        }));
+      };
+
+      const handleColorChange = (key, color) => {
+        setEditedCategories(c => ({
+          ...c,
+          [key]: { ...c[key], color }
+        }));
+      };
+
+      const handlePositionChange = (key, axis, value) => {
+        const numValue = parseInt(value) || 0;
+        setEditedCategories(c => ({
+          ...c,
+          [key]: {
+            ...c[key],
+            position: { ...c[key].position, [axis]: numValue }
+          }
+        }));
+      };
+
+      const handleDelete = (key) => {
+        const nodeCount = nodes.filter(n => n.category === key).length;
+        if (nodeCount > 0) {
+          if (!confirm(`This category has ${nodeCount} tasks. Delete anyway? Tasks will become uncategorized.`)) {
+            return;
+          }
+        }
+        setEditedCategories(c => {
+          const newCats = { ...c };
+          delete newCats[key];
+          return newCats;
+        });
+      };
+
+      const handleAddCategory = () => {
+        const newKey = 'category_' + generateId().substring(0, 6);
+        const usedPositions = Object.values(editedCategories).map(c => c.position);
+        // Find a spot that's not too close to existing categories
+        let newX = 0, newY = 0;
+        const positions = [
+          { x: -500, y: 0 }, { x: 500, y: 0 }, { x: 0, y: -400 }, { x: 0, y: 400 },
+          { x: -400, y: -300 }, { x: 400, y: -300 }, { x: -400, y: 300 }, { x: 400, y: 300 }
+        ];
+        for (const pos of positions) {
+          const tooClose = usedPositions.some(p =>
+            Math.abs(p.x - pos.x) < 200 && Math.abs(p.y - pos.y) < 200
+          );
+          if (!tooClose) {
+            newX = pos.x;
+            newY = pos.y;
+            break;
+          }
+        }
+
+        setEditedCategories(c => ({
+          ...c,
+          [newKey]: {
+            name: 'New Category',
+            color: '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'),
+            position: { x: newX, y: newY }
+          }
+        }));
+      };
+
+      const handleSave = () => {
+        onUpdate(editedCategories);
+        onClose();
+      };
+
+      const canDelete = Object.keys(editedCategories).length > 1;
+
+      return (
+        <div className="modal-overlay" onClick={onClose}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 600 }}>
+            <h2>Manage Categories</h2>
+            <p>Edit category names, colors, and positions on the canvas.</p>
+
+            <div style={{ maxHeight: '50vh', overflowY: 'auto', marginBottom: 16 }}>
+              {Object.entries(editedCategories).map(([key, cat]) => {
+                const nodeCount = nodes.filter(n => n.category === key).length;
+                return (
+                  <div key={key} className="category-editor">
+                    <input
+                      type="color"
+                      value={cat.color}
+                      onChange={e => handleColorChange(key, e.target.value)}
+                      title="Category color"
+                    />
+                    <input
+                      type="text"
+                      value={cat.name}
+                      onChange={e => handleNameChange(key, e.target.value)}
+                      placeholder="Category name"
+                    />
+                    <div className="position-inputs">
+                      <span className="position-label">X:</span>
+                      <input
+                        type="number"
+                        value={cat.position.x}
+                        onChange={e => handlePositionChange(key, 'x', e.target.value)}
+                        step="50"
+                      />
+                      <span className="position-label">Y:</span>
+                      <input
+                        type="number"
+                        value={cat.position.y}
+                        onChange={e => handlePositionChange(key, 'y', e.target.value)}
+                        step="50"
+                      />
+                    </div>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(key)}
+                      disabled={!canDelete}
+                      title={nodeCount > 0 ? `${nodeCount} tasks in this category` : 'Delete category'}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button className="add-category-btn" onClick={handleAddCategory}>
+              + Add New Category
+            </button>
+
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleSave}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ============ SEARCH OVERLAY ============
+
+    const SearchOverlay = ({ isOpen, onClose, nodes, categories, onSelect }) => {
       const [query, setQuery] = useState('');
       const [selectedIndex, setSelectedIndex] = useState(0);
       const inputRef = useRef(null);
@@ -593,7 +976,7 @@
         if (isOpen) {
           setQuery('');
           setSelectedIndex(0);
-          inputRef.current?.focus();
+          setTimeout(() => inputRef.current?.focus(), 100);
         }
       }, [isOpen]);
 
@@ -625,28 +1008,28 @@
             value={query}
             onChange={e => { setQuery(e.target.value); setSelectedIndex(0); }}
             onKeyDown={handleKeyDown}
-            placeholder="Search tasks... (↵ to jump)"
+            placeholder="Search tasks... (Enter to jump)"
           />
           {results.length > 0 && (
             <div className="search-results">
               {results.map((node, i) => {
-                const cat = CATEGORIES[node.category] || CATEGORIES.uncategorized;
+                const cat = categories[node.category] || { color: '#888' };
                 return (
                   <div
                     key={node.id}
                     className={`search-result ${i === selectedIndex ? 'selected' : ''}`}
                     onClick={() => { onSelect(node); onClose(); }}
                   >
-                    <span style={{ width: 10, height: 10, borderRadius: '50%', background: cat.color }} />
-                    <span>{node.title}</span>
-                    {node.status === 'done' && <span style={{ color: '#8b949e', marginLeft: 'auto' }}>✓</span>}
+                    <span style={{ width: 12, height: 12, borderRadius: '50%', background: cat.color, flexShrink: 0 }} />
+                    <span style={{ flex: 1 }}>{node.title}</span>
+                    {node.status === 'done' && <span style={{ color: '#4ade80' }}>✓</span>}
                   </div>
                 );
               })}
             </div>
           )}
           {query && results.length === 0 && (
-            <div style={{ padding: '12px', color: '#8b949e', fontSize: '13px' }}>No tasks found</div>
+            <div style={{ padding: 16, color: '#888', fontSize: 14 }}>No tasks found</div>
           )}
         </div>
       );
@@ -655,50 +1038,51 @@
     // ============ MAIN APP ============
 
     const App = () => {
-      // Load initial state from storage
       const initialData = useMemo(() => Storage.load(), []);
 
-      const [nodes, setNodes] = useState(initialData.nodes);
-      const [camera, setCamera] = useState(initialData.camera);
+      const [nodes, setNodes] = useState(initialData.nodes || []);
+      const [categories, setCategories] = useState(initialData.categories || DEFAULT_CATEGORIES);
+      const [camera, setCamera] = useState(initialData.camera || { x: 0, y: 0, zoom: 1 });
       const [selectedIds, setSelectedIds] = useState(new Set());
       const [editingId, setEditingId] = useState(null);
       const [contextMenu, setContextMenu] = useState(null);
       const [brainDumpOpen, setBrainDumpOpen] = useState(false);
       const [searchOpen, setSearchOpen] = useState(false);
+      const [categoryManagerOpen, setCategoryManagerOpen] = useState(false);
       const [showHelp, setShowHelp] = useState(nodes.length === 0);
-      const [focusMode, setFocusMode] = useState(null); // category to focus on
+      const [focusMode, setFocusMode] = useState(null);
 
-      // Refs for imperative updates during drag/pan (performance optimization)
       const svgRef = useRef(null);
       const dragRef = useRef(null);
       const panRef = useRef(null);
+      const categoryDragRef = useRef(null);
       const saveTimeoutRef = useRef(null);
       const clusterAnimRef = useRef(null);
+      const [draggingCategory, setDraggingCategory] = useState(null);
 
       // Debounced save
       useEffect(() => {
         clearTimeout(saveTimeoutRef.current);
         saveTimeoutRef.current = setTimeout(() => {
-          Storage.save({ nodes, camera });
+          Storage.save({ nodes, categories, camera });
         }, SAVE_DEBOUNCE);
         return () => clearTimeout(saveTimeoutRef.current);
-      }, [nodes, camera]);
+      }, [nodes, categories, camera]);
 
-      // Save on visibility change (tab close/switch)
+      // Save on tab close
       useEffect(() => {
         const handleVisibilityChange = () => {
           if (document.visibilityState === 'hidden') {
-            Storage.save({ nodes, camera });
+            Storage.save({ nodes, categories, camera });
           }
         };
         document.addEventListener('visibilitychange', handleVisibilityChange);
         return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-      }, [nodes, camera]);
+      }, [nodes, categories, camera]);
 
       // Keyboard shortcuts
       useEffect(() => {
         const handleKeyDown = (e) => {
-          // Don't trigger shortcuts when typing in inputs
           if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
           if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -706,12 +1090,12 @@
             setSearchOpen(true);
             return;
           }
-          if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'n') {
+          if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 'n' || e.key === 'N')) {
             e.preventDefault();
             setBrainDumpOpen(true);
             return;
           }
-          if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
+          if ((e.metaKey || e.ctrlKey) && (e.key === 'n' || e.key === 'N')) {
             e.preventDefault();
             addNode(0, 0);
             return;
@@ -735,17 +1119,18 @@
         return () => window.removeEventListener('keydown', handleKeyDown);
       }, [selectedIds, editingId]);
 
-      // ============ PAN & ZOOM ============
-
+      // Pan & Zoom
       const handleCanvasMouseDown = (e) => {
-        if (e.button === 0 && !e.altKey && e.target === svgRef.current) {
-          // Click on empty canvas - deselect unless shift held
+        // Only handle clicks on the SVG background
+        if (e.target !== svgRef.current && !e.target.classList?.contains('canvas-bg')) return;
+
+        if (e.button === 0 && !e.altKey) {
           if (!e.shiftKey) setSelectedIds(new Set());
           setEditingId(null);
           setContextMenu(null);
         }
-        // Middle click, Alt+click, or Space+click to pan
         if (e.button === 1 || (e.button === 0 && e.altKey)) {
+          e.preventDefault();
           panRef.current = { startX: e.clientX, startY: e.clientY, origX: camera.x, origY: camera.y };
         }
       };
@@ -755,6 +1140,20 @@
           const dx = e.clientX - panRef.current.startX;
           const dy = e.clientY - panRef.current.startY;
           setCamera(c => ({ ...c, x: panRef.current.origX + dx, y: panRef.current.origY + dy }));
+        } else if (categoryDragRef.current) {
+          const dx = (e.clientX - categoryDragRef.current.startX) / camera.zoom;
+          const dy = (e.clientY - categoryDragRef.current.startY) / camera.zoom;
+          const key = categoryDragRef.current.key;
+          setCategories(c => ({
+            ...c,
+            [key]: {
+              ...c[key],
+              position: {
+                x: categoryDragRef.current.origX + dx,
+                y: categoryDragRef.current.origY + dy
+              }
+            }
+          }));
         } else if (dragRef.current) {
           const dx = (e.clientX - dragRef.current.startX) / camera.zoom;
           const dy = (e.clientY - dragRef.current.startY) / camera.zoom;
@@ -768,22 +1167,37 @@
 
       const handleMouseUp = useCallback(() => {
         if (dragRef.current) {
-          // Mark dragged nodes as manually positioned (pinned)
           setNodes(n => n.map(node =>
             dragRef.current.ids.has(node.id)
               ? { ...node, layoutMode: 'manual' }
               : node
           ));
         }
+        if (categoryDragRef.current) {
+          setDraggingCategory(null);
+        }
         panRef.current = null;
         dragRef.current = null;
+        categoryDragRef.current = null;
       }, []);
 
-      // Zoom with scroll wheel (zoom to cursor position)
+      const handleCategoryMouseDown = (e, catKey) => {
+        if (e.button !== 0) return;
+        const cat = categories[catKey];
+        categoryDragRef.current = {
+          key: catKey,
+          startX: e.clientX,
+          startY: e.clientY,
+          origX: cat.position.x,
+          origY: cat.position.y
+        };
+        setDraggingCategory(catKey);
+      };
+
       const handleWheel = useCallback((e) => {
         e.preventDefault();
-        const delta = e.deltaY > 0 ? 0.9 : 1.1;
-        const newZoom = clamp(camera.zoom * delta, 0.2, 3);
+        const delta = e.deltaY > 0 ? 0.92 : 1.08;
+        const newZoom = clamp(camera.zoom * delta, 0.25, 2.5);
         const rect = svgRef.current.getBoundingClientRect();
         const cx = e.clientX - rect.width / 2;
         const cy = e.clientY - rect.height / 2;
@@ -803,15 +1217,14 @@
         }
       }, [handleWheel]);
 
-      // ============ NODE OPERATIONS ============
-
+      // Node operations
       const addNode = (x, y, props = {}) => {
         const newNode = {
           id: generateId(),
           title: 'New task',
           x, y,
           importance: 2,
-          category: 'uncategorized',
+          category: null, // uncategorized
           status: 'active',
           layoutMode: (x !== 0 || y !== 0) ? 'manual' : 'auto',
           createdAt: new Date().toISOString(),
@@ -824,111 +1237,83 @@
         return newNode;
       };
 
-      const addBrainDumpNodes = (text) => {
-        const lines = text.split('\n').filter(l => l.trim());
-        const newNodes = lines.map((line, i) => {
-          let title = line.trim();
-          let category = 'uncategorized';
-          let importance = 1;
-
-          const catMatch = title.match(/\[(\w+)\]/i);
-          if (catMatch) {
-            const cat = catMatch[1].toLowerCase();
-            if (CATEGORIES[cat]) category = cat;
-            title = title.replace(catMatch[0], '').trim();
-          }
-
-          if (title.includes('!!!')) { importance = 3; title = title.replace(/!!!/g, '').trim(); }
-          else if (title.includes('!!')) { importance = 2; title = title.replace(/!!/g, '').trim(); }
-
-          // Spread in a circle from center
-          const angle = (i / lines.length) * 2 * Math.PI;
+      const addBrainDumpNodes = (tasks) => {
+        const newNodes = tasks.map((t, i) => {
+          const angle = (i / tasks.length) * 2 * Math.PI;
           const radius = 80 + Math.random() * 60;
-
           return {
             id: generateId(),
-            title: title || 'Untitled',
+            title: t.title,
             x: Math.cos(angle) * radius,
             y: Math.sin(angle) * radius,
-            importance,
-            category,
+            importance: t.importance,
+            category: t.category,
             status: 'active',
             layoutMode: 'auto',
             createdAt: new Date().toISOString()
           };
         });
-
         setNodes(n => [...n, ...newNodes]);
         setShowHelp(false);
-        // Trigger auto-cluster after short delay
-        setTimeout(() => autoCluster(), 100);
+        setTimeout(() => autoCluster(), 150);
       };
 
-      // ============ AUTO-CLUSTER (One-shot animation, NOT continuous physics) ============
-      // Per ChatGPT feedback: no continuous drift - just a one-click "cluster" action
-
       const autoCluster = useCallback(() => {
-        setNodes(currentNodes => {
-          const toAnimate = currentNodes.filter(n => n.layoutMode !== 'manual');
-          if (toAnimate.length === 0) return currentNodes;
+        const toAnimate = nodes.filter(n => n.layoutMode !== 'manual' && n.category);
+        if (toAnimate.length === 0) return;
 
-          const startPositions = {};
-          const targetPositions = {};
+        const startPositions = {};
+        const targetPositions = {};
+        const categoryGroups = {};
 
-          // Group by category and calculate target positions
-          const categoryGroups = {};
-          toAnimate.forEach(n => {
-            if (!categoryGroups[n.category]) categoryGroups[n.category] = [];
-            categoryGroups[n.category].push(n);
-            startPositions[n.id] = { x: n.x, y: n.y };
-          });
-
-          // Calculate target positions with collision avoidance
-          Object.entries(categoryGroups).forEach(([catKey, catNodes]) => {
-            const cat = CATEGORIES[catKey] || CATEGORIES.uncategorized;
-            catNodes.forEach((n, i) => {
-              const angle = (i / catNodes.length) * 2 * Math.PI + Math.random() * 0.5;
-              const radius = 30 + i * 25 + Math.random() * 30;
-              targetPositions[n.id] = {
-                x: cat.position.x + Math.cos(angle) * radius,
-                y: cat.position.y + Math.sin(angle) * radius
-              };
-            });
-          });
-
-          // Animate
-          const startTime = performance.now();
-          const animate = (now) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / CLUSTER_DURATION, 1);
-            const eased = easeOutCubic(progress);
-
-            setNodes(current => current.map(node => {
-              if (node.layoutMode === 'manual' || !startPositions[node.id]) return node;
-              const start = startPositions[node.id];
-              const target = targetPositions[node.id];
-              return {
-                ...node,
-                x: start.x + (target.x - start.x) * eased,
-                y: start.y + (target.y - start.y) * eased
-              };
-            }));
-
-            if (progress < 1) {
-              clusterAnimRef.current = requestAnimationFrame(animate);
-            }
-          };
-
-          cancelAnimationFrame(clusterAnimRef.current);
-          clusterAnimRef.current = requestAnimationFrame(animate);
-          return currentNodes;
+        toAnimate.forEach(n => {
+          if (!categoryGroups[n.category]) categoryGroups[n.category] = [];
+          categoryGroups[n.category].push(n);
+          startPositions[n.id] = { x: n.x, y: n.y };
         });
-      }, []);
+
+        Object.entries(categoryGroups).forEach(([catKey, catNodes]) => {
+          const cat = categories[catKey];
+          if (!cat) return;
+          catNodes.forEach((n, i) => {
+            const angle = (i / catNodes.length) * 2 * Math.PI + Math.random() * 0.3;
+            const radius = 25 + i * 20 + Math.random() * 25;
+            targetPositions[n.id] = {
+              x: cat.position.x + Math.cos(angle) * radius,
+              y: cat.position.y + Math.sin(angle) * radius
+            };
+          });
+        });
+
+        const startTime = performance.now();
+        const animate = (now) => {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / CLUSTER_DURATION, 1);
+          const eased = easeOutCubic(progress);
+
+          setNodes(current => current.map(node => {
+            if (!startPositions[node.id] || !targetPositions[node.id]) return node;
+            const start = startPositions[node.id];
+            const target = targetPositions[node.id];
+            return {
+              ...node,
+              x: start.x + (target.x - start.x) * eased,
+              y: start.y + (target.y - start.y) * eased
+            };
+          }));
+
+          if (progress < 1) {
+            clusterAnimRef.current = requestAnimationFrame(animate);
+          }
+        };
+
+        cancelAnimationFrame(clusterAnimRef.current);
+        clusterAnimRef.current = requestAnimationFrame(animate);
+      }, [nodes, categories]);
 
       const handleNodeMouseDown = (e, nodeId) => {
-        if (e.button === 2) return; // Right click handled by context menu
+        if (e.button === 2) return;
 
-        // Selection logic
         if (e.shiftKey) {
           setSelectedIds(s => {
             const newSet = new Set(s);
@@ -940,8 +1325,7 @@
           setSelectedIds(new Set([nodeId]));
         }
 
-        // Start drag for selected nodes
-        const ids = e.shiftKey ? selectedIds : (selectedIds.has(nodeId) ? selectedIds : new Set([nodeId]));
+        const ids = e.shiftKey ? new Set(selectedIds) : (selectedIds.has(nodeId) ? new Set(selectedIds) : new Set([nodeId]));
         if (!ids.has(nodeId)) ids.add(nodeId);
 
         const orig = {};
@@ -952,12 +1336,11 @@
       };
 
       const handleDoubleClick = (e) => {
-        if (e.target === svgRef.current) {
-          const rect = svgRef.current.getBoundingClientRect();
-          const x = (e.clientX - rect.width / 2 - camera.x) / camera.zoom;
-          const y = (e.clientY - rect.height / 2 - camera.y) / camera.zoom;
-          addNode(x, y);
-        }
+        if (e.target !== svgRef.current && !e.target.classList?.contains('canvas-bg')) return;
+        const rect = svgRef.current.getBoundingClientRect();
+        const x = (e.clientX - rect.width / 2 - camera.x) / camera.zoom;
+        const y = (e.clientY - rect.height / 2 - camera.y) / camera.zoom;
+        addNode(x, y);
       };
 
       const handleContextMenuAction = (action, value) => {
@@ -971,7 +1354,6 @@
           setNodes(n => n.map(node => node.id === nodeId ? { ...node, layoutMode: 'auto' } : node));
           setTimeout(() => autoCluster(), 50);
         } else if (action === 'category') {
-          // When changing category, unpin so it can drift to new zone
           setNodes(n => n.map(node =>
             node.id === nodeId ? { ...node, category: value, layoutMode: 'auto' } : node
           ));
@@ -984,7 +1366,7 @@
 
       const fitAll = () => {
         if (nodes.length === 0) return;
-        const padding = 150;
+        const padding = 180;
         const xs = nodes.map(n => n.x);
         const ys = nodes.map(n => n.y);
         const minX = Math.min(...xs) - padding;
@@ -997,20 +1379,30 @@
         const centerY = (minY + maxY) / 2;
         const rect = svgRef.current?.getBoundingClientRect();
         if (!rect) return;
-        const zoom = Math.min(rect.width / width, rect.height / height, 2);
+        const zoom = clamp(Math.min(rect.width / width, rect.height / height), 0.3, 1.5);
         setCamera({ x: -centerX * zoom, y: -centerY * zoom, zoom });
       };
 
       const jumpToNode = (node) => {
-        setCamera(c => ({
-          ...c,
-          x: -node.x * c.zoom,
-          y: -node.y * c.zoom
-        }));
+        setCamera(c => ({ ...c, x: -node.x * c.zoom, y: -node.y * c.zoom }));
         setSelectedIds(new Set([node.id]));
       };
 
-      const handleExport = () => Storage.export({ nodes, camera, schemaVersion: SCHEMA_VERSION });
+      const handleCategoryUpdate = (newCategories) => {
+        // Find deleted categories
+        const deletedKeys = Object.keys(categories).filter(k => !newCategories[k]);
+        // Clear category from nodes that used deleted categories
+        if (deletedKeys.length > 0) {
+          setNodes(n => n.map(node =>
+            deletedKeys.includes(node.category)
+              ? { ...node, category: null }
+              : node
+          ));
+        }
+        setCategories(newCategories);
+      };
+
+      const handleExport = () => Storage.export({ nodes, categories, camera, schemaVersion: SCHEMA_VERSION });
 
       const handleImport = async () => {
         const input = document.createElement('input');
@@ -1022,17 +1414,17 @@
             try {
               const data = await Storage.import(file);
               setNodes(data.nodes || []);
+              setCategories(data.categories || DEFAULT_CATEGORIES);
               setCamera(data.camera || { x: 0, y: 0, zoom: 1 });
               setShowHelp(false);
             } catch (err) {
-              alert('Failed to import: ' + err.message);
+              alert('Import failed: ' + err.message);
             }
           }
         };
         input.click();
       };
 
-      // Stats
       const activeCount = nodes.filter(n => n.status === 'active').length;
       const doneCount = nodes.filter(n => n.status === 'done').length;
 
@@ -1048,62 +1440,63 @@
             <button onClick={() => addNode(0, 0)} title="New Task (⌘N)">➕ New</button>
             <button onClick={() => setBrainDumpOpen(true)} title="Brain Dump (⌘⇧N)">🧠 Dump</button>
             <button onClick={() => setSearchOpen(true)} title="Search (⌘K)">🔍 Find</button>
-            <button onClick={fitAll} title="Fit All">🎯 Fit</button>
+            <span className="divider" />
+            <button onClick={fitAll} title="Fit all tasks in view">🎯 Fit</button>
             <button onClick={autoCluster} title="Auto-arrange unpinned tasks">🔄 Cluster</button>
-            <button onClick={handleExport} title="Export JSON">📤</button>
+            <button onClick={() => setCategoryManagerOpen(true)} title="Manage categories">⚙️ Categories</button>
+            <span className="divider" />
+            <button onClick={handleExport} title="Export as JSON">📤</button>
             <button onClick={handleImport} title="Import JSON">📥</button>
           </div>
 
-          {/* Help hint */}
+          {/* Help */}
           {showHelp && (
             <div className="help-hint">
-              Double-click to add • Scroll to zoom • Alt+drag to pan • ⌘K to search
+              Double-click canvas to add task • Scroll to zoom • Alt+drag to pan • ⌘K to search
             </div>
           )}
 
-          {/* SVG Canvas */}
+          {/* Canvas */}
           <svg
             ref={svgRef}
             width="100%"
             height="100%"
             style={{
-              cursor: panRef.current ? 'grabbing' : dragRef.current ? 'grabbing' : 'default',
-              background: '#0d1117'
+              cursor: panRef.current ? 'grabbing' : dragRef.current ? 'grabbing' : 'crosshair',
+              background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
             }}
             onMouseDown={handleCanvasMouseDown}
             onDoubleClick={handleDoubleClick}
             onContextMenu={(e) => e.preventDefault()}
           >
             <defs>
-              <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                <circle cx="25" cy="25" r="1" fill="#21262d" />
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <circle cx="20" cy="20" r="1.5" fill="rgba(255,255,255,0.08)" />
               </pattern>
             </defs>
 
             <g transform={`translate(${window.innerWidth / 2 + camera.x}, ${window.innerHeight / 2 + camera.y}) scale(${camera.zoom})`}>
-              <rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#grid)" />
+              {/* Grid background - large area */}
+              <rect className="canvas-bg" x="-4000" y="-4000" width="8000" height="8000" fill="url(#grid)" />
 
-              {/* Category zone indicators */}
-              {Object.entries(CATEGORIES).map(([key, cat]) => (
-                <g
+              {/* Category zones */}
+              {Object.entries(categories).map(([key, cat]) => (
+                <CategoryZone
                   key={key}
-                  transform={`translate(${cat.position.x}, ${cat.position.y})`}
-                  opacity={focusMode && focusMode !== key ? 0.1 : 0.3}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setFocusMode(f => f === key ? null : key)}
-                >
-                  <circle r="150" fill={cat.color} fillOpacity="0.05" stroke={cat.color} strokeWidth="1" strokeDasharray="5,5" />
-                  <text y="170" textAnchor="middle" fill={cat.color} fontSize="12" fontWeight="500">
-                    {cat.name}
-                  </text>
-                </g>
+                  catKey={key}
+                  category={cat}
+                  dimmed={focusMode && focusMode !== key}
+                  onMouseDown={handleCategoryMouseDown}
+                  isDragging={draggingCategory === key}
+                />
               ))}
 
-              {/* Task nodes */}
+              {/* Nodes */}
               {nodes.map(node => (
                 <TaskNode
                   key={node.id}
                   node={node}
+                  categories={categories}
                   isSelected={selectedIds.has(node.id)}
                   isEditing={editingId === node.id}
                   dimmed={focusMode && node.category !== focusMode}
@@ -1117,13 +1510,13 @@
             </g>
           </svg>
 
-          {/* Legend - clickable to focus */}
+          {/* Legend */}
           <div className="legend">
-            {Object.entries(CATEGORIES).filter(([k]) => k !== 'uncategorized').map(([key, cat]) => (
+            {Object.entries(categories).map(([key, cat]) => (
               <div
                 key={key}
-                className="legend-item"
-                style={{ opacity: focusMode && focusMode !== key ? 0.4 : 1 }}
+                className={`legend-item ${focusMode === key ? 'active' : ''}`}
+                style={{ opacity: focusMode && focusMode !== key ? 0.5 : 1 }}
                 onClick={() => setFocusMode(f => f === key ? null : key)}
                 title={`Click to focus on ${cat.name}`}
               >
@@ -1144,30 +1537,47 @@
               x={contextMenu.x}
               y={contextMenu.y}
               node={nodes.find(n => n.id === contextMenu.nodeId)}
+              categories={categories}
               onClose={() => setContextMenu(null)}
               onAction={handleContextMenuAction}
             />
           )}
 
-          {/* Brain Dump Modal */}
+          {/* Brain Dump */}
           <BrainDumpModal
             isOpen={brainDumpOpen}
             onClose={() => setBrainDumpOpen(false)}
             onSubmit={addBrainDumpNodes}
+            categories={categories}
           />
 
-          {/* Search Overlay */}
+          {/* Search */}
           <SearchOverlay
             isOpen={searchOpen}
             onClose={() => setSearchOpen(false)}
             nodes={nodes}
+            categories={categories}
             onSelect={jumpToNode}
+          />
+
+          {/* Category Manager */}
+          <CategoryManagerModal
+            isOpen={categoryManagerOpen}
+            onClose={() => setCategoryManagerOpen(false)}
+            categories={categories}
+            onUpdate={handleCategoryUpdate}
+            nodes={nodes}
           />
         </div>
       );
     };
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    // Render with error boundary
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    );
   </script>
 </body>
 </html>
