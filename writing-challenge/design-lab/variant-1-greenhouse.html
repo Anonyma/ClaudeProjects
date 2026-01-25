@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Challenge - Greenhouse Variant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            leaf: { 50: '#f4f9f4', 100: '#e6f2e6', 200: '#c5e0c5', 400: '#7cb97c', 600: '#4a8f4a', 800: '#2d5a2d' },
+            bark: { 50: '#faf8f5', 100: '#f5f0e8', 200: '#e8dcc8', 400: '#c4a87c', 600: '#8b7355', 800: '#5c4a38' },
+            cream: '#fdfcf9',
+            moss: '#9caa8c'
+          },
+          fontFamily: {
+            display: ['Fraunces', 'serif'],
+            body: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f4f9f4 0%, #fdfcf9 50%, #f5f0e8 100%); }
+    .leaf-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5c-3 8-12 15-20 18 8 3 17 10 20 18 3-8 12-15 20-18-8-3-17-10-20-18z' fill='%239caa8c' fill-opacity='0.08'/%3E%3C/svg%3E");
+    }
+    .grow-progress {
+      background: linear-gradient(to top, #7cb97c var(--progress), #e6f2e6 var(--progress));
+    }
+  </style>
+</head>
+<body class="min-h-screen leaf-pattern">
+  <div class="max-w-4xl mx-auto p-6">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8 py-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-leaf-100 flex items-center justify-center">
+          <svg class="w-5 h-5 text-leaf-600" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L10 6.477V16h2a1 1 0 110 2H8a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1z"/>
+          </svg>
+        </div>
+        <h1 class="font-display text-2xl text-bark-800">Writing Garden</h1>
+      </div>
+      <nav class="flex gap-1 bg-white/60 backdrop-blur rounded-full p-1 shadow-sm">
+        <button class="px-4 py-2 rounded-full bg-leaf-100 text-leaf-800 text-sm font-medium">Write</button>
+        <button class="px-4 py-2 rounded-full text-bark-600 text-sm font-medium hover:bg-bark-50">Harvest</button>
+        <button class="px-4 py-2 rounded-full text-bark-600 text-sm font-medium hover:bg-bark-50">Growth</button>
+        <button class="px-4 py-2 rounded-full text-bark-600 text-sm font-medium hover:bg-bark-50">Seeds</button>
+      </nav>
+    </header>
+
+    <!-- Main Writing Area -->
+    <main class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-leaf-200/50 p-8 mb-6">
+
+      <!-- Progress Section -->
+      <div class="flex items-center justify-between mb-8 pb-6 border-b border-leaf-100">
+        <div class="flex items-center gap-6">
+          <!-- Growing Plant Indicator -->
+          <div class="relative w-20 h-28">
+            <div class="absolute bottom-0 w-full h-8 bg-bark-200 rounded-b-lg"></div>
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 w-2 bg-leaf-400 rounded-t" style="height: 60%; transition: height 0.5s;"></div>
+            <div class="absolute bottom-14 left-1/2 -translate-x-1/2">
+              <svg class="w-8 h-8 text-leaf-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.5 17a4.5 4.5 0 01-1.44-8.765 4.5 4.5 0 018.302-3.046 3.5 3.5 0 014.504 4.272A4 4 0 0115 17H5.5zm3.75-2.75a.75.75 0 001.5 0V9.66l1.95 2.1a.75.75 0 101.1-1.02l-3.25-3.5a.75.75 0 00-1.1 0l-3.25 3.5a.75.75 0 101.1 1.02l1.95-2.1v4.59z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+          </div>
+
+          <div>
+            <div class="text-3xl font-display text-bark-800">342 <span class="text-lg text-bark-400">/ 500 words</span></div>
+            <div class="text-sm text-moss mt-1">Your words are growing beautifully today</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="text-right">
+            <div class="text-2xl font-display text-bark-600">12:45</div>
+            <div class="text-xs text-bark-400">time in garden</div>
+          </div>
+          <button class="p-3 rounded-full bg-leaf-50 text-leaf-600 hover:bg-leaf-100 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Writing Area -->
+      <div class="min-h-[400px]">
+        <textarea
+          class="w-full h-[400px] resize-none bg-transparent text-bark-800 text-lg leading-relaxed focus:outline-none placeholder:text-bark-300"
+          placeholder="Plant your thoughts here and watch them grow..."
+          style="font-family: 'Fraunces', serif;"
+        >The morning light filtered through the greenhouse windows, casting warm patterns across the worn wooden tables. Each plant here had a story, a journey from seed to sprout to something beautiful.
+
+I find writing is much the same. We plant small ideas, nurture them with attention, and slowly watch them unfold into something we never quite expected.</textarea>
+      </div>
+    </main>
+
+    <!-- Bottom Stats -->
+    <div class="flex justify-between items-center px-4">
+      <div class="flex gap-6 text-sm">
+        <span class="text-bark-500">68% to goal</span>
+        <span class="text-bark-400">|</span>
+        <span class="text-moss">27 wpm</span>
+      </div>
+      <button class="px-6 py-3 bg-leaf-600 text-white rounded-full font-medium shadow-lg shadow-leaf-300 hover:bg-leaf-700 transition-colors">
+        Save & Rest
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

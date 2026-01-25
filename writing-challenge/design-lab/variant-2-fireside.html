@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Challenge - Fireside Variant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ember: { 50: '#fef7f0', 100: '#feecd8', 200: '#fdd4aa', 400: '#f5a142', 600: '#d97706', 800: '#92400e' },
+            charcoal: { 50: '#f7f6f5', 100: '#eae8e4', 200: '#d4d1cb', 400: '#8b8680', 600: '#57534e', 800: '#292524' },
+            warmwhite: '#fdfaf6',
+            candle: '#ffedd5'
+          },
+          fontFamily: {
+            serif: ['Libre Baskerville', 'serif'],
+            sans: ['DM Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(180deg, #292524 0%, #44403c 100%);
+    }
+    .glow {
+      box-shadow: 0 0 60px rgba(245, 161, 66, 0.15), 0 0 120px rgba(245, 161, 66, 0.1);
+    }
+    .flame {
+      animation: flicker 3s ease-in-out infinite;
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(0.98); }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="max-w-4xl mx-auto p-6">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8 py-4">
+      <div class="flex items-center gap-3">
+        <div class="flame text-3xl">🕯️</div>
+        <h1 class="font-serif text-2xl text-candle italic">The Fireside</h1>
+      </div>
+      <nav class="flex gap-6 text-sm">
+        <button class="text-ember-400 font-medium border-b-2 border-ember-400 pb-1">Write</button>
+        <button class="text-charcoal-200 hover:text-candle transition-colors">Library</button>
+        <button class="text-charcoal-200 hover:text-candle transition-colors">Journey</button>
+        <button class="text-charcoal-200 hover:text-candle transition-colors">Sparks</button>
+      </nav>
+    </header>
+
+    <!-- Main Writing Card -->
+    <main class="bg-warmwhite rounded-2xl glow p-10 mb-6 relative overflow-hidden">
+
+      <!-- Warm gradient overlay -->
+      <div class="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-ember-50/50 to-transparent pointer-events-none"></div>
+
+      <!-- Top Bar -->
+      <div class="relative flex items-center justify-between mb-8">
+        <div class="flex items-center gap-6">
+          <!-- Warm Ring Progress -->
+          <div class="relative w-16 h-16">
+            <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+              <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none" stroke="#feecd8" stroke-width="3"/>
+              <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none" stroke="#f5a142" stroke-width="3"
+                stroke-dasharray="68, 100" stroke-linecap="round"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-sm font-semibold text-charcoal-800">68%</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="text-3xl font-serif text-charcoal-800">342 <span class="text-lg text-charcoal-400 font-sans">words</span></div>
+            <div class="text-sm text-ember-600 mt-1">158 more to reach your goal</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+          <div class="text-center">
+            <div class="text-2xl font-serif text-charcoal-600">12:45</div>
+            <div class="text-xs text-charcoal-400 uppercase tracking-wider">elapsed</div>
+          </div>
+
+          <div class="flex gap-2">
+            <button class="w-10 h-10 rounded-full bg-charcoal-100 text-charcoal-600 flex items-center justify-center hover:bg-charcoal-200 transition-colors">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <button class="w-10 h-10 rounded-full bg-ember-100 text-ember-600 flex items-center justify-center hover:bg-ember-200 transition-colors">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="flex items-center gap-4 mb-8">
+        <div class="flex-1 h-px bg-gradient-to-r from-transparent via-charcoal-200 to-transparent"></div>
+        <span class="text-charcoal-300 text-xs uppercase tracking-widest">your story</span>
+        <div class="flex-1 h-px bg-gradient-to-r from-transparent via-charcoal-200 to-transparent"></div>
+      </div>
+
+      <!-- Writing Area -->
+      <textarea
+        class="w-full h-[380px] resize-none bg-transparent text-charcoal-800 text-lg leading-loose focus:outline-none placeholder:text-charcoal-300 font-serif"
+        placeholder="The fire crackles softly as you begin..."
+      >There's something about the evening hours that makes words flow easier. Perhaps it's the quiet, or the way the world seems to slow down as the light fades.
+
+I've always believed that the best stories are told by firelight. There's an intimacy to it, a warmth that seeps into every sentence.
+
+Tonight, I write about beginnings. About the first spark of an idea, fragile and bright, and how we nurture it into something more.</textarea>
+
+    </main>
+
+    <!-- Bottom Section -->
+    <div class="flex justify-between items-center px-4">
+      <div class="flex gap-4 text-sm text-charcoal-200">
+        <span class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-ember-400 animate-pulse"></span>
+          Writing
+        </span>
+        <span>27 wpm</span>
+        <span>•</span>
+        <span>1,842 characters</span>
+      </div>
+
+      <button class="group px-6 py-3 bg-gradient-to-r from-ember-400 to-ember-600 text-white rounded-full font-medium shadow-lg hover:shadow-ember-400/30 transition-all">
+        <span class="flex items-center gap-2">
+          Save for the Night
+          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

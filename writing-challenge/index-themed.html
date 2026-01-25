@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Challenge</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500&family=Josefin+Sans:wght@300;400;500&family=Kalam:wght@300;400;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;500;600&family=Quicksand:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <style>
+    /* Base resets */
+    * { box-sizing: border-box; }
+
+    /* Fireside styles */
+    .theme-fireside {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(180deg, #292524 0%, #44403c 100%);
+      min-height: 100vh;
+    }
+    .theme-fireside .font-display { font-family: 'Libre Baskerville', serif; }
+    .theme-fireside .font-writing { font-family: 'Libre Baskerville', serif; }
+    .theme-fireside .card-glow {
+      box-shadow: 0 0 60px rgba(245, 161, 66, 0.15), 0 0 120px rgba(245, 161, 66, 0.1);
+    }
+    .flame { animation: flicker 3s ease-in-out infinite; }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(0.98); }
+    }
+
+    /* Greenhouse styles */
+    .theme-greenhouse {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f4f9f4 0%, #fdfcf9 50%, #f5f0e8 100%);
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5c-3 8-12 15-20 18 8 3 17 10 20 18 3-8 12-15 20-18-8-3-17-10-20-18z' fill='%239caa8c' fill-opacity='0.08'/%3E%3C/svg%3E");
+      min-height: 100vh;
+    }
+    .theme-greenhouse .font-display { font-family: 'Fraunces', serif; }
+    .theme-greenhouse .font-writing { font-family: 'Fraunces', serif; }
+
+    /* Coffee Shop styles */
+    .theme-coffeeshop {
+      font-family: 'Nunito', sans-serif;
+      background: #fdfbf7;
+      min-height: 100vh;
+    }
+    .theme-coffeeshop .font-display { font-family: 'Caveat', cursive; }
+    .theme-coffeeshop .font-writing { font-family: 'Source Serif 4', serif; }
+    .notebook-lines {
+      background-image: repeating-linear-gradient(transparent, transparent 31px, #e8ddd0 31px, #e8ddd0 32px);
+      background-position: 0 8px;
+    }
+    .sticky-note {
+      background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+      box-shadow: 2px 3px 8px rgba(0,0,0,0.1);
+      transform: rotate(-2deg);
+    }
+    .coffee-ring {
+      background: radial-gradient(circle, transparent 40%, rgba(164, 124, 82, 0.08) 40%, rgba(164, 124, 82, 0.08) 50%, transparent 50%);
+    }
+
+    /* Journal styles */
+    .theme-journal {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #fdf4f5 0%, #faf6f0 50%, #f6f7f4 100%);
+      min-height: 100vh;
+    }
+    .theme-journal .font-display { font-family: 'Kalam', cursive; }
+    .theme-journal .font-writing { font-family: 'Lora', serif; }
+    .washi-tape {
+      background: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.3) 5px, rgba(255,255,255,0.3) 10px);
+    }
+    .journal-lines {
+      background-image: linear-gradient(transparent 31px, #f2e9dd 31px);
+      background-size: 100% 32px;
+    }
+
+    /* Cabin styles - rustic 8-bit prairie */
+    .theme-cabin {
+      font-family: 'Josefin Sans', sans-serif;
+      background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 40%, #7CB342 40%, #558B2F 100%);
+      min-height: 100vh;
+      image-rendering: pixelated;
+    }
+    .theme-cabin .font-display { font-family: 'Josefin Sans', sans-serif; font-weight: 500; }
+    .theme-cabin .font-writing { font-family: 'Lora', serif; }
+    .pixel-wood {
+      background: repeating-linear-gradient(
+        90deg,
+        #8B4513 0px, #8B4513 4px,
+        #A0522D 4px, #A0522D 8px,
+        #8B4513 8px, #8B4513 12px,
+        #6B3E0A 12px, #6B3E0A 16px
+      );
+    }
+    .pixel-log {
+      background: repeating-linear-gradient(
+        0deg,
+        #8B4513 0px, #8B4513 8px,
+        #A0522D 8px, #A0522D 16px,
+        #6B3E0A 16px, #6B3E0A 24px
+      );
+    }
+    .cabin-window {
+      background: linear-gradient(180deg, #87CEEB 0%, #ADD8E6 60%, #90EE90 60%, #228B22 100%);
+      box-shadow: inset 0 0 0 4px #6B3E0A;
+    }
+    .pixel-flower { animation: sway 2s ease-in-out infinite; }
+    @keyframes sway {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useRef } = React;
+
+    // Theme metadata
+    const THEMES = {
+      fireside: { id: 'fireside', name: 'Fireside', icon: '🕯️', tagline: 'Evening writing by candlelight' },
+      greenhouse: { id: 'greenhouse', name: 'Greenhouse', icon: '🌱', tagline: 'Where words grow' },
+      coffeeshop: { id: 'coffeeshop', name: 'Coffee Shop', icon: '☕', tagline: 'Words meet warmth' },
+      journal: { id: 'journal', name: 'Journal', icon: '📓', tagline: 'Every day is a new page' },
+      cabin: { id: 'cabin', name: 'Cabin', icon: '🏔', tagline: "A writer's retreat" }
+    };
+
+    // Storage utilities
+    const storage = {
+      get: (key, defaultValue) => {
+        try { return JSON.parse(localStorage.getItem(key)) || defaultValue; }
+        catch { return defaultValue; }
+      },
+      set: (key, value) => localStorage.setItem(key, JSON.stringify(value))
+    };
+
+    const COMMON_WORDS = new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','by','from','as','is','was','are','were','been','be','have','has','had','do','does','did','will','would','could','should','may','might','must','shall','can','it','this','that','these','those','i','you','he','she','we','they','me','him','her','us','them','my','your','his','its','our','their','what','which','who','whom','when','where','why','how','if','then','so','than','too','very','just','only','also','not','no','yes']);
+
+    const formatTime = (s) => {
+      const m = Math.floor(s / 60), sec = s % 60;
+      return `${m}:${sec.toString().padStart(2, '0')}`;
+    };
+    const formatDate = (d) => new Date(d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const formatDuration = (s) => {
+      if (!s) return '';
+      const m = Math.floor(s / 60);
+      return m >= 60 ? `${Math.floor(m/60)}h ${m%60}m` : `${m}m ${s%60}s`;
+    };
+
+    // Main App
+    function WritingApp() {
+      const [theme, setTheme] = useState(() => storage.get('writingTheme', 'fireside'));
+      const [currentView, setCurrentView] = useState('write');
+      const [settings, setSettings] = useState(() => storage.get('writingSettings', {
+        goalType: 'words', wordGoal: 500, characterGoal: 2500, timeGoal: 20
+      }));
+      const [sessions, setSessions] = useState(() => storage.get('writingSessions', []));
+      const [ideas, setIdeas] = useState(() => storage.get('writingIdeas', []));
+      const [texts, setTexts] = useState(() => storage.get('writingTexts', []));
+      const [isWriting, setIsWriting] = useState(false);
+      const [isPaused, setIsPaused] = useState(false);
+      const [currentText, setCurrentText] = useState('');
+      const [sessionStartTime, setSessionStartTime] = useState(null);
+      const [elapsedSeconds, setElapsedSeconds] = useState(0);
+      const [showTitleModal, setShowTitleModal] = useState(false);
+      const [pendingTitle, setPendingTitle] = useState('');
+      const timerRef = useRef(null);
+      const textareaRef = useRef(null);
+
+      useEffect(() => { storage.set('writingTheme', theme); }, [theme]);
+      useEffect(() => { storage.set('writingSettings', settings); }, [settings]);
+      useEffect(() => { storage.set('writingSessions', sessions); }, [sessions]);
+      useEffect(() => { storage.set('writingIdeas', ideas); }, [ideas]);
+      useEffect(() => { storage.set('writingTexts', texts); }, [texts]);
+
+      useEffect(() => {
+        if (isWriting && !isPaused) {
+          timerRef.current = setInterval(() => setElapsedSeconds(p => p + 1), 1000);
+        } else { clearInterval(timerRef.current); }
+        return () => clearInterval(timerRef.current);
+      }, [isWriting, isPaused]);
+
+      const getTextStats = useCallback((text) => {
+        const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+        return { words: words.length, characters: text.length };
+      }, []);
+
+      const stats = getTextStats(currentText);
+
+      const getProgress = useCallback(() => {
+        if (settings.goalType === 'words') return stats.words / settings.wordGoal;
+        if (settings.goalType === 'characters') return stats.characters / settings.characterGoal;
+        return elapsedSeconds / (settings.timeGoal * 60);
+      }, [settings, stats, elapsedSeconds]);
+
+      const progress = getProgress();
+      const goalMet = progress >= 1;
+
+      const startSession = () => {
+        setIsWriting(true); setIsPaused(false); setSessionStartTime(new Date().toISOString());
+        setElapsedSeconds(0); setCurrentText('');
+        setTimeout(() => textareaRef.current?.focus(), 100);
+      };
+
+      const endSession = () => {
+        if (currentText.trim().length > 0) { setShowTitleModal(true); setPendingTitle(''); }
+        else finalizeSession('');
+      };
+
+      const finalizeSession = (title) => {
+        const finalStats = getTextStats(currentText);
+        setSessions(prev => [...prev, {
+          id: Date.now(), startTime: sessionStartTime, duration: elapsedSeconds,
+          words: finalStats.words, characters: finalStats.characters, goalMet
+        }]);
+        if (currentText.trim().length > 0) {
+          setTexts(prev => [...prev, {
+            id: Date.now(), title: title || `Untitled - ${formatDate(sessionStartTime)}`,
+            content: currentText, createdAt: sessionStartTime,
+            wordCount: finalStats.words, characterCount: finalStats.characters,
+            duration: elapsedSeconds, goalMet
+          }]);
+        }
+        setIsWriting(false); setIsPaused(false); setCurrentText('');
+        setElapsedSeconds(0); setSessionStartTime(null); setShowTitleModal(false);
+      };
+
+      // Render themed layout
+      const renderThemedApp = () => {
+        switch(theme) {
+          case 'fireside': return <FiresideTheme {...{currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme}} />;
+          case 'greenhouse': return <GreenhouseTheme {...{currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme}} />;
+          case 'coffeeshop': return <CoffeeShopTheme {...{currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme}} />;
+          case 'journal': return <JournalTheme {...{currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme}} />;
+          case 'cabin': return <CabinTheme {...{currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme}} />;
+          default: return <FiresideTheme {...{currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme}} />;
+        }
+      };
+
+      return (
+        <>
+          {renderThemedApp()}
+          {showTitleModal && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">Save Your Writing</h3>
+                <p className="text-gray-600 mb-4">You wrote {stats.words} words in {formatTime(elapsedSeconds)}.{goalMet && " Goal reached!"}</p>
+                <input type="text" placeholder="Give it a title (optional)" value={pendingTitle}
+                  onChange={(e) => setPendingTitle(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 mb-4 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  autoFocus onKeyDown={(e) => { if (e.key === 'Enter') finalizeSession(pendingTitle); }} />
+                <div className="flex gap-2">
+                  <button onClick={() => finalizeSession(pendingTitle)} className="flex-1 py-3 bg-amber-500 text-white rounded-lg font-medium">Save</button>
+                  <button onClick={() => { setShowTitleModal(false); setIsWriting(true); }} className="px-4 py-3 text-gray-600 rounded-lg">Keep Writing</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      );
+    }
+
+    // ============ FIRESIDE THEME ============
+    function FiresideTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      return (
+        <div className="theme-fireside">
+          <div className="max-w-4xl mx-auto p-6">
+            {/* Header */}
+            <header className="flex justify-between items-center mb-8 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flame text-3xl">🕯️</div>
+                <h1 className="font-display text-2xl text-amber-50 italic">The Fireside</h1>
+              </div>
+              <nav className="flex gap-6 text-sm">
+                {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                  <button key={v} onClick={() => setCurrentView(v)}
+                    className={`${currentView === v ? 'text-amber-400 border-b-2 border-amber-400' : 'text-stone-400 hover:text-amber-100'} pb-1 transition-colors`}>
+                    {v.charAt(0).toUpperCase() + v.slice(1)}
+                  </button>
+                ))}
+              </nav>
+            </header>
+
+            {/* Main Content */}
+            {currentView === 'write' && (
+              !isWriting ? (
+                <div className="card-glow bg-amber-50 rounded-2xl p-12 text-center relative overflow-hidden">
+                  <div className="font-display text-2xl italic text-stone-500 mb-8">
+                    "There is no greater agony than bearing an untold story inside you."
+                  </div>
+                  <button onClick={startSession}
+                    className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-medium shadow-lg transition-all">
+                    Start Writing Session
+                  </button>
+                  <div className="mt-4 text-sm text-stone-400">
+                    Goal: {settings.goalType === 'words' ? `${settings.wordGoal} words` : `${settings.timeGoal} minutes`}
+                  </div>
+                </div>
+              ) : (
+                <div className="card-glow bg-amber-50 rounded-2xl p-8">
+                    {/* Status Bar */}
+                    <div className="flex items-center justify-between mb-6 pb-6 border-b border-stone-200">
+                      <div className="flex items-center gap-6">
+                        <div className="relative w-16 h-16">
+                          <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="15" fill="none" stroke="#feecd8" strokeWidth="3"/>
+                            <circle cx="18" cy="18" r="15" fill="none" stroke="#f5a142" strokeWidth="3"
+                              strokeDasharray={`${progress * 94}, 94`} strokeLinecap="round"/>
+                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-stone-700">
+                            {Math.round(progress * 100)}%
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-3xl font-display text-stone-800">
+                            {stats.words} <span className="text-lg text-stone-400">words</span>
+                          </div>
+                          <div className="text-sm text-amber-600">{settings.wordGoal - stats.words} more to goal</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-6">
+                        <div className="text-right">
+                          <div className="text-2xl font-display text-stone-600">{formatTime(elapsedSeconds)}</div>
+                          <div className="text-xs text-stone-400 uppercase tracking-wider">elapsed</div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button onClick={() => setIsPaused(!isPaused)}
+                            className="w-10 h-10 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center hover:bg-stone-200">
+                            {isPaused ? '▶' : '⏸'}
+                          </button>
+                          <button onClick={endSession}
+                            className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center hover:bg-amber-200">
+                            ⏹
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Divider */}
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent"></div>
+                      <span className="text-stone-300 text-xs uppercase tracking-widest">your story</span>
+                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent"></div>
+                    </div>
+                    {/* Writing Area */}
+                    <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                      disabled={isPaused}
+                      className="w-full h-[380px] resize-none bg-transparent text-stone-800 text-lg leading-loose focus:outline-none font-writing"
+                      placeholder="The fire crackles softly as you begin..." />
+                  {goalMet && (
+                    <div className="mt-4 py-3 text-center text-amber-700 font-medium bg-amber-100 rounded-lg">
+                      ✓ Goal reached! Keep going or save your work.
+                    </div>
+                  )}
+                </div>
+              )
+            )}
+
+            {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} dark />}
+            {currentView === 'stats' && <StatsViewGeneric sessions={sessions} dark />}
+            {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} dark />}
+            {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} dark />}
+          </div>
+        </div>
+      );
+    }
+
+    // ============ GREENHOUSE THEME ============
+    function GreenhouseTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      return (
+        <div className="theme-greenhouse">
+          <div className="max-w-4xl mx-auto p-6">
+            {/* Header */}
+            <header className="flex justify-between items-center mb-8 py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <span className="text-green-600">🌱</span>
+                </div>
+                <h1 className="font-display text-2xl text-green-900">Writing Garden</h1>
+              </div>
+              <nav className="flex gap-1 bg-white/60 backdrop-blur rounded-full p-1 shadow-sm">
+                {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                  <button key={v} onClick={() => setCurrentView(v)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium ${currentView === v ? 'bg-green-100 text-green-800' : 'text-green-700 hover:bg-green-50'}`}>
+                    {v.charAt(0).toUpperCase() + v.slice(1)}
+                  </button>
+                ))}
+              </nav>
+            </header>
+
+            {currentView === 'write' && (
+              !isWriting ? (
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-green-200/50 p-12 text-center">
+                  <div className="font-display text-2xl italic text-green-700/60 mb-8">
+                    "Every word is a seed waiting to bloom."
+                  </div>
+                  <button onClick={startSession}
+                    className="px-8 py-4 bg-green-600 text-white rounded-xl font-medium shadow-lg shadow-green-300 hover:bg-green-700 transition-colors">
+                    Start Writing Session
+                  </button>
+                  <div className="mt-4 text-sm text-green-600/60">
+                    Goal: {settings.goalType === 'words' ? `${settings.wordGoal} words` : `${settings.timeGoal} minutes`}
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-green-200/50 p-8">
+                  {/* Progress with plant */}
+                  <div className="flex items-center justify-between mb-8 pb-6 border-b border-green-100">
+                    <div className="flex items-center gap-6">
+                      {/* Growing Plant */}
+                      <div className="relative w-20 h-28">
+                        <div className="absolute bottom-0 w-full h-8 bg-amber-800/40 rounded-b-lg"></div>
+                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-2 bg-green-400 rounded-t transition-all duration-500"
+                          style={{ height: `${Math.min(progress * 60, 60)}%` }}></div>
+                        {progress > 0.3 && (
+                          <div className="absolute bottom-14 left-1/2 -translate-x-1/2 text-2xl transition-all duration-500">🌿</div>
+                        )}
+                        {progress >= 1 && (
+                          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 text-3xl animate-bounce">🌸</div>
+                        )}
+                      </div>
+                      <div>
+                        <div className="text-3xl font-display text-green-900">
+                          {stats.words} <span className="text-lg text-green-400">/ {settings.wordGoal} words</span>
+                        </div>
+                        <div className="text-sm text-green-600 mt-1">
+                          {goalMet ? 'Your words have bloomed!' : 'Your words are growing beautifully'}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <div className="text-2xl font-display text-green-800">{formatTime(elapsedSeconds)}</div>
+                        <div className="text-xs text-green-400">time in garden</div>
+                      </div>
+                      <button onClick={() => setIsPaused(!isPaused)}
+                        className="p-3 rounded-full bg-green-50 text-green-600 hover:bg-green-100">
+                        {isPaused ? '▶' : '⏸'}
+                      </button>
+                      <button onClick={endSession}
+                        className="p-3 rounded-full bg-green-600 text-white hover:bg-green-700">
+                        ⏹
+                      </button>
+                    </div>
+                  </div>
+                  {/* Writing Area */}
+                  <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                    disabled={isPaused}
+                    className="w-full h-[400px] resize-none bg-transparent text-green-900 text-lg leading-relaxed focus:outline-none font-writing"
+                    placeholder="Plant your thoughts here and watch them grow..." />
+                  {/* Stats footer */}
+                  <div className="flex justify-between items-center mt-4 pt-4 border-t border-green-100 text-sm text-green-600">
+                    <span>{Math.round(progress * 100)}% to goal • {stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0} wpm</span>
+                    <button onClick={endSession} className="px-6 py-3 bg-green-600 text-white rounded-full font-medium shadow-lg shadow-green-300 hover:bg-green-700">
+                      Save & Rest
+                    </button>
+                  </div>
+                </div>
+              )
+            )}
+
+            {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
+            {currentView === 'stats' && <StatsViewGeneric sessions={sessions} />}
+            {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} />}
+            {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} />}
+          </div>
+        </div>
+      );
+    }
+
+    // ============ COFFEE SHOP THEME ============
+    function CoffeeShopTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      return (
+        <div className="theme-coffeeshop">
+          <div className="max-w-5xl mx-auto p-6">
+            {/* Header - Cafe Menu Board */}
+            <header className="flex justify-between items-center mb-8 py-4 px-6 bg-amber-900 rounded-2xl">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">☕</span>
+                <div>
+                  <h1 className="font-display text-3xl text-amber-50">The Writer's Café</h1>
+                  <p className="text-amber-300/60 text-xs">where words meet warmth</p>
+                </div>
+              </div>
+              <nav className="flex gap-2">
+                {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                  <button key={v} onClick={() => setCurrentView(v)}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold ${currentView === v ? 'bg-amber-300 text-amber-900' : 'text-amber-200 hover:text-amber-50'}`}>
+                    {v.charAt(0).toUpperCase() + v.slice(1)}
+                  </button>
+                ))}
+              </nav>
+            </header>
+
+            {currentView === 'write' && (
+              !isWriting ? (
+                <div className="bg-gradient-to-br from-amber-100 to-orange-50 rounded-3xl p-12 text-center shadow-xl">
+                  <div className="font-display text-3xl text-amber-800 mb-8">
+                    "The first draft is just you telling yourself the story."
+                  </div>
+                  <button onClick={startSession}
+                    className="px-8 py-4 bg-amber-900 text-amber-50 rounded-xl font-semibold shadow-lg hover:bg-amber-800 transition-colors">
+                    Start Writing Session
+                  </button>
+                </div>
+              ) : (
+                <div className="relative">
+                  {/* Table background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-200 to-amber-100 rounded-3xl -z-10"></div>
+
+                  <div className="p-8 grid grid-cols-12 gap-6">
+                    {/* Notebook */}
+                    <div className="col-span-8 bg-amber-50 rounded-xl shadow-lg overflow-hidden">
+                      <div className="flex">
+                        {/* Spiral binding */}
+                        <div className="w-8 bg-amber-200 flex flex-col items-center py-4 gap-4">
+                          {[...Array(10)].map((_, i) => (
+                            <div key={i} className="w-3 h-3 rounded-full bg-amber-700"></div>
+                          ))}
+                        </div>
+                        <div className="flex-1 notebook-lines p-6 pt-8">
+                          <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                            disabled={isPaused}
+                            className="w-full h-[420px] resize-none bg-transparent text-amber-900 text-lg leading-8 focus:outline-none font-writing"
+                            placeholder="Start with your morning thoughts..." />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Side Panel */}
+                    <div className="col-span-4 space-y-4">
+                      {/* Sticky Note Progress */}
+                      <div className="sticky-note rounded-lg p-4">
+                        <div className="font-display text-2xl text-amber-900 mb-2">Today's Order ☕</div>
+                        <div className="space-y-2 text-sm text-amber-800">
+                          <div className="flex justify-between">
+                            <span>Words written</span>
+                            <span className="font-semibold">{stats.words} / {settings.wordGoal}</span>
+                          </div>
+                          <div className="h-2 bg-amber-200 rounded-full overflow-hidden">
+                            <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${Math.min(progress * 100, 100)}%` }}></div>
+                          </div>
+                          <div className="text-xs text-amber-600 text-right">{Math.round(progress * 100)}% there!</div>
+                        </div>
+                      </div>
+
+                      {/* Timer */}
+                      <div className="bg-amber-50 rounded-xl p-6 shadow-md coffee-ring">
+                        <div className="text-center">
+                          <div className="text-4xl font-display text-amber-900">{formatTime(elapsedSeconds)}</div>
+                          <div className="text-xs text-amber-500 uppercase tracking-wider mt-1">brewing time</div>
+                        </div>
+                        <div className="flex justify-center gap-3 mt-4">
+                          <button onClick={() => setIsPaused(!isPaused)}
+                            className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center hover:bg-amber-200">
+                            {isPaused ? '▶' : '⏸'}
+                          </button>
+                          <button onClick={endSession}
+                            className="w-10 h-10 rounded-full bg-amber-700 text-amber-50 flex items-center justify-center hover:bg-amber-800">
+                            ⏹
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Quick Stats */}
+                      <div className="bg-amber-50 rounded-xl p-4 shadow-md">
+                        <div className="font-display text-xl text-amber-900 mb-3">This Session</div>
+                        <div className="grid grid-cols-2 gap-3 text-center">
+                          <div className="bg-amber-100/50 rounded-lg p-3">
+                            <div className="font-semibold text-amber-900">{stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0}</div>
+                            <div className="text-xs text-amber-600">wpm</div>
+                          </div>
+                          <div className="bg-amber-100/50 rounded-lg p-3">
+                            <div className="font-semibold text-amber-900">{stats.characters}</div>
+                            <div className="text-xs text-amber-600">chars</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button onClick={endSession}
+                        className="w-full py-4 bg-amber-900 text-amber-50 rounded-xl font-semibold shadow-lg hover:bg-amber-800">
+                        Close Tab & Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
+
+            {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
+            {currentView === 'stats' && <StatsViewGeneric sessions={sessions} />}
+            {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} />}
+            {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} />}
+          </div>
+        </div>
+      );
+    }
+
+    // ============ JOURNAL THEME ============
+    function JournalTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      const today = new Date();
+      return (
+        <div className="theme-journal py-8">
+          <div className="max-w-3xl mx-auto px-6">
+            {/* Header */}
+            <header className="text-center mb-8">
+              <div className="inline-flex items-center gap-3 bg-amber-100 px-6 py-3 rounded-full">
+                <span className="text-2xl">📓</span>
+                <h1 className="font-display text-2xl text-stone-700">My Writing Journal</h1>
+              </div>
+              <nav className="flex justify-center gap-4 mt-4 text-sm">
+                {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                  <button key={v} onClick={() => setCurrentView(v)}
+                    className={`px-3 py-1 rounded-full font-medium ${currentView === v ? 'bg-rose-100 text-rose-800' : 'text-green-700 hover:bg-green-50'}`}>
+                    {v === 'write' ? 'Today' : v.charAt(0).toUpperCase() + v.slice(1)}
+                  </button>
+                ))}
+              </nav>
+            </header>
+
+            {currentView === 'write' && (
+              <div className="relative">
+                {/* Washi tape decorations */}
+                <div className="absolute -top-3 left-12 w-24 h-6 bg-rose-200 washi-tape rounded-sm" style={{ transform: 'rotate(-3deg)' }}></div>
+                <div className="absolute -top-2 right-16 w-20 h-6 bg-green-200 washi-tape rounded-sm" style={{ transform: 'rotate(2deg)' }}></div>
+
+                <div className="bg-amber-50/80 rounded-lg shadow-xl p-8 pt-10">
+                  {/* Date header */}
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-dashed border-amber-200">
+                    <div>
+                      <div className="font-display text-3xl text-stone-700">
+                        {today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                      </div>
+                      <div className="text-sm text-amber-600 mt-1">
+                        {today.toLocaleDateString('en-US', { weekday: 'long' })} ☀️
+                      </div>
+                    </div>
+                    {isWriting && (
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="font-display text-2xl text-green-700">{stats.words}</div>
+                          <div className="text-xs text-amber-500">words so far</div>
+                        </div>
+                        <div className="w-12 h-12 rounded-full border-4 border-green-200 overflow-hidden">
+                          <div className="w-full h-full bg-green-400" style={{
+                            background: `conic-gradient(#6b7f5a ${progress * 100}%, #dce2d0 ${progress * 100}%)`
+                          }}></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {!isWriting ? (
+                    <div className="text-center py-12">
+                      <div className="font-display text-2xl text-stone-500 mb-6">
+                        "Fill your paper with the breathings of your heart."
+                      </div>
+                      <button onClick={startSession}
+                        className="px-6 py-3 bg-rose-400 text-white rounded-lg font-medium shadow-md hover:bg-rose-500">
+                        Begin Today's Entry
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Mood stickers */}
+                      <div className="flex gap-3 mb-6">
+                        <span className="px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-sm border border-rose-200">feeling: creative ✨</span>
+                        <span className="px-3 py-1 bg-green-50 text-green-600 rounded-full text-sm border border-green-200">weather: sunny 🌤</span>
+                      </div>
+
+                      {/* Writing area with margin line */}
+                      <div className="relative">
+                        <div className="absolute left-6 top-0 bottom-0 w-px bg-rose-200"></div>
+                        <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                          disabled={isPaused}
+                          className="w-full h-[380px] pl-10 pr-4 resize-none bg-transparent text-stone-700 text-lg focus:outline-none font-writing leading-loose journal-lines"
+                          placeholder="Dear journal..." />
+                      </div>
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between mt-6 pt-4 border-t border-dashed border-amber-200">
+                        <div className="flex items-center gap-4 text-sm text-amber-600">
+                          <span>⏱ {formatTime(elapsedSeconds)}</span>
+                          <span>•</span>
+                          <span>{stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0} wpm</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <button onClick={() => setIsPaused(!isPaused)}
+                            className="px-4 py-2 text-amber-700 hover:bg-amber-100 rounded-lg flex items-center gap-2">
+                            {isPaused ? '▶ Resume' : '⏸ Pause'}
+                          </button>
+                          <button onClick={endSession}
+                            className="px-5 py-2 bg-rose-400 text-white rounded-lg font-medium shadow-md hover:bg-rose-500 flex items-center gap-2">
+                            ✓ Done for now
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Decorative sticker */}
+                <div className="absolute -bottom-2 right-8 text-3xl" style={{ transform: 'rotate(10deg)' }}>🍃</div>
+              </div>
+            )}
+
+            {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
+            {currentView === 'stats' && <StatsViewGeneric sessions={sessions} />}
+            {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} />}
+            {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} />}
+
+            {/* Footer quote */}
+            <div className="text-center mt-8 font-display text-xl text-green-600">
+              "Every day is a new page" 📖
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============ CABIN THEME (Rustic 8-bit Prairie) ============
+    function CabinTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      return (
+        <div className="theme-cabin p-6 pt-12">
+          <div className="max-w-4xl mx-auto">
+
+            {/* Prairie flowers and plants at ground level */}
+            <div className="flex justify-center gap-1 mb-[-8px] relative z-10">
+              <span className="pixel-flower text-xl">🌻</span>
+              <span className="text-lg">🌿</span>
+              <span className="pixel-flower text-xl" style={{animationDelay: '0.5s'}}>🌸</span>
+              <span className="text-lg">🌾</span>
+              <span className="pixel-flower text-xl" style={{animationDelay: '1s'}}>🌼</span>
+              <span className="text-lg">🌿</span>
+              <span className="pixel-flower text-xl" style={{animationDelay: '0.3s'}}>🌷</span>
+            </div>
+
+            {/* Cabin structure */}
+            <div className="relative">
+              {/* Roof - triangular wood shingles */}
+              <div className="flex justify-center mb-[-4px]">
+                <div className="w-0 h-0 border-l-[220px] border-r-[220px] border-b-[50px] border-l-transparent border-r-transparent"
+                  style={{borderBottomColor: '#6B3E0A'}}></div>
+              </div>
+              <div className="flex justify-center mb-[-2px]">
+                <div className="w-[400px] h-3 pixel-wood"></div>
+              </div>
+
+              {/* Cabin walls */}
+              <div className="bg-amber-100 shadow-2xl overflow-hidden border-x-8 border-b-8" style={{borderColor: '#8B4513'}}>
+
+                {/* Log beam header */}
+                <div className="pixel-log px-6 py-3 flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🏡</span>
+                    <h1 className="font-display text-xl text-amber-50 tracking-wide">Prairie Cabin</h1>
+                  </div>
+                  <nav className="flex gap-1 bg-amber-900/40 rounded px-2 py-1">
+                    {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                      <button key={v} onClick={() => setCurrentView(v)}
+                        className={`px-3 py-1 text-sm font-medium transition-colors ${currentView === v ? 'bg-amber-100 text-amber-900' : 'text-amber-100 hover:text-white'}`}>
+                        {v.charAt(0).toUpperCase() + v.slice(1)}
+                      </button>
+                    ))}
+                  </nav>
+                </div>
+
+                {/* Main content area */}
+                <div className="p-6 grid grid-cols-12 gap-6 bg-amber-50">
+
+                  {/* Left: Window and decorations */}
+                  <div className="col-span-3 space-y-4">
+                    {/* Rustic window */}
+                    <div className="cabin-window aspect-square">
+                      <div className="w-full h-full relative p-1">
+                        <div className="absolute inset-2 grid grid-cols-2 grid-rows-2 gap-1">
+                          {[0,1,2,3].map(i => (
+                            <div key={i} className="bg-sky-200/30" style={{boxShadow: 'inset 0 0 0 2px #6B3E0A'}}></div>
+                          ))}
+                        </div>
+                        {/* Sun in window */}
+                        <div className="absolute top-3 right-3 w-4 h-4 bg-yellow-300 rounded-full"></div>
+                      </div>
+                    </div>
+
+                    {/* Hanging plants */}
+                    <div className="flex justify-center gap-2 text-xl">
+                      <span>🪴</span>
+                      <span>🌵</span>
+                      <span>🪴</span>
+                    </div>
+
+                    {/* Stats on wooden board */}
+                    <div className="pixel-wood p-4 space-y-3 text-center">
+                      <div>
+                        <div className="font-display text-3xl text-amber-50">{formatTime(elapsedSeconds)}</div>
+                        <div className="text-xs text-amber-200 uppercase">time spent</div>
+                      </div>
+                      <div className="h-px bg-amber-700"></div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <div className="font-display text-xl text-green-300">{stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0}</div>
+                          <div className="text-xs text-amber-200">wpm</div>
+                        </div>
+                        <div>
+                          <div className="font-display text-xl text-yellow-300">{Math.round(progress * 100)}%</div>
+                          <div className="text-xs text-amber-200">goal</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Controls */}
+                    {isWriting && (
+                      <div className="flex gap-2">
+                        <button onClick={() => setIsPaused(!isPaused)}
+                          className="flex-1 py-2 bg-amber-200 text-amber-800 font-medium hover:bg-amber-300 flex items-center justify-center">
+                          {isPaused ? '▶' : '⏸'}
+                        </button>
+                        <button onClick={endSession}
+                          className="flex-1 py-2 bg-amber-700 text-amber-50 font-medium hover:bg-amber-800 flex items-center justify-center">
+                          ⏹
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right: Writing desk area */}
+                  <div className="col-span-9">
+                    <div className="bg-amber-100 border-4 p-6 h-full" style={{borderColor: '#A0522D'}}>
+                      {currentView === 'write' && (
+                        !isWriting ? (
+                          <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                            <div className="text-4xl mb-4">📜</div>
+                            <div className="font-display text-xl text-amber-700 mb-6">
+                              "The prairie wind whispers stories..."
+                            </div>
+                            <button onClick={startSession}
+                              className="px-6 py-3 bg-green-700 text-white font-medium shadow-lg hover:bg-green-800">
+                              Begin Writing
+                            </button>
+                            <div className="mt-3 text-sm text-amber-600">
+                              Goal: {settings.wordGoal} words
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            {/* Progress header */}
+                            <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-amber-300">
+                              <div className="flex items-center gap-3">
+                                <span className="text-xl">✍️</span>
+                                <div>
+                                  <div className="font-display text-2xl text-amber-900">
+                                    {stats.words} <span className="text-amber-500 text-base">words</span>
+                                  </div>
+                                  <div className="text-sm text-green-700">{Math.max(0, settings.wordGoal - stats.words)} more to go</div>
+                                </div>
+                              </div>
+                              <div className="w-24 h-3 bg-amber-200 overflow-hidden">
+                                <div className="h-full bg-green-600 transition-all" style={{ width: `${Math.min(progress * 100, 100)}%` }}></div>
+                              </div>
+                            </div>
+
+                            {/* Paper writing area */}
+                            <div className="bg-amber-50 p-4 border-2 border-amber-300">
+                              <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                                disabled={isPaused}
+                                className="w-full h-[320px] resize-none bg-transparent text-amber-900 text-lg leading-loose focus:outline-none font-writing"
+                                placeholder="The cabin creaks gently in the prairie wind..." />
+                            </div>
+                            {goalMet && (
+                              <div className="mt-3 py-2 text-center text-green-800 font-medium bg-green-100 border border-green-300">
+                                🌻 Goal reached! Keep writing or save your work.
+                              </div>
+                            )}
+                          </>
+                        )
+                      )}
+
+                      {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} embedded />}
+                      {currentView === 'stats' && <StatsViewGeneric sessions={sessions} embedded />}
+                      {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} embedded />}
+                      {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} embedded />}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floor/footer */}
+                <div className="pixel-wood px-6 py-3 flex justify-between items-center">
+                  <div className="flex items-center gap-4 text-sm text-amber-200">
+                    <span>🪵 Cabin life</span>
+                    <span>•</span>
+                    <span>{stats.characters} chars</span>
+                    <span>•</span>
+                    <span>🌾 Prairie quiet</span>
+                  </div>
+                  {isWriting && (
+                    <button onClick={endSession}
+                      className="px-4 py-2 bg-green-700 text-white font-medium hover:bg-green-800 shadow-md">
+                      Save & Rest
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* More prairie decorations at bottom */}
+            <div className="flex justify-center gap-2 mt-[-4px] relative z-10">
+              <span className="text-lg">🌾</span>
+              <span className="pixel-flower text-xl">🌻</span>
+              <span className="text-lg">🌿</span>
+              <span className="pixel-flower text-xl" style={{animationDelay: '0.7s'}}>🌼</span>
+              <span className="text-lg">🌾</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============ GENERIC VIEWS (shared across themes) ============
+    function TextsViewGeneric({ texts, setTexts, dark = false, embedded = false }) {
+      const [selectedText, setSelectedText] = useState(null);
+      const bg = dark ? 'bg-stone-800' : 'bg-white';
+      const textColor = dark ? 'text-stone-100' : 'text-stone-800';
+      const mutedColor = dark ? 'text-stone-400' : 'text-stone-500';
+
+      return (
+        <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`} grid md:grid-cols-3 gap-6`}>
+          <div className={`md:col-span-1 ${embedded ? '' : 'border-r border-stone-200'} pr-4`}>
+            <h3 className={`font-semibold mb-4 ${textColor}`}>Your Writings ({texts.length})</h3>
+            {texts.length === 0 ? (
+              <p className={mutedColor}>No texts saved yet.</p>
+            ) : (
+              <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+                {[...texts].reverse().map(text => (
+                  <div key={text.id} onClick={() => setSelectedText(text)}
+                    className={`p-3 rounded-lg cursor-pointer transition-all hover:bg-stone-100 ${selectedText?.id === text.id ? 'bg-stone-100 border-l-4 border-amber-400' : ''}`}>
+                    <div className={`font-medium truncate ${textColor}`}>{text.title}</div>
+                    <div className={`text-xs mt-1 ${mutedColor}`}>{formatDate(text.createdAt)} • {text.wordCount} words</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="md:col-span-2">
+            {selectedText ? (
+              <>
+                <div className="flex justify-between items-start mb-4 pb-4 border-b border-stone-200">
+                  <div>
+                    <h2 className={`text-2xl font-semibold ${textColor}`}>{selectedText.title}</h2>
+                    <div className={`text-sm ${mutedColor}`}>{formatDate(selectedText.createdAt)} • {selectedText.wordCount} words • {formatDuration(selectedText.duration)}</div>
+                  </div>
+                  <button onClick={() => { if(confirm('Delete?')) { setTexts(texts.filter(t => t.id !== selectedText.id)); setSelectedText(null); }}}
+                    className="text-red-500 text-sm hover:underline">Delete</button>
+                </div>
+                <div className={`prose max-w-none leading-loose ${textColor}`}>
+                  {selectedText.content.split('\n').map((p, i) => <p key={i} className="mb-4">{p}</p>)}
+                </div>
+              </>
+            ) : (
+              <div className={`flex flex-col items-center justify-center h-64 ${mutedColor}`}>
+                <span className="text-4xl mb-4 opacity-50">📄</span>
+                <p>Select a text to view</p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function StatsViewGeneric({ sessions, dark = false, embedded = false }) {
+      const bg = dark ? 'bg-stone-800' : 'bg-white';
+      const textColor = dark ? 'text-stone-100' : 'text-stone-800';
+      const mutedColor = dark ? 'text-stone-400' : 'text-stone-500';
+      const accentColor = dark ? 'text-amber-400' : 'text-amber-600';
+
+      const totalWords = sessions.reduce((s, x) => s + x.words, 0);
+      const totalMins = sessions.reduce((s, x) => s + Math.round(x.duration / 60), 0);
+      const goalsMet = sessions.filter(s => s.goalMet).length;
+
+      return (
+        <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`}`}>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            {[
+              { label: 'Total Words', value: totalWords.toLocaleString() },
+              { label: 'Total Minutes', value: totalMins },
+              { label: 'Goals Met', value: goalsMet }
+            ].map((s, i) => (
+              <div key={i} className={`text-center p-4 rounded-xl ${dark ? 'bg-stone-700' : 'bg-stone-50'}`}>
+                <div className={`text-2xl font-bold ${accentColor}`}>{s.value}</div>
+                <div className={`text-sm ${mutedColor}`}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+          <h3 className={`font-semibold mb-4 ${textColor}`}>Recent Sessions</h3>
+          {sessions.length === 0 ? (
+            <p className={mutedColor}>No sessions yet.</p>
+          ) : (
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {[...sessions].reverse().slice(0, 10).map(session => (
+                <div key={session.id} className={`flex justify-between py-3 border-b ${dark ? 'border-stone-700' : 'border-stone-100'}`}>
+                  <div>
+                    <div className={textColor}>{new Date(session.startTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</div>
+                    <div className={`text-sm ${mutedColor}`}>{session.words} words • {Math.round(session.duration / 60)} min</div>
+                  </div>
+                  {session.goalMet && <span className={`text-sm ${accentColor}`}>✓ Goal</span>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function IdeasViewGeneric({ ideas, setIdeas, dark = false, embedded = false }) {
+      const [newIdea, setNewIdea] = useState('');
+      const bg = dark ? 'bg-stone-800' : 'bg-white';
+      const textColor = dark ? 'text-stone-100' : 'text-stone-800';
+      const mutedColor = dark ? 'text-stone-400' : 'text-stone-500';
+
+      const addIdea = () => {
+        if (newIdea.trim()) {
+          setIdeas([...ideas, { id: Date.now(), text: newIdea.trim(), createdAt: new Date().toISOString() }]);
+          setNewIdea('');
+        }
+      };
+
+      return (
+        <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`} max-w-xl mx-auto`}>
+          <h3 className={`font-semibold mb-4 ${textColor}`}>✦ Writing Ideas</h3>
+          <div className="flex gap-2 mb-6">
+            <input type="text" value={newIdea} onChange={(e) => setNewIdea(e.target.value)}
+              placeholder="Capture a thought..."
+              className={`flex-1 px-4 py-3 rounded-lg focus:outline-none ${dark ? 'bg-stone-700 text-stone-100' : 'bg-stone-50 text-stone-800'}`}
+              onKeyDown={(e) => { if (e.key === 'Enter') addIdea(); }} />
+            <button onClick={addIdea} className="px-5 py-3 bg-amber-500 text-white rounded-lg font-medium">+</button>
+          </div>
+          {ideas.length === 0 ? (
+            <p className={mutedColor}>No ideas yet. Add something!</p>
+          ) : (
+            <div className="space-y-3">
+              {[...ideas].reverse().map(idea => (
+                <div key={idea.id} className={`flex items-start gap-3 p-3 rounded-lg group hover:bg-stone-50 ${dark ? 'hover:bg-stone-700' : ''}`}>
+                  <span className="text-amber-500">✦</span>
+                  <span className={`flex-1 ${textColor}`}>{idea.text}</span>
+                  <button onClick={() => setIdeas(ideas.filter(i => i.id !== idea.id))}
+                    className="opacity-0 group-hover:opacity-100 text-red-500">×</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function SettingsViewGeneric({ settings, setSettings, theme, setTheme, dark = false, embedded = false }) {
+      const bg = dark ? 'bg-stone-800' : 'bg-white';
+      const textColor = dark ? 'text-stone-100' : 'text-stone-800';
+      const mutedColor = dark ? 'text-stone-400' : 'text-stone-500';
+
+      return (
+        <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`} max-w-xl mx-auto space-y-8`}>
+          {/* Theme Selection */}
+          <div>
+            <h3 className={`font-semibold mb-4 ${textColor}`}>Choose Your Atmosphere</h3>
+            <div className="grid grid-cols-5 gap-3">
+              {Object.values(THEMES).map(t => (
+                <button key={t.id} onClick={() => setTheme(t.id)}
+                  className={`p-4 rounded-xl text-center transition-all hover:scale-105 ${
+                    theme === t.id
+                      ? 'bg-amber-500 text-white shadow-lg'
+                      : dark ? 'bg-stone-700 text-stone-200' : 'bg-stone-100 text-stone-700'
+                  }`}>
+                  <div className="text-2xl mb-2">{t.icon}</div>
+                  <div className="text-xs font-medium">{t.name}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Goal Settings */}
+          <div>
+            <h3 className={`font-semibold mb-4 ${textColor}`}>Writing Goals</h3>
+            <div className="space-y-4">
+              <div>
+                <label className={`block text-sm mb-2 ${mutedColor}`}>Goal Type</label>
+                <div className="flex gap-2">
+                  {['words', 'time'].map(type => (
+                    <button key={type} onClick={() => setSettings({ ...settings, goalType: type })}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                        settings.goalType === type
+                          ? 'bg-amber-500 text-white'
+                          : dark ? 'bg-stone-700 text-stone-200' : 'bg-stone-100 text-stone-700'
+                      }`}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className={`block text-sm mb-2 ${mutedColor}`}>
+                  Daily {settings.goalType === 'words' ? 'Word' : 'Time'} Goal
+                </label>
+                <div className="flex items-center gap-4">
+                  <input type="number"
+                    value={settings.goalType === 'words' ? settings.wordGoal : settings.timeGoal}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 0;
+                      if (settings.goalType === 'words') setSettings({ ...settings, wordGoal: val });
+                      else setSettings({ ...settings, timeGoal: val });
+                    }}
+                    className={`w-24 px-3 py-2 rounded-lg focus:outline-none ${dark ? 'bg-stone-700 text-stone-100' : 'bg-stone-50 text-stone-800'}`} />
+                  <div className="flex gap-2">
+                    {(settings.goalType === 'words' ? [250, 500, 750, 1000] : [15, 25, 30, 45]).map(n => (
+                      <button key={n} onClick={() => {
+                        if (settings.goalType === 'words') setSettings({ ...settings, wordGoal: n });
+                        else setSettings({ ...settings, timeGoal: n });
+                      }}
+                        className={`px-3 py-1 rounded text-sm ${
+                          (settings.goalType === 'words' ? settings.wordGoal : settings.timeGoal) === n
+                            ? 'bg-amber-500 text-white' : `${dark ? 'bg-stone-700 text-stone-300' : 'bg-stone-100 text-stone-600'}`
+                        }`}>
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Data */}
+          <div>
+            <h3 className={`font-semibold mb-4 ${textColor}`}>Data Management</h3>
+            <div className="flex gap-4">
+              <button onClick={() => {
+                const data = { theme, settings, sessions: JSON.parse(localStorage.getItem('writingSessions') || '[]'), ideas: JSON.parse(localStorage.getItem('writingIdeas') || '[]'), texts: JSON.parse(localStorage.getItem('writingTexts') || '[]') };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+                a.download = `writing-backup-${new Date().toISOString().split('T')[0]}.json`; a.click();
+              }} className={`px-4 py-2 rounded-lg ${dark ? 'bg-stone-700 text-stone-200' : 'bg-stone-100 text-stone-700'}`}>
+                Export Data
+              </button>
+              <button onClick={() => {
+                const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
+                input.onchange = (e) => {
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    try {
+                      const data = JSON.parse(ev.target.result);
+                      if (data.theme) localStorage.setItem('writingTheme', JSON.stringify(data.theme));
+                      if (data.settings) localStorage.setItem('writingSettings', JSON.stringify(data.settings));
+                      if (data.sessions) localStorage.setItem('writingSessions', JSON.stringify(data.sessions));
+                      if (data.ideas) localStorage.setItem('writingIdeas', JSON.stringify(data.ideas));
+                      if (data.texts) localStorage.setItem('writingTexts', JSON.stringify(data.texts));
+                      window.location.reload();
+                    } catch { alert('Invalid file'); }
+                  };
+                  reader.readAsText(e.target.files[0]);
+                };
+                input.click();
+              }} className={`px-4 py-2 rounded-lg ${dark ? 'bg-stone-700 text-stone-200' : 'bg-stone-100 text-stone-700'}`}>
+                Import Data
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<WritingApp />);
+  </script>
+</body>
+</html>

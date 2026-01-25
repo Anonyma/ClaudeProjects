@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Challenge - Design Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .card:hover .preview { transform: scale(1.02); }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+
+  <div class="max-w-6xl mx-auto">
+
+    <header class="text-center mb-12">
+      <div class="inline-block px-4 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-sm mb-4">
+        Design Lab
+      </div>
+      <h1 class="text-4xl font-bold mb-3">Writing Challenge Redesign</h1>
+      <p class="text-slate-400 max-w-xl mx-auto">
+        Five warm & cozy design directions to replace the sterile, generic feel. Each takes a different approach to making writing feel inviting.
+      </p>
+    </header>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Variant 1: Greenhouse -->
+      <a href="variant-1-greenhouse.html" class="card group block bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-700 hover:border-emerald-500/50 transition-all">
+        <div class="preview transition-transform h-48 bg-gradient-to-br from-emerald-50 to-amber-50 flex items-center justify-center">
+          <div class="text-6xl">🌱</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-lg">Greenhouse</h3>
+            <span class="text-xs px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded-full">Nature</span>
+          </div>
+          <p class="text-sm text-slate-400">Botanical warmth with soft greens, plant growth metaphors, and an organic feel. Words grow like plants.</p>
+        </div>
+      </a>
+
+      <!-- Variant 2: Fireside -->
+      <a href="variant-2-fireside.html" class="card group block bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-700 hover:border-amber-500/50 transition-all">
+        <div class="preview transition-transform h-48 bg-gradient-to-b from-slate-800 to-amber-900/50 flex items-center justify-center">
+          <div class="text-6xl">🕯️</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-lg">Fireside</h3>
+            <span class="text-xs px-2 py-1 bg-amber-500/20 text-amber-300 rounded-full">Intimate</span>
+          </div>
+          <p class="text-sm text-slate-400">Evening writing by candlelight. Dark mode with warm amber glows. Cozy and contemplative.</p>
+        </div>
+      </a>
+
+      <!-- Variant 3: Coffee Shop -->
+      <a href="variant-3-coffeeshop.html" class="card group block bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-700 hover:border-orange-500/50 transition-all">
+        <div class="preview transition-transform h-48 bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
+          <div class="text-6xl">☕</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-lg">Coffee Shop</h3>
+            <span class="text-xs px-2 py-1 bg-orange-500/20 text-orange-300 rounded-full">Playful</span>
+          </div>
+          <p class="text-sm text-slate-400">Notebook on a café table. Sticky notes, handwritten touches, espresso browns. Productive yet relaxed.</p>
+        </div>
+      </a>
+
+      <!-- Variant 4: Personal Journal -->
+      <a href="variant-4-journal.html" class="card group block bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-700 hover:border-pink-500/50 transition-all">
+        <div class="preview transition-transform h-48 bg-gradient-to-br from-rose-50 via-amber-50 to-green-50 flex items-center justify-center">
+          <div class="text-6xl">📓</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-lg">Personal Journal</h3>
+            <span class="text-xs px-2 py-1 bg-pink-500/20 text-pink-300 rounded-full">Whimsical</span>
+          </div>
+          <p class="text-sm text-slate-400">Washi tape, stickers, mood tags. A bullet journal aesthetic with soft pinks and sages. Diary-like intimacy.</p>
+        </div>
+      </a>
+
+      <!-- Variant 5: Mountain Cabin -->
+      <a href="variant-5-cabin.html" class="card group block bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-700 hover:border-green-500/50 transition-all">
+        <div class="preview transition-transform h-48 bg-gradient-to-b from-sky-200 to-green-800 flex items-center justify-center">
+          <div class="text-6xl">🏔</div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-lg">Mountain Cabin</h3>
+            <span class="text-xs px-2 py-1 bg-green-500/20 text-green-300 rounded-full">Retreat</span>
+          </div>
+          <p class="text-sm text-slate-400">A writer's retreat in the mountains. Wood textures, pine greens, wool whites. Solitude and focus.</p>
+        </div>
+      </a>
+
+    </div>
+
+    <footer class="text-center mt-12 text-slate-500 text-sm">
+      <p>Click any card to view the full design • Each variant shows the main writing view</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>

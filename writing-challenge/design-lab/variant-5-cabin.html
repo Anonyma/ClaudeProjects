@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Challenge - Mountain Cabin Variant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Josefin+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pine: { 50: '#f5f8f5', 100: '#e8efe8', 200: '#c5d9c5', 400: '#6d9b6d', 600: '#3d6b3d', 800: '#294529' },
+            stone: { 50: '#f8f7f6', 100: '#f0eeec', 200: '#ddd9d4', 400: '#a39b8f', 600: '#6d635a', 800: '#4a433c' },
+            wool: '#f5f2ed',
+            birch: '#e8e4dd',
+            hearth: '#c67b4e'
+          },
+          fontFamily: {
+            elegant: ['Cormorant Garamond', 'serif'],
+            clean: ['Josefin Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Josefin Sans', sans-serif;
+      background: #294529;
+    }
+    .wood-grain {
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 25 8, 50 10 T 100 10' stroke='%234a433c' stroke-width='0.5' fill='none' opacity='0.1'/%3E%3C/svg%3E");
+    }
+    .window-view {
+      background: linear-gradient(180deg, #87ceeb 0%, #b8d4e3 40%, #6d9b6d 40%, #3d6b3d 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+  <!-- Cabin frame -->
+  <div class="w-full max-w-5xl">
+
+    <!-- Roof -->
+    <div class="flex justify-center mb-[-2px]">
+      <div class="w-0 h-0 border-l-[200px] border-r-[200px] border-b-[40px] border-l-transparent border-r-transparent border-b-stone-600"></div>
+    </div>
+
+    <!-- Cabin interior -->
+    <div class="bg-stone-100 wood-grain rounded-lg shadow-2xl overflow-hidden">
+
+      <!-- Header beam -->
+      <div class="bg-stone-600 px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">🏔</span>
+          <h1 class="font-elegant text-2xl text-wool italic">Writing Cabin</h1>
+        </div>
+        <nav class="flex gap-1 bg-stone-800/30 rounded-full p-1">
+          <button class="px-4 py-1.5 bg-wool text-stone-800 rounded-full text-sm font-medium">Write</button>
+          <button class="px-4 py-1.5 text-wool/80 text-sm hover:text-wool transition-colors">Archive</button>
+          <button class="px-4 py-1.5 text-wool/80 text-sm hover:text-wool transition-colors">Progress</button>
+          <button class="px-4 py-1.5 text-wool/80 text-sm hover:text-wool transition-colors">Notes</button>
+        </nav>
+      </div>
+
+      <!-- Main content area -->
+      <div class="p-8 grid grid-cols-12 gap-8">
+
+        <!-- Left: Decorative window -->
+        <div class="col-span-3 space-y-6">
+          <!-- Window -->
+          <div class="aspect-square rounded-lg overflow-hidden border-8 border-stone-400 shadow-inner">
+            <div class="w-full h-full window-view relative">
+              <div class="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-1 p-0.5">
+                <div class="border border-stone-400/50"></div>
+                <div class="border border-stone-400/50"></div>
+                <div class="border border-stone-400/50"></div>
+                <div class="border border-stone-400/50"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cozy stats -->
+          <div class="bg-birch rounded-lg p-4 space-y-4">
+            <div class="text-center">
+              <div class="font-elegant text-4xl text-stone-800">12:45</div>
+              <div class="text-xs text-stone-500 uppercase tracking-widest">time spent</div>
+            </div>
+
+            <div class="h-px bg-stone-200"></div>
+
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <div class="font-elegant text-2xl text-pine-600">27</div>
+                <div class="text-xs text-stone-400">wpm</div>
+              </div>
+              <div>
+                <div class="font-elegant text-2xl text-hearth">68%</div>
+                <div class="text-xs text-stone-400">to goal</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="flex gap-2">
+            <button class="flex-1 py-3 bg-stone-200 text-stone-600 rounded-lg hover:bg-stone-300 transition-colors flex items-center justify-center gap-2">
+              <span>⏸</span>
+            </button>
+            <button class="flex-1 py-3 bg-hearth text-white rounded-lg hover:bg-hearth/90 transition-colors flex items-center justify-center gap-2">
+              <span>⏹</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Writing desk -->
+        <div class="col-span-9">
+          <div class="bg-wool rounded-xl shadow-lg p-8 h-full">
+
+            <!-- Desk lamp decoration -->
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-stone-200">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">💡</span>
+                <div>
+                  <div class="font-elegant text-2xl text-stone-800">342 <span class="text-stone-400 text-lg">words</span></div>
+                  <div class="text-sm text-pine-600">158 more until your goal</div>
+                </div>
+              </div>
+
+              <!-- Progress bar styled as a bookmark -->
+              <div class="w-32">
+                <div class="h-2 bg-pine-100 rounded-full overflow-hidden">
+                  <div class="h-full bg-pine-400 rounded-full transition-all" style="width: 68%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Writing area - like paper on desk -->
+            <div class="bg-white rounded-lg shadow-inner p-6 border border-stone-100">
+              <textarea
+                class="w-full h-[350px] resize-none bg-transparent text-stone-800 text-lg leading-loose focus:outline-none placeholder:text-stone-300 font-elegant"
+                placeholder="The cabin is quiet. Begin your story..."
+              >The cabin sits at the edge of the world, or so it feels. Below, the valley stretches out in endless shades of green, and above, the peaks touch clouds that have never known the noise of cities.
+
+I came here to write. To find the words that got lost somewhere in the rush of daily life. Up here, there's only the wind, the scratch of pen on paper, and the occasional call of a hawk circling overhead.
+
+They say solitude is necessary for creation. I'm beginning to understand why.
+
+In the quiet, thoughts have room to unfold. Ideas that seemed tangled down below slowly untangle themselves here, like mountain streams finding their natural course.</textarea>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer with fireplace vibe -->
+      <div class="bg-stone-200 px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-4 text-sm text-stone-500">
+          <span class="flex items-center gap-1">🪵 Cozy mode on</span>
+          <span>•</span>
+          <span>1,842 characters</span>
+        </div>
+        <button class="px-6 py-2 bg-pine-600 text-white rounded-lg font-medium hover:bg-pine-700 transition-colors shadow-md">
+          Save & Head Out
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Smoke from chimney -->
+    <div class="flex justify-end mr-20 mt-2">
+      <div class="text-stone-400 text-xl animate-pulse">〰️</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

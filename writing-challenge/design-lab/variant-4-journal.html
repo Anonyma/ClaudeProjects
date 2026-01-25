@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Challenge - Personal Journal Variant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: { 50: '#fdf4f5', 100: '#fce8ea', 200: '#f9d0d6', 400: '#f299a7', 600: '#db5a6e', 800: '#a3364a' },
+            sage: { 50: '#f6f7f4', 100: '#eef0e8', 200: '#dce2d0', 400: '#a8b896', 600: '#6b7f5a', 800: '#4a5a3d' },
+            sand: { 50: '#fdfcfa', 100: '#faf6f0', 200: '#f2e9dd', 400: '#d4c4aa', 600: '#a69474', 800: '#6d5d47' },
+            ink: '#4a4543'
+          },
+          fontFamily: {
+            handwriting: ['Kalam', 'cursive'],
+            serif: ['Lora', 'serif'],
+            body: ['Quicksand', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #fdf4f5 0%, #faf6f0 50%, #f6f7f4 100%);
+    }
+    .washi-tape {
+      background: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.3) 5px, rgba(255,255,255,0.3) 10px);
+    }
+    .paper-texture {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+  </style>
+</head>
+<body class="min-h-screen py-8">
+  <div class="max-w-3xl mx-auto px-6">
+
+    <!-- Header - like a journal cover -->
+    <header class="text-center mb-8">
+      <div class="inline-flex items-center gap-3 bg-sand-100 px-6 py-3 rounded-full">
+        <span class="text-2xl">📓</span>
+        <h1 class="font-handwriting text-2xl text-ink">My Writing Journal</h1>
+      </div>
+      <nav class="flex justify-center gap-4 mt-4 text-sm">
+        <button class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full font-medium">Today</button>
+        <button class="px-3 py-1 text-sage-600 hover:bg-sage-50 rounded-full">Pages</button>
+        <button class="px-3 py-1 text-sage-600 hover:bg-sage-50 rounded-full">Memories</button>
+        <button class="px-3 py-1 text-sage-600 hover:bg-sage-50 rounded-full">Dreams</button>
+      </nav>
+    </header>
+
+    <!-- Main Journal Page -->
+    <main class="relative">
+      <!-- Washi tape decorations -->
+      <div class="absolute -top-3 left-12 w-24 h-6 bg-rose-200 washi-tape rounded-sm rotate-[-3deg] z-10"></div>
+      <div class="absolute -top-2 right-16 w-20 h-6 bg-sage-200 washi-tape rounded-sm rotate-[2deg] z-10"></div>
+
+      <div class="bg-sand-50 paper-texture rounded-lg shadow-xl p-8 pt-10">
+
+        <!-- Date header -->
+        <div class="flex items-center justify-between mb-6 pb-4 border-b-2 border-dashed border-sand-200">
+          <div>
+            <div class="font-handwriting text-3xl text-ink">January 25, 2026</div>
+            <div class="text-sm text-sand-600 mt-1">Saturday morning ☀️</div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="text-right">
+              <div class="font-handwriting text-2xl text-sage-600">342</div>
+              <div class="text-xs text-sand-400">words so far</div>
+            </div>
+            <div class="w-12 h-12 rounded-full border-4 border-sage-200 flex items-center justify-center">
+              <div class="w-8 h-8 rounded-full bg-sage-400" style="background: conic-gradient(#6b7f5a 68%, #dce2d0 68%)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mood/weather stickers row -->
+        <div class="flex gap-3 mb-6">
+          <span class="px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-sm border border-rose-200">feeling: hopeful ✨</span>
+          <span class="px-3 py-1 bg-sage-50 text-sage-600 rounded-full text-sm border border-sage-200">weather: sunny 🌤</span>
+          <span class="px-3 py-1 bg-sand-100 text-sand-600 rounded-full text-sm border border-sand-200">mood: creative 🎨</span>
+        </div>
+
+        <!-- Writing area -->
+        <div class="relative">
+          <div class="absolute left-0 top-0 bottom-0 w-px bg-rose-200 ml-6"></div>
+          <textarea
+            class="w-full h-[380px] pl-10 pr-4 resize-none bg-transparent text-ink text-lg focus:outline-none placeholder:text-sand-300 font-serif leading-loose"
+            style="background-image: linear-gradient(transparent 31px, #f2e9dd 31px); background-size: 100% 32px;"
+            placeholder="Dear journal..."
+          >Dear journal,
+
+I woke up early today, before the alarm. There's something magical about those quiet morning hours when the world hasn't quite started yet.
+
+I've been thinking about what it means to show up for yourself. Every day, sitting down to write, even when the words don't come easily. It's a practice, like tending a garden.
+
+Some days the sentences bloom effortlessly. Other days, I'm just planting seeds, trusting they'll grow in time.
+
+Today feels like a planting day, and that's okay.</textarea>
+        </div>
+
+        <!-- Bottom decorations -->
+        <div class="flex items-center justify-between mt-6 pt-4 border-t border-dashed border-sand-200">
+          <div class="flex items-center gap-4 text-sm text-sand-500">
+            <span class="flex items-center gap-1">⏱ 12:45</span>
+            <span>•</span>
+            <span>27 wpm</span>
+            <span>•</span>
+            <span>158 words to goal</span>
+          </div>
+
+          <div class="flex gap-2">
+            <button class="px-4 py-2 text-sand-600 hover:bg-sand-100 rounded-lg transition-colors flex items-center gap-2">
+              <span>⏸</span> Pause
+            </button>
+            <button class="px-5 py-2 bg-rose-400 text-white rounded-lg font-medium shadow-md hover:bg-rose-500 transition-colors flex items-center gap-2">
+              <span>✓</span> Done for now
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sticker decorations -->
+      <div class="absolute -bottom-4 -left-4 text-4xl transform rotate-[-15deg]">🌸</div>
+      <div class="absolute -bottom-2 right-8 text-3xl transform rotate-[10deg]">🍃</div>
+
+    </main>
+
+    <!-- Motivational footer -->
+    <div class="text-center mt-8 font-handwriting text-xl text-sage-600">
+      "Every day is a new page" 📖
+    </div>
+
+  </div>
+</body>
+</html>
