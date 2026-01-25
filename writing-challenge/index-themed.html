@@ -276,7 +276,7 @@
                 <h1 className="font-display text-2xl text-amber-50 italic">The Fireside</h1>
               </div>
               <nav className="flex gap-6 text-sm">
-                {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
                   <button key={v} onClick={() => setCurrentView(v)}
                     className={`${currentView === v ? 'text-amber-400 border-b-2 border-amber-400' : 'text-stone-400 hover:text-amber-100'} pb-1 transition-colors`}>
                     {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -359,7 +359,7 @@
               )
             )}
 
-            {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} dark />}
+            {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} dark />}
             {currentView === 'stats' && <StatsViewGeneric sessions={sessions} dark />}
             {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} dark />}
             {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} dark />}
@@ -382,7 +382,7 @@
                 <h1 className="font-display text-2xl text-green-900">Writing Garden</h1>
               </div>
               <nav className="flex gap-1 bg-white/60 backdrop-blur rounded-full p-1 shadow-sm">
-                {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
                   <button key={v} onClick={() => setCurrentView(v)}
                     className={`px-4 py-2 rounded-full text-sm font-medium ${currentView === v ? 'bg-green-100 text-green-800' : 'text-green-700 hover:bg-green-50'}`}>
                     {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -462,7 +462,7 @@
               )
             )}
 
-            {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
+            {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
             {currentView === 'stats' && <StatsViewGeneric sessions={sessions} />}
             {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} />}
             {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} />}
@@ -486,7 +486,7 @@
                 </div>
               </div>
               <nav className="flex gap-2">
-                {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
                   <button key={v} onClick={() => setCurrentView(v)}
                     className={`px-4 py-2 rounded-full text-sm font-semibold ${currentView === v ? 'bg-amber-300 text-amber-900' : 'text-amber-200 hover:text-amber-50'}`}>
                     {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -590,7 +590,7 @@
               )
             )}
 
-            {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
+            {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
             {currentView === 'stats' && <StatsViewGeneric sessions={sessions} />}
             {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} />}
             {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} />}
@@ -612,10 +612,10 @@
                 <h1 className="font-display text-2xl text-stone-700">My Writing Journal</h1>
               </div>
               <nav className="flex justify-center gap-4 mt-4 text-sm">
-                {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
                   <button key={v} onClick={() => setCurrentView(v)}
                     className={`px-3 py-1 rounded-full font-medium ${currentView === v ? 'bg-rose-100 text-rose-800' : 'text-green-700 hover:bg-green-50'}`}>
-                    {v === 'write' ? 'Today' : v.charAt(0).toUpperCase() + v.slice(1)}
+                    {v === 'write' ? 'Today' : v === 'library' ? 'Pages' : v.charAt(0).toUpperCase() + v.slice(1)}
                   </button>
                 ))}
               </nav>
@@ -707,7 +707,7 @@
               </div>
             )}
 
-            {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
+            {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
             {currentView === 'stats' && <StatsViewGeneric sessions={sessions} />}
             {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} />}
             {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} />}
@@ -759,7 +759,7 @@
                     <h1 className="font-display text-xl text-amber-50 tracking-wide">Prairie Cabin</h1>
                   </div>
                   <nav className="flex gap-1 bg-amber-900/40 rounded px-2 py-1">
-                    {['write', 'texts', 'stats', 'ideas', 'settings'].map(v => (
+                    {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
                       <button key={v} onClick={() => setCurrentView(v)}
                         className={`px-3 py-1 text-sm font-medium transition-colors ${currentView === v ? 'bg-amber-100 text-amber-900' : 'text-amber-100 hover:text-white'}`}>
                         {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -879,7 +879,7 @@
                         )
                       )}
 
-                      {currentView === 'texts' && <TextsViewGeneric texts={texts} setTexts={setTexts} embedded />}
+                      {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} embedded />}
                       {currentView === 'stats' && <StatsViewGeneric sessions={sessions} embedded />}
                       {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} embedded />}
                       {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} embedded />}
@@ -920,25 +920,32 @@
     }
 
     // ============ GENERIC VIEWS (shared across themes) ============
+    const formatDateTime = (d) => new Date(d).toLocaleDateString('en-US', {
+      weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+    });
+
     function TextsViewGeneric({ texts, setTexts, dark = false, embedded = false }) {
       const [selectedText, setSelectedText] = useState(null);
       const bg = dark ? 'bg-stone-800' : 'bg-white';
       const textColor = dark ? 'text-stone-100' : 'text-stone-800';
       const mutedColor = dark ? 'text-stone-400' : 'text-stone-500';
+      const hoverBg = dark ? 'hover:bg-stone-700' : 'hover:bg-stone-100';
+      const selectedBg = dark ? 'bg-stone-700' : 'bg-stone-100';
+      const borderColor = dark ? 'border-stone-600' : 'border-stone-200';
 
       return (
         <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`} grid md:grid-cols-3 gap-6`}>
-          <div className={`md:col-span-1 ${embedded ? '' : 'border-r border-stone-200'} pr-4`}>
-            <h3 className={`font-semibold mb-4 ${textColor}`}>Your Writings ({texts.length})</h3>
+          <div className={`md:col-span-1 ${embedded ? '' : `border-r ${borderColor}`} pr-4`}>
+            <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Your Writings ({texts.length})</h3>
             {texts.length === 0 ? (
-              <p className={mutedColor}>No texts saved yet.</p>
+              <p className={mutedColor}>No writings saved yet.</p>
             ) : (
               <div className="space-y-2 max-h-[50vh] overflow-y-auto">
                 {[...texts].reverse().map(text => (
                   <div key={text.id} onClick={() => setSelectedText(text)}
-                    className={`p-3 rounded-lg cursor-pointer transition-all hover:bg-stone-100 ${selectedText?.id === text.id ? 'bg-stone-100 border-l-4 border-amber-400' : ''}`}>
+                    className={`p-3 rounded-lg cursor-pointer transition-all ${hoverBg} ${selectedText?.id === text.id ? `${selectedBg} border-l-4 border-amber-400` : ''}`}>
                     <div className={`font-medium truncate ${textColor}`}>{text.title}</div>
-                    <div className={`text-xs mt-1 ${mutedColor}`}>{formatDate(text.createdAt)} • {text.wordCount} words</div>
+                    <div className={`text-xs mt-1 ${mutedColor}`}>{formatDateTime(text.createdAt)} • {text.wordCount} words</div>
                   </div>
                 ))}
               </div>
@@ -947,10 +954,10 @@
           <div className="md:col-span-2">
             {selectedText ? (
               <>
-                <div className="flex justify-between items-start mb-4 pb-4 border-b border-stone-200">
+                <div className={`flex justify-between items-start mb-4 pb-4 border-b ${borderColor}`}>
                   <div>
-                    <h2 className={`text-2xl font-semibold ${textColor}`}>{selectedText.title}</h2>
-                    <div className={`text-sm ${mutedColor}`}>{formatDate(selectedText.createdAt)} • {selectedText.wordCount} words • {formatDuration(selectedText.duration)}</div>
+                    <h2 className={`font-display text-2xl font-semibold ${textColor}`}>{selectedText.title}</h2>
+                    <div className={`text-sm ${mutedColor}`}>{formatDateTime(selectedText.createdAt)} • {selectedText.wordCount} words • {formatDuration(selectedText.duration)}</div>
                   </div>
                   <button onClick={() => { if(confirm('Delete?')) { setTexts(texts.filter(t => t.id !== selectedText.id)); setSelectedText(null); }}}
                     className="text-red-500 text-sm hover:underline">Delete</button>
@@ -994,7 +1001,7 @@
               </div>
             ))}
           </div>
-          <h3 className={`font-semibold mb-4 ${textColor}`}>Recent Sessions</h3>
+          <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Recent Sessions</h3>
           {sessions.length === 0 ? (
             <p className={mutedColor}>No sessions yet.</p>
           ) : (
@@ -1029,7 +1036,7 @@
 
       return (
         <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`} max-w-xl mx-auto`}>
-          <h3 className={`font-semibold mb-4 ${textColor}`}>✦ Writing Ideas</h3>
+          <h3 className={`font-display font-semibold mb-4 ${textColor}`}>✦ Writing Ideas</h3>
           <div className="flex gap-2 mb-6">
             <input type="text" value={newIdea} onChange={(e) => setNewIdea(e.target.value)}
               placeholder="Capture a thought..."
@@ -1064,7 +1071,7 @@
         <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`} max-w-xl mx-auto space-y-8`}>
           {/* Theme Selection */}
           <div>
-            <h3 className={`font-semibold mb-4 ${textColor}`}>Choose Your Atmosphere</h3>
+            <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Choose Your Atmosphere</h3>
             <div className="grid grid-cols-5 gap-3">
               {Object.values(THEMES).map(t => (
                 <button key={t.id} onClick={() => setTheme(t.id)}
@@ -1082,7 +1089,7 @@
 
           {/* Goal Settings */}
           <div>
-            <h3 className={`font-semibold mb-4 ${textColor}`}>Writing Goals</h3>
+            <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Writing Goals</h3>
             <div className="space-y-4">
               <div>
                 <label className={`block text-sm mb-2 ${mutedColor}`}>Goal Type</label>
@@ -1134,7 +1141,7 @@
 
           {/* Data */}
           <div>
-            <h3 className={`font-semibold mb-4 ${textColor}`}>Data Management</h3>
+            <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Data Management</h3>
             <div className="flex gap-4">
               <button onClick={() => {
                 const data = { theme, settings, sessions: JSON.parse(localStorage.getItem('writingSessions') || '[]'), ideas: JSON.parse(localStorage.getItem('writingIdeas') || '[]'), texts: JSON.parse(localStorage.getItem('writingTexts') || '[]') };
