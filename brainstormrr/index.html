@@ -400,12 +400,12 @@
     const SCHEMA_VERSION = 1;
 
     const DEFAULT_CATEGORIES = {
-      writing: { name: 'Writing', color: '#a78bfa', position: { x: -350, y: -200 } },
-      admin: { name: 'Admin', color: '#60a5fa', position: { x: 350, y: -200 } },
-      study: { name: 'Study', color: '#4ade80', position: { x: -350, y: 200 } },
-      work: { name: 'Work', color: '#fb923c', position: { x: 350, y: 200 } },
-      personal: { name: 'Personal', color: '#fbbf24', position: { x: 0, y: -300 } },
-      health: { name: 'Health', color: '#2dd4bf', position: { x: 0, y: 300 } },
+      writing: { name: 'Writing', color: '#a78bfa', position: { x: -350, y: -200 }, radius: 140 },
+      admin: { name: 'Admin', color: '#60a5fa', position: { x: 350, y: -200 }, radius: 140 },
+      study: { name: 'Study', color: '#4ade80', position: { x: -350, y: 200 }, radius: 140 },
+      work: { name: 'Work', color: '#fb923c', position: { x: 350, y: 200 }, radius: 140 },
+      personal: { name: 'Personal', color: '#fbbf24', position: { x: 0, y: -300 }, radius: 140 },
+      health: { name: 'Health', color: '#2dd4bf', position: { x: 0, y: 300 }, radius: 140 },
     };
 
     const IMPORTANCE_SIZES = { 1: 60, 2: 85, 3: 115 };
@@ -591,6 +591,7 @@
     // ============ CATEGORY ZONE ============
 
     const CategoryZone = ({ catKey, category, dimmed, onMouseDown, isDragging }) => {
+      const radius = category.radius || 140;
       return (
         <g
           transform={`translate(${category.position.x}, ${category.position.y})`}
@@ -600,7 +601,7 @@
         >
           {/* Zone circle */}
           <circle
-            r="140"
+            r={radius}
             fill={category.color}
             fillOpacity={isDragging ? 0.2 : 0.12}
             stroke={category.color}
@@ -609,7 +610,7 @@
           />
           {/* Label */}
           <text
-            y="160"
+            y={radius + 20}
             textAnchor="middle"
             fill={category.color}
             fontSize="14"
@@ -620,7 +621,7 @@
           </text>
           {/* Drag hint */}
           <text
-            y="-120"
+            y={-radius + 20}
             textAnchor="middle"
             fill={category.color}
             fontSize="11"
@@ -849,6 +850,14 @@
         }));
       };
 
+      const handleRadiusChange = (key, value) => {
+        const numValue = Math.max(50, Math.min(300, parseInt(value) || 140));
+        setEditedCategories(c => ({
+          ...c,
+          [key]: { ...c[key], radius: numValue }
+        }));
+      };
+
       const handleDelete = (key) => {
         const nodeCount = nodes.filter(n => n.category === key).length;
         if (nodeCount > 0) {
@@ -888,7 +897,8 @@
           [newKey]: {
             name: 'New Category',
             color: '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'),
-            position: { x: newX, y: newY }
+            position: { x: newX, y: newY },
+            radius: 140
           }
         }));
       };
@@ -937,6 +947,16 @@
                         value={cat.position.y}
                         onChange={e => handlePositionChange(key, 'y', e.target.value)}
                         step="50"
+                      />
+                      <span className="position-label">Size:</span>
+                      <input
+                        type="number"
+                        value={cat.radius || 140}
+                        onChange={e => handleRadiusChange(key, e.target.value)}
+                        step="10"
+                        min="50"
+                        max="300"
+                        title="Zone radius (50-300)"
                       />
                     </div>
                     <button
@@ -1165,13 +1185,46 @@
         }
       }, [camera.zoom]);
 
-      const handleMouseUp = useCallback(() => {
+      const handleMouseUp = useCallback((e) => {
         if (dragRef.current) {
-          setNodes(n => n.map(node =>
-            dragRef.current.ids.has(node.id)
-              ? { ...node, layoutMode: 'manual' }
-              : node
-          ));
+          // Check if task was dropped into a category zone
+          const rect = svgRef.current?.getBoundingClientRect();
+          if (rect) {
+            const mouseX = (e.clientX - rect.width / 2 - camera.x) / camera.zoom;
+            const mouseY = (e.clientY - rect.height / 2 - camera.y) / camera.zoom;
+
+            // Find if we're inside any category zone
+            let droppedCategory = null;
+            for (const [catKey, cat] of Object.entries(categories)) {
+              const dist = Math.sqrt(
+                Math.pow(mouseX - cat.position.x, 2) +
+                Math.pow(mouseY - cat.position.y, 2)
+              );
+              const radius = cat.radius || 140;
+              if (dist < radius) {
+                droppedCategory = catKey;
+                break;
+              }
+            }
+
+            // Update nodes: set layoutMode to manual, and optionally assign category
+            setNodes(n => n.map(node => {
+              if (dragRef.current.ids.has(node.id)) {
+                const updates = { layoutMode: 'manual' };
+                if (droppedCategory) {
+                  updates.category = droppedCategory;
+                }
+                return { ...node, ...updates };
+              }
+              return node;
+            }));
+          } else {
+            setNodes(n => n.map(node =>
+              dragRef.current.ids.has(node.id)
+                ? { ...node, layoutMode: 'manual' }
+                : node
+            ));
+          }
         }
         if (categoryDragRef.current) {
           setDraggingCategory(null);
@@ -1179,11 +1232,13 @@
         panRef.current = null;
         dragRef.current = null;
         categoryDragRef.current = null;
-      }, []);
+      }, [camera, categories]);
 
       const handleCategoryMouseDown = (e, catKey) => {
-        if (e.button !== 0) return;
+        // Don't start category drag if we're already dragging a task
+        if (e.button !== 0 || dragRef.current) return;
         const cat = categories[catKey];
+        if (!cat) return; // Safety check
         categoryDragRef.current = {
           key: catKey,
           startX: e.clientX,
