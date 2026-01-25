@@ -487,70 +487,36 @@
                     </div>
                 </div>
 
-                <!-- Top Processes -->
+                <!-- Apps Aggregated - Main View -->
                 <div class="section">
                     <div class="section-title">
-                        Top Processes by CPU
+                        Resource Usage by App (all processes combined)
                     </div>
                     <table class="process-table">
                         <thead>
                             <tr>
-                                <th style="width: 50%">Process</th>
-                                <th>CPU</th>
+                                <th>App</th>
                                 <th>Memory</th>
+                                <th>CPU</th>
+                                <th style="text-align: right">Processes</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${data.processes.top_by_cpu.map(proc => {
-                                const name = getProcessName(proc.name);
-                                const cpuClass = getUsageClass(proc.cpu_pct);
-                                const memClass = getUsageClass(proc.memory_pct);
+                            ${(data.processes.apps_aggregated || []).map(app => {
+                                const cpuClass = getUsageClass(app.cpu_pct);
+                                const memClass = app.memory_pct > 30 ? 'high' : app.memory_pct > 15 ? 'medium' : 'low';
                                 return `
                                     <tr>
-                                        <td class="process-name">${name}</td>
+                                        <td class="process-name">${app.name}</td>
                                         <td>
-                                            <div class="usage-bar"><div class="usage-bar-fill ${cpuClass}" style="width: ${Math.min(proc.cpu_pct, 100)}%"></div></div>
-                                            <span class="usage-value">${proc.cpu_pct.toFixed(1)}%</span>
+                                            <div class="usage-bar" style="width: 80px"><div class="usage-bar-fill ${memClass}" style="width: ${Math.min(app.memory_pct * 2, 100)}%"></div></div>
+                                            <span class="usage-value">${app.memory_pct.toFixed(1)}%</span>
                                         </td>
                                         <td>
-                                            <div class="usage-bar"><div class="usage-bar-fill ${memClass}" style="width: ${Math.min(proc.memory_pct * 10, 100)}%"></div></div>
-                                            <span class="usage-value">${proc.memory_pct.toFixed(1)}%</span>
+                                            <div class="usage-bar" style="width: 80px"><div class="usage-bar-fill ${cpuClass}" style="width: ${Math.min(app.cpu_pct, 100)}%"></div></div>
+                                            <span class="usage-value">${app.cpu_pct.toFixed(0)}%</span>
                                         </td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="section">
-                    <div class="section-title">
-                        Top Processes by Memory
-                    </div>
-                    <table class="process-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 50%">Process</th>
-                                <th>Memory</th>
-                                <th>CPU</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.processes.top_by_memory.slice(0, 5).map(proc => {
-                                const name = getProcessName(proc.name);
-                                const cpuClass = getUsageClass(proc.cpu_pct);
-                                const memClass = getUsageClass(proc.memory_pct);
-                                return `
-                                    <tr>
-                                        <td class="process-name">${name}</td>
-                                        <td>
-                                            <div class="usage-bar"><div class="usage-bar-fill ${memClass}" style="width: ${Math.min(proc.memory_pct * 10, 100)}%"></div></div>
-                                            <span class="usage-value">${proc.memory_pct.toFixed(1)}%</span>
-                                        </td>
-                                        <td>
-                                            <div class="usage-bar"><div class="usage-bar-fill ${cpuClass}" style="width: ${Math.min(proc.cpu_pct, 100)}%"></div></div>
-                                            <span class="usage-value">${proc.cpu_pct.toFixed(1)}%</span>
-                                        </td>
+                                        <td style="text-align: right; color: #8b949e">${app.process_count}</td>
                                     </tr>
                                 `;
                             }).join('')}

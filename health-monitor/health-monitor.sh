@@ -114,6 +114,28 @@ done < <(ps aux | sort -k3 -rn | head -6 | tail -5)
 # Count processes
 PROC_COUNT=$(ps aux | wc -l | tr -d ' ')
 
+# Get aggregated stats by app using awk (works on old bash)
+APPS_AGGREGATED=$(ps aux | tail -n +2 | while read -r line; do
+    cpu_pct=$(echo "$line" | awk '{print $3}')
+    mem_pct=$(echo "$line" | awk '{print $4}')
+    cmd=$(echo "$line" | awk '{for(i=11;i<=NF;i++) printf "%s ", $i; print ""}' | xargs)
+    name=$(get_app_name "$cmd")
+    # Skip invalid names (must start with letter, at least 2 chars)
+    [[ "$name" =~ ^[a-zA-Z][a-zA-Z0-9_-]+$ ]] && echo "$name|$cpu_pct|$mem_pct"
+done | awk -F'|' '
+{
+    cpu[$1] += $2
+    mem[$1] += $3
+    count[$1]++
+}
+END {
+    for (name in mem) {
+        printf "%.1f|%s|%.1f|%d\n", mem[name], name, cpu[name], count[name]
+    }
+}' | sort -t'|' -k1 -rn | head -10 | while IFS='|' read -r mem name cpu count; do
+    printf '{"name":"%s","memory_pct":%s,"cpu_pct":%s,"process_count":%s},' "$name" "$mem" "$cpu" "$count"
+done | sed 's/,$//')
+
 # Get disk usage for main volume
 DISK_USAGE=$(df -h / | tail -1 | awk '{print $5}' | tr -d '%')
 DISK_AVAILABLE=$(df -h / | tail -1 | awk '{print $4}')
@@ -146,7 +168,8 @@ CURRENT_METRICS=$(cat <<EOF
   "processes": {
     "count": $PROC_COUNT,
     "top_by_memory": [$TOP_PROCS_MEM],
-    "top_by_cpu": [$TOP_PROCS_CPU]
+    "top_by_cpu": [$TOP_PROCS_CPU],
+    "apps_aggregated": [$APPS_AGGREGATED]
   },
   "alerts": []
 }
