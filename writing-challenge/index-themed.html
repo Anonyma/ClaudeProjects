@@ -474,22 +474,28 @@
     // ============ COFFEE SHOP THEME ============
     function CoffeeShopTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
       return (
-        <div className="theme-coffeeshop">
+        <div className="theme-coffeeshop min-h-screen bg-amber-100/50">
           <div className="max-w-5xl mx-auto p-6">
             {/* Header - Cafe Menu Board */}
-            <header className="flex justify-between items-center mb-8 py-4 px-6 bg-amber-900 rounded-2xl">
+            <header className="flex justify-between items-center mb-6 py-4 px-6 bg-amber-800 rounded-2xl">
               <div className="flex items-center gap-3">
-                <span className="text-3xl">☕</span>
+                <span className="text-2xl">☕</span>
                 <div>
-                  <h1 className="font-display text-3xl text-amber-50">The Writer's Café</h1>
-                  <p className="text-amber-300/60 text-xs">where words meet warmth</p>
+                  <h1 className="font-display text-2xl text-amber-50 italic">The Writer's Café</h1>
+                  <p className="text-amber-400/80 text-xs">where words meet warmth</p>
                 </div>
               </div>
-              <nav className="flex gap-2">
-                {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
-                  <button key={v} onClick={() => setCurrentView(v)}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold ${currentView === v ? 'bg-amber-300 text-amber-900' : 'text-amber-200 hover:text-amber-50'}`}>
-                    {v.charAt(0).toUpperCase() + v.slice(1)}
+              <nav className="flex gap-6">
+                {[
+                  { id: 'write', label: 'Write' },
+                  { id: 'library', label: 'Drafts' },
+                  { id: 'stats', label: 'Stats' },
+                  { id: 'ideas', label: 'Ideas' },
+                  { id: 'settings', label: 'Settings' }
+                ].map(v => (
+                  <button key={v.id} onClick={() => setCurrentView(v.id)}
+                    className={`px-4 py-2 text-sm font-medium transition-colors ${currentView === v.id ? 'bg-amber-600/50 text-amber-50 rounded-lg' : 'text-amber-300 hover:text-amber-100'}`}>
+                    {v.label}
                   </button>
                 ))}
               </nav>
@@ -497,96 +503,101 @@
 
             {currentView === 'write' && (
               !isWriting ? (
-                <div className="bg-gradient-to-br from-amber-100 to-orange-50 rounded-3xl p-12 text-center shadow-xl">
-                  <div className="font-display text-3xl text-amber-800 mb-8">
+                <div className="bg-amber-50 rounded-3xl p-12 text-center shadow-lg">
+                  <div className="font-display text-2xl italic text-amber-700 mb-8">
                     "The first draft is just you telling yourself the story."
                   </div>
                   <button onClick={startSession}
-                    className="px-8 py-4 bg-amber-900 text-amber-50 rounded-xl font-semibold shadow-lg hover:bg-amber-800 transition-colors">
+                    className="px-8 py-4 bg-amber-800 text-amber-50 rounded-xl font-semibold shadow-lg hover:bg-amber-900 transition-colors">
                     Start Writing Session
                   </button>
                 </div>
               ) : (
-                <div className="relative">
-                  {/* Table background */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-200 to-amber-100 rounded-3xl -z-10"></div>
-
-                  <div className="p-8 grid grid-cols-12 gap-6">
-                    {/* Notebook */}
-                    <div className="col-span-8 bg-amber-50 rounded-xl shadow-lg overflow-hidden">
-                      <div className="flex">
-                        {/* Spiral binding */}
-                        <div className="w-8 bg-amber-200 flex flex-col items-center py-4 gap-4">
-                          {[...Array(10)].map((_, i) => (
-                            <div key={i} className="w-3 h-3 rounded-full bg-amber-700"></div>
-                          ))}
-                        </div>
-                        <div className="flex-1 notebook-lines p-6 pt-8">
-                          <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
-                            disabled={isPaused}
-                            className="w-full h-[420px] resize-none bg-transparent text-amber-900 text-lg leading-8 focus:outline-none font-writing"
-                            placeholder="Start with your morning thoughts..." />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Side Panel */}
-                    <div className="col-span-4 space-y-4">
-                      {/* Sticky Note Progress */}
-                      <div className="sticky-note rounded-lg p-4">
-                        <div className="font-display text-2xl text-amber-900 mb-2">Today's Order ☕</div>
-                        <div className="space-y-2 text-sm text-amber-800">
-                          <div className="flex justify-between">
-                            <span>Words written</span>
-                            <span className="font-semibold">{stats.words} / {settings.wordGoal}</span>
+                <>
+                  {/* Main content card */}
+                  <div className="bg-amber-50 rounded-3xl shadow-lg p-6">
+                    <div className="grid grid-cols-12 gap-6">
+                      {/* Notebook */}
+                      <div className="col-span-8 bg-white rounded-xl shadow-inner overflow-hidden border border-amber-200">
+                        <div className="flex h-full">
+                          {/* Spiral binding */}
+                          <div className="w-10 bg-amber-100 flex flex-col items-center py-6 gap-6 border-r border-amber-200">
+                            {[...Array(12)].map((_, i) => (
+                              <div key={i} className="w-4 h-4 rounded-full bg-amber-300 border-2 border-amber-400"></div>
+                            ))}
                           </div>
-                          <div className="h-2 bg-amber-200 rounded-full overflow-hidden">
-                            <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${Math.min(progress * 100, 100)}%` }}></div>
-                          </div>
-                          <div className="text-xs text-amber-600 text-right">{Math.round(progress * 100)}% there!</div>
-                        </div>
-                      </div>
-
-                      {/* Timer */}
-                      <div className="bg-amber-50 rounded-xl p-6 shadow-md coffee-ring">
-                        <div className="text-center">
-                          <div className="text-4xl font-display text-amber-900">{formatTime(elapsedSeconds)}</div>
-                          <div className="text-xs text-amber-500 uppercase tracking-wider mt-1">brewing time</div>
-                        </div>
-                        <div className="flex justify-center gap-3 mt-4">
-                          <button onClick={() => setIsPaused(!isPaused)}
-                            className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center hover:bg-amber-200">
-                            {isPaused ? '▶' : '⏸'}
-                          </button>
-                          <button onClick={endSession}
-                            className="w-10 h-10 rounded-full bg-amber-700 text-amber-50 flex items-center justify-center hover:bg-amber-800">
-                            ⏹
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Quick Stats */}
-                      <div className="bg-amber-50 rounded-xl p-4 shadow-md">
-                        <div className="font-display text-xl text-amber-900 mb-3">This Session</div>
-                        <div className="grid grid-cols-2 gap-3 text-center">
-                          <div className="bg-amber-100/50 rounded-lg p-3">
-                            <div className="font-semibold text-amber-900">{stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0}</div>
-                            <div className="text-xs text-amber-600">wpm</div>
-                          </div>
-                          <div className="bg-amber-100/50 rounded-lg p-3">
-                            <div className="font-semibold text-amber-900">{stats.characters}</div>
-                            <div className="text-xs text-amber-600">chars</div>
+                          <div className="flex-1 notebook-lines p-6">
+                            <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                              disabled={isPaused}
+                              className="w-full h-[450px] resize-none bg-transparent text-amber-900 text-lg leading-8 focus:outline-none font-writing"
+                              placeholder="The coffee shop was quiet this morning, just the way I like it..." />
                           </div>
                         </div>
                       </div>
 
-                      <button onClick={endSession}
-                        className="w-full py-4 bg-amber-900 text-amber-50 rounded-xl font-semibold shadow-lg hover:bg-amber-800">
-                        Close Tab & Save
-                      </button>
+                      {/* Side Panel */}
+                      <div className="col-span-4 space-y-4">
+                        {/* Sticky Note Progress */}
+                        <div className="sticky-note rounded-lg p-5">
+                          <div className="font-display text-xl text-amber-900 mb-3">Today's Order ☕</div>
+                          <div className="space-y-2 text-sm text-amber-800">
+                            <div className="flex justify-between items-center">
+                              <span>Words written</span>
+                              <span className="font-semibold">{stats.words} / {settings.wordGoal}</span>
+                            </div>
+                            <div className="h-2 bg-amber-300/50 rounded-full overflow-hidden">
+                              <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${Math.min(progress * 100, 100)}%` }}></div>
+                            </div>
+                            <div className="text-xs text-amber-600 text-right">{Math.round(progress * 100)}% there!</div>
+                          </div>
+                        </div>
+
+                        {/* Timer - circular design */}
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+                          <div className="text-center">
+                            <div className="text-4xl text-amber-800 font-light tracking-wide">{formatTime(elapsedSeconds)}</div>
+                            <div className="text-xs text-amber-400 uppercase tracking-widest mt-2">brewing time</div>
+                          </div>
+                          <div className="flex justify-center gap-3 mt-5">
+                            <button onClick={() => setIsPaused(!isPaused)}
+                              className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center hover:bg-amber-100 border border-amber-200">
+                              {isPaused ? '▶' : '⏸'}
+                            </button>
+                            <button onClick={endSession}
+                              className="w-12 h-12 rounded-full bg-amber-800 text-amber-50 flex items-center justify-center hover:bg-amber-900">
+                              ⏹
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Quick Stats */}
+                        <div className="bg-white rounded-2xl p-5 shadow-sm border border-amber-100">
+                          <div className="font-display text-lg italic text-amber-800 mb-3">This Session</div>
+                          <div className="grid grid-cols-2 gap-4 text-center">
+                            <div>
+                              <div className="text-2xl font-light text-amber-800">{stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0}</div>
+                              <div className="text-xs text-amber-400">wpm</div>
+                            </div>
+                            <div>
+                              <div className="text-2xl font-light text-amber-800">{stats.characters > 1000 ? `${(stats.characters/1000).toFixed(1)}k` : stats.characters}</div>
+                              <div className="text-xs text-amber-400">chars</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button onClick={endSession}
+                          className="w-full py-4 bg-amber-800 text-amber-50 rounded-xl font-medium shadow-lg hover:bg-amber-900 transition-colors">
+                          <span>Close Tab </span><span className="font-display italic">& Save</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
+
+                  {/* Footer ambient text */}
+                  <div className="text-center mt-6 text-sm text-amber-400">
+                    Background noise: soft jazz • Temperature: perfect • Refills: unlimited
+                  </div>
+                </>
               )
             )}
 
