@@ -65,29 +65,51 @@ AVAILABLE_MB=$((FREE_MB + INACTIVE_MB))
 USED_MB=$((TOTAL_RAM_MB - AVAILABLE_MB))
 MEMORY_PCT=$(echo "$USED_MB $TOTAL_RAM_MB" | awk '{printf "%.1f", ($1/$2)*100}')
 
-# Get top 10 processes by memory
-TOP_PROCS_MEM=$(ps aux | sort -k4 -rn | head -11 | tail -10 | awk '{
-    mem_pct = $4
-    cpu_pct = $3
-    pid = $2
-    # Get command name (last field, may have spaces)
-    cmd = $11
-    for(i=12; i<=NF; i++) cmd = cmd " " $i
-    # Truncate long commands
-    if(length(cmd) > 40) cmd = substr(cmd, 1, 40) "..."
-    printf "{\"pid\":%s,\"name\":\"%s\",\"memory_pct\":%.1f,\"cpu_pct\":%.1f},", pid, cmd, mem_pct, cpu_pct
-}' | sed 's/,$//')
+# Helper function to get clean app name from process path
+get_app_name() {
+    local cmd="$1"
+    local name=""
 
-# Get top 5 by CPU
-TOP_PROCS_CPU=$(ps aux | sort -k3 -rn | head -6 | tail -5 | awk '{
-    mem_pct = $4
-    cpu_pct = $3
-    pid = $2
-    cmd = $11
-    for(i=12; i<=NF; i++) cmd = cmd " " $i
-    if(length(cmd) > 40) cmd = substr(cmd, 1, 40) "..."
-    printf "{\"pid\":%s,\"name\":\"%s\",\"memory_pct\":%.1f,\"cpu_pct\":%.1f},", pid, cmd, mem_pct, cpu_pct
-}' | sed 's/,$//')
+    # Try to extract .app name
+    if [[ "$cmd" == *".app"* ]]; then
+        name=$(echo "$cmd" | sed -n 's/.*\/\([^/]*\.app\).*/\1/p' | sed 's/\.app$//')
+    fi
+
+    # Fallback to basename
+    if [[ -z "$name" ]]; then
+        name=$(basename "$cmd" 2>/dev/null | cut -d' ' -f1)
+    fi
+
+    # Clean up common suffixes
+    name="${name% Helper*}"
+    name="${name% Agent*}"
+
+    echo "$name"
+}
+
+# Get top 10 processes by memory with clean names
+TOP_PROCS_MEM=""
+while IFS= read -r line; do
+    pid=$(echo "$line" | awk '{print $2}')
+    cpu_pct=$(echo "$line" | awk '{print $3}')
+    mem_pct=$(echo "$line" | awk '{print $4}')
+    cmd=$(echo "$line" | awk '{for(i=11;i<=NF;i++) printf "%s ", $i; print ""}' | xargs)
+    name=$(get_app_name "$cmd")
+    [[ -n "$TOP_PROCS_MEM" ]] && TOP_PROCS_MEM+=","
+    TOP_PROCS_MEM+="{\"pid\":$pid,\"name\":\"$name\",\"memory_pct\":$mem_pct,\"cpu_pct\":$cpu_pct}"
+done < <(ps aux | sort -k4 -rn | head -11 | tail -10)
+
+# Get top 5 by CPU with clean names
+TOP_PROCS_CPU=""
+while IFS= read -r line; do
+    pid=$(echo "$line" | awk '{print $2}')
+    cpu_pct=$(echo "$line" | awk '{print $3}')
+    mem_pct=$(echo "$line" | awk '{print $4}')
+    cmd=$(echo "$line" | awk '{for(i=11;i<=NF;i++) printf "%s ", $i; print ""}' | xargs)
+    name=$(get_app_name "$cmd")
+    [[ -n "$TOP_PROCS_CPU" ]] && TOP_PROCS_CPU+=","
+    TOP_PROCS_CPU+="{\"pid\":$pid,\"name\":\"$name\",\"memory_pct\":$mem_pct,\"cpu_pct\":$cpu_pct}"
+done < <(ps aux | sort -k3 -rn | head -6 | tail -5)
 
 # Count processes
 PROC_COUNT=$(ps aux | wc -l | tr -d ' ')
