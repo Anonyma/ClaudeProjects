@@ -13,8 +13,11 @@ ALERTS_LOG="$DATA_DIR/alerts.log"
 PUSHOVER_TOKEN="aabpf2tb7a9p3tnhdw3vzfb6hyxcna"
 PUSHOVER_USER="u8wpte8pqd3snj75s2n8gxqdzq94xj"
 
-# Thresholds
-LOAD_CRITICAL=10
+# Get CPU count for relative thresholds
+CPU_COUNT=$(sysctl -n hw.ncpu)
+
+# Thresholds (load is relative to CPU count)
+LOAD_CRITICAL=$(echo "$CPU_COUNT * 1.5" | bc)  # 1.5x CPU cores = critical (12 for 8-core)
 RAM_CRITICAL_MB=200
 APP_MEMORY_CRITICAL_PCT=50
 LOAD_ANOMALY_MULTIPLIER=2
@@ -98,10 +101,12 @@ CURRENT_METRICS=$(cat <<EOF
 {
   "timestamp": "$TIMESTAMP",
   "timestamp_epoch": $TIMESTAMP_EPOCH,
+  "cpu_count": $CPU_COUNT,
   "load": {
     "avg_1m": $LOAD_1,
     "avg_5m": $LOAD_5,
-    "avg_15m": $LOAD_15
+    "avg_15m": $LOAD_15,
+    "critical_threshold": $LOAD_CRITICAL
   },
   "memory": {
     "total_mb": $TOTAL_RAM_MB,
@@ -150,9 +155,13 @@ send_notification() {
 # Alert collection
 ALERTS=()
 
+# Get top CPU process for context in alerts
+TOP_CPU_PROC=$(ps aux | sort -k3 -rn | head -2 | tail -1 | awk '{print $11}' | xargs basename 2>/dev/null || echo "unknown")
+TOP_CPU_PCT=$(ps aux | sort -k3 -rn | head -2 | tail -1 | awk '{print $3}')
+
 # Check critical thresholds
 if (( $(echo "$LOAD_1 > $LOAD_CRITICAL" | bc -l) )); then
-    send_pushover "High Load Alert" "Load average ($LOAD_1) exceeds threshold ($LOAD_CRITICAL)"
+    send_pushover "System Overloaded" "Load $LOAD_1 (you have $CPU_COUNT cores, threshold $LOAD_CRITICAL). Top: $TOP_CPU_PROC at ${TOP_CPU_PCT}%"
     ALERTS+=("\"critical: load_high\"")
 fi
 
