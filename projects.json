@@ -1,7 +1,7 @@
 {
   "meta": {
     "description": "Index of all projects created with Claude CLI",
-    "lastUpdated": "2026-01-24",
+    "lastUpdated": "2026-01-26",
     "localPath": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/projects.json",
     "supabaseTable": "claude_projects",
     "dashboardUrl": "https://project-command-center.netlify.app"
@@ -483,6 +483,46 @@
       "files": [
         "index.html"
       ]
+    },
+    {
+      "id": "session-architect",
+      "name": "Session Architect v2.0",
+      "description": "Chrome extension for managing browser sessions with Tab Groups integration. Features atomic storage with crash recovery, auto-backup, tab suspender detection for 10+ extensions, and a Preact-based UI. Full TypeScript rewrite with reliable persistence.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/session-architect",
+      "type": "chrome-extension",
+      "created": "2026-01-26",
+      "tags": [
+        "chrome-extension",
+        "typescript",
+        "preact",
+        "tab-management",
+        "session-manager",
+        "tab-groups",
+        "productivity"
+      ],
+      "status": "active",
+      "access": {
+        "method": "chrome-extension",
+        "url": null,
+        "instructions": "Load unpacked extension: chrome://extensions → Developer mode → Load unpacked → select dist/ folder",
+        "hosted": null,
+        "requiresServer": false
+      },
+      "github": {
+        "repo": null
+      },
+      "files": [
+        "manifest.json",
+        "src/background/service-worker.ts",
+        "src/storage/atomic-storage.ts",
+        "src/chrome/tab-groups-manager.ts",
+        "src/ui/popup.tsx",
+        "dist/"
+      ],
+      "devCommands": {
+        "build": "npm run build",
+        "dev": "npm run dev"
+      }
     }
   ],
   "sharedResources": {
