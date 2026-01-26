@@ -252,6 +252,47 @@ Or deploy to Netlify for remote access.
 
 ---
 
+## CRITICAL: Log Work Sessions
+
+**After completing work on any project, log what you did in `_worklog/`.**
+
+This helps future agents pick up where you left off.
+
+### Quick Log Command:
+```bash
+cat >> /Users/z/Desktop/PersonalProjects/ClaudeProjects/_worklog/sessions/$(date +%Y-%m-%d)-PROJECTNAME.md << 'EOF'
+## Session: [TIME]
+**Status:** [completed/blocked/in-progress]
+
+### Done:
+- What you did
+
+### Issues:
+- Known problems
+
+### Next:
+- What's left
+
+### Files:
+- Changed files
+
+### Access:
+- URLs/commands to test
+EOF
+```
+
+### Also update LATEST.md:
+```bash
+echo "| $(date +%Y-%m-%d) | project-name | status | one-line summary |" >> /Users/z/Desktop/PersonalProjects/ClaudeProjects/_worklog/LATEST.md
+```
+
+### View recent activity:
+```bash
+cat /Users/z/Desktop/PersonalProjects/ClaudeProjects/_worklog/LATEST.md
+```
+
+---
+
 ## Repository Structure
 
 This is a personal projects repository containing independent project directories:
