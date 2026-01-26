@@ -73,6 +73,34 @@
             flex-wrap: wrap;
         }
 
+        .filter-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-right: 8px;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .cat-filter-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .cat-filter-btn:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+        .cat-filter-btn.active { background: var(--accent-purple); color: white; border-color: var(--accent-purple); }
+
         .filter-btn {
             padding: 6px 14px;
             border-radius: 20px;
@@ -86,6 +114,51 @@
 
         .filter-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
         .filter-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+
+        /* Category Section Headers */
+        .category-section {
+            margin-bottom: 32px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .category-icon {
+            font-size: 24px;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .category-count {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .category-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-left: auto;
+        }
+
+        .category-header.utilities { border-bottom-color: var(--accent-yellow); }
+        .category-header.apps { border-bottom-color: var(--accent-blue); }
+        .category-header.upskilling { border-bottom-color: var(--accent-green); }
+        .category-header.infrastructure { border-bottom-color: var(--accent-purple); }
+        .category-header.bots { border-bottom-color: var(--accent-orange); }
+        .category-header.archived { border-bottom-color: var(--text-secondary); }
 
         .projects-grid {
             display: grid;
@@ -126,6 +199,21 @@
             background: var(--bg-tertiary);
             color: var(--text-secondary);
         }
+
+        .category-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .category-badge.cat-utilities { background: rgba(210, 153, 34, 0.2); color: var(--accent-yellow); }
+        .category-badge.cat-apps { background: rgba(88, 166, 255, 0.2); color: var(--accent-blue); }
+        .category-badge.cat-upskilling { background: rgba(63, 185, 80, 0.2); color: var(--accent-green); }
+        .category-badge.cat-infrastructure { background: rgba(163, 113, 247, 0.2); color: var(--accent-purple); }
+        .category-badge.cat-bots { background: rgba(219, 109, 40, 0.2); color: var(--accent-orange); }
+        .category-badge.cat-archived { background: rgba(139, 148, 158, 0.2); color: var(--text-secondary); }
+        .category-badge.cat-unknown { background: var(--bg-tertiary); color: var(--text-secondary); }
 
         .status-badge {
             display: inline-flex;
@@ -793,7 +881,7 @@
                     </button>
                 </div>
                 <div class="action-group">
-                    <div class="action-group-title">Quick Open</div>
+                    <div class="action-group-title">Quick Open - Apps</div>
                     <button class="action-btn" onclick="openLink('study-app')">
                         <span class="action-icon">📚</span>
                         <span>NotebookLM Study Hub</span>
@@ -802,9 +890,24 @@
                         <span class="action-icon">🎨</span>
                         <span>Art Discovery</span>
                     </button>
-                    <button class="action-btn" onclick="copyPath('projects-json')">
-                        <span class="action-icon">📋</span>
-                        <span>Copy projects.json Path</span>
+                    <button class="action-btn" onclick="openLink('writing-app')">
+                        <span class="action-icon">✍️</span>
+                        <span>Writing Challenge</span>
+                    </button>
+                </div>
+                <div class="action-group">
+                    <div class="action-group-title">Quick Open - Utilities</div>
+                    <button class="action-btn" onclick="openLink('agent-hub')">
+                        <span class="action-icon">🔧</span>
+                        <span>Agent Hub Dashboard</span>
+                    </button>
+                    <button class="action-btn" onclick="openLink('health-monitor')">
+                        <span class="action-icon">💓</span>
+                        <span>System Health Monitor</span>
+                    </button>
+                    <button class="action-btn" onclick="openLink('tab-dashboard')">
+                        <span class="action-icon">🧠</span>
+                        <span>Tab Memory Dashboard</span>
                     </button>
                 </div>
                 <div class="action-group">
@@ -828,14 +931,27 @@
         <!-- Toast notification -->
         <div class="toast" id="toast"></div>
 
+        <!-- Category Filters -->
+        <div class="category-filters">
+            <span class="filter-label">Category:</span>
+            <button class="cat-filter-btn active" data-category="all">All</button>
+            <button class="cat-filter-btn" data-category="utilities">Utilities</button>
+            <button class="cat-filter-btn" data-category="apps">Apps</button>
+            <button class="cat-filter-btn" data-category="upskilling">Upskilling</button>
+            <button class="cat-filter-btn" data-category="infrastructure">Infrastructure</button>
+            <button class="cat-filter-btn" data-category="bots">Bots</button>
+            <button class="cat-filter-btn" data-category="archived">Archived</button>
+        </div>
+
+        <!-- Status Filters -->
         <div class="filters">
+            <span class="filter-label">Status:</span>
             <button class="filter-btn active" data-filter="all">All</button>
             <button class="filter-btn" data-filter="active">Active</button>
             <button class="filter-btn" data-filter="needs-fix">Needs Fix</button>
             <button class="filter-btn" data-filter="wip">WIP</button>
             <button class="filter-btn" data-filter="deployed">Deployed</button>
             <button class="filter-btn" data-filter="local">Local Only</button>
-            <button class="filter-btn" data-filter="archived">Archived</button>
         </div>
 
         <div class="projects-grid" id="projectsGrid">

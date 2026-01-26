@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     var SUPABASE_URL = 'https://ydwjzlikslebokuxzwco.supabase.co';
@@ -7,17 +7,29 @@
     var supabaseClient;
     var allProjects = [];
     var currentFilter = 'all';
+    var currentCategory = 'all';
+
+    var CATEGORY_INFO = {
+        utilities: { icon: '🔧', title: 'Utilities', description: 'System monitoring & admin tools' },
+        apps: { icon: '📱', title: 'Apps', description: 'Full-featured standalone applications' },
+        upskilling: { icon: '📚', title: 'Upskilling', description: 'Learning & personal development tools' },
+        infrastructure: { icon: '🏗️', title: 'Infrastructure', description: 'Meta/tracking/productivity tools' },
+        bots: { icon: '🤖', title: 'Bots', description: 'Telegram/chat bots' },
+        archived: { icon: '📦', title: 'Archived', description: 'Deprecated/archived projects' }
+    };
+
+    var CATEGORY_ORDER = ['utilities', 'apps', 'upskilling', 'infrastructure', 'bots', 'archived'];
 
     var AUTO_REFRESH_INTERVAL = 60000; // Refresh every 60 seconds
 
     function init() {
-        waitForSupabase(function() {
+        waitForSupabase(function () {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             loadProjects();
             setupEventListeners();
 
             // Auto-refresh every minute
-            setInterval(function() {
+            setInterval(function () {
                 loadProjects();
                 updateLastRefresh();
             }, AUTO_REFRESH_INTERVAL);
@@ -27,9 +39,7 @@
     }
 
     function updateLastRefresh() {
-        var now = new Date();
-        var timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        document.getElementById('lastSync').textContent = 'Last refresh: ' + timeStr + ' (auto-refreshes)';
+        // This is just the browser refresh time, lastSync shows data age
     }
 
     function waitForSupabase(callback) {
@@ -55,7 +65,7 @@
             .from('claude_projects')
             .select('*')
             .order('updated_at', { ascending: false })
-            .then(function(result) {
+            .then(function (result) {
                 if (result.error) {
                     console.error('Error loading projects:', result.error);
                     document.getElementById('projectsGrid').innerHTML =
@@ -69,10 +79,10 @@
     }
 
     function updateStats() {
-        var activeCount = allProjects.filter(function(p) { return p.status === 'active'; }).length;
-        var needsFixCount = allProjects.filter(function(p) { return p.status === 'needs-fix'; }).length;
-        var wipCount = allProjects.filter(function(p) { return p.status === 'wip'; }).length;
-        var archivedCount = allProjects.filter(function(p) {
+        var activeCount = allProjects.filter(function (p) { return p.status === 'active'; }).length;
+        var needsFixCount = allProjects.filter(function (p) { return p.status === 'needs-fix'; }).length;
+        var wipCount = allProjects.filter(function (p) { return p.status === 'wip'; }).length;
+        var archivedCount = allProjects.filter(function (p) {
             return p.status === 'archived' || p.status === 'deprecated';
         }).length;
 
@@ -81,7 +91,7 @@
         document.getElementById('activeProjects').textContent = activeCount;
         document.getElementById('needsFixProjects').textContent = needsFixCount;
         document.getElementById('deployedProjects').textContent =
-            allProjects.filter(function(p) { return p.hosted_url; }).length;
+            allProjects.filter(function (p) { return p.hosted_url; }).length;
 
         // Health panel
         document.getElementById('healthyCount').textContent = activeCount;
@@ -90,11 +100,11 @@
         document.getElementById('archivedCount').textContent = archivedCount;
 
         // Attention list (projects needing attention)
-        var attentionProjects = allProjects.filter(function(p) {
+        var attentionProjects = allProjects.filter(function (p) {
             return p.status === 'needs-fix' || p.status === 'wip';
         });
         var attentionHtml = '';
-        attentionProjects.forEach(function(p) {
+        attentionProjects.forEach(function (p) {
             var isWip = p.status === 'wip';
             var reason = p.last_error || p.status_note || (isWip ? 'Work in progress' : 'Needs attention');
 
@@ -153,32 +163,49 @@
 
         // Claude sessions
         var sessionsHtml = '';
-        var projectsWithSessions = allProjects.filter(function(p) { return p.claude_session_url; });
+        var projectsWithSessions = allProjects.filter(function (p) { return p.claude_session_url; });
         if (projectsWithSessions.length === 0) {
             sessionsHtml = '<span class="no-sessions">No saved sessions</span>';
         } else {
-            projectsWithSessions.forEach(function(p) {
+            projectsWithSessions.forEach(function (p) {
                 sessionsHtml += '<a href="' + p.claude_session_url + '" target="_blank" class="session-btn">' +
                     '🔗 ' + p.name + '</a>';
             });
         }
         document.getElementById('sessionsList').innerHTML = sessionsHtml;
 
-        // Last sync (placeholder - would need to read from log file which browser can't do)
-        document.getElementById('lastSync').textContent = 'Syncs at 9 AM & 6 PM daily';
+        // Last sync - show the latest updated_at from projects
+        var latestUpdate = null;
+        allProjects.forEach(function (p) {
+            var d = new Date(p.updated_at || p.created);
+            if (!latestUpdate || d > latestUpdate) latestUpdate = d;
+        });
+
+        if (latestUpdate) {
+            var timeStr = latestUpdate.toLocaleDateString() + ' ' + latestUpdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('lastSync').textContent = 'Data as of: ' + timeStr;
+        } else {
+            document.getElementById('lastSync').textContent = 'Sync status unknown';
+        }
     }
 
     function renderProjects() {
         var grid = document.getElementById('projectsGrid');
         var filtered = allProjects;
 
+        // Apply category filter first
+        if (currentCategory !== 'all') {
+            filtered = filtered.filter(function (p) { return p.category === currentCategory; });
+        }
+
+        // Then apply status filter
         if (currentFilter !== 'all') {
             if (currentFilter === 'deployed') {
-                filtered = allProjects.filter(function(p) { return p.hosted_url; });
+                filtered = filtered.filter(function (p) { return p.hosted_url; });
             } else if (currentFilter === 'local') {
-                filtered = allProjects.filter(function(p) { return p.path && !p.hosted_url; });
+                filtered = filtered.filter(function (p) { return p.path && !p.hosted_url; });
             } else {
-                filtered = allProjects.filter(function(p) { return p.status === currentFilter; });
+                filtered = filtered.filter(function (p) { return p.status === currentFilter; });
             }
         }
 
@@ -187,7 +214,43 @@
             return;
         }
 
-        grid.innerHTML = filtered.map(renderProjectCard).join('');
+        // If showing all categories, group by category
+        if (currentCategory === 'all') {
+            var html = '';
+            CATEGORY_ORDER.forEach(function (cat) {
+                var catProjects = filtered.filter(function (p) { return p.category === cat; });
+                if (catProjects.length > 0) {
+                    var info = CATEGORY_INFO[cat] || { icon: '📁', title: cat, description: '' };
+                    html += '<div class="category-section">' +
+                        '<div class="category-header ' + cat + '">' +
+                        '<span class="category-icon">' + info.icon + '</span>' +
+                        '<span class="category-title">' + info.title + '</span>' +
+                        '<span class="category-count">' + catProjects.length + ' project' + (catProjects.length !== 1 ? 's' : '') + '</span>' +
+                        '<span class="category-description">' + info.description + '</span>' +
+                        '</div>' +
+                        '<div class="projects-grid">' + catProjects.map(renderProjectCard).join('') + '</div>' +
+                        '</div>';
+                }
+            });
+
+            // Handle projects without a category
+            var uncategorized = filtered.filter(function (p) { return !p.category || !CATEGORY_INFO[p.category]; });
+            if (uncategorized.length > 0) {
+                html += '<div class="category-section">' +
+                    '<div class="category-header">' +
+                    '<span class="category-icon">❓</span>' +
+                    '<span class="category-title">Uncategorized</span>' +
+                    '<span class="category-count">' + uncategorized.length + ' project' + (uncategorized.length !== 1 ? 's' : '') + '</span>' +
+                    '</div>' +
+                    '<div class="projects-grid">' + uncategorized.map(renderProjectCard).join('') + '</div>' +
+                    '</div>';
+            }
+
+            grid.innerHTML = html;
+        } else {
+            // Single category view - no section headers needed
+            grid.innerHTML = filtered.map(renderProjectCard).join('');
+        }
     }
 
     function renderProjectCard(p) {
@@ -231,15 +294,19 @@
                 '<span class="platform-icon">▶️</span><span>Copy Run Command</span></button>';
         }
 
-        var tags = (p.tags || []).map(function(t) { return '<span class="tag">' + t + '</span>'; }).join('');
+        var tags = (p.tags || []).map(function (t) { return '<span class="tag">' + t + '</span>'; }).join('');
         var sessionLink = p.claude_session_url ?
             '<a href="' + p.claude_session_url + '" target="_blank" class="session-link">📎 Claude Session</a>' : '';
         var updatedAt = p.updated_at ? new Date(p.updated_at).toLocaleDateString() : 'Unknown';
 
+        // Category badge
+        var catInfo = CATEGORY_INFO[p.category] || { icon: '📁', title: p.category || 'Unknown' };
+        var categoryBadge = '<span class="category-badge cat-' + (p.category || 'unknown') + '">' + catInfo.icon + ' ' + catInfo.title + '</span>';
+
         return '<div class="project-card">' +
             '<div class="project-header"><div>' +
             '<div class="project-name">' + p.name + '</div>' +
-            '<span class="project-type">' + (p.type || 'project') + '</span></div>' +
+            '<div style="display: flex; gap: 6px; margin-top: 4px;">' + categoryBadge + '<span class="project-type">' + (p.type || 'project') + '</span></div></div>' +
             '<div class="header-badges">' + accessBadge + '<span class="status-badge ' + statusClass + '">' + statusLabel + '</span></div></div>' +
             '<div class="project-description">' + (p.description || 'No description') + '</div>' +
             '<div class="project-tags">' + tags + '</div>' +
@@ -250,17 +317,29 @@
     }
 
     function setupEventListeners() {
+        // Category filter buttons
+        var catBtns = document.querySelectorAll('.cat-filter-btn');
+        catBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                catBtns.forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                renderProjects();
+            });
+        });
+
+        // Status filter buttons
         var filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                filterBtns.forEach(function(b) { b.classList.remove('active'); });
+        filterBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                filterBtns.forEach(function (b) { b.classList.remove('active'); });
                 btn.classList.add('active');
                 currentFilter = btn.dataset.filter;
                 renderProjects();
             });
         });
 
-        document.getElementById('addProjectForm').addEventListener('submit', function(e) {
+        document.getElementById('addProjectForm').addEventListener('submit', function (e) {
             e.preventDefault();
             var formData = new FormData(e.target);
             var project = {
@@ -273,11 +352,11 @@
                 path: formData.get('path') || null,
                 github_repo: formData.get('github_repo') || null,
                 claude_session_url: formData.get('claude_session_url') || null,
-                tags: formData.get('tags') ? formData.get('tags').split(',').map(function(t) { return t.trim(); }) : [],
+                tags: formData.get('tags') ? formData.get('tags').split(',').map(function (t) { return t.trim(); }) : [],
                 created: new Date().toISOString().split('T')[0]
             };
 
-            supabaseClient.from('claude_projects').upsert(project, { onConflict: 'id' }).then(function(result) {
+            supabaseClient.from('claude_projects').upsert(project, { onConflict: 'id' }).then(function (result) {
                 if (result.error) {
                     alert('Error saving project: ' + result.error.message);
                     return;
@@ -287,17 +366,17 @@
             });
         });
 
-        document.getElementById('addModal').addEventListener('click', function(e) {
+        document.getElementById('addModal').addEventListener('click', function (e) {
             if (e.target.id === 'addModal') closeAddModal();
         });
     }
 
     // Expose modal functions globally
-    window.openAddModal = function() {
+    window.openAddModal = function () {
         document.getElementById('addModal').classList.add('show');
     };
 
-    window.closeAddModal = function() {
+    window.closeAddModal = function () {
         document.getElementById('addModal').classList.remove('show');
         document.getElementById('addProjectForm').reset();
     };
@@ -320,53 +399,57 @@
         'netlify': 'https://app.netlify.com/',
         'railway': 'https://railway.com/dashboard',
         'github': 'https://github.com/Anonyma',
-        'study-app': 'https://elaborate-beignet-acdd88.netlify.app/',
-        'art-app': 'https://art-discoverer.netlify.app'
+        'study-app': 'https://notebooklmstudyhub.netlify.app/',
+        'art-app': 'https://art-discoverer.netlify.app',
+        'writing-app': 'https://writing-challenge-app.netlify.app',
+        'agent-hub': 'http://localhost:8766/dashboard.html',
+        'health-monitor': 'file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/health-monitor/dashboard.html',
+        'tab-dashboard': 'http://localhost:8877/comet-tab-dashboard.html'
     };
 
     function showToast(message) {
         var toast = document.getElementById('toast');
         toast.textContent = message;
         toast.classList.add('show');
-        setTimeout(function() {
+        setTimeout(function () {
             toast.classList.remove('show');
         }, 2500);
     }
 
-    window.copyCommand = function(cmd) {
+    window.copyCommand = function (cmd) {
         var command = COMMANDS[cmd];
         if (command) {
-            navigator.clipboard.writeText(command).then(function() {
+            navigator.clipboard.writeText(command).then(function () {
                 showToast('✓ Command copied to clipboard');
             });
         }
     };
 
-    window.copyPath = function(pathKey) {
+    window.copyPath = function (pathKey) {
         var path = PATHS[pathKey];
         if (path) {
-            navigator.clipboard.writeText(path).then(function() {
+            navigator.clipboard.writeText(path).then(function () {
                 showToast('✓ Path copied to clipboard');
             });
         }
     };
 
-    window.openLink = function(linkKey) {
+    window.openLink = function (linkKey) {
         var url = LINKS[linkKey];
         if (url) {
             window.open(url, '_blank');
         }
     };
 
-    window.toggleActions = function() {
+    window.toggleActions = function () {
         var grid = document.getElementById('actionsGrid');
         var btn = document.querySelector('.toggle-actions');
         grid.classList.toggle('collapsed');
         btn.textContent = grid.classList.contains('collapsed') ? '▶' : '▼';
     };
 
-    window.copyToClipboard = function(text) {
-        navigator.clipboard.writeText(text).then(function() {
+    window.copyToClipboard = function (text) {
+        navigator.clipboard.writeText(text).then(function () {
             showToast('✓ Copied to clipboard');
         });
     };
