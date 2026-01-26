@@ -64,6 +64,8 @@ git add -A && git commit -m "Add voice-memo-transcriber project"
 
 **At the end of EVERY response where you create, modify, or complete work on a project, ALWAYS provide the user with a way to test or access the changes.**
 
+**NO EXCEPTIONS.** Every response that touches files must end with a URL or file path the user can click/copy to verify the work. This is non-negotiable.
+
 ### What to Include:
 
 **IMPORTANT:** Prefer `http://localhost:XXXX` URLs over `file://` URLs - localhost links are clickable, file:// requires copy-paste.
