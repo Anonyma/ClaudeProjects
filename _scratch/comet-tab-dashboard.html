@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comet Tab Memory Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            padding: 20px;
+            line-height: 1.5;
+        }
+        h1 { margin-bottom: 10px; color: #58a6ff; }
+        .subtitle { color: #8b949e; margin-bottom: 20px; }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .card h3 { color: #8b949e; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; }
+        .card .value { font-size: 28px; font-weight: 600; }
+        .card .value.warning { color: #f85149; }
+        .card .value.ok { color: #3fb950; }
+        .card .value.neutral { color: #58a6ff; }
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .cat-chip {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-chip:hover { border-color: #58a6ff; }
+        .cat-chip.selected { background: #1f6feb; border-color: #1f6feb; }
+        .cat-chip .count { 
+            background: #30363d;
+            border-radius: 10px;
+            padding: 2px 8px;
+            margin-left: 5px;
+            font-size: 11px;
+        }
+        .selection-bar {
+            background: #1f6feb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .selection-bar.visible { display: flex; }
+        .selection-bar button {
+            background: #fff;
+            color: #1f6feb;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #161b22;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th {
+            text-align: left;
+            padding: 12px 15px;
+            background: #21262d;
+            color: #8b949e;
+            font-size: 12px;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 12px 15px;
+            border-top: 1px solid #21262d;
+        }
+        tr:hover { background: #1c2128; }
+        tr.suspended { opacity: 0.6; }
+        tr.selected { background: #1f6feb33; }
+        .status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .status.active { background: #f8514922; color: #f85149; }
+        .status.suspended { background: #3fb95022; color: #3fb950; }
+        .mem { font-family: monospace; color: #f0883e; }
+        .url {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #8b949e;
+            font-size: 12px;
+        }
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .title-cell { max-width: 400px; }
+        .title-cell a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        .title-cell a:hover { text-decoration: underline; }
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .filter-btn:hover { border-color: #58a6ff; }
+        .filter-btn.active { background: #1f6feb; border-color: #1f6feb; }
+    </style>
+</head>
+<body>
+    <h1>🌐 Comet Tab Memory Dashboard</h1>
+    <p class="subtitle">Generated 2026-01-26 13:54:44 • Estimates based on tab state</p>
+    
+    <div class="summary">
+        <div class="card">
+            <h3>Total Tabs</h3>
+            <div class="value neutral">44</div>
+        </div>
+        <div class="card">
+            <h3>Active Tabs</h3>
+            <div class="value warning">18</div>
+        </div>
+        <div class="card">
+            <h3>Suspended Tabs</h3>
+            <div class="value ok">26</div>
+        </div>
+        <div class="card">
+            <h3>Est. Memory (Active)</h3>
+            <div class="value warning">1,900 MB</div>
+        </div>
+        <div class="card">
+            <h3>Est. Memory (Total)</h3>
+            <div class="value neutral">2,108 MB</div>
+        </div>
+        <div class="card">
+            <h3>Actual Comet Memory</h3>
+            <div class="value warning">~5,500 MB</div>
+        </div>
+    </div>
+    
+    <h3 style="margin-bottom: 10px; color: #8b949e;">Categories</h3>
+    <div class="categories">
+        <div class="cat-chip" data-category="Other">
+            Other <span class="count">21 tabs • ~1088MB</span>
+        </div>
+        <div class="cat-chip" data-category="Claude">
+            Claude <span class="count">13 tabs • ~622MB</span>
+        </div>
+        <div class="cat-chip" data-category="GitHub">
+            GitHub <span class="count">3 tabs • ~116MB</span>
+        </div>
+        <div class="cat-chip" data-category="Twitter/X">
+            Twitter/X <span class="count">3 tabs • ~116MB</span>
+        </div>
+        <div class="cat-chip" data-category="Workona">
+            Workona <span class="count">2 tabs • ~108MB</span>
+        </div>
+        <div class="cat-chip" data-category="Localhost">
+            Localhost <span class="count">2 tabs • ~58MB</span>
+        </div>
+    </div>
+    
+    <div class="selection-bar" id="selectionBar">
+        <span id="selectionInfo">0 tabs selected (0 MB)</span>
+        <button onclick="clearSelection()">Clear Selection</button>
+    </div>
+    
+    <div class="filter-row">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="active">Active Only</button>
+        <button class="filter-btn" data-filter="suspended">Suspended Only</button>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 40px;"><input type="checkbox" id="selectAll" onclick="toggleAll()"></th>
+                <th>Title</th>
+                <th style="width: 100px;">Status</th>
+                <th style="width: 100px;">Est. Memory</th>
+                <th style="width: 100px;">Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="" data-mem="150" data-category="Claude" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/code/session_017Rsi6hrRf2kMNGN7qSHxXQ" target="_blank">tg-personal-assistant/bot.py at claude/telegram-bot-knowledge-expenses-H087v · A...</a>
+                    <div class="url">https://claude.ai/code/session_017Rsi6hrRf2kMNGN7qSHxXQ</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~150 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="" data-mem="150" data-category="Claude" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/settings/usage" target="_blank">Linear – Plan and build products</a>
+                    <div class="url">https://claude.ai/settings/usage</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~150 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="" data-mem="150" data-category="Claude" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/new" target="_blank">Claude</a>
+                    <div class="url">https://claude.ai/new</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~150 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="vibekanban vs gastown vs conductor" target="_blank">Workona</a>
+                    <div class="url">vibekanban vs gastown vs conductor</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://skills.sh/" target="_blank">Telegram Web</a>
+                    <div class="url">https://skills.sh/</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://web.telegram.org/k/#@aiagentnotifierbot" target="_blank">Fix broken Railway deployment | Claude Code</a>
+                    <div class="url">https://web.telegram.org/k/#@aiagentnotifierbot</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="GitHub" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://github.com/Anonyma/tg-personal-assistant/blob/claude/telegram-bot-knowledge-expenses-H087v/bot.py" target="_blank">Claude</a>
+                    <div class="url">https://github.com/Anonyma/tg-personal-assistant/blob/claude/telegram-bot-knowledge-expenses-H087v/bot.py</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>GitHub</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Twitter/X" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://x.com/affaanmustafa/status/2014040193557471352" target="_blank">🤖 tg-personal-assistant | vibe-kanban</a>
+                    <div class="url">https://x.com/affaanmustafa/status/2014040193557471352</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Twitter/X</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://raw.githubusercontent.com/irinabuht12-oss/claude-marketing-skills/main/README.md" target="_blank">Machina on X: &quot;if you&#x27;ve got a spare weekend and want to get better with Claude ...</a>
+                    <div class="url">https://raw.githubusercontent.com/irinabuht12-oss/claude-marketing-skills/main/README.md</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://writing-challenge-app.netlify.app/" target="_blank">Writing Challenge</a>
+                    <div class="url">https://writing-challenge-app.netlify.app/</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://chatgpt.com/" target="_blank">ChatGPT</a>
+                    <div class="url">https://chatgpt.com/</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Claude" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://platform.claude.com/usage" target="_blank">Claude Developer Platform</a>
+                    <div class="url">https://platform.claude.com/usage</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://mit.zoom.us/rec/play/ErXch32gPze7N9SPn1dNE1-tjOr_LMcTnz_0S30k_EbU9YyBvIlPocID9VipPuAUPA9kvy8p-VZCzHs1.wXnoVMal_stVCCm0?eagerLoadZvaPages=&amp;accessLevel=meeting&amp;canPlayFromShare=true&amp;from=share_recording_detail&amp;continueMode=true&amp;componentName=rec-play&amp;originRequestUrl=https%3A%2F%2Fmit.zoom.us%2Frec%2Fshare%2FNyKwbYTLHua3VzdTDtZKFSnaKSAcOJToCFInhFrWHT8-d8FXBRUKKJ6wpahZOIqg.VofaQwjQnigyzo2J" target="_blank">HTGAA 2026 - Zoom</a>
+                    <div class="url">https://mit.zoom.us/rec/play/ErXch32gPze7N9SPn1dNE1-tjOr_LMcTnz_0S30k_EbU9YyBvIlPocID9VipPuAUPA9kvy8p-VZCzHs1.wXnoVMal_stVCCm0?eagerLoadZvaPages=&amp;accessLevel=meeting&amp;canPlayFromShare=true&amp;from=share_recording_detail&amp;continueMode=true&amp;componentName=rec-play&amp;originRequestUrl=https%3A%2F%2Fmit.zoom.us%2Frec%2Fshare%2FNyKwbYTLHua3VzdTDtZKFSnaKSAcOJToCFInhFrWHT8-d8FXBRUKKJ6wpahZOIqg.VofaQwjQnigyzo2J</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="chrome://chrome-urls/?host=chrome://discards/#internal-debug-pages" target="_blank">Comet URLs</a>
+                    <div class="url">chrome://chrome-urls/?host=chrome://discards/#internal-debug-pages</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="chrome://discards/" target="_blank">Discards</a>
+                    <div class="url">chrome://discards/</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Workona" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://workona.com/0/nedm93/claude-tasks/" target="_blank">Claude tasks - Workona</a>
+                    <div class="url">https://workona.com/0/nedm93/claude-tasks/</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Workona</td>
+            </tr>
+            <tr class="" data-mem="100" data-category="Other" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://www.vibekanban.com/" target="_blank">Vibe Kanban - Orchestrate AI Coding Agents</a>
+                    <div class="url">https://www.vibekanban.com/</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~100 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="" data-mem="50" data-category="Localhost" data-status="active">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="http://localhost:8766/dashboard.html" target="_blank">Agent Hub Dashboard</a>
+                    <div class="url">http://localhost:8766/dashboard.html</div>
+                </td>
+                <td><span class="status active">Active</span></td>
+                <td class="mem">~50 MB</td>
+                <td>Localhost</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Workona" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://workona.com/0/254313731/" target="_blank">The Agent Skills Directory</a>
+                    <div class="url">https://workona.com/0/254313731/</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Workona</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://linear.app/homepage" target="_blank">cogsec on X: &quot;The Longform Guide to Everything Claude Code&quot; / X</a>
+                    <div class="url">https://linear.app/homepage</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Localhost" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="http://127.0.0.1:54156/projects/3ac1fa2d-0c90-42ce-9609-a2d0abb5735d/tasks/e8c1794c-fad3-46dd-8c09-1cba16ec0e9c/attempts/e28fb213-ae4c-4a78-a919-3b7bcd3a3b19" target="_blank">Claude Assets Dashboard - Claude</a>
+                    <div class="url">http://127.0.0.1:54156/projects/3ac1fa2d-0c90-42ce-9609-a2d0abb5735d/tasks/e8c1794c-fad3-46dd-8c09-1cba16ec0e9c/attempts/e28fb213-ae4c-4a78-a919-3b7bcd3a3b19</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Localhost</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Claude" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/chat/6145d462-1ac6-4f7b-9e03-a51cca5e0380" target="_blank">Improving daily writing for clarity and publication - Claude</a>
+                    <div class="url">https://claude.ai/chat/6145d462-1ac6-4f7b-9e03-a51cca5e0380</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Claude" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/chat/e65da9a2-3a2d-4d6d-94f2-a471ad3dc160" target="_blank">Improve podcast summary content relevance | Claude Code</a>
+                    <div class="url">https://claude.ai/chat/e65da9a2-3a2d-4d6d-94f2-a471ad3dc160</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Claude" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/code/session_01M19212N1R4WdbuUrcg42fa" target="_blank"></a>
+                    <div class="url">https://claude.ai/code/session_01M19212N1R4WdbuUrcg42fa</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Twitter/X" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://x.com/EXM7777/status/2015485828492087313" target="_blank">just prompts + systems + messy projects with tons of files - run each new model ...</a>
+                    <div class="url">https://x.com/EXM7777/status/2015485828492087313</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Twitter/X</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://bradleywoolf.com/links-1/testing-extropics-thrml-library-on-energy-based-gene-perturbation-models" target="_blank">Sampling energy-based models with Extropic’s thrml</a>
+                    <div class="url">https://bradleywoolf.com/links-1/testing-extropics-thrml-library-on-energy-based-gene-perturbation-models</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://art-discoverer.netlify.app/" target="_blank">Art Discovery</a>
+                    <div class="url">https://art-discoverer.netlify.app/</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://www.perplexity.ai/" target="_blank">Perplexity</a>
+                    <div class="url">https://www.perplexity.ai/</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Claude" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/recents" target="_blank">Claude</a>
+                    <div class="url">https://claude.ai/recents</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Claude" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/settings/usage" target="_blank">Claude</a>
+                    <div class="url">https://claude.ai/settings/usage</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://developers.beeper.com/desktop-api/mcp" target="_blank">Beeper Desktop MCP - Beeper Developer Docs</a>
+                    <div class="url">https://developers.beeper.com/desktop-api/mcp</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://notebooklmstudyhub.netlify.app/" target="_blank">NotebookLM Study Hub</a>
+                    <div class="url">https://notebooklmstudyhub.netlify.app/</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Claude" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/chat/d04b4400-8531-42f5-bca1-bdc591905bf6" target="_blank">Claude</a>
+                    <div class="url">https://claude.ai/chat/d04b4400-8531-42f5-bca1-bdc591905bf6</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Claude" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://platform.claude.com/workspaces/default/cost" target="_blank">Claude Developer Platform</a>
+                    <div class="url">https://platform.claude.com/workspaces/default/cost</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Claude" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.ai/chat/2dada62a-9977-4ef6-bfa5-c3cc68e43caf" target="_blank">Improving clarity and articulation in personal writing - Claude</a>
+                    <div class="url">https://claude.ai/chat/2dada62a-9977-4ef6-bfa5-c3cc68e43caf</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://theagentarchitect.substack.com/p/ai-project-manager-automation-claude-asana-confluence" target="_blank">I&#x27;m Building an AI Project Manager That Handles 80% of My Admin - Part 1</a>
+                    <div class="url">https://theagentarchitect.substack.com/p/ai-project-manager-automation-claude-asana-confluence</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/writing-challenge/design-lab/variant-2-fireside.html" target="_blank">Writing Challenge - Fireside Variant</a>
+                    <div class="url">file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/writing-challenge/design-lab/variant-2-fireside.html</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/writing-challenge/index-themed.html" target="_blank">Writing Challenge</a>
+                    <div class="url">file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/writing-challenge/index-themed.html</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Twitter/X" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://x.com/i/grok?conversation=2015387687507878072" target="_blank">Grok</a>
+                    <div class="url">https://x.com/i/grok?conversation=2015387687507878072</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Twitter/X</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://www.reddit.com/r/LLMDevs/comments/1lpgfya/claude_code_agent_farm_orchestrate_multiple/" target="_blank">Claude Code Agent Farm - Orchestrate multiple Claude Code agents working in para...</a>
+                    <div class="url">https://www.reddit.com/r/LLMDevs/comments/1lpgfya/claude_code_agent_farm_orchestrate_multiple/</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Other" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claudecode.run/" target="_blank">Claude Code Agentrooms - Multi-Agent Development Workspace | AI Code Orchestrati...</a>
+                    <div class="url">https://claudecode.run/</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Other</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="GitHub" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://github.com/baryhuang/claude-code-by-agents" target="_blank">baryhuang/claude-code-by-agents: Desktop app and API created in public for multi...</a>
+                    <div class="url">https://github.com/baryhuang/claude-code-by-agents</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>GitHub</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="Claude" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://claude.com/connectors" target="_blank">Connectors | Claude</a>
+                    <div class="url">https://claude.com/connectors</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>Claude</td>
+            </tr>
+            <tr class="suspended" data-mem="8" data-category="GitHub" data-status="suspended">
+                <td><input type="checkbox" class="tab-checkbox" onchange="updateSelection()"></td>
+                <td class="title-cell">
+                    <a href="https://github.com/hesreallyhim/a-list-of-claude-code-agents" target="_blank">hesreallyhim/a-list-of-claude-code-agents: A list of Claude Code Sub-Agents subm...</a>
+                    <div class="url">https://github.com/hesreallyhim/a-list-of-claude-code-agents</div>
+                </td>
+                <td><span class="status suspended">Suspended</span></td>
+                <td class="mem">~8 MB</td>
+                <td>GitHub</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <script>
+        function updateSelection() {
+            const checkboxes = document.querySelectorAll('.tab-checkbox:checked');
+            const rows = document.querySelectorAll('tbody tr');
+            let totalMem = 0;
+            let count = 0;
+            
+            rows.forEach(row => {
+                const cb = row.querySelector('.tab-checkbox');
+                if (cb && cb.checked) {
+                    row.classList.add('selected');
+                    totalMem += parseInt(row.dataset.mem);
+                    count++;
+                } else {
+                    row.classList.remove('selected');
+                }
+            });
+            
+            const bar = document.getElementById('selectionBar');
+            const info = document.getElementById('selectionInfo');
+            
+            if (count > 0) {
+                bar.classList.add('visible');
+                info.textContent = `${count} tabs selected (~${totalMem.toLocaleString()} MB)`;
+            } else {
+                bar.classList.remove('visible');
+            }
+        }
+        
+        function toggleAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.tab-checkbox');
+            const visibleRows = document.querySelectorAll('tbody tr:not([style*="display: none"])');
+            
+            visibleRows.forEach(row => {
+                const cb = row.querySelector('.tab-checkbox');
+                if (cb) cb.checked = selectAll.checked;
+            });
+            updateSelection();
+        }
+        
+        function clearSelection() {
+            document.querySelectorAll('.tab-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            updateSelection();
+        }
+        
+        // Category filter
+        document.querySelectorAll('.cat-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('selected');
+                applyFilters();
+            });
+        });
+        
+        // Status filter
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                applyFilters();
+            });
+        });
+        
+        function applyFilters() {
+            const selectedCats = Array.from(document.querySelectorAll('.cat-chip.selected')).map(c => c.dataset.category);
+            const statusFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const cat = row.dataset.category;
+                const status = row.dataset.status;
+                
+                let showByCat = selectedCats.length === 0 || selectedCats.includes(cat);
+                let showByStatus = statusFilter === 'all' || statusFilter === status;
+                
+                row.style.display = (showByCat && showByStatus) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>

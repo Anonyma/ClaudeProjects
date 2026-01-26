@@ -66,16 +66,17 @@ git add -A && git commit -m "Add voice-memo-transcriber project"
 
 ### What to Include:
 
-For **local web apps**:
-```
-**To test:** Open in browser:
-file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/[project]/index.html
+**IMPORTANT:** Prefer `http://localhost:XXXX` URLs over `file://` URLs - localhost links are clickable, file:// requires copy-paste.
+
+For **local web apps** (start a server so links are clickable):
+```bash
+cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/[project] && python3 -m http.server 8XXX &
+# Then provide: http://localhost:8XXX/index.html
 ```
 
-For **apps requiring a server**:
+For **one-off outputs** (use the scratch server on port 8877):
 ```
-**To test:** Run this command, then open http://localhost:8000
-cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/[project] && python3 -m http.server 8000
+**View:** http://localhost:8877/your-file.html
 ```
 
 For **deployed apps**:
@@ -102,6 +103,41 @@ file:///path/to/test.html
 
 ❌ Bad ending:
 > "Fixed the crash bug and added category management." (no access instructions)
+
+---
+
+## Temporary Outputs & One-Off Files (`_scratch/`)
+
+**For one-off reports, dashboards, utilities, or temporary outputs - use the `_scratch/` folder.**
+
+### Location
+```
+/Users/z/Desktop/PersonalProjects/ClaudeProjects/_scratch/
+```
+
+### When to Use
+- Diagnostic reports (memory usage, system stats)
+- Temporary HTML dashboards or visualizations
+- One-off utilities that don't warrant their own project
+- Debug outputs, logs, or analysis files
+- Anything generated that might be discarded later
+
+### Serving Files (Clickable Links)
+Always serve via HTTP instead of `file://` URLs (which require copy-paste):
+
+```bash
+# Start server on port 8877 (if not already running)
+cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/_scratch && python3 -m http.server 8877 &
+
+# Then provide clickable link:
+# http://localhost:8877/your-file.html
+```
+
+### Promoting to Projects
+If a scratch file becomes useful long-term, move it to its own project folder and log it properly.
+
+### Cleanup
+The `_scratch/` folder can be periodically cleaned. Don't put anything critical here.
 
 ---
 
