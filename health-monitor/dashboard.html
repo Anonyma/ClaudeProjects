@@ -283,8 +283,11 @@
                 <input type="checkbox" id="autoRefresh" checked>
                 Auto-refresh (30s)
             </label>
-            <button class="refresh-btn" onclick="refresh()">Refresh Now</button>
+            <button class="refresh-btn" onclick="refresh()" title="Re-reads cached data. Run 'health' in terminal for fresh collection.">Refresh</button>
         </div>
+    </div>
+    <div style="text-align: right; font-size: 11px; color: #484f58; margin-top: -20px; margin-bottom: 16px;">
+        Data collected every 1 min. Refresh button re-reads the latest data.
     </div>
 
     <div id="content">
