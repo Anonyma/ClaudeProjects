@@ -21,6 +21,14 @@
             --purple: #a855f7;
             --warning: #f59e0b;
             --red: #ef4444;
+            /* Pie chart colors - high contrast */
+            --pie-1: #3FA2F6;
+            --pie-2: #f59e0b;
+            --pie-3: #a855f7;
+            --pie-4: #4A4D5E;
+            --pie-device-1: #25D366;
+            --pie-device-2: #3FA2F6;
+            --pie-device-3: #a855f7;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -305,6 +313,12 @@
             color: var(--gray-blue);
         }
 
+        .comparison-ref {
+            font-size: 11px;
+            color: var(--gray-blue);
+            font-style: italic;
+        }
+
         .comparison-change {
             font-size: 12px;
             font-weight: 500;
@@ -463,7 +477,7 @@
 
         .work-list ul {
             list-style: none;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .work-list li {
@@ -522,19 +536,25 @@
         }
 
         .status-box.green li::before {
-            content: '●';
+            content: '';
             position: absolute;
             left: 0;
-            color: var(--success-green);
-            font-size: 8px;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success-green);
         }
 
         .status-box.yellow li::before {
-            content: '●';
+            content: '';
             position: absolute;
             left: 0;
-            color: var(--warning);
-            font-size: 8px;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--warning);
         }
 
         /* ===== ACTIONS ===== */
@@ -566,15 +586,15 @@
         }
 
         .action-content h5 {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--white);
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
         .action-content p {
-            font-size: 11px;
-            line-height: 1.4;
+            font-size: 12px;
+            line-height: 1.5;
         }
 
         /* ===== FOOTER ===== */
@@ -622,7 +642,7 @@
         <div class="slide cover">
             <img src="NIRVEX-1.png" alt="Nirvex" class="cover-logo">
             <h1>Informe SEO Mensual</h1>
-            <div class="cover-subtitle">Estado y proximas acciones</div>
+            <div class="cover-subtitle">Estado y próximas acciones</div>
             <div class="cover-client">nirvex.es ↗</div>
 
             <div class="cover-meta">
@@ -631,7 +651,7 @@
                     <span>24 Oct 2025 — 23 Ene 2026</span>
                 </div>
                 <div style="text-align: right;">
-                    <strong>Fecha de emision</strong>
+                    <strong>Fecha de emisión</strong>
                     <span>25 de Enero, 2026</span>
                 </div>
             </div>
@@ -641,7 +661,7 @@
         <div class="slide">
             <div class="slide-header">
                 <h1 class="slide-title">Estado SEO</h1>
-                <span class="slide-number">01 / 10</span>
+                <span class="slide-number">01 / 09</span>
             </div>
 
             <div class="status-block">
@@ -653,12 +673,12 @@
 
             <div class="content-box executive">
                 <h4>Lectura ejecutiva</h4>
-                <p>SEO estable y correctamente indexado. El foco del mes es <strong>convertir la visibilidad existente en mas clics y leads</strong>. Las posiciones medias en pagina 2-3 indican potencial de crecimiento con optimizaciones puntuales.</p>
+                <p>SEO estable y correctamente indexado. El foco del mes es <strong>convertir la visibilidad existente en más clics y leads</strong>. Las posiciones medias en página 2-3 indican potencial de crecimiento con optimizaciones puntuales.</p>
             </div>
 
             <div class="content-box risk">
                 <h4>Riesgo principal</h4>
-                <p>CTR bajo en paginas de servicio (0.02% en /agencia-seo-valencia) limita la captacion actual a pesar de alta visibilidad.</p>
+                <p>CTR bajo en páginas de servicio (0.02% en /agencia-seo-valencia) limita la captación actual a pesar de alta visibilidad.</p>
             </div>
 
             <div class="stats-row">
@@ -669,7 +689,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-number">277</div>
-                    <div class="stat-label">Clics organicos</div>
+                    <div class="stat-label">Clics orgánicos</div>
                     <span class="stat-change neutral">Oportunidad</span>
                 </div>
                 <div class="stat-card">
@@ -679,8 +699,8 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-number">30.2</div>
-                    <div class="stat-label">Posicion media</div>
-                    <span class="stat-change down">Pagina 3</span>
+                    <div class="stat-label">Posición media</div>
+                    <span class="stat-change down">Página 3</span>
                 </div>
             </div>
 
@@ -693,13 +713,13 @@
         <!-- ==================== SLIDE 3: EVOLUCION 30 DIAS ==================== -->
         <div class="slide">
             <div class="slide-header">
-                <h1 class="slide-title">Evolucion 30 dias</h1>
-                <span class="slide-number">02 / 10</span>
+                <h1 class="slide-title">Evolución 30 días</h1>
+                <span class="slide-number">02 / 09</span>
             </div>
 
             <div class="comparison-grid">
                 <div class="comparison-box">
-                    <h4>Ultimos 30 dias (24 Dic — 23 Ene)</h4>
+                    <h4>Últimos 30 días (24 Dic — 23 Ene)</h4>
                     <div class="comparison-row">
                         <span class="comparison-label">Impresiones</span>
                         <div class="comparison-values">
@@ -722,7 +742,7 @@
                         </div>
                     </div>
                     <div class="comparison-row">
-                        <span class="comparison-label">Posicion media</span>
+                        <span class="comparison-label">Posición media</span>
                         <div class="comparison-values">
                             <span class="comparison-current">30.2</span>
                             <span class="comparison-change up">↑ 2 pos.</span>
@@ -730,71 +750,71 @@
                     </div>
                 </div>
                 <div class="comparison-box">
-                    <h4>30 dias anteriores (24 Nov — 23 Dic)</h4>
+                    <h4>30 días anteriores (24 Nov — 23 Dic)</h4>
                     <div class="comparison-row">
                         <span class="comparison-label">Impresiones</span>
                         <div class="comparison-values">
                             <span class="comparison-current">40.1K</span>
-                            <span class="comparison-previous">referencia</span>
+                            <span class="comparison-ref">(ref.)</span>
                         </div>
                     </div>
                     <div class="comparison-row">
                         <span class="comparison-label">Clics</span>
                         <div class="comparison-values">
                             <span class="comparison-current">107</span>
-                            <span class="comparison-previous">referencia</span>
+                            <span class="comparison-ref">(ref.)</span>
                         </div>
                     </div>
                     <div class="comparison-row">
                         <span class="comparison-label">CTR</span>
                         <div class="comparison-values">
                             <span class="comparison-current">0.27%</span>
-                            <span class="comparison-previous">referencia</span>
+                            <span class="comparison-ref">(ref.)</span>
                         </div>
                     </div>
                     <div class="comparison-row">
-                        <span class="comparison-label">Posicion media</span>
+                        <span class="comparison-label">Posición media</span>
                         <div class="comparison-values">
                             <span class="comparison-current">32.4</span>
-                            <span class="comparison-previous">referencia</span>
+                            <span class="comparison-ref">(ref.)</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="content-box">
-                <p><strong>Contexto:</strong> La ligera bajada en impresiones y clics coincide con el periodo de Navidad y Ano Nuevo, donde la actividad de busqueda B2B cae de forma estacional. La posicion media ha mejorado 2 posiciones, lo que indica que el trabajo de optimizacion esta dando resultados.</p>
+                <p><strong>Contexto:</strong> La ligera bajada en impresiones y clics coincide con el periodo de Navidad y Año Nuevo, donde la actividad de búsqueda B2B cae de forma estacional. La posición media ha mejorado 2 posiciones, lo que indica que el trabajo de optimización está dando resultados.</p>
             </div>
 
             <div class="charts-row">
                 <div class="chart-box">
-                    <h4>Distribucion por pais</h4>
+                    <h4>Distribución por país</h4>
                     <div class="pie-container">
                         <svg class="pie-chart" viewBox="0 0 42 42">
                             <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#3FA2F6" stroke-width="8" stroke-dasharray="78 22" stroke-dashoffset="25"/>
-                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#6bb8f8" stroke-width="8" stroke-dasharray="8 92" stroke-dashoffset="47"/>
-                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#9ed0fa" stroke-width="8" stroke-dasharray="3 97" stroke-dashoffset="39"/>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#f59e0b" stroke-width="8" stroke-dasharray="8 92" stroke-dashoffset="47"/>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#a855f7" stroke-width="8" stroke-dasharray="3 97" stroke-dashoffset="39"/>
                             <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#4A4D5E" stroke-width="8" stroke-dasharray="11 89" stroke-dashoffset="36"/>
                         </svg>
                         <div class="pie-legend">
-                            <div class="legend-item"><span class="legend-dot" style="background: #3FA2F6;"></span>Espana<span class="legend-value">77.6%</span></div>
-                            <div class="legend-item"><span class="legend-dot" style="background: #6bb8f8;"></span>Mexico<span class="legend-value">7.9%</span></div>
-                            <div class="legend-item"><span class="legend-dot" style="background: #9ed0fa;"></span>Colombia<span class="legend-value">2.9%</span></div>
+                            <div class="legend-item"><span class="legend-dot" style="background: #3FA2F6;"></span>España<span class="legend-value">77.6%</span></div>
+                            <div class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span>México<span class="legend-value">7.9%</span></div>
+                            <div class="legend-item"><span class="legend-dot" style="background: #a855f7;"></span>Colombia<span class="legend-value">2.9%</span></div>
                             <div class="legend-item"><span class="legend-dot" style="background: #4A4D5E;"></span>Otros<span class="legend-value">11.6%</span></div>
                         </div>
                     </div>
                 </div>
                 <div class="chart-box">
-                    <h4>Distribucion por dispositivo</h4>
+                    <h4>Distribución por dispositivo</h4>
                     <div class="pie-container">
                         <svg class="pie-chart" viewBox="0 0 42 42">
                             <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#25D366" stroke-width="8" stroke-dasharray="80 20" stroke-dashoffset="25"/>
-                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#6ee89c" stroke-width="8" stroke-dasharray="20 80" stroke-dashoffset="45"/>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#3FA2F6" stroke-width="8" stroke-dasharray="20 80" stroke-dashoffset="45"/>
                         </svg>
                         <div class="pie-legend">
                             <div class="legend-item"><span class="legend-dot" style="background: #25D366;"></span>Ordenador<span class="legend-value">80.1%</span></div>
-                            <div class="legend-item"><span class="legend-dot" style="background: #6ee89c;"></span>Movil<span class="legend-value">19.5%</span></div>
-                            <div class="legend-item"><span class="legend-dot" style="background: #4A4D5E;"></span>Tablet<span class="legend-value">0.4%</span></div>
+                            <div class="legend-item"><span class="legend-dot" style="background: #3FA2F6;"></span>Móvil<span class="legend-value">19.5%</span></div>
+                            <div class="legend-item"><span class="legend-dot" style="background: #a855f7;"></span>Tablet<span class="legend-value">0.4%</span></div>
                         </div>
                     </div>
                 </div>
@@ -809,13 +829,13 @@
         <!-- ==================== SLIDE 4: EVOLUCION 120 DIAS ==================== -->
         <div class="slide">
             <div class="slide-header">
-                <h1 class="slide-title">Evolucion 120 dias</h1>
-                <span class="slide-number">03 / 10</span>
+                <h1 class="slide-title">Evolución 120 días</h1>
+                <span class="slide-number">03 / 09</span>
             </div>
 
             <div class="comparison-grid">
                 <div class="comparison-box">
-                    <h4>Ultimos 120 dias (24 Sep — 23 Ene)</h4>
+                    <h4>Últimos 120 días (24 Sep — 23 Ene)</h4>
                     <div class="comparison-row">
                         <span class="comparison-label">Impresiones</span>
                         <div class="comparison-values">
@@ -838,7 +858,7 @@
                         </div>
                     </div>
                     <div class="comparison-row">
-                        <span class="comparison-label">Posicion media</span>
+                        <span class="comparison-label">Posición media</span>
                         <div class="comparison-values">
                             <span class="comparison-current">30.2</span>
                             <span class="comparison-change up">↑ 5 pos.</span>
@@ -846,41 +866,41 @@
                     </div>
                 </div>
                 <div class="comparison-box">
-                    <h4>120 dias anteriores (27 May — 23 Sep)</h4>
+                    <h4>120 días anteriores (27 May — 23 Sep)</h4>
                     <div class="comparison-row">
                         <span class="comparison-label">Impresiones</span>
                         <div class="comparison-values">
                             <span class="comparison-current">102.1K</span>
-                            <span class="comparison-previous">referencia</span>
+                            <span class="comparison-ref">(ref.)</span>
                         </div>
                     </div>
                     <div class="comparison-row">
                         <span class="comparison-label">Clics</span>
                         <div class="comparison-values">
                             <span class="comparison-current">256</span>
-                            <span class="comparison-previous">referencia</span>
+                            <span class="comparison-ref">(ref.)</span>
                         </div>
                     </div>
                     <div class="comparison-row">
                         <span class="comparison-label">CTR</span>
                         <div class="comparison-values">
                             <span class="comparison-current">0.25%</span>
-                            <span class="comparison-previous">referencia</span>
+                            <span class="comparison-ref">(ref.)</span>
                         </div>
                     </div>
                     <div class="comparison-row">
-                        <span class="comparison-label">Posicion media</span>
+                        <span class="comparison-label">Posición media</span>
                         <div class="comparison-values">
                             <span class="comparison-current">35.2</span>
-                            <span class="comparison-previous">referencia</span>
+                            <span class="comparison-ref">(ref.)</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="content-box executive">
+            <div class="content-box executive" style="max-width: 85%;">
                 <h4>Tendencia trimestral</h4>
-                <p>La visibilidad ha crecido un <strong>12% en los ultimos 4 meses</strong>, con mejora de 5 posiciones en el ranking medio. El CTR ha bajado ligeramente porque estamos rankeando para mas keywords (mayor volumen, menor precision). El foco ahora es <strong>convertir esa visibilidad en clics</strong> optimizando titles y meta descriptions.</p>
+                <p>La visibilidad ha crecido un <strong>12% en los últimos 4 meses</strong>, con mejora de 5 posiciones en el ranking medio. El CTR ha bajado ligeramente porque estamos rankeando para más keywords (mayor volumen, menor precisión). El foco ahora es <strong>convertir esa visibilidad en clics</strong> optimizando titles y meta descriptions.</p>
             </div>
 
             <div class="slide-footer">
@@ -893,7 +913,7 @@
         <div class="slide">
             <div class="slide-header">
                 <h1 class="slide-title">Keywords que importan</h1>
-                <span class="slide-number">04 / 10</span>
+                <span class="slide-number">04 / 09</span>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
@@ -1011,18 +1031,18 @@
         <!-- ==================== SLIDE 6: RENDIMIENTO PAGINAS ==================== -->
         <div class="slide">
             <div class="slide-header">
-                <h1 class="slide-title">Rendimiento por pagina</h1>
-                <span class="slide-number">05 / 10</span>
+                <h1 class="slide-title">Rendimiento por página</h1>
+                <span class="slide-number">05 / 09</span>
             </div>
 
             <table class="data-table" style="margin-bottom: 25px;">
                 <thead>
                     <tr>
-                        <th>Pagina</th>
+                        <th>Página</th>
                         <th>Clics</th>
                         <th>Impresiones</th>
                         <th>CTR</th>
-                        <th>Posicion</th>
+                        <th>Posición</th>
                         <th>Estado</th>
                     </tr>
                 </thead>
@@ -1072,12 +1092,12 @@
 
             <div class="content-box risk">
                 <h4>Oportunidad principal</h4>
-                <p><strong>/agencia-seo-valencia tiene 31K impresiones pero solo 6 clics (0.02% CTR).</strong> Reescribir title y meta description puede multiplicar x10 los clics sin cambiar posicion. Es el quick win mas rentable del mes.</p>
+                <p><strong>/agencia-seo-valencia tiene 31K impresiones pero solo 6 clics (0.02% CTR).</strong> Reescribir title y meta description puede multiplicar x10 los clics sin cambiar posición. Es el quick win más rentable del mes.</p>
             </div>
 
             <div class="content-box executive">
                 <h4>Modelo a replicar</h4>
-                <p>La calculadora de KPIs tiene <strong>5.19% CTR</strong>, muy por encima del benchmark. Las herramientas interactivas y recursos descargables funcionan bien. Crear mas assets de este tipo aumentaria leads cualificados.</p>
+                <p>La calculadora de KPIs tiene <strong>5.19% CTR</strong>, muy por encima del benchmark. Las herramientas interactivas y recursos descargables funcionan bien. Crear más assets de este tipo aumentaría leads cualificados.</p>
             </div>
 
             <div class="slide-footer">
@@ -1090,7 +1110,7 @@
         <div class="slide">
             <div class="slide-header">
                 <h1 class="slide-title">Trabajo SEO realizado este mes</h1>
-                <span class="slide-number">06 / 10</span>
+                <span class="slide-number">06 / 09</span>
             </div>
 
             <div class="work-grid">
@@ -1110,19 +1130,19 @@
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="work-list">
-                    <h4>Contenido y optimizacion</h4>
+                    <h4>Contenido y optimización</h4>
                     <ul>
-                        <li>4 contenidos nuevos orientados a keywords informacionales con potencial de atraccion de leads</li>
-                        <li>Revision y optimizacion de contenidos antiguos con problemas de indexacion</li>
-                        <li>Optimizacion de titulos, encabezados y estructura de contenidos existentes</li>
+                        <li>4 contenidos nuevos orientados a keywords informacionales con potencial de atracción de leads</li>
+                        <li>Revisión y optimización de contenidos antiguos con problemas de indexación</li>
+                        <li>Optimización de títulos, encabezados y estructura de contenidos existentes</li>
                     </ul>
                 </div>
                 <div class="work-list">
-                    <h4>SEO tecnico y seguimiento</h4>
+                    <h4>SEO técnico y seguimiento</h4>
                     <ul>
-                        <li>Refuerzo del enlazado interno para consolidar autoridad tematica</li>
-                        <li>Seguimiento manual de indexacion y rendimiento</li>
-                        <li>Analisis de metricas de rendimiento y velocidad web (WPO)</li>
+                        <li>Refuerzo del enlazado interno para consolidar autoridad temática</li>
+                        <li>Seguimiento manual de indexación y rendimiento</li>
+                        <li>Análisis de métricas de rendimiento y velocidad web (WPO)</li>
                     </ul>
                 </div>
             </div>
@@ -1137,35 +1157,35 @@
         <div class="slide">
             <div class="slide-header">
                 <h1 class="slide-title">Lo que funciona / Lo que estamos mejorando</h1>
-                <span class="slide-number">07 / 10</span>
+                <span class="slide-number">07 / 09</span>
             </div>
 
             <div class="status-grid">
                 <div class="status-box green">
                     <h4><span class="status-light green" style="width: 12px; height: 12px;"></span> Lo que funciona</h4>
                     <ul>
-                        <li>CTR de marca "nirvex" al 17.4% — reconocimiento solido</li>
-                        <li>Contenido informacional atrae trafico cualificado (58 clics organigrama marketing)</li>
+                        <li>CTR de marca "nirvex" al 17.4% — reconocimiento sólido</li>
+                        <li>Contenido informacional atrae tráfico cualificado (58 clics organigrama marketing)</li>
                         <li>Herramientas interactivas con CTR excepcional (5.19% calculadora KPIs)</li>
-                        <li>Posicion media mejorando: +5 posiciones en 120 dias</li>
-                        <li>Indexacion correcta y sin errores tecnicos criticos</li>
+                        <li>Posición media mejorando: +5 posiciones en 120 días</li>
+                        <li>Indexación correcta y sin errores técnicos críticos</li>
                     </ul>
                 </div>
                 <div class="status-box yellow">
                     <h4><span class="status-light yellow" style="width: 12px; height: 12px;"></span> Oportunidades / En proceso</h4>
                     <ul>
-                        <li>CTR de paginas de servicio muy bajo — prioridad de optimizacion</li>
-                        <li>Homepage rankeando en pagina 3 para muchas busquedas</li>
+                        <li>CTR de páginas de servicio muy bajo — prioridad de optimización</li>
+                        <li>Homepage rankeando en página 3 para muchas búsquedas</li>
                         <li>Keywords transaccionales en posiciones 11-15 (cerca de Top 10)</li>
                         <li>Contenido "pipeline de ventas" con bajo rendimiento</li>
-                        <li>Falta landing especifica para "agencia facebook ads"</li>
+                        <li>Falta landing específica para "agencia facebook ads"</li>
                     </ul>
                 </div>
             </div>
 
             <div class="content-box executive">
                 <h4>Impacto en negocio</h4>
-                <p>El trafico SEO actual genera visibilidad en keywords con intencion comercial (agencia SEO, agencia marketing). <strong>277 visitas organicas cualificadas</strong> que, con un CTR optimizado en paginas de servicio, podrian duplicarse sin necesidad de crear nuevo contenido. El foco es convertir impresiones existentes en leads.</p>
+                <p>El tráfico SEO actual genera visibilidad en keywords con intención comercial (agencia SEO, agencia marketing). <strong>277 visitas orgánicas cualificadas</strong> que, con un CTR optimizado en páginas de servicio, podrían duplicarse sin necesidad de crear nuevo contenido. El foco es convertir impresiones existentes en leads.</p>
             </div>
 
             <div class="slide-footer">
@@ -1177,27 +1197,27 @@
         <!-- ==================== SLIDE 9: PROXIMAS ACCIONES ==================== -->
         <div class="slide">
             <div class="slide-header">
-                <h1 class="slide-title">Proximas acciones</h1>
-                <span class="slide-number">08 / 10</span>
+                <h1 class="slide-title">Próximas acciones</h1>
+                <span class="slide-number">08 / 09</span>
             </div>
 
             <div class="content-box" style="margin-bottom: 20px;">
-                <p><strong>Plan operativo del proximo mes</strong> — acciones concretas ordenadas por impacto esperado.</p>
+                <p><strong>Plan operativo del próximo mes</strong> — acciones concretas ordenadas por impacto esperado.</p>
             </div>
 
             <div class="actions-grid">
                 <div class="action-card">
                     <div class="action-number">1</div>
                     <div class="action-content">
-                        <h5>Publicar 4 nuevos contenidos estrategicos</h5>
-                        <p>Orientados a keywords con intencion de negocio. <strong>Objetivo:</strong> aumentar visibilidad transaccional.</p>
+                        <h5>Publicar 4 nuevos contenidos estratégicos</h5>
+                        <p>Orientados a keywords con intención de negocio. <strong>Objetivo:</strong> aumentar visibilidad transaccional.</p>
                     </div>
                 </div>
                 <div class="action-card">
                     <div class="action-number">2</div>
                     <div class="action-content">
                         <h5>Revisar contenidos que han perdido posiciones</h5>
-                        <p>Optimizar contenidos del ultimo mes con caida de ranking. <strong>Objetivo:</strong> recuperar trafico perdido.</p>
+                        <p>Optimizar contenidos del último mes con caída de ranking. <strong>Objetivo:</strong> recuperar tráfico perdido.</p>
                     </div>
                 </div>
                 <div class="action-card">
@@ -1217,8 +1237,8 @@
                 <div class="action-card">
                     <div class="action-number">5</div>
                     <div class="action-content">
-                        <h5>Monitorizar recuperacion post-estacionalidad</h5>
-                        <p>Seguimiento de metricas tras periodo navideno. <strong>Objetivo:</strong> validar tendencia positiva.</p>
+                        <h5>Monitorizar recuperación post-estacionalidad</h5>
+                        <p>Seguimiento de métricas tras periodo navideño. <strong>Objetivo:</strong> validar tendencia positiva.</p>
                     </div>
                 </div>
             </div>
@@ -1230,40 +1250,34 @@
         </div>
 
         <!-- ==================== SLIDE 10: CIERRE ==================== -->
-        <div class="slide">
-            <div class="slide-header">
-                <h1 class="slide-title">Cierre</h1>
-                <span class="slide-number">09 / 10</span>
+        <div class="slide" style="display: flex; flex-direction: column; justify-content: center;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <img src="NIRVEX-1.png" alt="Nirvex" style="width: 120px; margin-bottom: 30px; opacity: 0.9;">
+                <h2 style="font-size: 32px; font-weight: 300; color: var(--white); margin-bottom: 20px;">Foco del próximo mes</h2>
+                <p style="font-size: 18px; color: var(--gray-blue); max-width: 650px; margin: 0 auto; line-height: 1.7;">
+                    Convertir la visibilidad existente en clics y leads mediante <strong style="color: var(--link-blue);">optimización de CTR</strong> en páginas de servicio y creación de contenido transaccional.
+                </p>
             </div>
 
-            <div class="cta-box" style="margin-bottom: 30px;">
-                <h4 style="font-size: 22px; margin-bottom: 15px;">Foco del proximo mes</h4>
-                <p style="font-size: 16px; color: var(--white); max-width: 600px; margin: 0 auto;">Convertir la visibilidad existente en clics y leads mediante optimizacion de CTR en paginas de servicio y creacion de contenido transaccional.</p>
-            </div>
-
-            <div class="stats-row" style="margin-bottom: 30px;">
-                <div class="stat-card">
-                    <div class="stat-number" style="font-size: 28px;">Febrero</div>
-                    <div class="stat-label">Proximo informe</div>
+            <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 50px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 36px; font-weight: 300; color: var(--white);">4</div>
+                    <div style="font-size: 12px; color: var(--gray-blue); margin-top: 6px;">Contenidos planificados</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" style="font-size: 28px;">4</div>
-                    <div class="stat-label">Contenidos planificados</div>
+                <div style="text-align: center;">
+                    <div style="font-size: 36px; font-weight: 300; color: var(--success-green);">x5</div>
+                    <div style="font-size: 12px; color: var(--gray-blue); margin-top: 6px;">Objetivo clics</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" style="font-size: 28px;">x5</div>
-                    <div class="stat-label">Objetivo clics /agencia-seo</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" style="font-size: 28px;">Top 10</div>
-                    <div class="stat-label">Meta keywords transacc.</div>
+                <div style="text-align: center;">
+                    <div style="font-size: 36px; font-weight: 300; color: var(--link-blue);">Top 10</div>
+                    <div style="font-size: 12px; color: var(--gray-blue); margin-top: 6px;">Meta keywords</div>
                 </div>
             </div>
 
-            <div class="content-box">
-                <p style="text-align: center; font-size: 15px;">
-                    <strong>¿Preguntas sobre este informe?</strong><br>
-                    Contacta con tu account manager en Nirvex
+            <div style="text-align: center;">
+                <p style="font-size: 14px; color: var(--gray-blue);">
+                    ¿Preguntas sobre este informe?<br>
+                    <strong style="color: var(--white);">Contacta con tu account manager</strong>
                 </p>
             </div>
 
