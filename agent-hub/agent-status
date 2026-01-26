@@ -1,0 +1,111 @@
+#!/bin/bash
+# View agent statuses from the Agent Hub
+
+AGENT_HUB_DIR="$(cd "$(dirname "$0")" && pwd)"
+STATUSES_FILE="$AGENT_HUB_DIR/statuses.json"
+
+if [ ! -f "$STATUSES_FILE" ]; then
+    echo "No agent statuses recorded yet."
+    exit 0
+fi
+
+# Check for --json flag
+if [ "$1" == "--json" ]; then
+    cat "$STATUSES_FILE"
+    exit 0
+fi
+
+# Check for specific agent
+if [ -n "$1" ] && [ "$1" != "--all" ]; then
+    python3 << EOF
+import json
+from datetime import datetime
+
+with open("$STATUSES_FILE", 'r') as f:
+    data = json.load(f)
+
+name = "$1"
+agent = data.get("agents", {}).get(name)
+
+if not agent:
+    print(f"Agent '{name}' not found")
+    exit(1)
+
+status_icons = {
+    "running": "🔄",
+    "blocked": "🚫",
+    "completed": "✅",
+    "error": "❌",
+    "idle": "💤"
+}
+
+icon = status_icons.get(agent["status"], "❓")
+print(f"\n{icon} {name}")
+print(f"   Status: {agent['status']}")
+print(f"   Message: {agent.get('message', '-')}")
+print(f"   Updated: {agent['updated_at']}")
+
+if agent.get("history"):
+    print(f"\n   Recent history:")
+    for entry in agent["history"][:5]:
+        icon = status_icons.get(entry["status"], "❓")
+        print(f"   {icon} {entry['timestamp'][:16]} - {entry.get('message', '-')[:50]}")
+print()
+EOF
+    exit 0
+fi
+
+# Show all agents
+python3 << EOF
+import json
+from datetime import datetime
+
+with open("$STATUSES_FILE", 'r') as f:
+    data = json.load(f)
+
+agents = data.get("agents", {})
+
+if not agents:
+    print("No agent statuses recorded yet.")
+    exit(0)
+
+status_icons = {
+    "running": "🔄",
+    "blocked": "🚫",
+    "completed": "✅",
+    "error": "❌",
+    "idle": "💤"
+}
+
+status_colors = {
+    "running": "\033[33m",  # yellow
+    "blocked": "\033[31m",  # red
+    "completed": "\033[32m",  # green
+    "error": "\033[31m",  # red
+    "idle": "\033[90m"  # gray
+}
+reset = "\033[0m"
+
+print("\n" + "=" * 60)
+print("  AGENT HUB STATUS")
+print("=" * 60)
+
+# Sort: running first, then blocked, then others
+def sort_key(item):
+    order = {"blocked": 0, "running": 1, "error": 2, "completed": 3, "idle": 4}
+    return order.get(item[1]["status"], 5)
+
+for name, agent in sorted(agents.items(), key=sort_key):
+    status = agent["status"]
+    icon = status_icons.get(status, "❓")
+    color = status_colors.get(status, "")
+    message = agent.get("message", "")[:45]
+    updated = agent["updated_at"][11:16] if agent.get("updated_at") else ""
+
+    print(f"{color}{icon} {name:20} {status:10} {message:45} {updated}{reset}")
+
+print("=" * 60)
+print(f"  Total: {len(agents)} agents")
+print("  Dashboard: http://localhost:8766/dashboard.html")
+print()
+EOF

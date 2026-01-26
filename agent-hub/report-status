@@ -1,0 +1,99 @@
+#!/bin/bash
+# Report agent status to the Agent Hub
+
+AGENT_HUB_DIR="$(cd "$(dirname "$0")" && pwd)"
+STATUSES_FILE="$AGENT_HUB_DIR/statuses.json"
+
+# Initialize statuses file if it doesn't exist
+if [ ! -f "$STATUSES_FILE" ]; then
+    echo '{"agents":{}}' > "$STATUSES_FILE"
+fi
+
+# Parse arguments
+NAME=""
+STATUS=""
+MESSAGE=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --name|-n)
+            NAME="$2"
+            shift 2
+            ;;
+        running|blocked|completed|error|idle)
+            STATUS="$1"
+            shift
+            ;;
+        *)
+            if [ -z "$MESSAGE" ]; then
+                MESSAGE="$1"
+            else
+                MESSAGE="$MESSAGE $1"
+            fi
+            shift
+            ;;
+    esac
+done
+
+# Default name to current directory
+if [ -z "$NAME" ]; then
+    NAME="$(basename "$(pwd)")"
+fi
+
+# Validate status
+if [ -z "$STATUS" ]; then
+    echo "Usage: report-status [--name agent-name] <status> [message]"
+    echo "Statuses: running, blocked, completed, error, idle"
+    exit 1
+fi
+
+# Get current timestamp
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+# Update the JSON file using python (more reliable than jq for complex updates)
+python3 << EOF
+import json
+import sys
+
+statuses_file = "$STATUSES_FILE"
+name = "$NAME"
+status = "$STATUS"
+message = """$MESSAGE"""
+timestamp = "$TIMESTAMP"
+
+try:
+    with open(statuses_file, 'r') as f:
+        data = json.load(f)
+except:
+    data = {"agents": {}}
+
+if "agents" not in data:
+    data["agents"] = {}
+
+# Get existing agent data or create new
+agent = data["agents"].get(name, {"history": []})
+
+# Update current status
+agent["status"] = status
+agent["message"] = message
+agent["updated_at"] = timestamp
+
+# Add to history (keep last 20 entries)
+agent["history"].insert(0, {
+    "status": status,
+    "message": message,
+    "timestamp": timestamp
+})
+agent["history"] = agent["history"][:20]
+
+# Set created_at if new
+if "created_at" not in agent:
+    agent["created_at"] = timestamp
+
+data["agents"][name] = agent
+
+with open(statuses_file, 'w') as f:
+    json.dump(data, f, indent=2)
+
+print(f"✓ {name}: {status}" + (f" - {message}" if message else ""))
+EOF

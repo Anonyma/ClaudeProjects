@@ -1,0 +1,28 @@
+#!/bin/bash
+# Start the Agent Hub dashboard server
+
+AGENT_HUB_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Check if server is already running
+if lsof -i :8766 > /dev/null 2>&1; then
+    echo "Agent Hub already running at http://localhost:8766"
+    open "http://localhost:8766/dashboard.html"
+    exit 0
+fi
+
+# Start the server
+echo "Starting Agent Hub..."
+python3 "$AGENT_HUB_DIR/agent-hub-server.py" &
+SERVER_PID=$!
+
+# Wait a moment for server to start
+sleep 1
+
+# Open in browser
+open "http://localhost:8766/dashboard.html"
+
+echo "Agent Hub running (PID: $SERVER_PID)"
+echo "Press Ctrl+C to stop, or run: kill $SERVER_PID"
+
+# Keep script running to show logs
+wait $SERVER_PID

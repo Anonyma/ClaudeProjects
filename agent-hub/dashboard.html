@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Hub</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: #21262d;
+            border-radius: 20px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: 1px solid #30363d;
+            background: #21262d;
+            color: #c9d1d9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #30363d;
+            border-color: #8b949e;
+        }
+
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 16px;
+        }
+
+        .agent-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .agent-card:hover {
+            border-color: #8b949e;
+        }
+
+        .agent-card.running {
+            border-left: 3px solid #f0883e;
+        }
+
+        .agent-card.blocked {
+            border-left: 3px solid #f85149;
+            background: #1c1410;
+        }
+
+        .agent-card.error {
+            border-left: 3px solid #f85149;
+        }
+
+        .agent-card.completed {
+            border-left: 3px solid #3fb950;
+        }
+
+        .agent-card.idle {
+            border-left: 3px solid #6e7681;
+            opacity: 0.7;
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .agent-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #58a6ff;
+        }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .agent-status.running {
+            background: rgba(240, 136, 62, 0.2);
+            color: #f0883e;
+        }
+
+        .agent-status.blocked {
+            background: rgba(248, 81, 73, 0.2);
+            color: #f85149;
+        }
+
+        .agent-status.error {
+            background: rgba(248, 81, 73, 0.2);
+            color: #f85149;
+        }
+
+        .agent-status.completed {
+            background: rgba(63, 185, 80, 0.2);
+            color: #3fb950;
+        }
+
+        .agent-status.idle {
+            background: rgba(110, 118, 129, 0.2);
+            color: #8b949e;
+        }
+
+        .agent-message {
+            font-size: 14px;
+            color: #8b949e;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .agent-time {
+            font-size: 12px;
+            color: #6e7681;
+        }
+
+        .agent-history {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #21262d;
+        }
+
+        .history-toggle {
+            font-size: 12px;
+            color: #58a6ff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .history-list {
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .history-item {
+            display: flex;
+            gap: 8px;
+            padding: 4px 0;
+            color: #6e7681;
+        }
+
+        .history-item .icon {
+            width: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6e7681;
+        }
+
+        .empty-state h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #8b949e;
+        }
+
+        .last-updated {
+            font-size: 12px;
+            color: #6e7681;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .agent-card.running .status-dot {
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.running { background: #f0883e; }
+        .status-dot.blocked { background: #f85149; }
+        .status-dot.error { background: #f85149; }
+        .status-dot.completed { background: #3fb950; }
+        .status-dot.idle { background: #6e7681; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 Agent Hub</h1>
+        <div class="stats" id="stats"></div>
+        <div class="actions">
+            <button onclick="clearCompleted()">Clear Completed</button>
+            <button onclick="refresh()">↻ Refresh</button>
+        </div>
+    </div>
+
+    <div class="agents-grid" id="agents-grid"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8766/api';
+        const STATUS_ICONS = {
+            running: '🔄',
+            blocked: '🚫',
+            completed: '✅',
+            error: '❌',
+            idle: '💤'
+        };
+
+        let expandedAgents = new Set();
+
+        async function fetchStatuses() {
+            try {
+                const res = await fetch(`${API_BASE}/statuses`);
+                return await res.json();
+            } catch (e) {
+                // Try loading from file if server not running
+                try {
+                    const res = await fetch('statuses.json');
+                    return await res.json();
+                } catch (e2) {
+                    return { agents: {} };
+                }
+            }
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) return 'just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+            return date.toLocaleDateString();
+        }
+
+        function renderAgent(name, agent) {
+            const isExpanded = expandedAgents.has(name);
+            const history = agent.history || [];
+
+            return `
+                <div class="agent-card ${agent.status}">
+                    <div class="agent-header">
+                        <span class="agent-name">${name}</span>
+                        <span class="agent-status ${agent.status}">
+                            <span class="status-dot ${agent.status}"></span>
+                            ${agent.status}
+                        </span>
+                    </div>
+                    <div class="agent-message">${agent.message || 'No message'}</div>
+                    <div class="agent-time">Updated ${formatTime(agent.updated_at)}</div>
+                    ${history.length > 1 ? `
+                        <div class="agent-history">
+                            <div class="history-toggle" onclick="toggleHistory('${name}')">
+                                ${isExpanded ? '▼' : '▶'} History (${history.length})
+                            </div>
+                            ${isExpanded ? `
+                                <div class="history-list">
+                                    ${history.slice(0, 10).map(h => `
+                                        <div class="history-item">
+                                            <span class="icon">${STATUS_ICONS[h.status] || '❓'}</span>
+                                            <span>${formatTime(h.timestamp)}</span>
+                                            <span>${h.message || '-'}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function toggleHistory(name) {
+            if (expandedAgents.has(name)) {
+                expandedAgents.delete(name);
+            } else {
+                expandedAgents.add(name);
+            }
+            render();
+        }
+
+        async function render() {
+            const data = await fetchStatuses();
+            const agents = data.agents || {};
+            const grid = document.getElementById('agents-grid');
+            const stats = document.getElementById('stats');
+
+            if (Object.keys(agents).length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h2>No agents reporting</h2>
+                        <p>Use <code>report-status --name my-agent running "Working on something"</code> to report status</p>
+                    </div>
+                `;
+                stats.innerHTML = '';
+                return;
+            }
+
+            // Sort agents: blocked first, then running, then others
+            const sortOrder = { blocked: 0, running: 1, error: 2, completed: 3, idle: 4 };
+            const sortedAgents = Object.entries(agents).sort((a, b) => {
+                return (sortOrder[a[1].status] || 5) - (sortOrder[b[1].status] || 5);
+            });
+
+            grid.innerHTML = sortedAgents.map(([name, agent]) => renderAgent(name, agent)).join('');
+
+            // Update stats
+            const counts = {};
+            Object.values(agents).forEach(a => {
+                counts[a.status] = (counts[a.status] || 0) + 1;
+            });
+
+            stats.innerHTML = Object.entries(counts).map(([status, count]) => `
+                <div class="stat">
+                    <span>${STATUS_ICONS[status] || '❓'}</span>
+                    <span>${count} ${status}</span>
+                </div>
+            `).join('');
+        }
+
+        async function clearCompleted() {
+            try {
+                await fetch(`${API_BASE}/clear-completed`);
+                render();
+            } catch (e) {
+                alert('Server not running. Start with: agent-dashboard');
+            }
+        }
+
+        function refresh() {
+            render();
+        }
+
+        // Initial render
+        render();
+
+        // Auto-refresh every 5 seconds
+        setInterval(render, 5000);
+    </script>
+</body>
+</html>
