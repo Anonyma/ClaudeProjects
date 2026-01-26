@@ -1,0 +1,15 @@
+{
+  "env": {
+    "PROJECT_NAME": "Nirvex",
+    "PROJECT_TYPE": "marketing-agency"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(/Applications/Google Chrome.app/*)",
+      "Read",
+      "Write",
+      "Edit"
+    ]
+  }
+}
