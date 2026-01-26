@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Dashboard - Command Center</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'SF Mono', 'Fira Code', Menlo, monospace;
+            background: #0a0a0c;
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .hud {
+            max-width: 1500px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto auto 1fr;
+            gap: 12px;
+        }
+
+        .panel {
+            background: linear-gradient(180deg, rgba(20, 20, 25, 0.95) 0%, rgba(15, 15, 18, 0.98) 100%);
+            border: 1px solid rgba(100, 200, 255, 0.1);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(100, 200, 255, 0.3), transparent);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(100, 200, 255, 0.7);
+        }
+
+        .status-led {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-led.green { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+        .status-led.red { background: #ff4444; box-shadow: 0 0 8px #ff4444; }
+        .status-led.yellow { background: #ffcc00; box-shadow: 0 0 8px #ffcc00; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Header panel - full width */
+        .header-panel {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+        }
+
+        .system-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-glyph {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(100, 200, 255, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(100, 200, 255, 0.05);
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(100, 200, 255, 0.9);
+        }
+
+        .system-status {
+            display: flex;
+            gap: 24px;
+            font-size: 12px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-label {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .status-value {
+            color: #00ff88;
+        }
+
+        .status-value.warning { color: #ffcc00; }
+        .status-value.danger { color: #ff4444; }
+
+        /* Stat panels */
+        .stat-panel {
+            padding: 20px;
+        }
+
+        .stat-main {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        .stat-unit {
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .stat-panel.danger .stat-number { color: #ff4444; }
+        .stat-panel.success .stat-number { color: #00ff88; }
+        .stat-panel.warning .stat-number { color: #ffcc00; }
+
+        .stat-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 1s ease;
+        }
+
+        .stat-panel.danger .stat-fill { background: #ff4444; }
+        .stat-panel.success .stat-fill { background: #00ff88; }
+        .stat-panel.warning .stat-fill { background: #ffcc00; }
+
+        .stat-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Categories panel */
+        .categories-panel {
+            grid-row: span 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .categories-list {
+            flex: 1;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .category-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-row:hover {
+            background: rgba(100, 200, 255, 0.05);
+            border-color: rgba(100, 200, 255, 0.2);
+        }
+
+        .category-row.selected {
+            background: rgba(100, 200, 255, 0.1);
+            border-color: rgba(100, 200, 255, 0.4);
+        }
+
+        .category-indicator {
+            width: 4px;
+            height: 32px;
+            border-radius: 2px;
+        }
+
+        .category-info {
+            flex: 1;
+        }
+
+        .category-name {
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .category-meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .category-metric {
+            text-align: right;
+        }
+
+        .metric-value {
+            font-size: 16px;
+            color: #ffcc00;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        /* Tabs panel - spans 2 columns */
+        .tabs-panel {
+            grid-column: span 2;
+            grid-row: span 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tabs-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+        }
+
+        .toolbar-filters {
+            display: flex;
+            gap: 4px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            color: rgba(255,255,255,0.5);
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: rgba(100, 200, 255, 0.3);
+            color: rgba(100, 200, 255, 0.8);
+        }
+
+        .filter-btn.active {
+            background: rgba(100, 200, 255, 0.1);
+            border-color: rgba(100, 200, 255, 0.5);
+            color: rgba(100, 200, 255, 1);
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: transparent;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            border-radius: 4px;
+            color: #ff4444;
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 68, 68, 0.1);
+            border-color: #ff4444;
+        }
+
+        .selection-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: rgba(100, 200, 255, 0.05);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .selection-info {
+            color: rgba(100, 200, 255, 0.8);
+        }
+
+        .tabs-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .tab-entry {
+            display: grid;
+            grid-template-columns: 30px 1fr 80px 80px 40px;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.2s;
+        }
+
+        .tab-entry:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .tab-entry.active-tab {
+            border-left: 2px solid #ff4444;
+            background: linear-gradient(90deg, rgba(255, 68, 68, 0.05) 0%, transparent 100%);
+        }
+
+        .tab-entry.selected {
+            background: rgba(100, 200, 255, 0.05);
+        }
+
+        .tab-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .tab-checkbox.checked {
+            background: rgba(100, 200, 255, 0.8);
+            border-color: rgba(100, 200, 255, 0.8);
+        }
+
+        .tab-checkbox.checked::after {
+            content: '✓';
+            font-size: 10px;
+            color: #0a0a0c;
+        }
+
+        .tab-content {
+            min-width: 0;
+        }
+
+        .tab-title {
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .tab-url {
+            font-size: 10px;
+            color: rgba(255,255,255,0.3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab-status {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tab-status.online {
+            background: rgba(255, 68, 68, 0.15);
+            color: #ff4444;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .tab-status.offline {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .tab-memory {
+            font-size: 12px;
+            color: #ffcc00;
+            text-align: right;
+        }
+
+        .tab-action {
+            width: 28px;
+            height: 28px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            background: transparent;
+            color: rgba(255,255,255,0.3);
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+
+        .tab-entry:hover .tab-action {
+            opacity: 1;
+        }
+
+        .tab-action:hover {
+            border-color: #ff4444;
+            color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        /* Scrollbar */
+        .tabs-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .tabs-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .tabs-list::-webkit-scrollbar-thumb {
+            background: rgba(100, 200, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        /* Scanlines effect */
+        .hud::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="hud">
+        <!-- Header -->
+        <div class="panel header-panel">
+            <div class="system-title">
+                <div class="logo-glyph">◈</div>
+                <h1>Memory Command</h1>
+            </div>
+            <div class="system-status">
+                <div class="status-item">
+                    <span class="status-led green"></span>
+                    <span class="status-label">SYS</span>
+                    <span class="status-value">ONLINE</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">UPD</span>
+                    <span class="status-value">30s</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">MEM</span>
+                    <span class="status-value warning">78%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="panel stat-panel danger">
+            <div class="panel-header">
+                <span class="status-led red"></span>
+                Active Processes
+            </div>
+            <div class="stat-main">
+                <span class="stat-number">18</span>
+                <span class="stat-unit">tabs</span>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-fill" style="width: 41%"></div>
+            </div>
+            <div class="stat-detail">
+                <span>consuming resources</span>
+                <span>41% of total</span>
+            </div>
+        </div>
+
+        <div class="panel stat-panel success">
+            <div class="panel-header">
+                <span class="status-led green"></span>
+                Suspended
+            </div>
+            <div class="stat-main">
+                <span class="stat-number">26</span>
+                <span class="stat-unit">tabs</span>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-fill" style="width: 59%"></div>
+            </div>
+            <div class="stat-detail">
+                <span>memory conserved</span>
+                <span>59% of total</span>
+            </div>
+        </div>
+
+        <div class="panel stat-panel warning">
+            <div class="panel-header">
+                <span class="status-led yellow"></span>
+                Memory Load
+            </div>
+            <div class="stat-main">
+                <span class="stat-number">1.9</span>
+                <span class="stat-unit">GB</span>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-fill" style="width: 78%"></div>
+            </div>
+            <div class="stat-detail">
+                <span>active allocation</span>
+                <span>78% capacity</span>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="panel categories-panel">
+            <div class="panel-header">
+                <span class="status-led green"></span>
+                Categories
+            </div>
+            <div class="categories-list">
+                <div class="category-row selected">
+                    <div class="category-indicator" style="background: #64c8ff;"></div>
+                    <div class="category-info">
+                        <div class="category-name">Claude AI</div>
+                        <div class="category-meta">12 tabs • 8 active</div>
+                    </div>
+                    <div class="category-metric">
+                        <div class="metric-value">~800M</div>
+                        <div class="metric-label">est.</div>
+                    </div>
+                </div>
+                <div class="category-row">
+                    <div class="category-indicator" style="background: #1da1f2;"></div>
+                    <div class="category-info">
+                        <div class="category-name">Twitter/X</div>
+                        <div class="category-meta">8 tabs • 3 active</div>
+                    </div>
+                    <div class="category-metric">
+                        <div class="metric-value">~400M</div>
+                        <div class="metric-label">est.</div>
+                    </div>
+                </div>
+                <div class="category-row">
+                    <div class="category-indicator" style="background: #00ff88;"></div>
+                    <div class="category-info">
+                        <div class="category-name">GitHub</div>
+                        <div class="category-meta">6 tabs • 2 active</div>
+                    </div>
+                    <div class="category-metric">
+                        <div class="metric-value">~300M</div>
+                        <div class="metric-label">est.</div>
+                    </div>
+                </div>
+                <div class="category-row">
+                    <div class="category-indicator" style="background: #ffcc00;"></div>
+                    <div class="category-info">
+                        <div class="category-name">Localhost</div>
+                        <div class="category-meta">4 tabs • 4 active</div>
+                    </div>
+                    <div class="category-metric">
+                        <div class="metric-value">~200M</div>
+                        <div class="metric-label">est.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="panel tabs-panel">
+            <div class="panel-header">
+                <span class="status-led green"></span>
+                Process Monitor
+            </div>
+            <div class="tabs-toolbar">
+                <div class="toolbar-filters">
+                    <button class="filter-btn active">ALL</button>
+                    <button class="filter-btn">ACTIVE</button>
+                    <button class="filter-btn">SUSPENDED</button>
+                </div>
+                <div class="toolbar-actions">
+                    <button class="action-btn">⊗ TERMINATE SELECTED</button>
+                </div>
+            </div>
+            <div class="selection-row">
+                <span class="selection-info">▸ 3 processes selected • ~450 MB allocation</span>
+            </div>
+            <div class="tabs-list">
+                <div class="tab-entry active-tab selected">
+                    <div class="tab-checkbox checked"></div>
+                    <div class="tab-content">
+                        <div class="tab-title">Claude - Building a memory dashboard</div>
+                        <div class="tab-url">claude.ai/chat/abc123</div>
+                    </div>
+                    <span class="tab-status online">ACTIVE</span>
+                    <span class="tab-memory">~150 MB</span>
+                    <button class="tab-action">✕</button>
+                </div>
+                <div class="tab-entry active-tab selected">
+                    <div class="tab-checkbox checked"></div>
+                    <div class="tab-content">
+                        <div class="tab-title">Telegram Web</div>
+                        <div class="tab-url">web.telegram.org</div>
+                    </div>
+                    <span class="tab-status online">ACTIVE</span>
+                    <span class="tab-memory">~180 MB</span>
+                    <button class="tab-action">✕</button>
+                </div>
+                <div class="tab-entry active-tab selected">
+                    <div class="tab-checkbox checked"></div>
+                    <div class="tab-content">
+                        <div class="tab-title">Vibe Kanban - Orchestrate AI Agents</div>
+                        <div class="tab-url">vibekanban.com</div>
+                    </div>
+                    <span class="tab-status online">ACTIVE</span>
+                    <span class="tab-memory">~120 MB</span>
+                    <button class="tab-action">✕</button>
+                </div>
+                <div class="tab-entry">
+                    <div class="tab-checkbox"></div>
+                    <div class="tab-content">
+                        <div class="tab-title">Linear – Plan and build products</div>
+                        <div class="tab-url">linear.app/homepage</div>
+                    </div>
+                    <span class="tab-status offline">SUSPENDED</span>
+                    <span class="tab-memory">~8 MB</span>
+                    <button class="tab-action">✕</button>
+                </div>
+                <div class="tab-entry">
+                    <div class="tab-checkbox"></div>
+                    <div class="tab-content">
+                        <div class="tab-title">NotebookLM Study Hub</div>
+                        <div class="tab-url">notebooklmstudyhub.netlify.app</div>
+                    </div>
+                    <span class="tab-status offline">SUSPENDED</span>
+                    <span class="tab-memory">~8 MB</span>
+                    <button class="tab-action">✕</button>
+                </div>
+                <div class="tab-entry">
+                    <div class="tab-checkbox"></div>
+                    <div class="tab-content">
+                        <div class="tab-title">Claude Code Agent Farm - Reddit</div>
+                        <div class="tab-url">reddit.com/r/LLMDevs/...</div>
+                    </div>
+                    <span class="tab-status offline">SUSPENDED</span>
+                    <span class="tab-memory">~8 MB</span>
+                    <button class="tab-action">✕</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

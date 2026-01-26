@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Lab - Tab Dashboard Variants</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f12;
+            min-height: 100vh;
+            color: #e8e8f0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #8b8b9e;
+            font-size: 16px;
+        }
+
+        .variants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .variant-card {
+            background: #1a1a1f;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .variant-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(167, 139, 250, 0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .variant-preview {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .variant-1 .variant-preview {
+            background: linear-gradient(135deg, #0f0a1e 0%, #1a1035 50%, #0d1929 100%);
+        }
+
+        .variant-2 .variant-preview {
+            background: #050508;
+        }
+
+        .variant-2 .variant-preview::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(247, 37, 133, 0.3) 0%, transparent 70%);
+            top: -50px;
+            right: -50px;
+        }
+
+        .variant-3 .variant-preview {
+            background: #111113;
+        }
+
+        .variant-4 .variant-preview {
+            background: #0c0c0f;
+        }
+
+        .variant-5 .variant-preview {
+            background: #0a0a0c;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .variant-5 .variant-preview::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(100, 200, 255, 0.03) 0px,
+                rgba(100, 200, 255, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+
+        .variant-info {
+            padding: 20px;
+        }
+
+        .variant-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .variant-desc {
+            font-size: 14px;
+            color: #8b8b9e;
+            line-height: 1.5;
+        }
+
+        .variant-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            background: rgba(167, 139, 250, 0.15);
+            color: #a78bfa;
+            border-radius: 12px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            color: #6b6b7e;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Design Lab</h1>
+            <p class="subtitle">Tab Memory Dashboard - 5 Distinct Variations</p>
+        </header>
+
+        <div class="variants-grid">
+            <a href="variant-1-gradient-flow.html" class="variant-card variant-1">
+                <div class="variant-preview">🌊</div>
+                <div class="variant-info">
+                    <div class="variant-name">1. Gradient Flow</div>
+                    <div class="variant-desc">Smooth gradients, glassmorphism, flowing color transitions. Sidebar + table layout with elegant depth.</div>
+                    <div class="variant-tags">
+                        <span class="tag">Glassmorphism</span>
+                        <span class="tag">Gradients</span>
+                        <span class="tag">Sidebar</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="variant-2-neon-glow.html" class="variant-card variant-2">
+                <div class="variant-preview">✨</div>
+                <div class="variant-info">
+                    <div class="variant-name">2. Neon Glow</div>
+                    <div class="variant-desc">Dark with vibrant accent colors and glowing effects. Memory bar visualization, card-based tab display.</div>
+                    <div class="variant-tags">
+                        <span class="tag">Neon</span>
+                        <span class="tag">Glow Effects</span>
+                        <span class="tag">Cards</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="variant-3-bento.html" class="variant-card variant-3">
+                <div class="variant-preview">🍱</div>
+                <div class="variant-info">
+                    <div class="variant-name">3. Bento Grid</div>
+                    <div class="variant-desc">Modern bento-style layout with depth, shadows, and Apple-inspired aesthetics. Organized grid structure.</div>
+                    <div class="variant-tags">
+                        <span class="tag">Bento</span>
+                        <span class="tag">Apple-style</span>
+                        <span class="tag">Grid</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="variant-4-radial.html" class="variant-card variant-4">
+                <div class="variant-preview">◉</div>
+                <div class="variant-info">
+                    <div class="variant-name">4. Radial</div>
+                    <div class="variant-desc">Circular progress rings for data visualization. Animated radial chart as the hero element with clean stats.</div>
+                    <div class="variant-tags">
+                        <span class="tag">Data Viz</span>
+                        <span class="tag">Rings</span>
+                        <span class="tag">Animated</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="variant-5-command-center.html" class="variant-card variant-5">
+                <div class="variant-preview">◈</div>
+                <div class="variant-info">
+                    <div class="variant-name">5. Command Center</div>
+                    <div class="variant-desc">HUD-style interface with status indicators, monospace typography, and a technical operations aesthetic.</div>
+                    <div class="variant-tags">
+                        <span class="tag">HUD</span>
+                        <span class="tag">Monospace</span>
+                        <span class="tag">Technical</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <footer>
+            Design Lab • Tab Memory Dashboard Redesign
+        </footer>
+    </div>
+</body>
+</html>

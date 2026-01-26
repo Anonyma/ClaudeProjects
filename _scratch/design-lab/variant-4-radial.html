@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Dashboard - Radial</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0c0c0f;
+            min-height: 100vh;
+            color: #f5f5f7;
+            padding: 32px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(48, 209, 88, 0.12);
+            color: #30d158;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: #30d158;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .top-section {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .radial-card {
+            background: #1c1c1e;
+            border-radius: 28px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .radial-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin-bottom: 24px;
+        }
+
+        .radial-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 8px solid;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ring-outer {
+            width: 280px;
+            height: 280px;
+            border-color: rgba(255, 69, 58, 0.2);
+        }
+
+        .ring-outer-fill {
+            width: 280px;
+            height: 280px;
+            border-color: #ff453a transparent transparent transparent;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            animation: rotate-outer 2s ease-out forwards;
+        }
+
+        @keyframes rotate-outer {
+            to { transform: translate(-50%, -50%) rotate(55deg); }
+        }
+
+        .ring-middle {
+            width: 220px;
+            height: 220px;
+            border-color: rgba(255, 159, 10, 0.2);
+        }
+
+        .ring-middle-fill {
+            width: 220px;
+            height: 220px;
+            border-color: #ff9f0a transparent transparent transparent;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            animation: rotate-middle 2s ease-out forwards;
+        }
+
+        @keyframes rotate-middle {
+            to { transform: translate(-50%, -50%) rotate(200deg); }
+        }
+
+        .ring-inner {
+            width: 160px;
+            height: 160px;
+            border-color: rgba(48, 209, 88, 0.2);
+        }
+
+        .ring-inner-fill {
+            width: 160px;
+            height: 160px;
+            border-color: #30d158 transparent transparent transparent;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            animation: rotate-inner 2s ease-out forwards;
+        }
+
+        @keyframes rotate-inner {
+            to { transform: translate(-50%, -50%) rotate(300deg); }
+        }
+
+        .radial-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: #1c1c1e;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radial-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .radial-label {
+            font-size: 11px;
+            color: #8e8e93;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .radial-legend {
+            display: flex;
+            gap: 24px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.active { background: #ff453a; }
+        .legend-dot.memory { background: #ff9f0a; }
+        .legend-dot.suspended { background: #30d158; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            height: 100%;
+        }
+
+        .stat-tile {
+            background: #1c1c1e;
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .stat-tile.active .stat-icon { background: rgba(255, 69, 58, 0.15); }
+        .stat-tile.suspended .stat-icon { background: rgba(48, 209, 88, 0.15); }
+        .stat-tile.memory .stat-icon { background: rgba(255, 159, 10, 0.15); }
+
+        .stat-change {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .stat-change.up { background: rgba(255, 69, 58, 0.15); color: #ff453a; }
+        .stat-change.down { background: rgba(48, 209, 88, 0.15); color: #30d158; }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-tile.active .stat-value { color: #ff453a; }
+        .stat-tile.suspended .stat-value { color: #30d158; }
+        .stat-tile.memory .stat-value { color: #ff9f0a; }
+
+        .stat-label {
+            font-size: 14px;
+            color: #8e8e93;
+        }
+
+        .tabs-section {
+            background: #1c1c1e;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .tabs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .tabs-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .tabs-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .pill-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            background: rgba(255,255,255,0.06);
+            border: none;
+            color: #f5f5f7;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pill-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .pill-btn.danger {
+            background: rgba(255, 69, 58, 0.15);
+            color: #ff453a;
+        }
+
+        .pill-btn.danger:hover {
+            background: #ff453a;
+            color: white;
+        }
+
+        .category-row {
+            display: flex;
+            gap: 12px;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            overflow-x: auto;
+        }
+
+        .category-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 24px;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .category-pill:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .category-pill.selected {
+            background: rgba(94, 92, 230, 0.15);
+            border-color: rgba(94, 92, 230, 0.4);
+        }
+
+        .category-count {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .tabs-content {
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .tab-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.2s;
+        }
+
+        .tab-row:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .tab-row.active-tab {
+            background: linear-gradient(90deg, rgba(255, 69, 58, 0.08) 0%, transparent 100%);
+        }
+
+        .tab-select {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-select.checked {
+            background: #5e5ce6;
+            border-color: #5e5ce6;
+        }
+
+        .tab-select.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+        }
+
+        .tab-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .tab-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tab-title {
+            font-size: 15px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .tab-url {
+            font-size: 12px;
+            color: #636366;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab-badge {
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tab-badge.active {
+            background: rgba(255, 69, 58, 0.15);
+            color: #ff453a;
+        }
+
+        .tab-badge.suspended {
+            background: rgba(48, 209, 88, 0.15);
+            color: #30d158;
+        }
+
+        .tab-mem {
+            font-family: 'SF Mono', Menlo, monospace;
+            font-size: 14px;
+            color: #ff9f0a;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        .tab-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            color: #636366;
+            border-radius: 8px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .tab-row:hover .tab-close {
+            opacity: 1;
+        }
+
+        .tab-close:hover {
+            background: rgba(255, 69, 58, 0.15);
+            color: #ff453a;
+        }
+
+        /* Scrollbar */
+        .tabs-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .tabs-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tabs-content::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+
+        .selection-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            background: rgba(94, 92, 230, 0.1);
+            border-bottom: 1px solid rgba(94, 92, 230, 0.2);
+        }
+
+        .selection-text {
+            color: #5e5ce6;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                🧠 Tab Memory
+                <span class="live-badge">
+                    <span class="live-dot"></span>
+                    Live
+                </span>
+            </h1>
+        </header>
+
+        <div class="top-section">
+            <div class="radial-card">
+                <div class="radial-container">
+                    <div class="radial-ring ring-outer"></div>
+                    <div class="radial-ring ring-outer-fill"></div>
+                    <div class="radial-ring ring-middle"></div>
+                    <div class="radial-ring ring-middle-fill"></div>
+                    <div class="radial-ring ring-inner"></div>
+                    <div class="radial-ring ring-inner-fill"></div>
+                    <div class="radial-center">
+                        <div class="radial-value">44</div>
+                        <div class="radial-label">Total</div>
+                    </div>
+                </div>
+                <div class="radial-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot active"></span>
+                        Active (18)
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot memory"></span>
+                        1.9 GB
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot suspended"></span>
+                        Suspended (26)
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-tile active">
+                    <div class="stat-top">
+                        <div class="stat-icon">🔥</div>
+                        <span class="stat-change up">+3</span>
+                    </div>
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">Active tabs</div>
+                </div>
+                <div class="stat-tile suspended">
+                    <div class="stat-top">
+                        <div class="stat-icon">💤</div>
+                        <span class="stat-change down">-2</span>
+                    </div>
+                    <div class="stat-value">26</div>
+                    <div class="stat-label">Suspended</div>
+                </div>
+                <div class="stat-tile memory">
+                    <div class="stat-top">
+                        <div class="stat-icon">💾</div>
+                        <span class="stat-change up">+200M</span>
+                    </div>
+                    <div class="stat-value">1.9G</div>
+                    <div class="stat-label">Memory used</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs-section">
+            <div class="tabs-header">
+                <span class="tabs-title">All Tabs</span>
+                <div class="tabs-actions">
+                    <button class="pill-btn">🔄 Refresh</button>
+                    <button class="pill-btn danger">✕ Close 3 Selected</button>
+                </div>
+            </div>
+
+            <div class="category-row">
+                <div class="category-pill selected">
+                    All <span class="category-count">44</span>
+                </div>
+                <div class="category-pill">
+                    🤖 Claude <span class="category-count">12</span>
+                </div>
+                <div class="category-pill">
+                    🐦 Twitter <span class="category-count">8</span>
+                </div>
+                <div class="category-pill">
+                    💻 GitHub <span class="category-count">6</span>
+                </div>
+                <div class="category-pill">
+                    🏠 Localhost <span class="category-count">4</span>
+                </div>
+                <div class="category-pill">
+                    📑 Other <span class="category-count">14</span>
+                </div>
+            </div>
+
+            <div class="selection-banner">
+                <span class="selection-text">3 tabs selected • ~450 MB estimated</span>
+            </div>
+
+            <div class="tabs-content">
+                <div class="tab-row active-tab">
+                    <div class="tab-select checked"></div>
+                    <div class="tab-icon">🤖</div>
+                    <div class="tab-info">
+                        <div class="tab-title">Claude - Building a memory dashboard</div>
+                        <div class="tab-url">claude.ai/chat/abc123</div>
+                    </div>
+                    <span class="tab-badge active">Active</span>
+                    <span class="tab-mem">~150 MB</span>
+                    <button class="tab-close">✕</button>
+                </div>
+                <div class="tab-row active-tab">
+                    <div class="tab-select checked"></div>
+                    <div class="tab-icon">💬</div>
+                    <div class="tab-info">
+                        <div class="tab-title">Telegram Web</div>
+                        <div class="tab-url">web.telegram.org</div>
+                    </div>
+                    <span class="tab-badge active">Active</span>
+                    <span class="tab-mem">~180 MB</span>
+                    <button class="tab-close">✕</button>
+                </div>
+                <div class="tab-row active-tab">
+                    <div class="tab-select checked"></div>
+                    <div class="tab-icon">📋</div>
+                    <div class="tab-info">
+                        <div class="tab-title">Vibe Kanban - Orchestrate AI Agents</div>
+                        <div class="tab-url">vibekanban.com</div>
+                    </div>
+                    <span class="tab-badge active">Active</span>
+                    <span class="tab-mem">~120 MB</span>
+                    <button class="tab-close">✕</button>
+                </div>
+                <div class="tab-row">
+                    <div class="tab-select"></div>
+                    <div class="tab-icon">📐</div>
+                    <div class="tab-info">
+                        <div class="tab-title">Linear – Plan and build products</div>
+                        <div class="tab-url">linear.app/homepage</div>
+                    </div>
+                    <span class="tab-badge suspended">Suspended</span>
+                    <span class="tab-mem">~8 MB</span>
+                    <button class="tab-close">✕</button>
+                </div>
+                <div class="tab-row">
+                    <div class="tab-select"></div>
+                    <div class="tab-icon">📚</div>
+                    <div class="tab-info">
+                        <div class="tab-title">NotebookLM Study Hub</div>
+                        <div class="tab-url">notebooklmstudyhub.netlify.app</div>
+                    </div>
+                    <span class="tab-badge suspended">Suspended</span>
+                    <span class="tab-mem">~8 MB</span>
+                    <button class="tab-close">✕</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
