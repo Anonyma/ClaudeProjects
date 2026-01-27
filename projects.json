@@ -661,6 +661,39 @@
       }
     },
     {
+      "id": "llm-council",
+      "name": "LLM Council",
+      "description": "Send the same query to multiple LLMs at once and compare responses side-by-side. Supports OpenAI (GPT-4o, GPT-4o-mini), Anthropic (Claude Sonnet 4, Claude Haiku), and Google (Gemini 2.0 Flash).",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/llm-council",
+      "type": "web-app",
+      "category": "apps",
+      "created": "2026-01-27",
+      "tags": [
+        "llm",
+        "ai",
+        "comparison",
+        "openai",
+        "anthropic",
+        "google",
+        "gemini",
+        "gpt",
+        "claude"
+      ],
+      "status": "wip",
+      "access": {
+        "method": "localhost",
+        "url": "http://localhost:8880/index.html",
+        "instructions": "Start server: cd llm-council && python3 -m http.server 8880. Open: http://localhost:8880/index.html. Configure API keys via gear icon.",
+        "hosted": null,
+        "requiresServer": true,
+        "serverCommand": "cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/llm-council && python3 -m http.server 8880"
+      },
+      "files": [
+        "CLAUDE.md",
+        "index.html"
+      ]
+    },
+    {
       "id": "reading-dashboard",
       "name": "NotebookLM Reading Dashboard",
       "description": "Dashboard for NotebookLM sources (superseded by NotebookLM Study Hub)",
