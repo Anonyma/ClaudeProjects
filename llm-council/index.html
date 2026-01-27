@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1800px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -48,12 +48,13 @@
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 0.9rem;
             transition: all 0.2s;
+            font-weight: 500;
         }
 
         .btn-icon {
@@ -70,7 +71,6 @@
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            font-weight: 500;
         }
 
         .btn-primary:hover {
@@ -93,6 +93,16 @@
             background: #3a3a4a;
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+
+        /* Input Section */
         .input-section {
             background: #12121a;
             border-radius: 12px;
@@ -112,6 +122,7 @@
             font-size: 1rem;
             resize: vertical;
             font-family: inherit;
+            line-height: 1.5;
         }
 
         .prompt-textarea:focus {
@@ -123,63 +134,242 @@
             color: #666;
         }
 
-        .model-selector {
+        /* Provider Grid */
+        .providers-section {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 16px;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 16px;
         }
 
-        .model-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 14px;
-            background: #1a1a24;
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #aaa;
+        }
+
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .provider-card {
+            background: #12121a;
+            border-radius: 12px;
             border: 1px solid #2a2a3a;
-            border-radius: 20px;
-            cursor: pointer;
+            overflow: hidden;
             transition: all 0.2s;
         }
 
-        .model-toggle:hover {
+        .provider-card.disabled {
+            opacity: 0.5;
+        }
+
+        .provider-card.enabled {
             border-color: #4a4a5a;
         }
 
-        .model-toggle.selected {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
+        .provider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: #1a1a24;
+            border-bottom: 1px solid #2a2a3a;
         }
 
-        .model-toggle input {
-            display: none;
+        .provider-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .model-toggle .indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #3a3a4a;
-            transition: background 0.2s;
+        .provider-icon {
+            font-size: 1.4rem;
         }
 
-        .model-toggle.selected .indicator {
-            background: #667eea;
-        }
-
-        .model-toggle .provider-icon {
+        .provider-name {
+            font-weight: 600;
             font-size: 1rem;
         }
 
-        .model-toggle .model-name {
-            font-size: 0.85rem;
+        .provider-toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
         }
 
+        .provider-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #2a2a3a;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #666;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .provider-toggle input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .provider-toggle input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+            background-color: white;
+        }
+
+        .provider-body {
+            padding: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0a0a0f;
+            border: 1px solid #2a2a3a;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0a0a0f;
+            border: 1px solid #2a2a3a;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .features-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .feature-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: #1a1a24;
+            border: 1px solid #2a2a3a;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .feature-chip:hover {
+            border-color: #4a4a5a;
+        }
+
+        .feature-chip.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        .feature-chip.unavailable {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .feature-chip input {
+            display: none;
+        }
+
+        .api-key-status {
+            font-size: 0.75rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .api-key-status.configured {
+            color: #10b981;
+        }
+
+        .api-key-status.missing {
+            color: #f87171;
+        }
+
+        /* Action Row */
         .action-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: 16px;
+        }
+
+        .selected-count {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Responses Section */
+        .responses-section {
+            margin-bottom: 24px;
         }
 
         .responses-grid {
@@ -193,6 +383,8 @@
             border-radius: 12px;
             border: 1px solid #2a2a3a;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .response-header {
@@ -204,26 +396,51 @@
             border-bottom: 1px solid #2a2a3a;
         }
 
-        .response-header .model-info {
+        .response-model-info {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .response-header .model-info .icon {
+        .response-model-info .icon {
             font-size: 1.2rem;
         }
 
-        .response-header .model-info .name {
-            font-weight: 500;
+        .response-model-info .details {
+            display: flex;
+            flex-direction: column;
         }
 
-        .response-header .actions {
+        .response-model-info .provider-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .response-model-info .model-name {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .response-features {
+            display: flex;
+            gap: 6px;
+        }
+
+        .feature-badge {
+            padding: 2px 8px;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .response-actions {
             display: flex;
             gap: 8px;
         }
 
-        .response-header .copy-btn {
+        .copy-btn {
             background: transparent;
             border: none;
             color: #666;
@@ -233,15 +450,16 @@
             font-size: 0.8rem;
         }
 
-        .response-header .copy-btn:hover {
+        .copy-btn:hover {
             color: #e0e0e0;
             background: #2a2a3a;
         }
 
         .response-body {
             padding: 18px;
+            flex: 1;
             min-height: 200px;
-            max-height: 500px;
+            max-height: 600px;
             overflow-y: auto;
         }
 
@@ -286,6 +504,56 @@
             justify-content: space-between;
         }
 
+        /* Synthesis Section */
+        .synthesis-section {
+            background: #12121a;
+            border-radius: 12px;
+            border: 2px solid #667eea;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .synthesis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-bottom: 1px solid #2a2a3a;
+        }
+
+        .synthesis-header h3 {
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .synthesis-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .synthesis-body {
+            padding: 20px;
+        }
+
+        .synthesis-body pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .synthesis-placeholder {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
         /* Settings Modal */
         .modal-overlay {
             display: none;
@@ -294,7 +562,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 100;
             align-items: center;
             justify-content: center;
@@ -309,7 +577,7 @@
             border-radius: 16px;
             border: 1px solid #2a2a3a;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -372,6 +640,13 @@
             border-color: #667eea;
         }
 
+        .setting-group small {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
         .modal-footer {
             padding: 16px 20px;
             border-top: 1px solid #2a2a3a;
@@ -391,62 +666,97 @@
             margin-bottom: 16px;
         }
 
-        .select-all-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 8px;
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .select-link {
-            font-size: 0.8rem;
-            color: #667eea;
-            cursor: pointer;
-            text-decoration: underline;
+        ::-webkit-scrollbar-track {
+            background: #1a1a24;
         }
 
-        .select-link:hover {
-            color: #8a9bef;
+        ::-webkit-scrollbar-thumb {
+            background: #3a3a4a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a4a5a;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>LLM Council</h1>
+            <h1>🏛️ LLM Council</h1>
             <div class="header-actions">
-                <button class="btn btn-icon" onclick="openSettings()" title="Settings">⚙️</button>
+                <button class="btn btn-icon" onclick="openSettings()" title="API Keys">🔑</button>
             </div>
         </header>
 
+        <!-- Query Input -->
         <div class="input-section">
             <textarea
                 id="prompt"
                 class="prompt-textarea"
-                placeholder="Enter your prompt here... The same query will be sent to all selected models."
+                placeholder="Enter your query here. It will be sent to all enabled providers simultaneously..."
             ></textarea>
+        </div>
 
-            <div class="select-all-row">
-                <span class="select-link" onclick="selectAllModels()">Select All</span>
-                <span class="select-link" onclick="deselectAllModels()">Deselect All</span>
-            </div>
-
-            <div class="model-selector" id="modelSelector">
-                <!-- Model toggles will be populated by JS -->
-            </div>
-
-            <div class="action-row">
-                <span id="selectedCount" style="font-size: 0.85rem; color: #666;">0 models selected</span>
+        <!-- Provider Selection -->
+        <div class="providers-section">
+            <div class="section-header">
+                <span class="section-title">Select Providers & Models</span>
                 <div style="display: flex; gap: 12px;">
-                    <button class="btn btn-secondary" onclick="clearResponses()">Clear</button>
-                    <button class="btn btn-primary" id="submitBtn" onclick="submitQuery()">Send to Council</button>
+                    <button class="btn btn-secondary" onclick="enableAllProviders()">Enable All</button>
+                    <button class="btn btn-secondary" onclick="disableAllProviders()">Disable All</button>
+                </div>
+            </div>
+            <div class="providers-grid" id="providersGrid">
+                <!-- Provider cards populated by JS -->
+            </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="input-section">
+            <div class="action-row">
+                <span class="selected-count" id="selectedCount">0 providers enabled</span>
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
+                    <button class="btn btn-primary" id="submitBtn" onclick="submitQuery()">
+                        🚀 Send to Council
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div id="responsesContainer">
-            <div class="empty-state">
-                <div class="icon">🏛️</div>
-                <p>Select models above and send your query to convene the council.</p>
+        <!-- Responses -->
+        <div class="responses-section" id="responsesSection" style="display: none;">
+            <div class="section-header">
+                <span class="section-title">Responses</span>
+            </div>
+            <div class="responses-grid" id="responsesGrid"></div>
+        </div>
+
+        <!-- Synthesis -->
+        <div class="synthesis-section" id="synthesisSection" style="display: none;">
+            <div class="synthesis-header">
+                <h3>🧠 Council Synthesis</h3>
+                <div class="synthesis-controls">
+                    <select id="synthesisModel" class="form-select" style="width: auto;">
+                        <option value="claude">Claude Sonnet 4</option>
+                        <option value="gpt">GPT-4o</option>
+                        <option value="gemini">Gemini 2.0 Flash</option>
+                    </select>
+                    <button class="btn btn-success" id="synthesizeBtn" onclick="synthesize()">
+                        ✨ Synthesize
+                    </button>
+                </div>
+            </div>
+            <div class="synthesis-body" id="synthesisBody">
+                <div class="synthesis-placeholder">
+                    Click "Synthesize" to generate a comprehensive analysis comparing all responses.
+                </div>
             </div>
         </div>
     </div>
@@ -455,22 +765,11 @@
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
             <div class="modal-header">
-                <h2>API Settings</h2>
+                <h2>🔑 API Keys</h2>
                 <button class="modal-close" onclick="closeSettings()">×</button>
             </div>
-            <div class="modal-body">
-                <div class="setting-group">
-                    <label>OpenAI API Key</label>
-                    <input type="password" id="openaiKey" placeholder="sk-...">
-                </div>
-                <div class="setting-group">
-                    <label>Anthropic API Key</label>
-                    <input type="password" id="anthropicKey" placeholder="sk-ant-...">
-                </div>
-                <div class="setting-group">
-                    <label>Google AI API Key</label>
-                    <input type="password" id="googleKey" placeholder="AI...">
-                </div>
+            <div class="modal-body" id="settingsBody">
+                <!-- Settings populated by JS -->
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
@@ -480,66 +779,255 @@
     </div>
 
     <script>
-        // Model definitions
-        const MODELS = [
-            { id: 'gpt-4o', name: 'GPT-4o', provider: 'openai', icon: '🟢' },
-            { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'openai', icon: '🟢' },
-            { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4', provider: 'anthropic', icon: '🟤' },
-            { id: 'claude-3-5-haiku-20241022', name: 'Claude Haiku', provider: 'anthropic', icon: '🟤' },
-            { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', provider: 'google', icon: '🔵' },
-        ];
+        // ==================== PROVIDER DEFINITIONS ====================
+        const PROVIDERS = {
+            openai: {
+                id: 'openai',
+                name: 'OpenAI',
+                icon: '🟢',
+                models: [
+                    { id: 'gpt-4o', name: 'GPT-4o', default: true },
+                    { id: 'gpt-4o-mini', name: 'GPT-4o Mini' },
+                    { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' },
+                    { id: 'o1', name: 'o1 (Reasoning)' },
+                    { id: 'o1-mini', name: 'o1 Mini' },
+                    { id: 'o3-mini', name: 'o3 Mini' },
+                ],
+                features: {
+                    webSearch: { available: true, label: 'Web Search' },
+                    deepResearch: { available: false, label: 'Deep Research' },
+                    extendedThinking: { available: false, label: 'Extended Thinking' }
+                },
+                keyName: 'llm_council_openai',
+                keyPlaceholder: 'sk-...'
+            },
+            anthropic: {
+                id: 'anthropic',
+                name: 'Claude',
+                icon: '🟤',
+                models: [
+                    { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4', default: true },
+                    { id: 'claude-opus-4-5-20250514', name: 'Claude Opus 4.5' },
+                    { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku' },
+                ],
+                features: {
+                    webSearch: { available: false, label: 'Web Search' },
+                    deepResearch: { available: false, label: 'Deep Research' },
+                    extendedThinking: { available: true, label: 'Extended Thinking' }
+                },
+                keyName: 'llm_council_anthropic',
+                keyPlaceholder: 'sk-ant-...'
+            },
+            google: {
+                id: 'google',
+                name: 'Gemini',
+                icon: '🔵',
+                models: [
+                    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', default: true },
+                    { id: 'gemini-2.0-flash-thinking-exp', name: 'Gemini 2.0 Flash Thinking' },
+                    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
+                    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' },
+                ],
+                features: {
+                    webSearch: { available: true, label: 'Web Search (Grounding)' },
+                    deepResearch: { available: false, label: 'Deep Research' },
+                    extendedThinking: { available: false, label: 'Extended Thinking' }
+                },
+                keyName: 'llm_council_google',
+                keyPlaceholder: 'AI...'
+            },
+            perplexity: {
+                id: 'perplexity',
+                name: 'Perplexity',
+                icon: '🟣',
+                models: [
+                    { id: 'sonar-pro', name: 'Sonar Pro', default: true },
+                    { id: 'sonar', name: 'Sonar' },
+                    { id: 'sonar-reasoning-pro', name: 'Sonar Reasoning Pro' },
+                    { id: 'sonar-reasoning', name: 'Sonar Reasoning' },
+                    { id: 'sonar-deep-research', name: 'Sonar Deep Research' },
+                ],
+                features: {
+                    webSearch: { available: true, label: 'Web Search', alwaysOn: true },
+                    deepResearch: { available: true, label: 'Deep Research' },
+                    extendedThinking: { available: false, label: 'Extended Thinking' }
+                },
+                keyName: 'llm_council_perplexity',
+                keyPlaceholder: 'pplx-...'
+            },
+            ollama: {
+                id: 'ollama',
+                name: 'Local (Ollama)',
+                icon: '🦙',
+                models: [
+                    { id: 'llama3.3:70b', name: 'Llama 3.3 70B', default: true },
+                    { id: 'llama3.2:latest', name: 'Llama 3.2' },
+                    { id: 'mistral:latest', name: 'Mistral' },
+                    { id: 'mixtral:latest', name: 'Mixtral' },
+                    { id: 'qwen2.5:72b', name: 'Qwen 2.5 72B' },
+                    { id: 'deepseek-r1:70b', name: 'DeepSeek R1 70B' },
+                    { id: 'phi4:latest', name: 'Phi-4' },
+                    { id: 'custom', name: '(Custom Model)' },
+                ],
+                features: {
+                    webSearch: { available: false, label: 'Web Search' },
+                    deepResearch: { available: false, label: 'Deep Research' },
+                    extendedThinking: { available: false, label: 'Extended Thinking' }
+                },
+                keyName: null,
+                endpointName: 'llm_council_ollama_endpoint',
+                defaultEndpoint: 'http://localhost:11434'
+            }
+        };
 
-        let selectedModels = new Set();
+        // ==================== STATE ====================
+        let providerStates = {};
         let responses = {};
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            renderModelSelector();
-            loadSettings();
-        });
+        // Initialize provider states
+        function initProviderStates() {
+            Object.keys(PROVIDERS).forEach(providerId => {
+                const provider = PROVIDERS[providerId];
+                const defaultModel = provider.models.find(m => m.default) || provider.models[0];
+                providerStates[providerId] = {
+                    enabled: false,
+                    model: defaultModel.id,
+                    customModel: '',
+                    features: {
+                        webSearch: provider.features.webSearch?.alwaysOn || false,
+                        deepResearch: false,
+                        extendedThinking: false
+                    }
+                };
+            });
+        }
 
-        function renderModelSelector() {
-            const container = document.getElementById('modelSelector');
-            container.innerHTML = MODELS.map(model => `
-                <label class="model-toggle ${selectedModels.has(model.id) ? 'selected' : ''}" data-model="${model.id}">
-                    <input type="checkbox" ${selectedModels.has(model.id) ? 'checked' : ''} onchange="toggleModel('${model.id}')">
-                    <span class="indicator"></span>
-                    <span class="provider-icon">${model.icon}</span>
-                    <span class="model-name">${model.name}</span>
-                </label>
-            `).join('');
+        // ==================== RENDERING ====================
+        function renderProviders() {
+            const grid = document.getElementById('providersGrid');
+            grid.innerHTML = Object.values(PROVIDERS).map(provider => {
+                const state = providerStates[provider.id];
+                const hasKey = provider.keyName ? !!localStorage.getItem(provider.keyName) : true;
+                const isOllama = provider.id === 'ollama';
+
+                return `
+                    <div class="provider-card ${state.enabled ? 'enabled' : 'disabled'}">
+                        <div class="provider-header">
+                            <div class="provider-info">
+                                <span class="provider-icon">${provider.icon}</span>
+                                <span class="provider-name">${provider.name}</span>
+                            </div>
+                            <label class="provider-toggle">
+                                <input type="checkbox" ${state.enabled ? 'checked' : ''}
+                                    onchange="toggleProvider('${provider.id}')">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="provider-body">
+                            <div class="form-group">
+                                <label class="form-label">Model</label>
+                                <select class="form-select" onchange="setModel('${provider.id}', this.value)">
+                                    ${provider.models.map(m => `
+                                        <option value="${m.id}" ${state.model === m.id ? 'selected' : ''}>
+                                            ${m.name}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            ${state.model === 'custom' && isOllama ? `
+                                <div class="form-group">
+                                    <label class="form-label">Custom Model Name</label>
+                                    <input type="text" class="form-input" placeholder="e.g., my-model:latest"
+                                        value="${state.customModel}"
+                                        onchange="setCustomModel('${provider.id}', this.value)">
+                                </div>
+                            ` : ''}
+                            <div class="form-group">
+                                <label class="form-label">Features</label>
+                                <div class="features-row">
+                                    ${Object.entries(provider.features).map(([key, feat]) => `
+                                        <label class="feature-chip ${state.features[key] ? 'active' : ''} ${!feat.available ? 'unavailable' : ''}"
+                                            onclick="toggleFeature('${provider.id}', '${key}', ${feat.available}, ${feat.alwaysOn || false})">
+                                            <input type="checkbox" ${state.features[key] ? 'checked' : ''} ${!feat.available ? 'disabled' : ''}>
+                                            ${feat.label}
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ${provider.keyName ? `
+                                <div class="api-key-status ${hasKey ? 'configured' : 'missing'}">
+                                    ${hasKey ? '✓ API key configured' : '✗ API key needed'}
+                                </div>
+                            ` : isOllama ? `
+                                <div class="form-group" style="margin-top: 8px;">
+                                    <label class="form-label">Endpoint</label>
+                                    <input type="text" class="form-input" placeholder="http://localhost:11434"
+                                        value="${localStorage.getItem(provider.endpointName) || provider.defaultEndpoint}"
+                                        onchange="localStorage.setItem('${provider.endpointName}', this.value)">
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
             updateSelectedCount();
         }
 
-        function toggleModel(modelId) {
-            if (selectedModels.has(modelId)) {
-                selectedModels.delete(modelId);
-            } else {
-                selectedModels.add(modelId);
-            }
-            renderModelSelector();
-        }
-
-        function selectAllModels() {
-            MODELS.forEach(m => selectedModels.add(m.id));
-            renderModelSelector();
-        }
-
-        function deselectAllModels() {
-            selectedModels.clear();
-            renderModelSelector();
+        function renderSettings() {
+            const body = document.getElementById('settingsBody');
+            body.innerHTML = Object.values(PROVIDERS)
+                .filter(p => p.keyName)
+                .map(provider => `
+                    <div class="setting-group">
+                        <label>${provider.icon} ${provider.name} API Key</label>
+                        <input type="password" id="key_${provider.id}"
+                            placeholder="${provider.keyPlaceholder}"
+                            value="${localStorage.getItem(provider.keyName) || ''}">
+                    </div>
+                `).join('');
         }
 
         function updateSelectedCount() {
+            const count = Object.values(providerStates).filter(s => s.enabled).length;
             document.getElementById('selectedCount').textContent =
-                `${selectedModels.size} model${selectedModels.size !== 1 ? 's' : ''} selected`;
+                `${count} provider${count !== 1 ? 's' : ''} enabled`;
+        }
+
+        // ==================== INTERACTIONS ====================
+        function toggleProvider(providerId) {
+            providerStates[providerId].enabled = !providerStates[providerId].enabled;
+            renderProviders();
+        }
+
+        function setModel(providerId, modelId) {
+            providerStates[providerId].model = modelId;
+            renderProviders();
+        }
+
+        function setCustomModel(providerId, value) {
+            providerStates[providerId].customModel = value;
+        }
+
+        function toggleFeature(providerId, featureKey, available, alwaysOn) {
+            if (!available || alwaysOn) return;
+            providerStates[providerId].features[featureKey] = !providerStates[providerId].features[featureKey];
+            renderProviders();
+        }
+
+        function enableAllProviders() {
+            Object.keys(providerStates).forEach(id => providerStates[id].enabled = true);
+            renderProviders();
+        }
+
+        function disableAllProviders() {
+            Object.keys(providerStates).forEach(id => providerStates[id].enabled = false);
+            renderProviders();
         }
 
         function openSettings() {
+            renderSettings();
             document.getElementById('settingsModal').classList.add('active');
-            document.getElementById('openaiKey').value = localStorage.getItem('llm_council_openai') || '';
-            document.getElementById('anthropicKey').value = localStorage.getItem('llm_council_anthropic') || '';
-            document.getElementById('googleKey').value = localStorage.getItem('llm_council_google') || '';
         }
 
         function closeSettings() {
@@ -547,119 +1035,172 @@
         }
 
         function saveSettings() {
-            localStorage.setItem('llm_council_openai', document.getElementById('openaiKey').value);
-            localStorage.setItem('llm_council_anthropic', document.getElementById('anthropicKey').value);
-            localStorage.setItem('llm_council_google', document.getElementById('googleKey').value);
+            Object.values(PROVIDERS).filter(p => p.keyName).forEach(provider => {
+                const value = document.getElementById(`key_${provider.id}`).value;
+                if (value) {
+                    localStorage.setItem(provider.keyName, value);
+                } else {
+                    localStorage.removeItem(provider.keyName);
+                }
+            });
             closeSettings();
+            renderProviders();
         }
 
-        function loadSettings() {
-            // Settings are loaded when modal opens
-        }
-
-        function clearResponses() {
+        function clearAll() {
             responses = {};
-            document.getElementById('responsesContainer').innerHTML = `
-                <div class="empty-state">
-                    <div class="icon">🏛️</div>
-                    <p>Select models above and send your query to convene the council.</p>
-                </div>
-            `;
+            document.getElementById('responsesSection').style.display = 'none';
+            document.getElementById('synthesisSection').style.display = 'none';
+            document.getElementById('prompt').value = '';
         }
 
+        // ==================== API CALLS ====================
         async function submitQuery() {
             const prompt = document.getElementById('prompt').value.trim();
             if (!prompt) {
-                alert('Please enter a prompt');
+                alert('Please enter a query');
                 return;
             }
-            if (selectedModels.size === 0) {
-                alert('Please select at least one model');
+
+            const enabledProviders = Object.entries(providerStates)
+                .filter(([_, state]) => state.enabled)
+                .map(([id, state]) => ({ id, state, provider: PROVIDERS[id] }));
+
+            if (enabledProviders.length === 0) {
+                alert('Please enable at least one provider');
                 return;
             }
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Querying...';
+            submitBtn.textContent = '⏳ Querying...';
 
-            // Initialize response cards
-            const container = document.getElementById('responsesContainer');
-            container.innerHTML = '';
+            // Show response section
+            const responsesSection = document.getElementById('responsesSection');
+            const responsesGrid = document.getElementById('responsesGrid');
+            responsesSection.style.display = 'block';
 
-            const selectedModelsList = MODELS.filter(m => selectedModels.has(m.id));
+            // Create response cards
+            responsesGrid.innerHTML = enabledProviders.map(({ id, state, provider }) => {
+                const model = provider.models.find(m => m.id === state.model) || { name: state.model };
+                const activeFeatures = Object.entries(state.features)
+                    .filter(([_, v]) => v)
+                    .map(([k, _]) => provider.features[k]?.label || k);
 
-            container.innerHTML = `<div class="responses-grid">
-                ${selectedModelsList.map(model => `
-                    <div class="response-card" id="card-${model.id}">
+                return `
+                    <div class="response-card" id="card-${id}">
                         <div class="response-header">
-                            <div class="model-info">
-                                <span class="icon">${model.icon}</span>
-                                <span class="name">${model.name}</span>
+                            <div class="response-model-info">
+                                <span class="icon">${provider.icon}</span>
+                                <div class="details">
+                                    <span class="provider-name">${provider.name}</span>
+                                    <span class="model-name">${model.name}</span>
+                                </div>
                             </div>
-                            <div class="actions">
-                                <button class="copy-btn" onclick="copyResponse('${model.id}')">Copy</button>
+                            <div class="response-features">
+                                ${activeFeatures.map(f => `<span class="feature-badge">${f}</span>`).join('')}
                             </div>
                         </div>
-                        <div class="response-body loading" id="body-${model.id}">
+                        <div class="response-body loading" id="body-${id}">
                             <div class="spinner"></div>
                         </div>
-                        <div class="response-footer" id="footer-${model.id}">
-                            <span>Waiting...</span>
-                            <span></span>
+                        <div class="response-footer" id="footer-${id}">
+                            <span>Querying...</span>
+                            <button class="copy-btn" onclick="copyResponse('${id}')">📋 Copy</button>
                         </div>
                     </div>
-                `).join('')}
-            </div>`;
+                `;
+            }).join('');
 
-            // Send requests in parallel
-            const promises = selectedModelsList.map(model => queryModel(model, prompt));
+            // Reset responses
+            responses = {};
+
+            // Query all providers in parallel
+            const promises = enabledProviders.map(({ id, state, provider }) =>
+                queryProvider(id, state, provider, prompt)
+            );
+
             await Promise.allSettled(promises);
 
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Send to Council';
+            submitBtn.textContent = '🚀 Send to Council';
+
+            // Show synthesis section
+            document.getElementById('synthesisSection').style.display = 'block';
         }
 
-        async function queryModel(model, prompt) {
+        async function queryProvider(providerId, state, provider, prompt) {
             const startTime = Date.now();
-            const bodyEl = document.getElementById(`body-${model.id}`);
-            const footerEl = document.getElementById(`footer-${model.id}`);
+            const bodyEl = document.getElementById(`body-${providerId}`);
+            const footerEl = document.getElementById(`footer-${providerId}`);
 
             try {
                 let result;
+                const modelId = state.model === 'custom' ? state.customModel : state.model;
 
-                switch (model.provider) {
+                switch (providerId) {
                     case 'openai':
-                        result = await queryOpenAI(model.id, prompt);
+                        result = await queryOpenAI(modelId, prompt, state.features);
                         break;
                     case 'anthropic':
-                        result = await queryAnthropic(model.id, prompt);
+                        result = await queryAnthropic(modelId, prompt, state.features);
                         break;
                     case 'google':
-                        result = await queryGoogle(model.id, prompt);
+                        result = await queryGoogle(modelId, prompt, state.features);
+                        break;
+                    case 'perplexity':
+                        result = await queryPerplexity(modelId, prompt, state.features);
+                        break;
+                    case 'ollama':
+                        result = await queryOllama(modelId, prompt);
                         break;
                 }
 
                 const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-                responses[model.id] = result.content;
+                responses[providerId] = {
+                    content: result.content,
+                    model: modelId,
+                    provider: provider.name,
+                    features: state.features,
+                    elapsed,
+                    tokens: result.tokens
+                };
 
                 bodyEl.classList.remove('loading');
                 bodyEl.innerHTML = `<pre>${escapeHtml(result.content)}</pre>`;
                 footerEl.innerHTML = `
-                    <span>${elapsed}s</span>
-                    <span>${result.tokens ? result.tokens + ' tokens' : ''}</span>
+                    <span>${elapsed}s${result.tokens ? ` · ${result.tokens} tokens` : ''}</span>
+                    <button class="copy-btn" onclick="copyResponse('${providerId}')">📋 Copy</button>
                 `;
             } catch (error) {
                 const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
                 bodyEl.classList.remove('loading');
                 bodyEl.classList.add('error');
                 bodyEl.innerHTML = `<pre>Error: ${escapeHtml(error.message)}</pre>`;
-                footerEl.innerHTML = `<span>${elapsed}s</span><span>Failed</span>`;
+                footerEl.innerHTML = `
+                    <span>${elapsed}s · Failed</span>
+                    <button class="copy-btn" onclick="copyResponse('${providerId}')">📋 Copy</button>
+                `;
             }
         }
 
-        async function queryOpenAI(modelId, prompt) {
+        async function queryOpenAI(modelId, prompt, features) {
             const apiKey = localStorage.getItem('llm_council_openai');
             if (!apiKey) throw new Error('OpenAI API key not configured');
+
+            const isReasoning = modelId.startsWith('o1') || modelId.startsWith('o3');
+
+            const body = {
+                model: modelId,
+                messages: [{ role: 'user', content: prompt }],
+            };
+
+            if (!isReasoning) {
+                body.max_tokens = 4096;
+            }
+
+            // Web search for supported models (using the responses API would require different handling)
+            // For now, just note that web search toggle exists but standard chat completions don't support it directly
 
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
@@ -667,11 +1208,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${apiKey}`
                 },
-                body: JSON.stringify({
-                    model: modelId,
-                    messages: [{ role: 'user', content: prompt }],
-                    max_tokens: 4096
-                })
+                body: JSON.stringify(body)
             });
 
             if (!response.ok) {
@@ -686,9 +1223,24 @@
             };
         }
 
-        async function queryAnthropic(modelId, prompt) {
+        async function queryAnthropic(modelId, prompt, features) {
             const apiKey = localStorage.getItem('llm_council_anthropic');
             if (!apiKey) throw new Error('Anthropic API key not configured');
+
+            const body = {
+                model: modelId,
+                max_tokens: 8192,
+                messages: [{ role: 'user', content: prompt }]
+            };
+
+            // Extended thinking for Claude
+            if (features.extendedThinking) {
+                body.thinking = {
+                    type: 'enabled',
+                    budget_tokens: 10000
+                };
+                body.temperature = 1; // Required for extended thinking
+            }
 
             const response = await fetch('https://api.anthropic.com/v1/messages', {
                 method: 'POST',
@@ -698,11 +1250,7 @@
                     'anthropic-version': '2023-06-01',
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
-                body: JSON.stringify({
-                    model: modelId,
-                    max_tokens: 4096,
-                    messages: [{ role: 'user', content: prompt }]
-                })
+                body: JSON.stringify(body)
             });
 
             if (!response.ok) {
@@ -711,25 +1259,46 @@
             }
 
             const data = await response.json();
+
+            // Handle extended thinking response
+            let content = '';
+            if (data.content) {
+                for (const block of data.content) {
+                    if (block.type === 'thinking') {
+                        content += `<thinking>\n${block.thinking}\n</thinking>\n\n`;
+                    } else if (block.type === 'text') {
+                        content += block.text;
+                    }
+                }
+            }
+
             return {
-                content: data.content[0].text,
-                tokens: data.usage?.input_tokens + data.usage?.output_tokens
+                content: content,
+                tokens: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0)
             };
         }
 
-        async function queryGoogle(modelId, prompt) {
+        async function queryGoogle(modelId, prompt, features) {
             const apiKey = localStorage.getItem('llm_council_google');
             if (!apiKey) throw new Error('Google AI API key not configured');
 
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }]
-                })
-            });
+            const body = {
+                contents: [{ parts: [{ text: prompt }] }]
+            };
+
+            // Grounding (web search) for Gemini
+            if (features.webSearch) {
+                body.tools = [{ google_search: {} }];
+            }
+
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }
+            );
 
             if (!response.ok) {
                 const err = await response.json();
@@ -737,14 +1306,178 @@
             }
 
             const data = await response.json();
+
+            let content = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+            // Include grounding metadata if available
+            const grounding = data.candidates?.[0]?.groundingMetadata;
+            if (grounding?.webSearchQueries) {
+                content += `\n\n---\nSources searched: ${grounding.webSearchQueries.join(', ')}`;
+            }
+
             return {
-                content: data.candidates[0].content.parts[0].text,
+                content,
                 tokens: data.usageMetadata?.totalTokenCount
             };
         }
 
-        function copyResponse(modelId) {
-            const content = responses[modelId];
+        async function queryPerplexity(modelId, prompt, features) {
+            const apiKey = localStorage.getItem('llm_council_perplexity');
+            if (!apiKey) throw new Error('Perplexity API key not configured');
+
+            const body = {
+                model: modelId,
+                messages: [{ role: 'user', content: prompt }]
+            };
+
+            const response = await fetch('https://api.perplexity.ai/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error?.message || 'Perplexity API error');
+            }
+
+            const data = await response.json();
+
+            let content = data.choices[0].message.content;
+
+            // Include citations if available
+            if (data.citations && data.citations.length > 0) {
+                content += '\n\n---\nSources:\n' + data.citations.map((c, i) => `[${i+1}] ${c}`).join('\n');
+            }
+
+            return {
+                content,
+                tokens: data.usage?.total_tokens
+            };
+        }
+
+        async function queryOllama(modelId, prompt) {
+            const endpoint = localStorage.getItem('llm_council_ollama_endpoint') || 'http://localhost:11434';
+
+            const response = await fetch(`${endpoint}/api/generate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: modelId,
+                    prompt: prompt,
+                    stream: false
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ollama error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return {
+                content: data.response,
+                tokens: data.eval_count
+            };
+        }
+
+        // ==================== SYNTHESIS ====================
+        async function synthesize() {
+            const responseEntries = Object.entries(responses).filter(([_, r]) => r && r.content);
+
+            if (responseEntries.length < 2) {
+                alert('Need at least 2 responses to synthesize');
+                return;
+            }
+
+            const synthesizeBtn = document.getElementById('synthesizeBtn');
+            const synthesisBody = document.getElementById('synthesisBody');
+
+            synthesizeBtn.disabled = true;
+            synthesizeBtn.textContent = '⏳ Analyzing...';
+            synthesisBody.innerHTML = '<div class="response-body loading"><div class="spinner"></div></div>';
+
+            const synthesisModel = document.getElementById('synthesisModel').value;
+            const originalPrompt = document.getElementById('prompt').value.trim();
+
+            // Build the synthesis prompt
+            const responsesText = responseEntries.map(([id, r]) => {
+                const features = Object.entries(r.features || {})
+                    .filter(([_, v]) => v)
+                    .map(([k]) => k)
+                    .join(', ');
+                return `
+=== ${r.provider} (${r.model})${features ? ` [${features}]` : ''} ===
+Response time: ${r.elapsed}s
+${r.tokens ? `Tokens: ${r.tokens}` : ''}
+
+${r.content}
+`;
+            }).join('\n\n');
+
+            const synthesisPrompt = `You are an expert analyst tasked with synthesizing multiple AI responses into a comprehensive analysis.
+
+ORIGINAL QUERY:
+${originalPrompt}
+
+RESPONSES FROM DIFFERENT AI SYSTEMS:
+${responsesText}
+
+Please provide a thorough synthesis with the following sections:
+
+## Summary of Each Response
+Briefly summarize what each AI said, capturing their key points accurately. Do not lose any important information.
+
+## Points of Agreement
+What did the AIs agree on? List the specific points where there was consensus.
+
+## Points of Disagreement
+Where did the AIs differ? Explain the different perspectives or contradictions.
+
+## Unique Insights
+What unique points did individual AIs make that others didn't mention?
+
+## Accuracy Assessment
+Note any factual claims that appear incorrect or that conflict between responses. Flag anything that should be verified.
+
+## Final Synthesis
+Provide a comprehensive conclusion that:
+- Combines the best insights from all responses
+- Notes which AI provided the strongest answer for which aspects
+- Gives a final, balanced answer to the original query
+- Preserves all important nuances and caveats
+
+Be thorough and ensure no valuable information from any response is lost in your synthesis.`;
+
+            try {
+                let result;
+
+                switch (synthesisModel) {
+                    case 'claude':
+                        result = await queryAnthropic('claude-sonnet-4-20250514', synthesisPrompt, {});
+                        break;
+                    case 'gpt':
+                        result = await queryOpenAI('gpt-4o', synthesisPrompt, {});
+                        break;
+                    case 'gemini':
+                        result = await queryGoogle('gemini-2.0-flash', synthesisPrompt, {});
+                        break;
+                }
+
+                synthesisBody.innerHTML = `<pre>${escapeHtml(result.content)}</pre>`;
+            } catch (error) {
+                synthesisBody.innerHTML = `<pre style="color: #f87171;">Synthesis failed: ${escapeHtml(error.message)}</pre>`;
+            }
+
+            synthesizeBtn.disabled = false;
+            synthesizeBtn.textContent = '✨ Synthesize';
+        }
+
+        // ==================== UTILITIES ====================
+        function copyResponse(providerId) {
+            const content = responses[providerId]?.content;
             if (content) {
                 navigator.clipboard.writeText(content);
             }
@@ -762,6 +1495,10 @@
                 submitQuery();
             }
         });
+
+        // ==================== INIT ====================
+        initProviderStates();
+        renderProviders();
     </script>
 </body>
 </html>

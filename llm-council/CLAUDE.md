@@ -1,7 +1,7 @@
 # LLM Council
 
 ## Purpose
-Send the same query to multiple LLMs at once and compare their responses side-by-side.
+Send the same query to multiple LLMs at once, compare their responses side-by-side, and synthesize a final analysis highlighting agreements, disagreements, and conclusions.
 
 ## Quick Start
 ```bash
@@ -11,27 +11,64 @@ python3 -m http.server 8880
 ```
 
 ## Features
-- Text input for queries/prompts
-- Toggle selection for multiple LLM providers
-- Side-by-side response comparison
-- API key configuration (stored in localStorage)
-- Copy individual responses
-- Clear all responses
+- **Multi-provider support**: Query multiple AI providers simultaneously
+- **Model selection**: Choose exact model for each provider
+- **Feature toggles**: Enable web search, deep research, extended thinking per provider
+- **Side-by-side comparison**: View all responses in a grid layout
+- **Synthesis**: Send all outputs to a final AI for comprehensive analysis
+- **API key management**: Stored securely in localStorage
+- **Keyboard shortcuts**: Cmd/Ctrl+Enter to submit
 
-## Supported Providers
-- OpenAI (GPT-4o, GPT-4o-mini)
-- Anthropic (Claude Sonnet 4, Claude Haiku)
-- Google (Gemini 2.0 Flash)
+## Supported Providers & Models
+
+### OpenAI
+- GPT-4o, GPT-4o Mini, GPT-4 Turbo
+- o1, o1 Mini, o3 Mini (reasoning models)
+- Features: Web Search
+
+### Anthropic (Claude)
+- Claude Opus 4.5, Claude Sonnet 4, Claude 3.5 Haiku
+- Features: Extended Thinking
+
+### Google (Gemini)
+- Gemini 2.0 Flash, Gemini 2.0 Flash Thinking
+- Gemini 1.5 Pro, Gemini 1.5 Flash
+- Features: Web Search (Grounding)
+
+### Perplexity
+- Sonar Pro, Sonar, Sonar Reasoning Pro/Regular
+- Sonar Deep Research
+- Features: Web Search (always on), Deep Research
+
+### Local (Ollama)
+- Llama 3.3 70B, Llama 3.2, Mistral, Mixtral
+- Qwen 2.5 72B, DeepSeek R1 70B, Phi-4
+- Custom model support
+- Configurable endpoint (default: http://localhost:11434)
+
+## Synthesis Feature
+After receiving responses, click "Synthesize" to generate:
+- Summary of each response
+- Points of agreement across all AIs
+- Points of disagreement/contradictions
+- Unique insights from each AI
+- Accuracy assessment (flagging conflicting facts)
+- Final comprehensive conclusion
+
+Choose which AI performs the synthesis: Claude, GPT-4o, or Gemini.
 
 ## Architecture
-Single-page web app with:
-- `index.html` - All HTML, CSS, and JavaScript in one file
+Single-page web app (`index.html`) with:
+- All HTML, CSS, and JavaScript in one file
 - API keys stored in browser localStorage
-- Direct API calls to each provider (requires CORS-friendly endpoints or browser extension)
+- Direct API calls to each provider
+- Parallel request execution
 
 ## Configuration
-Click the gear icon to configure API keys for each provider. Keys are stored locally and never transmitted except to their respective API endpoints.
+Click the 🔑 key icon to configure API keys for each provider.
 
 ## Notes
-- Some providers may require CORS browser extensions for local development
+- Anthropic requires `anthropic-dangerous-direct-browser-access` header for browser calls
+- Ollama must have CORS enabled or be accessed from localhost
 - API usage incurs costs based on each provider's pricing
+- Perplexity always performs web search (it's their core feature)
