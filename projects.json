@@ -679,18 +679,23 @@
         "gpt",
         "claude"
       ],
-      "status": "wip",
+      "status": "active",
       "access": {
         "method": "localhost",
         "url": "http://localhost:8880/index.html",
-        "instructions": "Start server: cd llm-council && python3 -m http.server 8880. Open: http://localhost:8880/index.html. Configure API keys via gear icon.",
+        "instructions": "Start server: cd llm-council && python3 -m http.server 8880. Open: http://localhost:8880/index.html. Configure API keys via 🔑 icon. For Web UI mode, install the browser extension from /extension folder.",
         "hosted": null,
         "requiresServer": true,
         "serverCommand": "cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/llm-council && python3 -m http.server 8880"
       },
+      "github": {
+        "repo": "https://github.com/Anonyma/llm-council"
+      },
       "files": [
         "CLAUDE.md",
-        "index.html"
+        "README.md",
+        "index.html",
+        "extension/"
       ]
     },
     {
