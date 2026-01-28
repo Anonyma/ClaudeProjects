@@ -70,6 +70,16 @@ git add -A && git commit -m "Add voice-memo-transcriber project"
 
 **IMPORTANT:** Prefer `http://localhost:XXXX` URLs over `file://` URLs - localhost links are clickable, file:// requires copy-paste.
 
+**IMPORTANT:** For documents like Markdown, text files, or other files that render as plain text via localhost, ALWAYS provide BOTH:
+1. The localhost URL (for quick access)
+2. The full file path (so user can open in an app that renders it properly, e.g., markdown preview)
+
+Example for markdown files:
+```
+**View:** http://localhost:8877/report.md
+**File:** /Users/z/Desktop/PersonalProjects/ClaudeProjects/_scratch/report.md
+```
+
 For **local web apps** (start a server so links are clickable):
 ```bash
 cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/[project] && python3 -m http.server 8XXX &
@@ -79,6 +89,10 @@ cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/[project] && python3 -m http
 For **one-off outputs** (use the scratch server on port 8877):
 ```
 **View:** http://localhost:8877/your-file.html
+```
+For markdown/text files, also include:
+```
+**File:** /Users/z/Desktop/PersonalProjects/ClaudeProjects/_scratch/your-file.md
 ```
 
 For **deployed apps**:
