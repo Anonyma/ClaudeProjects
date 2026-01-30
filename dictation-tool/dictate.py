@@ -1,27 +1,19 @@
 #!/usr/bin/env python3
 """
-Simple dictation tool - hold a key to record, release to transcribe and paste.
+System-wide dictation app - runs in menu bar, works in any app.
 
 Usage:
     python3 dictate.py                    # Use OpenAI Whisper API
-    python3 dictate.py --local            # Use local Whisper (faster-whisper)
     python3 dictate.py --groq             # Use Groq's Whisper API (faster, cheaper)
+    python3 dictate.py --local            # Use local Whisper (no API needed)
 
-Hotkey: Hold Right Option (Alt) key to record, release to transcribe.
-        Press Escape to quit.
+Hotkey: Hold Right Option (⌥) to record, release to transcribe.
+        Or use Cmd+Shift+D to toggle recording.
 
-Requirements:
-    pip3 install sounddevice numpy openai pynput
-
-For local mode:
-    pip3 install faster-whisper
-
-For Groq mode:
-    pip3 install groq
+The app runs in your menu bar - look for the 🎙️ icon.
 """
 
 import argparse
-import io
 import os
 import subprocess
 import sys
@@ -29,258 +21,302 @@ import tempfile
 import threading
 import time
 import wave
-from pathlib import Path
+from enum import Enum
 
 import numpy as np
+import rumps
 import sounddevice as sd
 from pynput import keyboard
 
 # Configuration
-SAMPLE_RATE = 16000  # Whisper expects 16kHz
+SAMPLE_RATE = 16000
 CHANNELS = 1
-HOTKEY = keyboard.Key.alt_r  # Right Option/Alt key - change this if needed
-
-# State
-recording = False
-audio_chunks = []
-current_keys = set()
+HOLD_KEY = keyboard.Key.alt_r  # Right Option key for hold-to-record
+# Cmd+Shift+D for toggle mode
+TOGGLE_COMBO = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode.from_char('d')}
 
 
-def get_transcription_backend(args):
-    """Return the appropriate transcription function based on args."""
-    if args.local:
-        return transcribe_local
-    elif args.groq:
-        return transcribe_groq
-    else:
-        return transcribe_openai
+class RecordingState(Enum):
+    IDLE = "idle"
+    RECORDING = "recording"
+    PROCESSING = "processing"
 
 
-def transcribe_openai(audio_path: str) -> str:
-    """Transcribe using OpenAI Whisper API."""
-    from openai import OpenAI
+class DictationApp(rumps.App):
+    def __init__(self, backend="openai"):
+        super().__init__("🎙️", quit_button=None)
 
-    client = OpenAI()  # Uses OPENAI_API_KEY env var
-
-    with open(audio_path, "rb") as audio_file:
-        transcript = client.audio.transcriptions.create(
-            model="whisper-1",
-            file=audio_file,
-            language="en",  # Helps with accent recognition
-        )
-    return transcript.text
-
-
-def transcribe_groq(audio_path: str) -> str:
-    """Transcribe using Groq's Whisper API (faster, cheaper)."""
-    from groq import Groq
-
-    client = Groq()  # Uses GROQ_API_KEY env var
-
-    with open(audio_path, "rb") as audio_file:
-        transcript = client.audio.transcriptions.create(
-            model="whisper-large-v3",
-            file=audio_file,
-            language="en",
-        )
-    return transcript.text
-
-
-def transcribe_local(audio_path: str) -> str:
-    """Transcribe using local faster-whisper."""
-    from faster_whisper import WhisperModel
-
-    # Use medium model for good balance of speed/accuracy
-    # Change to "large-v3" for best accuracy with accents
-    model_size = os.environ.get("WHISPER_MODEL", "medium")
-
-    # Cache model in module for reuse
-    if not hasattr(transcribe_local, "_model"):
-        print(f"Loading local Whisper model ({model_size})... ", end="", flush=True)
-        transcribe_local._model = WhisperModel(
-            model_size,
-            device="auto",  # Uses GPU if available (MPS on Mac)
-            compute_type="auto",
-        )
-        print("done!")
-
-    model = transcribe_local._model
-    segments, _ = model.transcribe(audio_path, language="en")
-    return " ".join(segment.text for segment in segments).strip()
-
-
-def save_audio_to_wav(chunks: list, path: str):
-    """Save audio chunks to a WAV file."""
-    audio_data = np.concatenate(chunks, axis=0)
-
-    with wave.open(path, "wb") as wf:
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(2)  # 16-bit
-        wf.setframerate(SAMPLE_RATE)
-        wf.writeframes((audio_data * 32767).astype(np.int16).tobytes())
-
-
-def paste_text(text: str):
-    """Copy text to clipboard and paste it."""
-    # Copy to clipboard
-    process = subprocess.Popen(
-        ["pbcopy"],
-        stdin=subprocess.PIPE,
-    )
-    process.communicate(text.encode("utf-8"))
-
-    # Paste using AppleScript
-    subprocess.run([
-        "osascript", "-e",
-        'tell application "System Events" to keystroke "v" using command down'
-    ], check=True)
-
-
-def play_sound(sound_type: str):
-    """Play a system sound for feedback."""
-    sounds = {
-        "start": "/System/Library/Sounds/Pop.aiff",
-        "stop": "/System/Library/Sounds/Blow.aiff",
-        "error": "/System/Library/Sounds/Basso.aiff",
-    }
-    sound_path = sounds.get(sound_type)
-    if sound_path and os.path.exists(sound_path):
-        subprocess.run(["afplay", sound_path], check=False)
-
-
-class DictationApp:
-    def __init__(self, transcribe_fn):
-        self.transcribe_fn = transcribe_fn
-        self.recording = False
+        self.backend = backend
+        self.state = RecordingState.IDLE
         self.audio_chunks = []
         self.stream = None
-        self.processing = False
+        self.current_keys = set()
+        self.toggle_mode = False  # True = toggle, False = hold
 
-    def audio_callback(self, indata, frames, time_info, status):
-        """Called for each audio block during recording."""
-        if self.recording:
-            self.audio_chunks.append(indata.copy())
+        # Menu items
+        self.status_item = rumps.MenuItem("Ready - Hold ⌥ to dictate")
+        self.toggle_item = rumps.MenuItem("Toggle Mode (⌘⇧D)", callback=self.toggle_recording)
+        self.backend_display = rumps.MenuItem(f"Backend: {backend.title()}")
+        self.backend_display.set_callback(None)  # Non-clickable
+
+        self.menu = [
+            self.status_item,
+            None,  # Separator
+            self.toggle_item,
+            self.backend_display,
+            None,
+            rumps.MenuItem("Quit", callback=self.quit_app),
+        ]
+
+        # Start keyboard listener in background
+        self.keyboard_listener = keyboard.Listener(
+            on_press=self.on_key_press,
+            on_release=self.on_key_release
+        )
+        self.keyboard_listener.start()
+
+        # Load transcription backend
+        self.transcribe_fn = self._get_transcribe_fn()
+
+    def _get_transcribe_fn(self):
+        """Get the transcription function based on backend."""
+        if self.backend == "local":
+            return self._transcribe_local
+        elif self.backend == "groq":
+            return self._transcribe_groq
+        else:
+            return self._transcribe_openai
+
+    def _transcribe_openai(self, audio_path: str) -> str:
+        from openai import OpenAI
+        client = OpenAI()
+        with open(audio_path, "rb") as f:
+            result = client.audio.transcriptions.create(
+                model="whisper-1",
+                file=f,
+                language="en",
+            )
+        return result.text
+
+    def _transcribe_groq(self, audio_path: str) -> str:
+        from groq import Groq
+        client = Groq()
+        with open(audio_path, "rb") as f:
+            result = client.audio.transcriptions.create(
+                model="whisper-large-v3",
+                file=f,
+                language="en",
+            )
+        return result.text
+
+    def _transcribe_local(self, audio_path: str) -> str:
+        from faster_whisper import WhisperModel
+        model_size = os.environ.get("WHISPER_MODEL", "medium")
+        if not hasattr(self, "_local_model"):
+            self._local_model = WhisperModel(model_size, device="auto", compute_type="auto")
+        segments, _ = self._local_model.transcribe(audio_path, language="en")
+        return " ".join(s.text for s in segments).strip()
+
+    def on_key_press(self, key):
+        """Handle key press events."""
+        self.current_keys.add(key)
+
+        # Check for toggle combo (Cmd+Shift+D)
+        if self._check_toggle_combo():
+            self.toggle_recording(None)
+            return
+
+        # Hold-to-record with Right Option
+        if key == HOLD_KEY and self.state == RecordingState.IDLE:
+            self.start_recording()
+
+    def on_key_release(self, key):
+        """Handle key release events."""
+        self.current_keys.discard(key)
+
+        # Stop recording on Right Option release (if not in toggle mode)
+        if key == HOLD_KEY and self.state == RecordingState.RECORDING and not self.toggle_mode:
+            self.stop_recording()
+
+    def _check_toggle_combo(self):
+        """Check if toggle key combo is pressed."""
+        # Normalize keys for comparison
+        pressed = set()
+        for k in self.current_keys:
+            if hasattr(k, 'char') and k.char:
+                pressed.add(keyboard.KeyCode.from_char(k.char.lower()))
+            else:
+                pressed.add(k)
+
+        required = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode.from_char('d')}
+        return required.issubset(pressed)
+
+    def toggle_recording(self, _):
+        """Toggle recording on/off (for Cmd+Shift+D mode)."""
+        if self.state == RecordingState.IDLE:
+            self.toggle_mode = True
+            self.start_recording()
+        elif self.state == RecordingState.RECORDING:
+            self.stop_recording()
 
     def start_recording(self):
         """Start recording audio."""
-        if self.recording or self.processing:
+        if self.state != RecordingState.IDLE:
             return
 
-        self.recording = True
+        self.state = RecordingState.RECORDING
         self.audio_chunks = []
+        self.title = "🔴"
+        self.status_item.title = "Recording... Release ⌥ or press ⌘⇧D to stop"
 
+        # Play start sound
+        self._play_sound("start")
+
+        # Start audio stream
         self.stream = sd.InputStream(
             samplerate=SAMPLE_RATE,
             channels=CHANNELS,
             dtype=np.float32,
-            callback=self.audio_callback,
+            callback=self._audio_callback,
         )
         self.stream.start()
-        play_sound("start")
-        print("🎙️  Recording...", end="", flush=True)
+
+    def _audio_callback(self, indata, frames, time_info, status):
+        """Capture audio data."""
+        if self.state == RecordingState.RECORDING:
+            self.audio_chunks.append(indata.copy())
 
     def stop_recording(self):
         """Stop recording and transcribe."""
-        if not self.recording:
+        if self.state != RecordingState.RECORDING:
             return
 
-        self.recording = False
-        self.processing = True
+        self.state = RecordingState.PROCESSING
+        self.toggle_mode = False
+        self.title = "⏳"
+        self.status_item.title = "Transcribing..."
 
+        # Stop audio stream
         if self.stream:
             self.stream.stop()
             self.stream.close()
             self.stream = None
 
-        print(" done!")
-        play_sound("stop")
+        self._play_sound("stop")
 
-        if not self.audio_chunks:
-            print("⚠️  No audio recorded")
-            self.processing = False
-            return
-
-        # Process in background thread
+        # Process in background
         threading.Thread(target=self._process_audio, daemon=True).start()
 
     def _process_audio(self):
-        """Process recorded audio (runs in background thread)."""
+        """Process and transcribe audio."""
         try:
+            if not self.audio_chunks:
+                self._finish_processing("No audio captured")
+                return
+
             # Save to temp file
             with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
                 temp_path = f.name
 
-            save_audio_to_wav(self.audio_chunks, temp_path)
+            audio_data = np.concatenate(self.audio_chunks, axis=0)
+            with wave.open(temp_path, "wb") as wf:
+                wf.setnchannels(CHANNELS)
+                wf.setsampwidth(2)
+                wf.setframerate(SAMPLE_RATE)
+                wf.writeframes((audio_data * 32767).astype(np.int16).tobytes())
 
-            # Calculate duration
-            duration = len(np.concatenate(self.audio_chunks)) / SAMPLE_RATE
-            print(f"📝 Transcribing {duration:.1f}s of audio...")
+            duration = len(audio_data) / SAMPLE_RATE
 
             # Transcribe
-            start_time = time.time()
+            start = time.time()
             text = self.transcribe_fn(temp_path)
-            elapsed = time.time() - start_time
+            elapsed = time.time() - start
 
-            print(f"✅ Transcribed in {elapsed:.1f}s: \"{text[:50]}{'...' if len(text) > 50 else ''}\"")
-
-            # Paste
-            if text.strip():
-                paste_text(text)
-
-            # Cleanup
+            # Cleanup temp file
             os.unlink(temp_path)
 
+            if text.strip():
+                self._paste_text(text)
+                preview = text[:30] + "..." if len(text) > 30 else text
+                self._finish_processing(f"✓ {preview}")
+            else:
+                self._finish_processing("No speech detected")
+
         except Exception as e:
-            print(f"❌ Error: {e}")
-            play_sound("error")
-        finally:
-            self.processing = False
+            self._play_sound("error")
+            self._finish_processing(f"Error: {str(e)[:30]}")
+
+    def _paste_text(self, text: str):
+        """Copy to clipboard and paste."""
+        # Copy to clipboard
+        subprocess.run(["pbcopy"], input=text.encode(), check=True)
+
+        # Small delay to ensure clipboard is ready
+        time.sleep(0.05)
+
+        # Paste using AppleScript
+        subprocess.run([
+            "osascript", "-e",
+            'tell application "System Events" to keystroke "v" using command down'
+        ], check=True)
+
+    def _finish_processing(self, message: str):
+        """Reset state after processing."""
+        self.state = RecordingState.IDLE
+        self.title = "🎙️"
+        self.status_item.title = f"Ready - {message}"
+
+        # Reset status after 3 seconds
+        def reset_status():
+            time.sleep(3)
+            if self.state == RecordingState.IDLE:
+                self.status_item.title = "Ready - Hold ⌥ to dictate"
+        threading.Thread(target=reset_status, daemon=True).start()
+
+    def _play_sound(self, sound_type: str):
+        """Play feedback sound."""
+        sounds = {
+            "start": "/System/Library/Sounds/Pop.aiff",
+            "stop": "/System/Library/Sounds/Blow.aiff",
+            "error": "/System/Library/Sounds/Basso.aiff",
+        }
+        path = sounds.get(sound_type)
+        if path and os.path.exists(path):
+            subprocess.run(["afplay", path], check=False,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    def quit_app(self, _):
+        """Quit the application."""
+        self.keyboard_listener.stop()
+        rumps.quit_application()
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Simple dictation tool")
-    parser.add_argument("--local", action="store_true", help="Use local Whisper model")
-    parser.add_argument("--groq", action="store_true", help="Use Groq's Whisper API")
-    parser.add_argument("--test", action="store_true", help="Test recording without transcription")
+    parser = argparse.ArgumentParser(description="System-wide dictation app")
+    parser.add_argument("--groq", action="store_true", help="Use Groq Whisper API")
+    parser.add_argument("--local", action="store_true", help="Use local Whisper")
     args = parser.parse_args()
 
-    # Check dependencies
-    if not args.local and not args.groq:
-        if not os.environ.get("OPENAI_API_KEY"):
-            print("❌ OPENAI_API_KEY not set. Set it or use --local/--groq")
-            sys.exit(1)
+    # Determine backend
+    if args.local:
+        backend = "local"
     elif args.groq:
+        backend = "groq"
         if not os.environ.get("GROQ_API_KEY"):
-            print("❌ GROQ_API_KEY not set.")
+            print("❌ GROQ_API_KEY not set")
+            sys.exit(1)
+    else:
+        backend = "openai"
+        if not os.environ.get("OPENAI_API_KEY"):
+            print("❌ OPENAI_API_KEY not set. Use --groq or --local, or set OPENAI_API_KEY")
             sys.exit(1)
 
-    transcribe_fn = get_transcription_backend(args)
-    app = DictationApp(transcribe_fn)
+    print(f"🎙️ Starting dictation app with {backend} backend...")
+    print("   Look for 🎙️ in your menu bar")
+    print("   Hold Right Option (⌥) to record, or use ⌘⇧D to toggle")
 
-    print("=" * 50)
-    print("🎤 Dictation Tool")
-    print("=" * 50)
-    print(f"Backend: {'Local Whisper' if args.local else 'Groq' if args.groq else 'OpenAI Whisper API'}")
-    print(f"Hotkey: Hold Right Option (⌥) to record")
-    print(f"Press Escape to quit")
-    print("=" * 50)
-    print("Ready! Hold Right Option key and speak...")
-    print()
-
-    def on_press(key):
-        if key == HOTKEY:
-            app.start_recording()
-        elif key == keyboard.Key.esc:
-            print("\n👋 Goodbye!")
-            return False  # Stop listener
-
-    def on_release(key):
-        if key == HOTKEY:
-            app.stop_recording()
-
-    # Start keyboard listener
-    with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
-        listener.join()
+    app = DictationApp(backend=backend)
+    app.run()
 
 
 if __name__ == "__main__":

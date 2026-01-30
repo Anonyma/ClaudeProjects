@@ -3,9 +3,10 @@ sounddevice>=0.4.6
 numpy>=1.24.0
 openai>=1.0.0
 pynput>=1.7.6
+rumps>=0.4.0
 
-# Optional: for Groq backend
+# Optional: for Groq backend (recommended - faster & cheaper)
 groq>=0.4.0
 
-# Optional: for local Whisper
-# faster-whisper>=0.10.0
+# Optional: for local Whisper (no API needed)
+# pip3 install faster-whisper
