@@ -699,6 +699,42 @@
       ]
     },
     {
+      "id": "paper-reading-mentor",
+      "name": "Paper Reading Mentor",
+      "description": "AI-guided academic paper reading sessions. Features 8-step expert reading strategy, PDF viewer with highlights, AI mentor (Ollama/Gemini/Claude), Cornell notes, and paper library with arXiv/Semantic Scholar import.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/paper-reading-mentor",
+      "type": "web-app",
+      "category": "upskilling",
+      "created": "2026-01-30",
+      "tags": [
+        "learning",
+        "papers",
+        "academic",
+        "ai-mentor",
+        "pdf",
+        "note-taking",
+        "research",
+        "react"
+      ],
+      "status": "active",
+      "access": {
+        "method": "localhost",
+        "url": "http://localhost:8080/index.html",
+        "instructions": "Start server: cd paper-reading-mentor && python3 -m http.server 8080. Open: http://localhost:8080/index.html. Configure AI provider in settings (Ollama is free).",
+        "hosted": null,
+        "requiresServer": true,
+        "serverCommand": "cd /Users/z/Desktop/PersonalProjects/ClaudeProjects/paper-reading-mentor && python3 -m http.server 8080"
+      },
+      "github": {
+        "repo": null
+      },
+      "files": [
+        "index.html",
+        "README.md",
+        "netlify.toml"
+      ]
+    },
+    {
       "id": "reading-dashboard",
       "name": "NotebookLM Reading Dashboard",
       "description": "Dashboard for NotebookLM sources (superseded by NotebookLM Study Hub)",
