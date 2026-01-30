@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "LLM Council Bridge",
+  "version": "1.0.0",
+  "description": "Use your ChatGPT Plus, Claude Max, and Gemini Advanced subscriptions with LLM Council",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*",
+    "https://www.perplexity.ai/*",
+    "http://localhost:*/*",
+    "file:///*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"],
+      "js": ["content-scripts/chatgpt.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://claude.ai/*"],
+      "js": ["content-scripts/claude.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["content-scripts/gemini.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.perplexity.ai/*"],
+      "js": ["content-scripts/perplexity.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost:*/*", "file:///*"]
+  },
+  "action": {
+    "default_title": "LLM Council Bridge"
+  }
+}

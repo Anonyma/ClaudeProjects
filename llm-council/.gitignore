@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+api-keys.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test
+coverage/
+.nyc_output/
+
+# Misc
+*.bak
+*.tmp
+*.temp
+
+# Browser extension build artifacts (keep source)
+extension/dist/
+extension/*.crx
+extension/*.pem

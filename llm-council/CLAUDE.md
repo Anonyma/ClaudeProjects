@@ -10,6 +10,32 @@ python3 -m http.server 8880
 # Open http://localhost:8880/index.html
 ```
 
+## Use Your Subscriptions (No API Credits!)
+Instead of paying for API credits, use your existing subscriptions (ChatGPT Plus, Claude Max, Gemini Advanced, Perplexity Pro):
+
+```bash
+# 1. Install dependencies
+cd server
+pip install -r requirements.txt
+playwright install chromium
+
+# 2. Log into each provider (opens browser for manual login)
+python login.py --provider chatgpt   # Log into ChatGPT Plus
+python login.py --provider claude    # Log into Claude Max
+python login.py --provider gemini    # Log into Gemini Advanced
+python login.py --provider perplexity # Log into Perplexity Pro
+# Or all at once: python login.py --all
+
+# 3. Start the Playwright server
+python server.py  # Runs on http://localhost:8881
+
+# 4. Open the web app - it will auto-detect the server
+cd .. && python3 -m http.server 8880
+# Open http://localhost:8880/index.html
+```
+
+The web app will show "Server: X providers" when connected, and you can toggle "Web UI (Server)" mode for each provider.
+
 ## Features
 - **Multi-provider support**: Query multiple AI providers simultaneously
 - **Model selection**: Choose exact model for each provider
@@ -61,8 +87,15 @@ Choose which AI performs the synthesis: Claude, GPT-4o, or Gemini.
 Single-page web app (`index.html`) with:
 - All HTML, CSS, and JavaScript in one file
 - API keys stored in browser localStorage
-- Direct API calls to each provider
+- Direct API calls to each provider (API mode)
+- Playwright server for subscription-based access (Web UI mode)
 - Parallel request execution
+
+### Playwright Server (`server/`)
+- `login.py` - Opens browser for manual login, saves session to `~/.llm-council/profiles/`
+- `server.py` - HTTP server (port 8881) that uses saved sessions to query providers headlessly
+- Sessions persist until cleared or expired
+- No credentials stored - only browser cookies/localStorage
 
 ## Configuration
 Click the 🔑 key icon to configure API keys for each provider.

@@ -5,684 +5,275 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Council</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #0a0a0f;
             color: #e0e0e0;
             min-height: 100vh;
         }
-
-        .container {
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
+        .container { max-width: 1800px; margin: 0 auto; padding: 20px; }
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #2a2a3a;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #2a2a3a;
         }
-
         h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
+            font-size: 1.8rem; font-weight: 600;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-        }
-
+        .header-actions { display: flex; gap: 12px; align-items: center; }
         .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            font-weight: 500;
+            padding: 10px 20px; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 0.9rem; transition: all 0.2s; font-weight: 500;
         }
+        .btn-icon { background: transparent; color: #888; padding: 8px; font-size: 1.2rem; }
+        .btn-icon:hover { color: #fff; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-secondary { background: #2a2a3a; color: #e0e0e0; }
+        .btn-secondary:hover { background: #3a3a4a; }
+        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
 
-        .btn-icon {
-            background: transparent;
-            color: #888;
-            padding: 8px;
-            font-size: 1.2rem;
+        .extension-status {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.8rem;
+            background: #1a1a24; border: 1px solid #2a2a3a;
         }
+        .extension-status.connected { border-color: #10b981; color: #10b981; }
+        .extension-status.disconnected { border-color: #f87171; color: #f87171; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .status-dot.connected { background: #10b981; }
+        .status-dot.disconnected { background: #f87171; }
 
-        .btn-icon:hover {
-            color: #fff;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: #2a2a3a;
-            color: #e0e0e0;
-        }
-
-        .btn-secondary:hover {
-            background: #3a3a4a;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-
-        .btn-success:hover {
-            opacity: 0.9;
-        }
-
-        /* Input Section */
         .input-section {
-            background: #12121a;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-            border: 1px solid #2a2a3a;
+            background: #12121a; border-radius: 12px; padding: 20px;
+            margin-bottom: 24px; border: 1px solid #2a2a3a;
         }
-
         .prompt-textarea {
-            width: 100%;
-            min-height: 120px;
-            background: #0a0a0f;
-            border: 1px solid #2a2a3a;
-            border-radius: 8px;
-            padding: 16px;
-            color: #e0e0e0;
-            font-size: 1rem;
-            resize: vertical;
-            font-family: inherit;
-            line-height: 1.5;
+            width: 100%; min-height: 120px; background: #0a0a0f;
+            border: 1px solid #2a2a3a; border-radius: 8px; padding: 16px;
+            color: #e0e0e0; font-size: 1rem; resize: vertical; font-family: inherit;
         }
+        .prompt-textarea:focus { outline: none; border-color: #667eea; }
 
-        .prompt-textarea:focus {
-            outline: none;
-            border-color: #667eea;
+        .global-options {
+            display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap;
         }
-
-        .prompt-textarea::placeholder {
-            color: #666;
+        .option-chip {
+            display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+            background: #1a1a24; border: 1px solid #2a2a3a; border-radius: 20px;
+            font-size: 0.85rem; cursor: pointer; user-select: none; transition: all 0.2s;
         }
+        .option-chip:hover { border-color: #4a4a5a; }
+        .option-chip.active { border-color: #667eea; background: rgba(102,126,234,0.15); }
+        .option-chip input { display: none; }
 
-        /* Provider Grid */
-        .providers-section {
-            margin-bottom: 24px;
-        }
-
+        .providers-section { margin-bottom: 24px; }
         .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
         }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #aaa;
-        }
-
+        .section-title { font-size: 1.1rem; font-weight: 500; color: #aaa; }
         .providers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;
         }
-
         .provider-card {
-            background: #12121a;
-            border-radius: 12px;
-            border: 1px solid #2a2a3a;
-            overflow: hidden;
-            transition: all 0.2s;
+            background: #12121a; border-radius: 12px; border: 1px solid #2a2a3a;
+            overflow: hidden; transition: all 0.2s;
         }
-
-        .provider-card.disabled {
-            opacity: 0.5;
-        }
-
-        .provider-card.enabled {
-            border-color: #4a4a5a;
-        }
-
+        .provider-card.disabled { opacity: 0.5; }
+        .provider-card.enabled { border-color: #4a4a5a; }
         .provider-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 16px;
-            background: #1a1a24;
-            border-bottom: 1px solid #2a2a3a;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 16px; background: #1a1a24; border-bottom: 1px solid #2a2a3a;
         }
-
-        .provider-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .provider-icon {
-            font-size: 1.4rem;
-        }
-
-        .provider-name {
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .provider-toggle {
-            position: relative;
-            width: 44px;
-            height: 24px;
-        }
-
-        .provider-toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
+        .provider-info { display: flex; align-items: center; gap: 10px; }
+        .provider-icon { font-size: 1.4rem; }
+        .provider-name { font-weight: 600; }
+        .provider-toggle { position: relative; width: 44px; height: 24px; }
+        .provider-toggle input { opacity: 0; width: 0; height: 0; }
         .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #2a2a3a;
-            transition: 0.3s;
-            border-radius: 24px;
+            position: absolute; cursor: pointer; inset: 0;
+            background-color: #2a2a3a; transition: 0.3s; border-radius: 24px;
         }
-
         .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: #666;
-            transition: 0.3s;
-            border-radius: 50%;
+            position: absolute; content: ""; height: 18px; width: 18px;
+            left: 3px; bottom: 3px; background-color: #666;
+            transition: 0.3s; border-radius: 50%;
         }
-
         .provider-toggle input:checked + .toggle-slider {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-
         .provider-toggle input:checked + .toggle-slider:before {
-            transform: translateX(20px);
-            background-color: white;
+            transform: translateX(20px); background-color: white;
         }
-
-        .provider-body {
-            padding: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-
+        .provider-body { padding: 16px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group:last-child { margin-bottom: 0; }
         .form-label {
-            display: block;
-            font-size: 0.8rem;
-            color: #888;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            display: block; font-size: 0.8rem; color: #888;
+            margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;
         }
-
-        .form-select {
-            width: 100%;
-            padding: 10px 12px;
-            background: #0a0a0f;
-            border: 1px solid #2a2a3a;
-            border-radius: 6px;
-            color: #e0e0e0;
-            font-size: 0.9rem;
-            cursor: pointer;
+        .form-select, .form-input {
+            width: 100%; padding: 10px 12px; background: #0a0a0f;
+            border: 1px solid #2a2a3a; border-radius: 6px;
+            color: #e0e0e0; font-size: 0.9rem;
         }
-
-        .form-select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px 12px;
-            background: #0a0a0f;
-            border: 1px solid #2a2a3a;
-            border-radius: 6px;
-            color: #e0e0e0;
-            font-size: 0.9rem;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .features-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
+        .form-select:focus, .form-input:focus { outline: none; border-color: #667eea; }
+        .features-row { display: flex; flex-wrap: wrap; gap: 8px; }
         .feature-chip {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            background: #1a1a24;
-            border: 1px solid #2a2a3a;
-            border-radius: 16px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
+            display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+            background: #1a1a24; border: 1px solid #2a2a3a; border-radius: 16px;
+            font-size: 0.8rem; cursor: pointer; transition: all 0.2s; user-select: none;
         }
+        .feature-chip:hover { border-color: #4a4a5a; }
+        .feature-chip.active { border-color: #667eea; background: rgba(102,126,234,0.15); }
+        .feature-chip.unavailable { opacity: 0.4; cursor: not-allowed; }
+        .feature-chip input { display: none; }
 
-        .feature-chip:hover {
-            border-color: #4a4a5a;
+        .mode-selector {
+            display: flex; gap: 8px; margin-top: 12px;
         }
-
-        .feature-chip.active {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.15);
+        .mode-btn {
+            flex: 1; padding: 8px; text-align: center; font-size: 0.75rem;
+            background: #1a1a24; border: 1px solid #2a2a3a; border-radius: 6px;
+            cursor: pointer; transition: all 0.2s; color: #888;
         }
-
-        .feature-chip.unavailable {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .feature-chip input {
-            display: none;
-        }
+        .mode-btn:hover { border-color: #4a4a5a; color: #e0e0e0; }
+        .mode-btn.active { border-color: #667eea; background: rgba(102,126,234,0.15); color: #e0e0e0; }
+        .mode-btn.web-ui { border-color: #10b981; }
+        .mode-btn.web-ui.active { background: rgba(16,185,129,0.15); border-color: #10b981; color: #10b981; }
 
         .api-key-status {
-            font-size: 0.75rem;
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 0.75rem; margin-top: 8px;
+            display: flex; align-items: center; gap: 6px;
         }
+        .api-key-status.configured { color: #10b981; }
+        .api-key-status.missing { color: #f87171; }
+        .api-key-status.web-mode { color: #10b981; }
 
-        .api-key-status.configured {
-            color: #10b981;
-        }
-
-        .api-key-status.missing {
-            color: #f87171;
-        }
-
-        /* Action Row */
         .action-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 16px;
+            display: flex; justify-content: space-between; align-items: center; margin-top: 16px;
         }
+        .selected-count { font-size: 0.9rem; color: #888; }
+        .action-buttons { display: flex; gap: 12px; }
 
-        .selected-count {
-            font-size: 0.9rem;
-            color: #888;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        /* Responses Section */
-        .responses-section {
-            margin-bottom: 24px;
-        }
-
+        .responses-section { margin-bottom: 24px; }
         .responses-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;
         }
-
         .response-card {
-            background: #12121a;
-            border-radius: 12px;
-            border: 1px solid #2a2a3a;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            background: #12121a; border-radius: 12px; border: 1px solid #2a2a3a;
+            overflow: hidden; display: flex; flex-direction: column;
         }
-
         .response-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 18px;
-            background: #1a1a24;
-            border-bottom: 1px solid #2a2a3a;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 18px; background: #1a1a24; border-bottom: 1px solid #2a2a3a;
         }
-
-        .response-model-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .response-model-info .icon {
-            font-size: 1.2rem;
-        }
-
-        .response-model-info .details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .response-model-info .provider-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .response-model-info .model-name {
-            font-size: 0.8rem;
-            color: #888;
-        }
-
-        .response-features {
-            display: flex;
-            gap: 6px;
-        }
-
+        .response-model-info { display: flex; align-items: center; gap: 10px; }
+        .response-model-info .icon { font-size: 1.2rem; }
+        .response-model-info .details { display: flex; flex-direction: column; }
+        .response-model-info .provider-name { font-weight: 600; font-size: 0.95rem; }
+        .response-model-info .model-name { font-size: 0.8rem; color: #888; }
+        .response-features { display: flex; gap: 6px; }
         .feature-badge {
-            padding: 2px 8px;
-            background: rgba(102, 126, 234, 0.2);
-            color: #667eea;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
+            padding: 2px 8px; background: rgba(102,126,234,0.2); color: #667eea;
+            border-radius: 10px; font-size: 0.7rem; text-transform: uppercase;
         }
-
-        .response-actions {
-            display: flex;
-            gap: 8px;
-        }
-
+        .feature-badge.web-ui { background: rgba(16,185,129,0.2); color: #10b981; }
         .copy-btn {
-            background: transparent;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
+            background: transparent; border: none; color: #666;
+            cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;
         }
-
-        .copy-btn:hover {
-            color: #e0e0e0;
-            background: #2a2a3a;
-        }
-
+        .copy-btn:hover { color: #e0e0e0; background: #2a2a3a; }
         .response-body {
-            padding: 18px;
-            flex: 1;
-            min-height: 200px;
-            max-height: 600px;
-            overflow-y: auto;
+            padding: 18px; flex: 1; min-height: 200px; max-height: 600px; overflow-y: auto;
         }
-
         .response-body pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: inherit;
-            font-size: 0.95rem;
-            line-height: 1.6;
+            white-space: pre-wrap; word-wrap: break-word;
+            font-family: inherit; font-size: 0.95rem; line-height: 1.6;
         }
-
-        .response-body.loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        .response-body.loading { display: flex; align-items: center; justify-content: center; }
         .spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid #2a2a3a;
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+            width: 32px; height: 32px; border: 3px solid #2a2a3a;
+            border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .response-body.error pre {
-            color: #f87171;
-        }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .response-body.error pre { color: #f87171; }
         .response-footer {
-            padding: 10px 18px;
-            background: #1a1a24;
-            border-top: 1px solid #2a2a3a;
-            font-size: 0.8rem;
-            color: #666;
-            display: flex;
-            justify-content: space-between;
+            padding: 10px 18px; background: #1a1a24; border-top: 1px solid #2a2a3a;
+            font-size: 0.8rem; color: #666; display: flex; justify-content: space-between;
         }
 
-        /* Synthesis Section */
         .synthesis-section {
-            background: #12121a;
-            border-radius: 12px;
-            border: 2px solid #667eea;
-            overflow: hidden;
-            margin-bottom: 24px;
+            background: #12121a; border-radius: 12px; border: 2px solid #667eea;
+            overflow: hidden; margin-bottom: 24px;
         }
-
         .synthesis-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             padding: 16px 20px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
             border-bottom: 1px solid #2a2a3a;
         }
-
         .synthesis-header h3 {
             font-size: 1.1rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
-        .synthesis-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .synthesis-body {
-            padding: 20px;
-        }
-
+        .synthesis-controls { display: flex; align-items: center; gap: 16px; }
+        .synthesis-body { padding: 20px; }
         .synthesis-body pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: inherit;
-            font-size: 0.95rem;
-            line-height: 1.7;
+            white-space: pre-wrap; word-wrap: break-word;
+            font-family: inherit; font-size: 0.95rem; line-height: 1.7;
         }
+        .synthesis-placeholder { text-align: center; padding: 40px; color: #666; }
 
-        .synthesis-placeholder {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        /* Settings Modal */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8); z-index: 100;
+            align-items: center; justify-content: center;
         }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
+        .modal-overlay.active { display: flex; }
         .modal {
-            background: #12121a;
-            border-radius: 16px;
-            border: 1px solid #2a2a3a;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
+            background: #12121a; border-radius: 16px; border: 1px solid #2a2a3a;
+            width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;
         }
-
         .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid #2a2a3a;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px; border-bottom: 1px solid #2a2a3a;
         }
-
-        .modal-header h2 {
-            font-size: 1.2rem;
-        }
-
+        .modal-header h2 { font-size: 1.2rem; }
         .modal-close {
-            background: transparent;
-            border: none;
-            color: #666;
-            font-size: 1.5rem;
-            cursor: pointer;
+            background: transparent; border: none; color: #666;
+            font-size: 1.5rem; cursor: pointer;
         }
-
-        .modal-close:hover {
-            color: #e0e0e0;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .setting-group {
-            margin-bottom: 20px;
-        }
-
-        .setting-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .setting-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-
+        .modal-close:hover { color: #e0e0e0; }
+        .modal-body { padding: 20px; }
+        .setting-group { margin-bottom: 20px; }
+        .setting-group:last-child { margin-bottom: 0; }
+        .setting-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #aaa; }
         .setting-group input {
-            width: 100%;
-            padding: 12px;
-            background: #0a0a0f;
-            border: 1px solid #2a2a3a;
-            border-radius: 8px;
-            color: #e0e0e0;
-            font-size: 0.95rem;
+            width: 100%; padding: 12px; background: #0a0a0f;
+            border: 1px solid #2a2a3a; border-radius: 8px; color: #e0e0e0; font-size: 0.95rem;
         }
-
-        .setting-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .setting-group small {
-            display: block;
-            margin-top: 6px;
-            font-size: 0.8rem;
-            color: #666;
-        }
-
+        .setting-group input:focus { outline: none; border-color: #667eea; }
+        .setting-group small { display: block; margin-top: 6px; font-size: 0.8rem; color: #666; }
         .modal-footer {
-            padding: 16px 20px;
-            border-top: 1px solid #2a2a3a;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
+            padding: 16px 20px; border-top: 1px solid #2a2a3a;
+            display: flex; justify-content: flex-end; gap: 12px;
         }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a24; }
+        ::-webkit-scrollbar-thumb { background: #3a3a4a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4a4a5a; }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
+        .info-banner {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,95,70,0.1) 100%);
+            border: 1px solid #10b981; border-radius: 8px; padding: 12px 16px;
+            margin-bottom: 16px; font-size: 0.85rem; color: #10b981;
         }
-
-        .empty-state .icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-        }
-
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #1a1a24;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #3a3a4a;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4a4a5a;
-        }
+        .info-banner a { color: #34d399; }
     </style>
 </head>
 <body>
@@ -690,20 +281,35 @@
         <header>
             <h1>🏛️ LLM Council</h1>
             <div class="header-actions">
+                <div class="extension-status" id="extensionStatus">
+                    <span class="status-dot disconnected"></span>
+                    <span>Bridge: Disconnected</span>
+                </div>
                 <button class="btn btn-icon" onclick="openSettings()" title="API Keys">🔑</button>
             </div>
         </header>
 
-        <!-- Query Input -->
-        <div class="input-section">
-            <textarea
-                id="prompt"
-                class="prompt-textarea"
-                placeholder="Enter your query here. It will be sent to all enabled providers simultaneously..."
-            ></textarea>
+        <div class="info-banner" id="extensionBanner" style="display: none;">
+            💡 <strong>Use your subscriptions!</strong> Query ChatGPT Plus, Claude Max, Gemini Advanced, and Perplexity Pro via their web UIs instead of API credits.
+            Run <code>cd llm-council/server && python login.py --all && python server.py</code> to get started.
         </div>
 
-        <!-- Provider Selection -->
+        <div class="input-section">
+            <textarea id="prompt" class="prompt-textarea"
+                placeholder="Enter your query here. It will be sent to all enabled providers simultaneously..."></textarea>
+            <div class="global-options">
+                <label class="option-chip" id="incognitoChip" onclick="toggleIncognito()">
+                    <input type="checkbox" id="incognitoMode">
+                    🕶️ Incognito Mode
+                </label>
+                <label class="option-chip" title="Responses won't be stored in chat history where supported">
+                    <span style="font-size: 0.75rem; color: #666;">
+                        (No history storage for API calls)
+                    </span>
+                </label>
+            </div>
+        </div>
+
         <div class="providers-section">
             <div class="section-header">
                 <span class="section-title">Select Providers & Models</span>
@@ -712,12 +318,9 @@
                     <button class="btn btn-secondary" onclick="disableAllProviders()">Disable All</button>
                 </div>
             </div>
-            <div class="providers-grid" id="providersGrid">
-                <!-- Provider cards populated by JS -->
-            </div>
+            <div class="providers-grid" id="providersGrid"></div>
         </div>
 
-        <!-- Action Row -->
         <div class="input-section">
             <div class="action-row">
                 <span class="selected-count" id="selectedCount">0 providers enabled</span>
@@ -730,15 +333,11 @@
             </div>
         </div>
 
-        <!-- Responses -->
         <div class="responses-section" id="responsesSection" style="display: none;">
-            <div class="section-header">
-                <span class="section-title">Responses</span>
-            </div>
+            <div class="section-header"><span class="section-title">Responses</span></div>
             <div class="responses-grid" id="responsesGrid"></div>
         </div>
 
-        <!-- Synthesis -->
         <div class="synthesis-section" id="synthesisSection" style="display: none;">
             <div class="synthesis-header">
                 <h3>🧠 Council Synthesis</h3>
@@ -748,9 +347,7 @@
                         <option value="gpt">GPT-4o</option>
                         <option value="gemini">Gemini 2.0 Flash</option>
                     </select>
-                    <button class="btn btn-success" id="synthesizeBtn" onclick="synthesize()">
-                        ✨ Synthesize
-                    </button>
+                    <button class="btn btn-success" id="synthesizeBtn" onclick="synthesize()">✨ Synthesize</button>
                 </div>
             </div>
             <div class="synthesis-body" id="synthesisBody">
@@ -761,16 +358,13 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
             <div class="modal-header">
                 <h2>🔑 API Keys</h2>
                 <button class="modal-close" onclick="closeSettings()">×</button>
             </div>
-            <div class="modal-body" id="settingsBody">
-                <!-- Settings populated by JS -->
-            </div>
+            <div class="modal-body" id="settingsBody"></div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
                 <button class="btn btn-primary" onclick="saveSettings()">Save</button>
@@ -779,12 +373,15 @@
     </div>
 
     <script>
+        // ==================== EXTENSION ID ====================
+        // Update this after installing the extension
+        const EXTENSION_ID = localStorage.getItem('llm_council_extension_id') || '';
+
         // ==================== PROVIDER DEFINITIONS ====================
         const PROVIDERS = {
             openai: {
-                id: 'openai',
-                name: 'OpenAI',
-                icon: '🟢',
+                id: 'openai', name: 'ChatGPT', icon: '🟢',
+                webUiProvider: 'chatgpt',
                 models: [
                     { id: 'gpt-4o', name: 'GPT-4o', default: true },
                     { id: 'gpt-4o-mini', name: 'GPT-4o Mini' },
@@ -798,13 +395,12 @@
                     deepResearch: { available: false, label: 'Deep Research' },
                     extendedThinking: { available: false, label: 'Extended Thinking' }
                 },
-                keyName: 'llm_council_openai',
-                keyPlaceholder: 'sk-...'
+                keyName: 'llm_council_openai', keyPlaceholder: 'sk-...',
+                supportsWebUi: true
             },
             anthropic: {
-                id: 'anthropic',
-                name: 'Claude',
-                icon: '🟤',
+                id: 'anthropic', name: 'Claude', icon: '🟤',
+                webUiProvider: 'claude',
                 models: [
                     { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4', default: true },
                     { id: 'claude-opus-4-5-20250514', name: 'Claude Opus 4.5' },
@@ -815,13 +411,12 @@
                     deepResearch: { available: false, label: 'Deep Research' },
                     extendedThinking: { available: true, label: 'Extended Thinking' }
                 },
-                keyName: 'llm_council_anthropic',
-                keyPlaceholder: 'sk-ant-...'
+                keyName: 'llm_council_anthropic', keyPlaceholder: 'sk-ant-...',
+                supportsWebUi: true
             },
             google: {
-                id: 'google',
-                name: 'Gemini',
-                icon: '🔵',
+                id: 'google', name: 'Gemini', icon: '🔵',
+                webUiProvider: 'gemini',
                 models: [
                     { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', default: true },
                     { id: 'gemini-2.0-flash-thinking-exp', name: 'Gemini 2.0 Flash Thinking' },
@@ -833,13 +428,12 @@
                     deepResearch: { available: false, label: 'Deep Research' },
                     extendedThinking: { available: false, label: 'Extended Thinking' }
                 },
-                keyName: 'llm_council_google',
-                keyPlaceholder: 'AI...'
+                keyName: 'llm_council_google', keyPlaceholder: 'AI...',
+                supportsWebUi: true
             },
             perplexity: {
-                id: 'perplexity',
-                name: 'Perplexity',
-                icon: '🟣',
+                id: 'perplexity', name: 'Perplexity', icon: '🟣',
+                webUiProvider: 'perplexity',
                 models: [
                     { id: 'sonar-pro', name: 'Sonar Pro', default: true },
                     { id: 'sonar', name: 'Sonar' },
@@ -852,13 +446,11 @@
                     deepResearch: { available: true, label: 'Deep Research' },
                     extendedThinking: { available: false, label: 'Extended Thinking' }
                 },
-                keyName: 'llm_council_perplexity',
-                keyPlaceholder: 'pplx-...'
+                keyName: 'llm_council_perplexity', keyPlaceholder: 'pplx-...',
+                supportsWebUi: true
             },
             ollama: {
-                id: 'ollama',
-                name: 'Local (Ollama)',
-                icon: '🦙',
+                id: 'ollama', name: 'Local (Ollama)', icon: '🦙',
                 models: [
                     { id: 'llama3.3:70b', name: 'Llama 3.3 70B', default: true },
                     { id: 'llama3.2:latest', name: 'Llama 3.2' },
@@ -876,15 +468,19 @@
                 },
                 keyName: null,
                 endpointName: 'llm_council_ollama_endpoint',
-                defaultEndpoint: 'http://localhost:11434'
+                defaultEndpoint: 'http://localhost:11434',
+                supportsWebUi: false
             }
         };
 
         // ==================== STATE ====================
         let providerStates = {};
         let responses = {};
+        let extensionConnected = false;
+        let playwrightServerConnected = false;
+        let playwrightProviders = []; // Providers available via Playwright server
+        let incognitoMode = false;
 
-        // Initialize provider states
         function initProviderStates() {
             Object.keys(PROVIDERS).forEach(providerId => {
                 const provider = PROVIDERS[providerId];
@@ -893,6 +489,7 @@
                     enabled: false,
                     model: defaultModel.id,
                     customModel: '',
+                    useWebUi: false, // Use subscription via web UI instead of API
                     features: {
                         webSearch: provider.features.webSearch?.alwaysOn || false,
                         deepResearch: false,
@@ -902,6 +499,116 @@
             });
         }
 
+        // ==================== BRIDGE COMMUNICATION ====================
+        // Check both Chrome extension and Playwright server for Web UI mode
+
+        async function checkExtension() {
+            if (!EXTENSION_ID) {
+                extensionConnected = false;
+            } else {
+                try {
+                    const response = await chrome.runtime.sendMessage(EXTENSION_ID, { type: 'PING' });
+                    extensionConnected = response?.success === true;
+                } catch (e) {
+                    extensionConnected = false;
+                }
+            }
+            return extensionConnected;
+        }
+
+        async function checkPlaywrightServer() {
+            try {
+                const response = await fetch('http://localhost:8881/health', {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(2000)
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    playwrightServerConnected = data.status === 'ok';
+                    playwrightProviders = data.providers || [];
+                } else {
+                    playwrightServerConnected = false;
+                    playwrightProviders = [];
+                }
+            } catch (e) {
+                playwrightServerConnected = false;
+                playwrightProviders = [];
+            }
+            return playwrightServerConnected;
+        }
+
+        async function checkBridges() {
+            await Promise.all([checkExtension(), checkPlaywrightServer()]);
+            updateBridgeStatus();
+        }
+
+        function updateBridgeStatus() {
+            const el = document.getElementById('extensionStatus');
+            const banner = document.getElementById('extensionBanner');
+
+            if (playwrightServerConnected) {
+                el.className = 'extension-status connected';
+                el.innerHTML = `<span class="status-dot connected"></span><span>Server: ${playwrightProviders.length} providers</span>`;
+                banner.style.display = 'none';
+            } else if (extensionConnected) {
+                el.className = 'extension-status connected';
+                el.innerHTML = '<span class="status-dot connected"></span><span>Extension: Connected</span>';
+                banner.style.display = 'none';
+            } else {
+                el.className = 'extension-status disconnected';
+                el.innerHTML = '<span class="status-dot disconnected"></span><span>Bridge: Not Connected</span>';
+                banner.style.display = 'block';
+            }
+        }
+
+        async function queryViaPlaywrightServer(providerId, prompt) {
+            const webUiProvider = PROVIDERS[providerId].webUiProvider;
+            const response = await fetch('http://localhost:8881/query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider: webUiProvider, prompt })
+            });
+            const data = await response.json();
+            if (data.error) throw new Error(data.error);
+            return {
+                content: data.response,
+                tokens: null,
+                viaWebUi: true,
+                elapsed: data.elapsed
+            };
+        }
+
+        async function queryViaExtension(provider, prompt, state) {
+            if (!EXTENSION_ID) throw new Error('Extension not configured');
+            const queryId = `${provider}_${Date.now()}`;
+            const response = await chrome.runtime.sendMessage(EXTENSION_ID, {
+                type: 'QUERY',
+                provider: PROVIDERS[provider].webUiProvider,
+                prompt,
+                queryId,
+                model: state.model,
+                features: state.features
+            });
+            if (!response.success) throw new Error(response.error || 'Extension query failed');
+            return { content: response.content, tokens: null, viaWebUi: true };
+        }
+
+        async function queryViaWebUi(providerId, prompt, state) {
+            const webUiProvider = PROVIDERS[providerId].webUiProvider;
+
+            // Prefer Playwright server if available for this provider
+            if (playwrightServerConnected && playwrightProviders.includes(webUiProvider)) {
+                return queryViaPlaywrightServer(providerId, prompt);
+            }
+
+            // Fall back to Chrome extension
+            if (extensionConnected) {
+                return queryViaExtension(providerId, prompt, state);
+            }
+
+            throw new Error('No Web UI bridge available. Start Playwright server or install extension.');
+        }
+
         // ==================== RENDERING ====================
         function renderProviders() {
             const grid = document.getElementById('providersGrid');
@@ -909,6 +616,9 @@
                 const state = providerStates[provider.id];
                 const hasKey = provider.keyName ? !!localStorage.getItem(provider.keyName) : true;
                 const isOllama = provider.id === 'ollama';
+                const webUiProvider = provider.webUiProvider;
+                const hasPlaywrightSession = playwrightServerConnected && playwrightProviders.includes(webUiProvider);
+                const canUseWebUi = provider.supportsWebUi && (extensionConnected || hasPlaywrightSession);
 
                 return `
                     <div class="provider-card ${state.enabled ? 'enabled' : 'disabled'}">
@@ -924,7 +634,20 @@
                             </label>
                         </div>
                         <div class="provider-body">
-                            <div class="form-group">
+                            ${provider.supportsWebUi ? `
+                                <div class="mode-selector">
+                                    <div class="mode-btn ${!state.useWebUi ? 'active' : ''}"
+                                        onclick="setMode('${provider.id}', false)">
+                                        🔑 API Key
+                                    </div>
+                                    <div class="mode-btn web-ui ${state.useWebUi ? 'active' : ''} ${!canUseWebUi ? 'unavailable' : ''}"
+                                        onclick="setMode('${provider.id}', true)"
+                                        title="${canUseWebUi ? (hasPlaywrightSession ? 'Use subscription via Playwright server' : 'Use subscription via Chrome extension') : 'Start Playwright server or install extension'}">
+                                        🌐 Web UI ${hasPlaywrightSession ? '(Server)' : '(Subscription)'}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            <div class="form-group" style="margin-top: 12px;">
                                 <label class="form-label">Model</label>
                                 <select class="form-select" onchange="setModel('${provider.id}', this.value)">
                                     ${provider.models.map(m => `
@@ -948,13 +671,17 @@
                                     ${Object.entries(provider.features).map(([key, feat]) => `
                                         <label class="feature-chip ${state.features[key] ? 'active' : ''} ${!feat.available ? 'unavailable' : ''}"
                                             onclick="toggleFeature('${provider.id}', '${key}', ${feat.available}, ${feat.alwaysOn || false})">
-                                            <input type="checkbox" ${state.features[key] ? 'checked' : ''} ${!feat.available ? 'disabled' : ''}>
+                                            <input type="checkbox" ${state.features[key] ? 'checked' : ''}>
                                             ${feat.label}
                                         </label>
                                     `).join('')}
                                 </div>
                             </div>
-                            ${provider.keyName ? `
+                            ${state.useWebUi ? `
+                                <div class="api-key-status web-mode">
+                                    ✓ Using ${provider.name} subscription ${hasPlaywrightSession ? 'via Playwright' : 'via Extension'}
+                                </div>
+                            ` : provider.keyName ? `
                                 <div class="api-key-status ${hasKey ? 'configured' : 'missing'}">
                                     ${hasKey ? '✓ API key configured' : '✗ API key needed'}
                                 </div>
@@ -970,22 +697,29 @@
                     </div>
                 `;
             }).join('');
-
             updateSelectedCount();
         }
 
         function renderSettings() {
             const body = document.getElementById('settingsBody');
-            body.innerHTML = Object.values(PROVIDERS)
-                .filter(p => p.keyName)
-                .map(provider => `
+            body.innerHTML = `
+                <div class="setting-group">
+                    <label>🔌 LLM Council Bridge Extension ID</label>
+                    <input type="text" id="extensionIdInput"
+                        placeholder="Extension ID (from chrome://extensions)"
+                        value="${EXTENSION_ID}">
+                    <small>Install the extension from the /extension folder, then copy its ID here.</small>
+                </div>
+                <hr style="border-color: #2a2a3a; margin: 20px 0;">
+                ${Object.values(PROVIDERS).filter(p => p.keyName).map(provider => `
                     <div class="setting-group">
                         <label>${provider.icon} ${provider.name} API Key</label>
                         <input type="password" id="key_${provider.id}"
                             placeholder="${provider.keyPlaceholder}"
                             value="${localStorage.getItem(provider.keyName) || ''}">
                     </div>
-                `).join('');
+                `).join('')}
+            `;
         }
 
         function updateSelectedCount() {
@@ -1009,10 +743,29 @@
             providerStates[providerId].customModel = value;
         }
 
+        function setMode(providerId, useWebUi) {
+            if (useWebUi) {
+                const webUiProvider = PROVIDERS[providerId].webUiProvider;
+                const hasPlaywright = playwrightServerConnected && playwrightProviders.includes(webUiProvider);
+                if (!hasPlaywright && !extensionConnected) {
+                    alert('Web UI mode requires either:\n\n1. Playwright Server (recommended):\n   cd llm-council/server\n   python login.py --provider ' + webUiProvider + '\n   python server.py\n\n2. Chrome Extension:\n   Load from llm-council/extension folder');
+                    return;
+                }
+            }
+            providerStates[providerId].useWebUi = useWebUi;
+            renderProviders();
+        }
+
         function toggleFeature(providerId, featureKey, available, alwaysOn) {
             if (!available || alwaysOn) return;
             providerStates[providerId].features[featureKey] = !providerStates[providerId].features[featureKey];
             renderProviders();
+        }
+
+        function toggleIncognito() {
+            incognitoMode = !incognitoMode;
+            const chip = document.getElementById('incognitoChip');
+            chip.classList.toggle('active', incognitoMode);
         }
 
         function enableAllProviders() {
@@ -1035,16 +788,20 @@
         }
 
         function saveSettings() {
+            // Save extension ID
+            const extId = document.getElementById('extensionIdInput').value.trim();
+            if (extId) localStorage.setItem('llm_council_extension_id', extId);
+            else localStorage.removeItem('llm_council_extension_id');
+
+            // Save API keys
             Object.values(PROVIDERS).filter(p => p.keyName).forEach(provider => {
                 const value = document.getElementById(`key_${provider.id}`).value;
-                if (value) {
-                    localStorage.setItem(provider.keyName, value);
-                } else {
-                    localStorage.removeItem(provider.keyName);
-                }
+                if (value) localStorage.setItem(provider.keyName, value);
+                else localStorage.removeItem(provider.keyName);
             });
+
             closeSettings();
-            renderProviders();
+            location.reload(); // Reload to re-check extension
         }
 
         function clearAll() {
@@ -1057,35 +814,29 @@
         // ==================== API CALLS ====================
         async function submitQuery() {
             const prompt = document.getElementById('prompt').value.trim();
-            if (!prompt) {
-                alert('Please enter a query');
-                return;
-            }
+            if (!prompt) { alert('Please enter a query'); return; }
 
             const enabledProviders = Object.entries(providerStates)
                 .filter(([_, state]) => state.enabled)
                 .map(([id, state]) => ({ id, state, provider: PROVIDERS[id] }));
 
-            if (enabledProviders.length === 0) {
-                alert('Please enable at least one provider');
-                return;
-            }
+            if (enabledProviders.length === 0) { alert('Please enable at least one provider'); return; }
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Querying...';
 
-            // Show response section
             const responsesSection = document.getElementById('responsesSection');
             const responsesGrid = document.getElementById('responsesGrid');
             responsesSection.style.display = 'block';
 
-            // Create response cards
             responsesGrid.innerHTML = enabledProviders.map(({ id, state, provider }) => {
                 const model = provider.models.find(m => m.id === state.model) || { name: state.model };
                 const activeFeatures = Object.entries(state.features)
-                    .filter(([_, v]) => v)
-                    .map(([k, _]) => provider.features[k]?.label || k);
+                    .filter(([_, v]) => v).map(([k]) => provider.features[k]?.label || k);
+                const badges = state.useWebUi
+                    ? ['<span class="feature-badge web-ui">Web UI</span>']
+                    : activeFeatures.map(f => `<span class="feature-badge">${f}</span>`);
 
                 return `
                     <div class="response-card" id="card-${id}">
@@ -1097,13 +848,9 @@
                                     <span class="model-name">${model.name}</span>
                                 </div>
                             </div>
-                            <div class="response-features">
-                                ${activeFeatures.map(f => `<span class="feature-badge">${f}</span>`).join('')}
-                            </div>
+                            <div class="response-features">${badges.join('')}</div>
                         </div>
-                        <div class="response-body loading" id="body-${id}">
-                            <div class="spinner"></div>
-                        </div>
+                        <div class="response-body loading" id="body-${id}"><div class="spinner"></div></div>
                         <div class="response-footer" id="footer-${id}">
                             <span>Querying...</span>
                             <button class="copy-btn" onclick="copyResponse('${id}')">📋 Copy</button>
@@ -1112,20 +859,13 @@
                 `;
             }).join('');
 
-            // Reset responses
             responses = {};
-
-            // Query all providers in parallel
             const promises = enabledProviders.map(({ id, state, provider }) =>
-                queryProvider(id, state, provider, prompt)
-            );
-
+                queryProvider(id, state, provider, prompt));
             await Promise.allSettled(promises);
 
             submitBtn.disabled = false;
             submitBtn.textContent = '🚀 Send to Council';
-
-            // Show synthesis section
             document.getElementById('synthesisSection').style.display = 'block';
         }
 
@@ -1138,38 +878,28 @@
                 let result;
                 const modelId = state.model === 'custom' ? state.customModel : state.model;
 
-                switch (providerId) {
-                    case 'openai':
-                        result = await queryOpenAI(modelId, prompt, state.features);
-                        break;
-                    case 'anthropic':
-                        result = await queryAnthropic(modelId, prompt, state.features);
-                        break;
-                    case 'google':
-                        result = await queryGoogle(modelId, prompt, state.features);
-                        break;
-                    case 'perplexity':
-                        result = await queryPerplexity(modelId, prompt, state.features);
-                        break;
-                    case 'ollama':
-                        result = await queryOllama(modelId, prompt);
-                        break;
+                if (state.useWebUi && provider.supportsWebUi) {
+                    result = await queryViaWebUi(providerId, prompt, state);
+                } else {
+                    switch (providerId) {
+                        case 'openai': result = await queryOpenAI(modelId, prompt, state.features); break;
+                        case 'anthropic': result = await queryAnthropic(modelId, prompt, state.features); break;
+                        case 'google': result = await queryGoogle(modelId, prompt, state.features); break;
+                        case 'perplexity': result = await queryPerplexity(modelId, prompt, state.features); break;
+                        case 'ollama': result = await queryOllama(modelId, prompt); break;
+                    }
                 }
 
                 const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
                 responses[providerId] = {
-                    content: result.content,
-                    model: modelId,
-                    provider: provider.name,
-                    features: state.features,
-                    elapsed,
-                    tokens: result.tokens
+                    content: result.content, model: modelId, provider: provider.name,
+                    features: state.features, elapsed, tokens: result.tokens, viaWebUi: result.viaWebUi
                 };
 
                 bodyEl.classList.remove('loading');
                 bodyEl.innerHTML = `<pre>${escapeHtml(result.content)}</pre>`;
                 footerEl.innerHTML = `
-                    <span>${elapsed}s${result.tokens ? ` · ${result.tokens} tokens` : ''}</span>
+                    <span>${elapsed}s${result.tokens ? ` · ${result.tokens} tokens` : ''}${result.viaWebUi ? ' · Web UI' : ''}</span>
                     <button class="copy-btn" onclick="copyResponse('${providerId}')">📋 Copy</button>
                 `;
             } catch (error) {
@@ -1177,10 +907,8 @@
                 bodyEl.classList.remove('loading');
                 bodyEl.classList.add('error');
                 bodyEl.innerHTML = `<pre>Error: ${escapeHtml(error.message)}</pre>`;
-                footerEl.innerHTML = `
-                    <span>${elapsed}s · Failed</span>
-                    <button class="copy-btn" onclick="copyResponse('${providerId}')">📋 Copy</button>
-                `;
+                footerEl.innerHTML = `<span>${elapsed}s · Failed</span>
+                    <button class="copy-btn" onclick="copyResponse('${providerId}')">📋 Copy</button>`;
             }
         }
 
@@ -1189,212 +917,106 @@
             if (!apiKey) throw new Error('OpenAI API key not configured');
 
             const isReasoning = modelId.startsWith('o1') || modelId.startsWith('o3');
-
-            const body = {
-                model: modelId,
-                messages: [{ role: 'user', content: prompt }],
-            };
-
-            if (!isReasoning) {
-                body.max_tokens = 4096;
-            }
-
-            // Web search for supported models (using the responses API would require different handling)
-            // For now, just note that web search toggle exists but standard chat completions don't support it directly
+            const body = { model: modelId, messages: [{ role: 'user', content: prompt }] };
+            if (!isReasoning) body.max_tokens = 4096;
+            if (incognitoMode) body.store = false; // Don't store in OpenAI history
 
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
                 body: JSON.stringify(body)
             });
-
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error?.message || 'OpenAI API error');
-            }
-
+            if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message || 'OpenAI API error'); }
             const data = await response.json();
-            return {
-                content: data.choices[0].message.content,
-                tokens: data.usage?.total_tokens
-            };
+            return { content: data.choices[0].message.content, tokens: data.usage?.total_tokens };
         }
 
         async function queryAnthropic(modelId, prompt, features) {
             const apiKey = localStorage.getItem('llm_council_anthropic');
             if (!apiKey) throw new Error('Anthropic API key not configured');
 
-            const body = {
-                model: modelId,
-                max_tokens: 8192,
-                messages: [{ role: 'user', content: prompt }]
-            };
-
-            // Extended thinking for Claude
+            const body = { model: modelId, max_tokens: 8192, messages: [{ role: 'user', content: prompt }] };
             if (features.extendedThinking) {
-                body.thinking = {
-                    type: 'enabled',
-                    budget_tokens: 10000
-                };
-                body.temperature = 1; // Required for extended thinking
+                body.thinking = { type: 'enabled', budget_tokens: 10000 };
+                body.temperature = 1;
             }
 
             const response = await fetch('https://api.anthropic.com/v1/messages', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': apiKey,
-                    'anthropic-version': '2023-06-01',
-                    'anthropic-dangerous-direct-browser-access': 'true'
+                    'Content-Type': 'application/json', 'x-api-key': apiKey,
+                    'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify(body)
             });
-
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error?.message || 'Anthropic API error');
-            }
-
+            if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message || 'Anthropic API error'); }
             const data = await response.json();
 
-            // Handle extended thinking response
             let content = '';
             if (data.content) {
                 for (const block of data.content) {
-                    if (block.type === 'thinking') {
-                        content += `<thinking>\n${block.thinking}\n</thinking>\n\n`;
-                    } else if (block.type === 'text') {
-                        content += block.text;
-                    }
+                    if (block.type === 'thinking') content += `<thinking>\n${block.thinking}\n</thinking>\n\n`;
+                    else if (block.type === 'text') content += block.text;
                 }
             }
-
-            return {
-                content: content,
-                tokens: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0)
-            };
+            return { content, tokens: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0) };
         }
 
         async function queryGoogle(modelId, prompt, features) {
             const apiKey = localStorage.getItem('llm_council_google');
             if (!apiKey) throw new Error('Google AI API key not configured');
 
-            const body = {
-                contents: [{ parts: [{ text: prompt }] }]
-            };
-
-            // Grounding (web search) for Gemini
-            if (features.webSearch) {
-                body.tools = [{ google_search: {} }];
-            }
+            const body = { contents: [{ parts: [{ text: prompt }] }] };
+            if (features.webSearch) body.tools = [{ google_search: {} }];
 
             const response = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                }
+                { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
             );
-
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error?.message || 'Google AI API error');
-            }
-
+            if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message || 'Google AI error'); }
             const data = await response.json();
 
             let content = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
-            // Include grounding metadata if available
             const grounding = data.candidates?.[0]?.groundingMetadata;
-            if (grounding?.webSearchQueries) {
-                content += `\n\n---\nSources searched: ${grounding.webSearchQueries.join(', ')}`;
-            }
-
-            return {
-                content,
-                tokens: data.usageMetadata?.totalTokenCount
-            };
+            if (grounding?.webSearchQueries) content += `\n\n---\nSources: ${grounding.webSearchQueries.join(', ')}`;
+            return { content, tokens: data.usageMetadata?.totalTokenCount };
         }
 
         async function queryPerplexity(modelId, prompt, features) {
             const apiKey = localStorage.getItem('llm_council_perplexity');
             if (!apiKey) throw new Error('Perplexity API key not configured');
 
-            const body = {
-                model: modelId,
-                messages: [{ role: 'user', content: prompt }]
-            };
-
             const response = await fetch('https://api.perplexity.ai/chat/completions', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: JSON.stringify(body)
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                body: JSON.stringify({ model: modelId, messages: [{ role: 'user', content: prompt }] })
             });
-
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error?.message || 'Perplexity API error');
-            }
-
+            if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message || 'Perplexity error'); }
             const data = await response.json();
 
             let content = data.choices[0].message.content;
-
-            // Include citations if available
-            if (data.citations && data.citations.length > 0) {
-                content += '\n\n---\nSources:\n' + data.citations.map((c, i) => `[${i+1}] ${c}`).join('\n');
-            }
-
-            return {
-                content,
-                tokens: data.usage?.total_tokens
-            };
+            if (data.citations?.length > 0) content += '\n\n---\nSources:\n' + data.citations.map((c, i) => `[${i+1}] ${c}`).join('\n');
+            return { content, tokens: data.usage?.total_tokens };
         }
 
         async function queryOllama(modelId, prompt) {
             const endpoint = localStorage.getItem('llm_council_ollama_endpoint') || 'http://localhost:11434';
-
             const response = await fetch(`${endpoint}/api/generate`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: modelId,
-                    prompt: prompt,
-                    stream: false
-                })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: modelId, prompt, stream: false })
             });
-
-            if (!response.ok) {
-                throw new Error(`Ollama error: ${response.status}`);
-            }
-
+            if (!response.ok) throw new Error(`Ollama error: ${response.status}`);
             const data = await response.json();
-            return {
-                content: data.response,
-                tokens: data.eval_count
-            };
+            return { content: data.response, tokens: data.eval_count };
         }
 
         // ==================== SYNTHESIS ====================
         async function synthesize() {
-            const responseEntries = Object.entries(responses).filter(([_, r]) => r && r.content);
-
-            if (responseEntries.length < 2) {
-                alert('Need at least 2 responses to synthesize');
-                return;
-            }
+            const responseEntries = Object.entries(responses).filter(([_, r]) => r?.content);
+            if (responseEntries.length < 2) { alert('Need at least 2 responses to synthesize'); return; }
 
             const synthesizeBtn = document.getElementById('synthesizeBtn');
             const synthesisBody = document.getElementById('synthesisBody');
-
             synthesizeBtn.disabled = true;
             synthesizeBtn.textContent = '⏳ Analyzing...';
             synthesisBody.innerHTML = '<div class="response-body loading"><div class="spinner"></div></div>';
@@ -1402,22 +1024,12 @@
             const synthesisModel = document.getElementById('synthesisModel').value;
             const originalPrompt = document.getElementById('prompt').value.trim();
 
-            // Build the synthesis prompt
             const responsesText = responseEntries.map(([id, r]) => {
-                const features = Object.entries(r.features || {})
-                    .filter(([_, v]) => v)
-                    .map(([k]) => k)
-                    .join(', ');
-                return `
-=== ${r.provider} (${r.model})${features ? ` [${features}]` : ''} ===
-Response time: ${r.elapsed}s
-${r.tokens ? `Tokens: ${r.tokens}` : ''}
+                const features = Object.entries(r.features || {}).filter(([_, v]) => v).map(([k]) => k).join(', ');
+                return `\n=== ${r.provider} (${r.model})${features ? ` [${features}]` : ''}${r.viaWebUi ? ' [Web UI]' : ''} ===\nResponse time: ${r.elapsed}s\n${r.tokens ? `Tokens: ${r.tokens}` : ''}\n\n${r.content}\n`;
+            }).join('\n');
 
-${r.content}
-`;
-            }).join('\n\n');
-
-            const synthesisPrompt = `You are an expert analyst tasked with synthesizing multiple AI responses into a comprehensive analysis.
+            const synthesisPrompt = `You are an expert analyst synthesizing multiple AI responses.
 
 ORIGINAL QUERY:
 ${originalPrompt}
@@ -1425,52 +1037,43 @@ ${originalPrompt}
 RESPONSES FROM DIFFERENT AI SYSTEMS:
 ${responsesText}
 
-Please provide a thorough synthesis with the following sections:
+Provide a thorough synthesis with:
 
 ## Summary of Each Response
-Briefly summarize what each AI said, capturing their key points accurately. Do not lose any important information.
+Briefly summarize each AI's key points. Preserve all important information.
 
 ## Points of Agreement
-What did the AIs agree on? List the specific points where there was consensus.
+What did the AIs agree on? List specific consensus points.
 
 ## Points of Disagreement
-Where did the AIs differ? Explain the different perspectives or contradictions.
+Where did they differ? Explain the contradictions.
 
 ## Unique Insights
-What unique points did individual AIs make that others didn't mention?
+What unique points did individual AIs make?
 
 ## Accuracy Assessment
-Note any factual claims that appear incorrect or that conflict between responses. Flag anything that should be verified.
+Note conflicting facts or claims that should be verified.
 
 ## Final Synthesis
-Provide a comprehensive conclusion that:
+Comprehensive conclusion that:
 - Combines the best insights from all responses
-- Notes which AI provided the strongest answer for which aspects
-- Gives a final, balanced answer to the original query
-- Preserves all important nuances and caveats
+- Notes which AI was strongest for which aspects
+- Gives a final, balanced answer
+- Preserves all important nuances
 
-Be thorough and ensure no valuable information from any response is lost in your synthesis.`;
+Be thorough - no valuable information should be lost.`;
 
             try {
                 let result;
-
                 switch (synthesisModel) {
-                    case 'claude':
-                        result = await queryAnthropic('claude-sonnet-4-20250514', synthesisPrompt, {});
-                        break;
-                    case 'gpt':
-                        result = await queryOpenAI('gpt-4o', synthesisPrompt, {});
-                        break;
-                    case 'gemini':
-                        result = await queryGoogle('gemini-2.0-flash', synthesisPrompt, {});
-                        break;
+                    case 'claude': result = await queryAnthropic('claude-sonnet-4-20250514', synthesisPrompt, {}); break;
+                    case 'gpt': result = await queryOpenAI('gpt-4o', synthesisPrompt, {}); break;
+                    case 'gemini': result = await queryGoogle('gemini-2.0-flash', synthesisPrompt, {}); break;
                 }
-
                 synthesisBody.innerHTML = `<pre>${escapeHtml(result.content)}</pre>`;
             } catch (error) {
                 synthesisBody.innerHTML = `<pre style="color: #f87171;">Synthesis failed: ${escapeHtml(error.message)}</pre>`;
             }
-
             synthesizeBtn.disabled = false;
             synthesizeBtn.textContent = '✨ Synthesize';
         }
@@ -1478,9 +1081,7 @@ Be thorough and ensure no valuable information from any response is lost in your
         // ==================== UTILITIES ====================
         function copyResponse(providerId) {
             const content = responses[providerId]?.content;
-            if (content) {
-                navigator.clipboard.writeText(content);
-            }
+            if (content) navigator.clipboard.writeText(content);
         }
 
         function escapeHtml(text) {
@@ -1489,16 +1090,13 @@ Be thorough and ensure no valuable information from any response is lost in your
             return div.innerHTML;
         }
 
-        // Keyboard shortcut: Cmd/Ctrl + Enter to submit
         document.getElementById('prompt').addEventListener('keydown', (e) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                submitQuery();
-            }
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') submitQuery();
         });
 
         // ==================== INIT ====================
         initProviderStates();
-        renderProviders();
+        checkBridges().then(() => renderProviders());
     </script>
 </body>
 </html>
