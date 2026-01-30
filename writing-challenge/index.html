@@ -8,156 +8,432 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500&family=Josefin+Sans:wght@300;400;500&family=Kalam:wght@300;400;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Nunito:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; }
+    * { box-sizing: border-box; }
+
+    /* Paper texture base for landing */
+    .paper-landing {
+      background-color: #fdfbf7;
+      background-image: url('paper-texture.png');
+      background-blend-mode: multiply;
+      position: relative;
+    }
+    .paper-landing::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 100px rgba(0,0,0,0.05);
+      pointer-events: none;
+    }
+
+    /* Landing page paper stack effect */
+    .paper-stack {
+      box-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.12),
+        0 8px 0 -3px #f5f3ef,
+        0 8px 1px -2px rgba(0, 0, 0, 0.12),
+        0 16px 0 -6px #efebe5,
+        0 16px 1px -5px rgba(0, 0, 0, 0.12),
+        0 24px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Fireside */
+    .theme-fireside { font-family: 'DM Sans', sans-serif; background: linear-gradient(180deg, #292524 0%, #44403c 100%); min-height: 100vh; }
+    .theme-fireside .font-display { font-family: 'Libre Baskerville', serif; }
+    .theme-fireside .font-writing { font-family: 'Libre Baskerville', serif; }
+    .theme-fireside .card-glow { box-shadow: 0 0 60px rgba(245, 161, 66, 0.15), 0 0 120px rgba(245, 161, 66, 0.1); }
+    .flame { animation: flicker 3s ease-in-out infinite; }
+    @keyframes flicker { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(0.98); } }
+
+    /* Greenhouse */
+    .theme-greenhouse { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f4f9f4 0%, #fdfcf9 50%, #f5f0e8 100%); background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5c-3 8-12 15-20 18 8 3 17 10 20 18 3-8 12-15 20-18-8-3-17-10-20-18z' fill='%239caa8c' fill-opacity='0.08'/%3E%3C/svg%3E"); min-height: 100vh; }
+    .theme-greenhouse .font-display { font-family: 'Fraunces', serif; }
+    .theme-greenhouse .font-writing { font-family: 'Fraunces', serif; }
+
+    /* Coffee Shop */
+    .theme-coffeeshop { font-family: 'Nunito', sans-serif; background: #fdfbf7; min-height: 100vh; }
+    .theme-coffeeshop .font-display { font-family: 'Caveat', cursive; }
+    .theme-coffeeshop .font-writing { font-family: 'Source Serif 4', serif; }
+    .notebook-lines { background-image: repeating-linear-gradient(transparent, transparent 31px, #e8ddd0 31px, #e8ddd0 32px); background-position: 0 8px; }
+    .sticky-note { background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%); box-shadow: 2px 3px 8px rgba(0,0,0,0.1); transform: rotate(-2deg); }
+
+    /* Journal */
+    .theme-journal { font-family: 'Quicksand', sans-serif; background: linear-gradient(135deg, #fdf4f5 0%, #faf6f0 50%, #f6f7f4 100%); min-height: 100vh; }
+    .theme-journal .font-display { font-family: 'Kalam', cursive; }
+    .theme-journal .font-writing { font-family: 'Lora', serif; }
+    .washi-tape { background: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.3) 5px, rgba(255,255,255,0.3) 10px); }
+    .journal-lines { background-image: linear-gradient(transparent 31px, #f2e9dd 31px); background-size: 100% 32px; }
+
+    /* Cabin */
+    .theme-cabin { font-family: 'Josefin Sans', sans-serif; background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 40%, #7CB342 40%, #558B2F 100%); min-height: 100vh; image-rendering: pixelated; }
+    .theme-cabin .font-display { font-family: 'Josefin Sans', sans-serif; font-weight: 500; }
+    .theme-cabin .font-writing { font-family: 'Lora', serif; }
+    .pixel-wood { background: repeating-linear-gradient(90deg, #8B4513 0px, #8B4513 4px, #A0522D 4px, #A0522D 8px, #8B4513 8px, #8B4513 12px, #6B3E0A 12px, #6B3E0A 16px); }
+    .pixel-log { background: repeating-linear-gradient(0deg, #8B4513 0px, #8B4513 8px, #A0522D 8px, #A0522D 16px, #6B3E0A 16px, #6B3E0A 24px); }
+    .pixel-flower { animation: sway 2s ease-in-out infinite; }
+    @keyframes sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+
+    /* Cozy Writer Room background */
+    .cozy-room {
+      background-color: #3e3226;
+      background-image: radial-gradient(#4a3b2e 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .font-typewriter { font-family: 'Courier Prime', monospace; }
+    .font-serif-display { font-family: 'Playfair Display', serif; }
+    .font-merriweather { font-family: 'Merriweather', serif; }
   </style>
 </head>
 <body>
   <div id="root"></div>
-  <script type="text/babel" data-type="module">
-    const { useState, useEffect, useCallback, useRef } = React;
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useRef, createContext, useContext } = React;
 
-    // Simple emoji-based icon components
-    const EmojiIcon = ({ emoji, size = 20, className = '' }) => (
-      <span className={className} style={{ fontSize: size * 0.8, lineHeight: 1 }}>{emoji}</span>
-    );
+    // ============ SUPABASE AUTH ============
+    const SUPABASE_URL = 'https://ydwjzlikslebokuxzwco.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MDE3MTUsImV4cCI6MjA1MjI3NzcxNX0.lPSP_OHyn2xkdPWpT1-WF8teXcpjyPwsP_sJmOTzIwo';
 
-    const Play = (p) => <EmojiIcon emoji="▶️" {...p} />;
-    const Pause = (p) => <EmojiIcon emoji="⏸️" {...p} />;
-    const Square = (p) => <EmojiIcon emoji="⏹️" {...p} />;
-    const Clock = (p) => <EmojiIcon emoji="🕐" {...p} />;
-    const Target = (p) => <EmojiIcon emoji="🎯" {...p} />;
-    const BarChart3 = (p) => <EmojiIcon emoji="📊" {...p} />;
-    const Lightbulb = (p) => <EmojiIcon emoji="💡" {...p} />;
-    const Settings = (p) => <EmojiIcon emoji="⚙️" {...p} />;
-    const ChevronLeft = (p) => <EmojiIcon emoji="◀️" {...p} />;
-    const ChevronRight = (p) => <EmojiIcon emoji="▶️" {...p} />;
-    const ChevronUp = (p) => <EmojiIcon emoji="🔼" {...p} />;
-    const ChevronDown = (p) => <EmojiIcon emoji="🔽" {...p} />;
-    const FileText = (p) => <EmojiIcon emoji="📄" {...p} />;
-    const Calendar = (p) => <EmojiIcon emoji="📅" {...p} />;
-    const TrendingUp = (p) => <EmojiIcon emoji="📈" {...p} />;
-    const Timer = (p) => <EmojiIcon emoji="⏱️" {...p} />;
-    const Check = (p) => <EmojiIcon emoji="✓" {...p} />;
-    const X = (p) => <EmojiIcon emoji="✕" {...p} />;
-    const Edit3 = (p) => <EmojiIcon emoji="✏️" {...p} />;
-    const Save = (p) => <EmojiIcon emoji="💾" {...p} />;
-    const Trash2 = (p) => <EmojiIcon emoji="🗑️" {...p} />;
-    const Plus = (p) => <EmojiIcon emoji="➕" {...p} />;
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Storage utilities
-    const storage = {
-      get: (key, defaultValue) => {
-        try {
-          const item = localStorage.getItem(key);
-          return item ? JSON.parse(item) : defaultValue;
-        } catch {
-          return defaultValue;
-        }
-      },
-      set: (key, value) => {
-        localStorage.setItem(key, JSON.stringify(value));
-      }
-    };
+    // Auth Context
+    const AuthContext = createContext(null);
 
-    // Common words list for separate counting
-    const COMMON_WORDS = new Set([
-      'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with',
-      'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been', 'be', 'have', 'has', 'had',
-      'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must',
-      'shall', 'can', 'it', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she',
-      'we', 'they', 'me', 'him', 'her', 'us', 'them', 'my', 'your', 'his', 'its', 'our',
-      'their', 'what', 'which', 'who', 'whom', 'when', 'where', 'why', 'how', 'if', 'then',
-      'so', 'than', 'too', 'very', 'just', 'only', 'also', 'not', 'no', 'yes'
-    ]);
+    function AuthProvider({ children }) {
+      const [user, setUser] = useState(null);
+      const [loading, setLoading] = useState(true);
 
-    // Clock progress visualization component
-    const ClockProgress = ({ progress, size = 120 }) => {
-      const radius = (size - 12) / 2;
-      const center = size / 2;
-      const circumference = 2 * Math.PI * radius;
-      const strokeDashoffset = circumference * (1 - Math.min(progress, 1));
+      useEffect(() => {
+        // Check current session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        });
 
-      const minuteAngle = (progress * 360) - 90;
-      const minuteHandLength = radius * 0.7;
-      const minuteX = center + minuteHandLength * Math.cos(minuteAngle * Math.PI / 180);
-      const minuteY = center + minuteHandLength * Math.sin(minuteAngle * Math.PI / 180);
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+          setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+      }, []);
+
+      const signUp = async (email, password) => {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        return data;
+      };
+
+      const signIn = async (email, password) => {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        return data;
+      };
+
+      const signOut = async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+      };
+
+      const signInWithMagicLink = async (email) => {
+        const { data, error } = await supabase.auth.signInWithOtp({ email });
+        if (error) throw error;
+        return data;
+      };
 
       return (
-        <svg width={size} height={size} className="transform -rotate-90">
-          <circle cx={center} cy={center} r={radius} fill="none" stroke="#e5e7eb" strokeWidth="8" />
-          <circle cx={center} cy={center} r={radius} fill="none"
-            stroke={progress >= 1 ? "#22c55e" : "#3b82f6"} strokeWidth="8" strokeLinecap="round"
-            strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
-            style={{ transition: 'stroke-dashoffset 0.3s ease' }} />
-          <circle cx={center} cy={center} r="4" fill="#374151" className="transform rotate-90 origin-center" />
-          <line x1={center} y1={center} x2={minuteX} y2={minuteY} stroke="#374151" strokeWidth="3"
-            strokeLinecap="round" className="transform rotate-90 origin-center" />
-        </svg>
+        <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, signInWithMagicLink }}>
+          {children}
+        </AuthContext.Provider>
       );
+    }
+
+    function useAuth() {
+      return useContext(AuthContext);
+    }
+
+    // Theme metadata
+    const THEMES = {
+      fireside: { id: 'fireside', name: 'Fireside', icon: '🕯️', tagline: 'Evening writing by candlelight' },
+      greenhouse: { id: 'greenhouse', name: 'Greenhouse', icon: '🌱', tagline: 'Where words grow' },
+      coffeeshop: { id: 'coffeeshop', name: 'Coffee Shop', icon: '☕', tagline: 'Words meet warmth' },
+      journal: { id: 'journal', name: 'Journal', icon: '📓', tagline: 'Every day is a new page' },
+      cabin: { id: 'cabin', name: 'Cabin', icon: '🏔', tagline: "A writer's retreat" }
     };
 
-    const formatTime = (seconds) => {
-      const hrs = Math.floor(seconds / 3600);
-      const mins = Math.floor((seconds % 3600) / 60);
-      const secs = seconds % 60;
-      if (hrs > 0) return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    // Storage
+    const storage = {
+      get: (key, defaultValue) => {
+        try { return JSON.parse(localStorage.getItem(key)) || defaultValue; }
+        catch { return defaultValue; }
+      },
+      set: (key, value) => localStorage.setItem(key, JSON.stringify(value))
     };
 
-    const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const COMMON_WORDS = new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','by','from','as','is','was','are','were','been','be','have','has','had','do','does','did','will','would','could','should','may','might','must','shall','can','it','this','that','these','those','i','you','he','she','we','they','me','him','her','us','them','my','your','his','its','our','their','what','which','who','whom','when','where','why','how','if','then','so','than','too','very','just','only','also','not','no','yes']);
 
-    function WritingChallengeApp() {
+    const formatTime = (s) => {
+      const m = Math.floor(s / 60), sec = s % 60;
+      return `${m}:${sec.toString().padStart(2, '0')}`;
+    };
+    const formatDate = (d) => new Date(d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const formatDuration = (s) => {
+      if (!s) return '';
+      const m = Math.floor(s / 60);
+      return m >= 60 ? `${Math.floor(m/60)}h ${m%60}m` : `${m}m ${s%60}s`;
+    };
+
+    // ============ AUTH SCREEN (Cozy Writer Style) ============
+    function AuthScreen({ onSkip }) {
+      const { signIn, signUp, signInWithMagicLink } = useAuth();
+      const [mode, setMode] = useState('login'); // login, signup, magic
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState('');
+      const [message, setMessage] = useState('');
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setMessage('');
+        setLoading(true);
+
+        try {
+          if (mode === 'magic') {
+            await signInWithMagicLink(email);
+            setMessage('Check your email for the magic link!');
+          } else if (mode === 'signup') {
+            await signUp(email, password);
+            setMessage('Check your email to confirm your account!');
+          } else {
+            await signIn(email, password);
+          }
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div className="cozy-room min-h-screen flex items-center justify-center p-6">
+          <div className="paper-landing paper-stack rounded-sm max-w-md w-full p-10">
+            {/* Header */}
+            <div className="text-center mb-8 border-b-2 border-double border-stone-200 pb-6">
+              <h1 className="font-serif-display text-3xl italic text-stone-700 mb-2">The Writer's Room</h1>
+              <p className="text-stone-400 text-sm font-merriweather">Your private writing sanctuary</p>
+            </div>
+
+            {/* Quote */}
+            <div className="text-center mb-8">
+              <p className="font-merriweather italic text-stone-500 text-lg leading-relaxed">
+                "There is no greater agony than bearing an untold story inside you."
+              </p>
+              <p className="text-stone-400 text-xs mt-2">— Maya Angelou</p>
+            </div>
+
+            {/* Auth Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="w-full px-4 py-3 bg-transparent border-b border-dashed border-stone-300 font-typewriter text-stone-700 focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
+                  required
+                />
+              </div>
+
+              {mode !== 'magic' && (
+                <div>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="password"
+                    className="w-full px-4 py-3 bg-transparent border-b border-dashed border-stone-300 font-typewriter text-stone-700 focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
+                    required
+                  />
+                </div>
+              )}
+
+              {error && <p className="text-red-500 text-sm font-typewriter">{error}</p>}
+              {message && <p className="text-green-600 text-sm font-typewriter">{message}</p>}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 border-2 border-stone-700 text-stone-700 hover:bg-stone-700 hover:text-white transition-colors duration-300 font-typewriter tracking-widest uppercase text-sm disabled:opacity-50"
+              >
+                {loading ? '...' : mode === 'magic' ? 'Send Magic Link' : mode === 'signup' ? 'Create Account' : 'Enter'}
+              </button>
+            </form>
+
+            {/* Mode Toggle */}
+            <div className="mt-6 text-center space-y-2">
+              {mode === 'login' && (
+                <>
+                  <button onClick={() => setMode('signup')} className="text-stone-500 text-sm hover:text-stone-700 font-typewriter">
+                    Need an account? <span className="underline">Sign up</span>
+                  </button>
+                  <br />
+                  <button onClick={() => setMode('magic')} className="text-stone-400 text-xs hover:text-stone-600 font-typewriter">
+                    or use a magic link
+                  </button>
+                </>
+              )}
+              {mode === 'signup' && (
+                <button onClick={() => setMode('login')} className="text-stone-500 text-sm hover:text-stone-700 font-typewriter">
+                  Already have an account? <span className="underline">Log in</span>
+                </button>
+              )}
+              {mode === 'magic' && (
+                <button onClick={() => setMode('login')} className="text-stone-500 text-sm hover:text-stone-700 font-typewriter">
+                  Back to <span className="underline">password login</span>
+                </button>
+              )}
+            </div>
+
+            {/* Skip Option */}
+            <div className="mt-8 pt-6 border-t border-dashed border-stone-200 text-center">
+              <button
+                onClick={onSkip}
+                className="text-stone-400 text-xs hover:text-stone-600 font-typewriter"
+              >
+                Continue without account →
+              </button>
+              <p className="text-stone-300 text-xs mt-1 font-typewriter">(your writing will only be saved locally)</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============ ELEGANT LANDING PAGE (Cozy Writer Style) ============
+    function ElegantLandingPage({ settings, startSession, theme, setCurrentView }) {
+      const { user, signOut } = useAuth();
+      const themeData = THEMES[theme];
+
+      return (
+        <div className="cozy-room min-h-screen flex flex-col items-center justify-center p-6">
+          {/* User badge */}
+          {user && (
+            <div className="absolute top-4 right-4 flex items-center gap-3">
+              <span className="text-amber-100/60 text-sm font-typewriter">{user.email}</span>
+              <button onClick={signOut} className="text-amber-100/40 hover:text-amber-100 text-sm font-typewriter">
+                sign out
+              </button>
+            </div>
+          )}
+
+          <div className="paper-landing paper-stack rounded-sm max-w-2xl w-full p-12 text-center">
+            {/* Decorative Header */}
+            <div className="flex justify-center items-center gap-4 mb-6">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-stone-300"></div>
+              <span className="text-3xl">{themeData.icon}</span>
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-stone-300"></div>
+            </div>
+
+            {/* Title */}
+            <h1 className="font-serif-display text-4xl italic text-stone-700 mb-2">
+              {themeData.name === 'Fireside' ? 'The Fireside' :
+               themeData.name === 'Greenhouse' ? 'Writing Garden' :
+               themeData.name === 'Coffee Shop' ? "The Writer's Café" :
+               themeData.name === 'Journal' ? 'My Writing Journal' :
+               'Prairie Cabin'}
+            </h1>
+            <p className="text-stone-400 text-sm font-merriweather mb-10">{themeData.tagline}</p>
+
+            {/* Quote */}
+            <div className="mb-10">
+              <p className="font-merriweather italic text-stone-500 text-xl leading-relaxed">
+                "There is no greater agony than bearing an untold story inside you."
+              </p>
+              <p className="text-stone-400 text-xs mt-3">— Maya Angelou</p>
+            </div>
+
+            {/* Start Button */}
+            <button
+              onClick={startSession}
+              className="px-10 py-4 border-2 border-stone-700 text-stone-700 hover:bg-stone-700 hover:text-white transition-colors duration-300 font-typewriter tracking-widest uppercase text-sm"
+            >
+              Start Writing
+            </button>
+
+            {/* Goal Info */}
+            <div className="mt-6 text-stone-400 text-sm font-typewriter">
+              Target: {settings.goalType === 'words' ? `${settings.wordGoal} words` : `${settings.timeGoal} minutes`}
+            </div>
+
+            {/* Navigation */}
+            <div className="mt-10 pt-8 border-t border-dashed border-stone-200">
+              <div className="flex justify-center gap-8">
+                {['library', 'stats', 'ideas', 'settings'].map(v => (
+                  <button
+                    key={v}
+                    onClick={() => setCurrentView(v)}
+                    className="text-stone-400 hover:text-stone-600 text-sm font-typewriter uppercase tracking-wider"
+                  >
+                    {v === 'library' ? 'Texts' : v}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Theme indicator */}
+          <div className="mt-6 text-amber-100/40 text-xs font-typewriter">
+            atmosphere: {themeData.name.toLowerCase()}
+          </div>
+        </div>
+      );
+    }
+
+    // ============ MAIN APP ============
+    function WritingApp() {
+      const { user, loading: authLoading } = useAuth();
+      // Auth is now optional - default to skipping it
+      const [skipAuth, setSkipAuth] = useState(() => storage.get('skipAuth', true));
+      const [theme, setTheme] = useState(() => storage.get('writingTheme', 'fireside'));
       const [currentView, setCurrentView] = useState('write');
       const [settings, setSettings] = useState(() => storage.get('writingSettings', {
-        goalType: 'words', wordGoal: 500, characterGoal: 2500, timeGoal: 20,
-        countSpaces: true, countPunctuation: true, separateCommonWords: false, defaultPomodoro: 25,
+        goalType: 'words', wordGoal: 500, characterGoal: 2500, timeGoal: 20
       }));
-
       const [sessions, setSessions] = useState(() => storage.get('writingSessions', []));
       const [ideas, setIdeas] = useState(() => storage.get('writingIdeas', []));
       const [texts, setTexts] = useState(() => storage.get('writingTexts', []));
-
       const [isWriting, setIsWriting] = useState(false);
       const [isPaused, setIsPaused] = useState(false);
       const [currentText, setCurrentText] = useState('');
       const [sessionStartTime, setSessionStartTime] = useState(null);
       const [elapsedSeconds, setElapsedSeconds] = useState(0);
-      const [timerTarget, setTimerTarget] = useState(null);
       const [showTitleModal, setShowTitleModal] = useState(false);
       const [pendingTitle, setPendingTitle] = useState('');
-
       const timerRef = useRef(null);
       const textareaRef = useRef(null);
 
+      useEffect(() => { storage.set('writingTheme', theme); }, [theme]);
       useEffect(() => { storage.set('writingSettings', settings); }, [settings]);
       useEffect(() => { storage.set('writingSessions', sessions); }, [sessions]);
       useEffect(() => { storage.set('writingIdeas', ideas); }, [ideas]);
       useEffect(() => { storage.set('writingTexts', texts); }, [texts]);
+      useEffect(() => { storage.set('skipAuth', skipAuth); }, [skipAuth]);
 
       useEffect(() => {
         if (isWriting && !isPaused) {
-          timerRef.current = setInterval(() => setElapsedSeconds(prev => prev + 1), 1000);
+          timerRef.current = setInterval(() => setElapsedSeconds(p => p + 1), 1000);
         } else { clearInterval(timerRef.current); }
         return () => clearInterval(timerRef.current);
       }, [isWriting, isPaused]);
 
       const getTextStats = useCallback((text) => {
         const words = text.trim().split(/\s+/).filter(w => w.length > 0);
-        const wordCount = words.length;
-        let commonWordCount = 0, contentWordCount = 0;
-        words.forEach(word => {
-          if (COMMON_WORDS.has(word.toLowerCase().replace(/[^\w]/g, ''))) commonWordCount++;
-          else contentWordCount++;
-        });
-        let charCount = text.length;
-        if (!settings.countSpaces) charCount = text.replace(/\s/g, '').length;
-        if (!settings.countPunctuation) {
-          charCount = text.replace(/[^\w\s]/g, '').length;
-          if (!settings.countSpaces) charCount = text.replace(/[^\w]/g, '').length;
-        }
-        return { words: wordCount, characters: charCount, commonWords: commonWordCount, contentWords: contentWordCount };
-      }, [settings]);
+        return { words: words.length, characters: text.length };
+      }, []);
 
       const stats = getTextStats(currentText);
 
@@ -169,16 +445,12 @@
 
       const progress = getProgress();
       const goalMet = progress >= 1;
-      const timerProgress = timerTarget ? elapsedSeconds / (timerTarget * 60) : 0;
-      const pomodoroComplete = timerTarget && elapsedSeconds >= timerTarget * 60;
 
       const startSession = () => {
         setIsWriting(true); setIsPaused(false); setSessionStartTime(new Date().toISOString());
-        setElapsedSeconds(0); setCurrentText('');
-        if (textareaRef.current) textareaRef.current.focus();
+        setElapsedSeconds(0); setCurrentText(''); setCurrentView('write');
+        setTimeout(() => textareaRef.current?.focus(), 100);
       };
-
-      const togglePause = () => setIsPaused(!isPaused);
 
       const endSession = () => {
         if (currentText.trim().length > 0) { setShowTitleModal(true); setPendingTitle(''); }
@@ -186,532 +458,939 @@
       };
 
       const finalizeSession = (title) => {
-        const endTime = new Date().toISOString();
         const finalStats = getTextStats(currentText);
-        const session = {
-          id: Date.now(), startTime: sessionStartTime, endTime, duration: elapsedSeconds,
-          words: finalStats.words, characters: finalStats.characters,
-          contentWords: finalStats.contentWords, commonWords: finalStats.commonWords,
-          goalType: settings.goalType, goalMet,
-          goalValue: settings.goalType === 'words' ? settings.wordGoal :
-                     settings.goalType === 'characters' ? settings.characterGoal : settings.timeGoal
-        };
-        setSessions(prev => [...prev, session]);
+        setSessions(prev => [...prev, {
+          id: Date.now(), startTime: sessionStartTime, duration: elapsedSeconds,
+          words: finalStats.words, characters: finalStats.characters, goalMet
+        }]);
         if (currentText.trim().length > 0) {
-          const text = {
+          setTexts(prev => [...prev, {
             id: Date.now(), title: title || `Untitled - ${formatDate(sessionStartTime)}`,
             content: currentText, createdAt: sessionStartTime,
             wordCount: finalStats.words, characterCount: finalStats.characters,
-            duration: elapsedSeconds, goalType: settings.goalType, goalMet
-          };
-          setTexts(prev => [...prev, text]);
+            duration: elapsedSeconds, goalMet
+          }]);
         }
         setIsWriting(false); setIsPaused(false); setCurrentText('');
-        setElapsedSeconds(0); setSessionStartTime(null); setTimerTarget(null); setShowTitleModal(false);
+        setElapsedSeconds(0); setSessionStartTime(null); setShowTitleModal(false);
       };
 
-      const setPomodoro = (minutes) => { setTimerTarget(minutes); setElapsedSeconds(0); };
+      // Show loading
+      if (authLoading) {
+        return (
+          <div className="cozy-room min-h-screen flex items-center justify-center">
+            <div className="text-amber-100/60 font-typewriter">Loading...</div>
+          </div>
+        );
+      }
 
-      const NavButton = ({ view, icon: Icon, label }) => (
-        <button onClick={() => setCurrentView(view)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-            currentView === view ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
-          <Icon size={20} /><span className="hidden sm:inline">{label}</span>
-        </button>
-      );
+      // Auth is optional - only show if user explicitly wants to sign in
+      // The app works fully offline with localStorage
+      // Users can sign in via Settings if they want cloud sync (future feature)
+
+      // Show elegant landing page when not writing
+      if (!isWriting && currentView === 'write') {
+        return (
+          <>
+            <ElegantLandingPage
+              settings={settings}
+              startSession={startSession}
+              theme={theme}
+              setCurrentView={setCurrentView}
+            />
+            {/* Other views are handled below */}
+          </>
+        );
+      }
+
+      // Render themed writing interface
+      const renderThemedApp = () => {
+        const props = {currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme};
+        switch(theme) {
+          case 'fireside': return <FiresideTheme {...props} />;
+          case 'greenhouse': return <GreenhouseTheme {...props} />;
+          case 'coffeeshop': return <CoffeeShopTheme {...props} />;
+          case 'journal': return <JournalTheme {...props} />;
+          case 'cabin': return <CabinTheme {...props} />;
+          default: return <FiresideTheme {...props} />;
+        }
+      };
 
       return (
-        <div className="min-h-screen bg-gray-50">
-          <nav className="bg-white border-b border-gray-200 px-4 py-3">
-            <div className="max-w-6xl mx-auto flex items-center justify-between">
-              <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                <Edit3 className="text-blue-500" />
-                <span className="hidden sm:inline">Writing Challenge</span>
-              </h1>
-              <div className="flex gap-2">
-                <NavButton view="write" icon={FileText} label="Write" />
-                <NavButton view="stats" icon={BarChart3} label="Stats" />
-                <NavButton view="texts" icon={Calendar} label="Texts" />
-                <NavButton view="ideas" icon={Lightbulb} label="Ideas" />
-                <NavButton view="settings" icon={Settings} label="Settings" />
-              </div>
-            </div>
-          </nav>
-
-          <main className="max-w-6xl mx-auto p-4">
-            {currentView === 'write' && <WritingView {...{isWriting, isPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, timerTarget, timerProgress, pomodoroComplete, settings, startSession, togglePause, endSession, setPomodoro, textareaRef}} />}
-            {currentView === 'stats' && <StatsView sessions={sessions} settings={settings} />}
-            {currentView === 'texts' && <TextsView texts={texts} setTexts={setTexts} />}
-            {currentView === 'ideas' && <IdeasView ideas={ideas} setIdeas={setIdeas} />}
-            {currentView === 'settings' && <SettingsView settings={settings} setSettings={setSettings} />}
-          </main>
-
+        <>
+          {renderThemedApp()}
           {showTitleModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-xl p-6 max-w-md w-full">
-                <h3 className="text-lg font-semibold mb-4">Save Your Writing</h3>
-                <p className="text-gray-600 mb-4">Great work! You wrote {stats.words} words in {formatTime(elapsedSeconds)}.{goalMet && " You met your goal!"}</p>
-                <input type="text" placeholder="Give your text a title (optional)" value={pendingTitle}
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">Save Your Writing</h3>
+                <p className="text-gray-600 mb-4">You wrote {stats.words} words in {formatTime(elapsedSeconds)}.{goalMet && " Goal reached!"}</p>
+                <input type="text" placeholder="Give it a title (optional)" value={pendingTitle}
                   onChange={(e) => setPendingTitle(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 mb-4 focus:outline-none focus:ring-2 focus:ring-amber-400"
                   autoFocus onKeyDown={(e) => { if (e.key === 'Enter') finalizeSession(pendingTitle); }} />
                 <div className="flex gap-2">
-                  <button onClick={() => finalizeSession(pendingTitle)} className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Save</button>
-                  <button onClick={() => { setShowTitleModal(false); setIsWriting(true); }} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Keep Writing</button>
+                  <button onClick={() => finalizeSession(pendingTitle)} className="flex-1 py-3 bg-amber-500 text-white rounded-lg font-medium">Save</button>
+                  <button onClick={() => { setShowTitleModal(false); setIsWriting(true); }} className="px-4 py-3 text-gray-600 rounded-lg">Keep Writing</button>
                 </div>
               </div>
+            </div>
+          )}
+        </>
+      );
+    }
+
+    // ============ FIRESIDE THEME ============
+    function FiresideTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      const { user, signOut } = useAuth();
+
+      return (
+        <div className="theme-fireside">
+          <div className="max-w-4xl mx-auto p-6">
+            <header className="flex justify-between items-center mb-8 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flame text-3xl">🕯️</div>
+                <h1 className="font-display text-2xl text-amber-50 italic">The Fireside</h1>
+              </div>
+              <div className="flex items-center gap-6">
+                <nav className="flex gap-6 text-sm">
+                  {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
+                    <button key={v} onClick={() => setCurrentView(v)}
+                      className={`${currentView === v ? 'text-amber-400 border-b-2 border-amber-400' : 'text-stone-400 hover:text-amber-100'} pb-1 transition-colors`}>
+                      {v.charAt(0).toUpperCase() + v.slice(1)}
+                    </button>
+                  ))}
+                </nav>
+                {user && (
+                  <button onClick={signOut} className="text-stone-500 hover:text-amber-100 text-sm">
+                    sign out
+                  </button>
+                )}
+              </div>
+            </header>
+
+            {currentView === 'write' && isWriting && (
+              <div className="card-glow bg-amber-50 rounded-2xl p-8">
+                <div className="flex items-center justify-between mb-6 pb-6 border-b border-stone-200">
+                  <div className="flex items-center gap-6">
+                    <div className="relative w-16 h-16">
+                      <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" r="15" fill="none" stroke="#feecd8" strokeWidth="3"/>
+                        <circle cx="18" cy="18" r="15" fill="none" stroke="#f5a142" strokeWidth="3"
+                          strokeDasharray={`${progress * 94}, 94`} strokeLinecap="round"/>
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-stone-700">
+                        {Math.round(progress * 100)}%
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-display text-stone-800">
+                        {stats.words} <span className="text-lg text-stone-400">words</span>
+                      </div>
+                      <div className="text-sm text-amber-600">{Math.max(0, settings.wordGoal - stats.words)} more to goal</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="text-right">
+                      <div className="text-2xl font-display text-stone-600">{formatTime(elapsedSeconds)}</div>
+                      <div className="text-xs text-stone-400 uppercase tracking-wider">elapsed</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => setIsPaused(!isPaused)}
+                        className="w-10 h-10 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center hover:bg-stone-200">
+                        {isPaused ? '▶' : '⏸'}
+                      </button>
+                      <button onClick={endSession}
+                        className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center hover:bg-amber-200">
+                        ⏹
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent"></div>
+                  <span className="text-stone-300 text-xs uppercase tracking-widest">your story</span>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent"></div>
+                </div>
+                <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                  disabled={isPaused}
+                  className="w-full h-[380px] resize-none bg-transparent text-stone-800 text-lg leading-loose focus:outline-none font-writing"
+                  placeholder="The fire crackles softly as you begin..." />
+                {goalMet && (
+                  <div className="mt-4 py-3 text-center text-amber-700 font-medium bg-amber-100 rounded-lg">
+                    ✓ Goal reached! Keep going or save your work.
+                  </div>
+                )}
+              </div>
+            )}
+
+            {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} dark />}
+            {currentView === 'stats' && <StatsViewGeneric sessions={sessions} dark />}
+            {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} dark />}
+            {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} dark />}
+          </div>
+        </div>
+      );
+    }
+
+    // ============ GREENHOUSE THEME ============
+    function GreenhouseTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      const { user, signOut } = useAuth();
+
+      return (
+        <div className="theme-greenhouse">
+          <div className="max-w-4xl mx-auto p-6">
+            <header className="flex justify-between items-center mb-8 py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <span className="text-green-600">🌱</span>
+                </div>
+                <h1 className="font-display text-2xl text-green-900">Writing Garden</h1>
+              </div>
+              <div className="flex items-center gap-4">
+                <nav className="flex gap-1 bg-white/60 backdrop-blur rounded-full p-1 shadow-sm">
+                  {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
+                    <button key={v} onClick={() => setCurrentView(v)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium ${currentView === v ? 'bg-green-100 text-green-800' : 'text-green-700 hover:bg-green-50'}`}>
+                      {v.charAt(0).toUpperCase() + v.slice(1)}
+                    </button>
+                  ))}
+                </nav>
+                {user && (
+                  <button onClick={signOut} className="text-green-500 hover:text-green-700 text-sm">
+                    sign out
+                  </button>
+                )}
+              </div>
+            </header>
+
+            {currentView === 'write' && isWriting && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg shadow-green-200/50 p-8">
+                <div className="flex items-center justify-between mb-8 pb-6 border-b border-green-100">
+                  <div className="flex items-center gap-6">
+                    <div className="relative w-20 h-28">
+                      <div className="absolute bottom-0 w-full h-8 bg-amber-800/40 rounded-b-lg"></div>
+                      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-2 bg-green-400 rounded-t transition-all duration-500"
+                        style={{ height: `${Math.min(progress * 60, 60)}%` }}></div>
+                      {progress > 0.3 && (
+                        <div className="absolute bottom-14 left-1/2 -translate-x-1/2 text-2xl transition-all duration-500">🌿</div>
+                      )}
+                      {progress >= 1 && (
+                        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 text-3xl animate-bounce">🌸</div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-3xl font-display text-green-900">
+                        {stats.words} <span className="text-lg text-green-400">/ {settings.wordGoal} words</span>
+                      </div>
+                      <div className="text-sm text-green-600 mt-1">
+                        {goalMet ? 'Your words have bloomed!' : 'Your words are growing beautifully'}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <div className="text-2xl font-display text-green-800">{formatTime(elapsedSeconds)}</div>
+                      <div className="text-xs text-green-400">time in garden</div>
+                    </div>
+                    <button onClick={() => setIsPaused(!isPaused)}
+                      className="p-3 rounded-full bg-green-50 text-green-600 hover:bg-green-100">
+                      {isPaused ? '▶' : '⏸'}
+                    </button>
+                    <button onClick={endSession}
+                      className="p-3 rounded-full bg-green-600 text-white hover:bg-green-700">
+                      ⏹
+                    </button>
+                  </div>
+                </div>
+                <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                  disabled={isPaused}
+                  className="w-full h-[400px] resize-none bg-transparent text-green-900 text-lg leading-relaxed focus:outline-none font-writing"
+                  placeholder="Plant your thoughts here and watch them grow..." />
+                <div className="flex justify-between items-center mt-4 pt-4 border-t border-green-100 text-sm text-green-600">
+                  <span>{Math.round(progress * 100)}% to goal • {stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0} wpm</span>
+                  <button onClick={endSession} className="px-6 py-3 bg-green-600 text-white rounded-full font-medium shadow-lg shadow-green-300 hover:bg-green-700">
+                    Save & Rest
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
+            {currentView === 'stats' && <StatsViewGeneric sessions={sessions} />}
+            {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} />}
+            {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} />}
+          </div>
+        </div>
+      );
+    }
+
+    // ============ COFFEE SHOP THEME ============
+    function CoffeeShopTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      const { user, signOut } = useAuth();
+
+      return (
+        <div className="theme-coffeeshop min-h-screen bg-amber-100/50">
+          <div className="max-w-5xl mx-auto p-6">
+            <header className="flex justify-between items-center mb-6 py-4 px-6 bg-amber-800 rounded-2xl">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">☕</span>
+                <div>
+                  <h1 className="font-display text-2xl text-amber-50 italic">The Writer's Café</h1>
+                  <p className="text-amber-400/80 text-xs">where words meet warmth</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <nav className="flex gap-6">
+                  {[
+                    { id: 'write', label: 'Write' },
+                    { id: 'library', label: 'Drafts' },
+                    { id: 'stats', label: 'Stats' },
+                    { id: 'ideas', label: 'Ideas' },
+                    { id: 'settings', label: 'Settings' }
+                  ].map(v => (
+                    <button key={v.id} onClick={() => setCurrentView(v.id)}
+                      className={`px-4 py-2 text-sm font-medium transition-colors ${currentView === v.id ? 'bg-amber-600/50 text-amber-50 rounded-lg' : 'text-amber-300 hover:text-amber-100'}`}>
+                      {v.label}
+                    </button>
+                  ))}
+                </nav>
+                {user && (
+                  <button onClick={signOut} className="text-amber-300/60 hover:text-amber-100 text-sm">
+                    sign out
+                  </button>
+                )}
+              </div>
+            </header>
+
+            {currentView === 'write' && isWriting && (
+              <>
+                <div className="bg-amber-50 rounded-3xl shadow-lg p-6">
+                  <div className="grid grid-cols-12 gap-6">
+                    <div className="col-span-8 bg-white rounded-xl shadow-inner overflow-hidden border border-amber-200">
+                      <div className="flex h-full">
+                        <div className="w-10 bg-amber-100 flex flex-col items-center py-6 gap-6 border-r border-amber-200">
+                          {[...Array(12)].map((_, i) => (
+                            <div key={i} className="w-4 h-4 rounded-full bg-amber-300 border-2 border-amber-400"></div>
+                          ))}
+                        </div>
+                        <div className="flex-1 notebook-lines p-6">
+                          <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                            disabled={isPaused}
+                            className="w-full h-[450px] resize-none bg-transparent text-amber-900 text-lg leading-8 focus:outline-none font-writing"
+                            placeholder="The coffee shop was quiet this morning, just the way I like it..." />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="col-span-4 space-y-4">
+                      <div className="sticky-note rounded-lg p-5">
+                        <div className="font-display text-xl text-amber-900 mb-3">Today's Order ☕</div>
+                        <div className="space-y-2 text-sm text-amber-800">
+                          <div className="flex justify-between items-center">
+                            <span>Words written</span>
+                            <span className="font-semibold">{stats.words} / {settings.wordGoal}</span>
+                          </div>
+                          <div className="h-2 bg-amber-300/50 rounded-full overflow-hidden">
+                            <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${Math.min(progress * 100, 100)}%` }}></div>
+                          </div>
+                          <div className="text-xs text-amber-600 text-right">{Math.round(progress * 100)}% there!</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+                        <div className="text-center">
+                          <div className="text-4xl text-amber-800 font-light tracking-wide">{formatTime(elapsedSeconds)}</div>
+                          <div className="text-xs text-amber-400 uppercase tracking-widest mt-2">brewing time</div>
+                        </div>
+                        <div className="flex justify-center gap-3 mt-5">
+                          <button onClick={() => setIsPaused(!isPaused)}
+                            className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center hover:bg-amber-100 border border-amber-200">
+                            {isPaused ? '▶' : '⏸'}
+                          </button>
+                          <button onClick={endSession}
+                            className="w-12 h-12 rounded-full bg-amber-800 text-amber-50 flex items-center justify-center hover:bg-amber-900">
+                            ⏹
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-5 shadow-sm border border-amber-100">
+                        <div className="font-display text-lg italic text-amber-800 mb-3">This Session</div>
+                        <div className="grid grid-cols-2 gap-4 text-center">
+                          <div>
+                            <div className="text-2xl font-light text-amber-800">{stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0}</div>
+                            <div className="text-xs text-amber-400">wpm</div>
+                          </div>
+                          <div>
+                            <div className="text-2xl font-light text-amber-800">{stats.characters > 1000 ? `${(stats.characters/1000).toFixed(1)}k` : stats.characters}</div>
+                            <div className="text-xs text-amber-400">chars</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button onClick={endSession}
+                        className="w-full py-4 bg-amber-800 text-amber-50 rounded-xl font-medium shadow-lg hover:bg-amber-900 transition-colors">
+                        <span>Close Tab </span><span className="font-display italic">& Save</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center mt-6 text-sm text-amber-400">
+                  Background noise: soft jazz • Temperature: perfect • Refills: unlimited
+                </div>
+              </>
+            )}
+
+            {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
+            {currentView === 'stats' && <StatsViewGeneric sessions={sessions} />}
+            {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} />}
+            {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} />}
+          </div>
+        </div>
+      );
+    }
+
+    // ============ JOURNAL THEME ============
+    function JournalTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      const { user, signOut } = useAuth();
+      const today = new Date();
+
+      return (
+        <div className="theme-journal py-8">
+          <div className="max-w-3xl mx-auto px-6">
+            <header className="text-center mb-8">
+              <div className="inline-flex items-center gap-3 bg-amber-100 px-6 py-3 rounded-full">
+                <span className="text-2xl">📓</span>
+                <h1 className="font-display text-2xl text-stone-700">My Writing Journal</h1>
+              </div>
+              <div className="flex justify-center items-center gap-4 mt-4">
+                <nav className="flex gap-4 text-sm">
+                  {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
+                    <button key={v} onClick={() => setCurrentView(v)}
+                      className={`px-3 py-1 rounded-full font-medium ${currentView === v ? 'bg-rose-100 text-rose-800' : 'text-green-700 hover:bg-green-50'}`}>
+                      {v === 'write' ? 'Today' : v === 'library' ? 'Pages' : v.charAt(0).toUpperCase() + v.slice(1)}
+                    </button>
+                  ))}
+                </nav>
+                {user && (
+                  <button onClick={signOut} className="text-stone-400 hover:text-stone-600 text-sm">
+                    sign out
+                  </button>
+                )}
+              </div>
+            </header>
+
+            {currentView === 'write' && isWriting && (
+              <div className="relative">
+                <div className="absolute -top-3 left-12 w-24 h-6 bg-rose-200 washi-tape rounded-sm" style={{ transform: 'rotate(-3deg)' }}></div>
+                <div className="absolute -top-2 right-16 w-20 h-6 bg-green-200 washi-tape rounded-sm" style={{ transform: 'rotate(2deg)' }}></div>
+
+                <div className="bg-amber-50/80 rounded-lg shadow-xl p-8 pt-10">
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-dashed border-amber-200">
+                    <div>
+                      <div className="font-display text-3xl text-stone-700">
+                        {today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                      </div>
+                      <div className="text-sm text-amber-600 mt-1">
+                        {today.toLocaleDateString('en-US', { weekday: 'long' })} ☀️
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <div className="font-display text-2xl text-green-700">{stats.words}</div>
+                        <div className="text-xs text-amber-500">words so far</div>
+                      </div>
+                      <div className="w-12 h-12 rounded-full border-4 border-green-200 overflow-hidden">
+                        <div className="w-full h-full" style={{
+                          background: `conic-gradient(#6b7f5a ${progress * 100}%, #dce2d0 ${progress * 100}%)`
+                        }}></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 mb-6">
+                    <span className="px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-sm border border-rose-200">feeling: creative ✨</span>
+                    <span className="px-3 py-1 bg-green-50 text-green-600 rounded-full text-sm border border-green-200">weather: sunny 🌤</span>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute left-6 top-0 bottom-0 w-px bg-rose-200"></div>
+                    <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                      disabled={isPaused}
+                      className="w-full h-[380px] pl-10 pr-4 resize-none bg-transparent text-stone-700 text-lg focus:outline-none font-writing leading-loose journal-lines"
+                      placeholder="Dear journal..." />
+                  </div>
+
+                  <div className="flex items-center justify-between mt-6 pt-4 border-t border-dashed border-amber-200">
+                    <div className="flex items-center gap-4 text-sm text-amber-600">
+                      <span>⏱ {formatTime(elapsedSeconds)}</span>
+                      <span>•</span>
+                      <span>{stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0} wpm</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => setIsPaused(!isPaused)}
+                        className="px-4 py-2 text-amber-700 hover:bg-amber-100 rounded-lg flex items-center gap-2">
+                        {isPaused ? '▶ Resume' : '⏸ Pause'}
+                      </button>
+                      <button onClick={endSession}
+                        className="px-5 py-2 bg-rose-400 text-white rounded-lg font-medium shadow-md hover:bg-rose-500 flex items-center gap-2">
+                        ✓ Done for now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute -bottom-2 right-8 text-3xl" style={{ transform: 'rotate(10deg)' }}>🍃</div>
+              </div>
+            )}
+
+            {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} />}
+            {currentView === 'stats' && <StatsViewGeneric sessions={sessions} />}
+            {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} />}
+            {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} />}
+
+            <div className="text-center mt-8 font-display text-xl text-green-600">
+              "Every day is a new page" 📖
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============ CABIN THEME ============
+    function CabinTheme({ currentView, setCurrentView, isWriting, isPaused, setIsPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, settings, setSettings, startSession, endSession, textareaRef, sessions, texts, setTexts, ideas, setIdeas, theme, setTheme }) {
+      const { user, signOut } = useAuth();
+
+      return (
+        <div className="theme-cabin p-6 pt-12">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex justify-center gap-1 mb-[-8px] relative z-10">
+              <span className="pixel-flower text-xl">🌻</span>
+              <span className="text-lg">🌿</span>
+              <span className="pixel-flower text-xl" style={{animationDelay: '0.5s'}}>🌸</span>
+              <span className="text-lg">🌾</span>
+              <span className="pixel-flower text-xl" style={{animationDelay: '1s'}}>🌼</span>
+              <span className="text-lg">🌿</span>
+              <span className="pixel-flower text-xl" style={{animationDelay: '0.3s'}}>🌷</span>
+            </div>
+
+            <div className="relative">
+              <div className="flex justify-center mb-[-4px]">
+                <div className="w-0 h-0 border-l-[220px] border-r-[220px] border-b-[50px] border-l-transparent border-r-transparent"
+                  style={{borderBottomColor: '#6B3E0A'}}></div>
+              </div>
+              <div className="flex justify-center mb-[-2px]">
+                <div className="w-[400px] h-3 pixel-wood"></div>
+              </div>
+
+              <div className="bg-amber-100 shadow-2xl overflow-hidden border-x-8 border-b-8" style={{borderColor: '#8B4513'}}>
+                <div className="pixel-log px-6 py-3 flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🏡</span>
+                    <h1 className="font-display text-xl text-amber-50 tracking-wide">Prairie Cabin</h1>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <nav className="flex gap-1 bg-amber-900/40 rounded px-2 py-1">
+                      {['write', 'library', 'stats', 'ideas', 'settings'].map(v => (
+                        <button key={v} onClick={() => setCurrentView(v)}
+                          className={`px-3 py-1 text-sm font-medium transition-colors ${currentView === v ? 'bg-amber-100 text-amber-900' : 'text-amber-100 hover:text-white'}`}>
+                          {v.charAt(0).toUpperCase() + v.slice(1)}
+                        </button>
+                      ))}
+                    </nav>
+                    {user && (
+                      <button onClick={signOut} className="text-amber-300/60 hover:text-amber-100 text-sm">
+                        sign out
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-6 grid grid-cols-12 gap-6 bg-amber-50">
+                  <div className="col-span-3 space-y-4">
+                    <div className="cabin-window aspect-square bg-sky-200/30" style={{boxShadow: 'inset 0 0 0 4px #6B3E0A'}}>
+                      <div className="w-full h-full relative p-1">
+                        <div className="absolute inset-2 grid grid-cols-2 grid-rows-2 gap-1">
+                          {[0,1,2,3].map(i => (
+                            <div key={i} className="bg-sky-200/30" style={{boxShadow: 'inset 0 0 0 2px #6B3E0A'}}></div>
+                          ))}
+                        </div>
+                        <div className="absolute top-3 right-3 w-4 h-4 bg-yellow-300 rounded-full"></div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center gap-2 text-xl">
+                      <span>🪴</span>
+                      <span>🌵</span>
+                      <span>🪴</span>
+                    </div>
+
+                    <div className="pixel-wood p-4 space-y-3 text-center">
+                      <div>
+                        <div className="font-display text-3xl text-amber-50">{formatTime(elapsedSeconds)}</div>
+                        <div className="text-xs text-amber-200 uppercase">time spent</div>
+                      </div>
+                      <div className="h-px bg-amber-700"></div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <div className="font-display text-xl text-green-300">{stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0}</div>
+                          <div className="text-xs text-amber-200">wpm</div>
+                        </div>
+                        <div>
+                          <div className="font-display text-xl text-yellow-300">{Math.round(progress * 100)}%</div>
+                          <div className="text-xs text-amber-200">goal</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {isWriting && (
+                      <div className="flex gap-2">
+                        <button onClick={() => setIsPaused(!isPaused)}
+                          className="flex-1 py-2 bg-amber-200 text-amber-800 font-medium hover:bg-amber-300 flex items-center justify-center">
+                          {isPaused ? '▶' : '⏸'}
+                        </button>
+                        <button onClick={endSession}
+                          className="flex-1 py-2 bg-amber-700 text-amber-50 font-medium hover:bg-amber-800 flex items-center justify-center">
+                          ⏹
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="col-span-9">
+                    <div className="bg-amber-100 border-4 p-6 h-full" style={{borderColor: '#A0522D'}}>
+                      {currentView === 'write' && isWriting && (
+                        <>
+                          <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-amber-300">
+                            <div className="flex items-center gap-3">
+                              <span className="text-xl">✍️</span>
+                              <div>
+                                <div className="font-display text-2xl text-amber-900">
+                                  {stats.words} <span className="text-amber-500 text-base">words</span>
+                                </div>
+                                <div className="text-sm text-green-700">{Math.max(0, settings.wordGoal - stats.words)} more to go</div>
+                              </div>
+                            </div>
+                            <div className="w-24 h-3 bg-amber-200 overflow-hidden">
+                              <div className="h-full bg-green-600 transition-all" style={{ width: `${Math.min(progress * 100, 100)}%` }}></div>
+                            </div>
+                          </div>
+
+                          <div className="bg-amber-50 p-4 border-2 border-amber-300">
+                            <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)}
+                              disabled={isPaused}
+                              className="w-full h-[320px] resize-none bg-transparent text-amber-900 text-lg leading-loose focus:outline-none font-writing"
+                              placeholder="The cabin creaks gently in the prairie wind..." />
+                          </div>
+                          {goalMet && (
+                            <div className="mt-3 py-2 text-center text-green-800 font-medium bg-green-100 border border-green-300">
+                              🌻 Goal reached! Keep writing or save your work.
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {currentView === 'library' && <TextsViewGeneric texts={texts} setTexts={setTexts} embedded />}
+                      {currentView === 'stats' && <StatsViewGeneric sessions={sessions} embedded />}
+                      {currentView === 'ideas' && <IdeasViewGeneric ideas={ideas} setIdeas={setIdeas} embedded />}
+                      {currentView === 'settings' && <SettingsViewGeneric settings={settings} setSettings={setSettings} theme={theme} setTheme={setTheme} embedded />}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pixel-wood px-6 py-3 flex justify-between items-center">
+                  <div className="flex items-center gap-4 text-sm text-amber-200">
+                    <span>🪵 Cabin life</span>
+                    <span>•</span>
+                    <span>{stats.characters} chars</span>
+                    <span>•</span>
+                    <span>🌾 Prairie quiet</span>
+                  </div>
+                  {isWriting && (
+                    <button onClick={endSession}
+                      className="px-4 py-2 bg-green-700 text-white font-medium hover:bg-green-800 shadow-md">
+                      Save & Rest
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center gap-2 mt-[-4px] relative z-10">
+              <span className="text-lg">🌾</span>
+              <span className="pixel-flower text-xl">🌻</span>
+              <span className="text-lg">🌿</span>
+              <span className="pixel-flower text-xl" style={{animationDelay: '0.7s'}}>🌼</span>
+              <span className="text-lg">🌾</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============ GENERIC VIEWS ============
+    const formatDateTime = (d) => new Date(d).toLocaleDateString('en-US', {
+      weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+    });
+
+    function TextsViewGeneric({ texts, setTexts, dark = false, embedded = false }) {
+      const [selectedText, setSelectedText] = useState(null);
+      const bg = dark ? 'bg-stone-800' : 'bg-white';
+      const textColor = dark ? 'text-stone-100' : 'text-stone-800';
+      const mutedColor = dark ? 'text-stone-400' : 'text-stone-500';
+      const hoverBg = dark ? 'hover:bg-stone-700' : 'hover:bg-stone-100';
+      const selectedBg = dark ? 'bg-stone-700' : 'bg-stone-100';
+      const borderColor = dark ? 'border-stone-600' : 'border-stone-200';
+
+      return (
+        <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`} grid md:grid-cols-3 gap-6`}>
+          <div className={`md:col-span-1 ${embedded ? '' : `border-r ${borderColor}`} pr-4`}>
+            <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Your Writings ({texts.length})</h3>
+            {texts.length === 0 ? (
+              <p className={mutedColor}>No writings saved yet.</p>
+            ) : (
+              <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+                {[...texts].reverse().map(text => (
+                  <div key={text.id} onClick={() => setSelectedText(text)}
+                    className={`p-3 rounded-lg cursor-pointer transition-all ${hoverBg} ${selectedText?.id === text.id ? `${selectedBg} border-l-4 border-amber-400` : ''}`}>
+                    <div className={`font-medium truncate ${textColor}`}>{text.title}</div>
+                    <div className={`text-xs mt-1 ${mutedColor}`}>{formatDateTime(text.createdAt)} • {text.wordCount} words</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="md:col-span-2">
+            {selectedText ? (
+              <>
+                <div className={`flex justify-between items-start mb-4 pb-4 border-b ${borderColor}`}>
+                  <div>
+                    <h2 className={`font-display text-2xl font-semibold ${textColor}`}>{selectedText.title}</h2>
+                    <div className={`text-sm ${mutedColor}`}>{formatDateTime(selectedText.createdAt)} • {selectedText.wordCount} words • {formatDuration(selectedText.duration)}</div>
+                  </div>
+                  <button onClick={() => { if(confirm('Delete?')) { setTexts(texts.filter(t => t.id !== selectedText.id)); setSelectedText(null); }}}
+                    className="text-red-500 text-sm hover:underline">Delete</button>
+                </div>
+                <div className={`prose max-w-none leading-loose ${textColor}`}>
+                  {selectedText.content.split('\n').map((p, i) => <p key={i} className="mb-4">{p}</p>)}
+                </div>
+              </>
+            ) : (
+              <div className={`flex flex-col items-center justify-center h-64 ${mutedColor}`}>
+                <span className="text-4xl mb-4 opacity-50">📄</span>
+                <p>Select a text to view</p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function StatsViewGeneric({ sessions, dark = false, embedded = false }) {
+      const bg = dark ? 'bg-stone-800' : 'bg-white';
+      const textColor = dark ? 'text-stone-100' : 'text-stone-800';
+      const mutedColor = dark ? 'text-stone-400' : 'text-stone-500';
+      const accentColor = dark ? 'text-amber-400' : 'text-amber-600';
+
+      const totalWords = sessions.reduce((s, x) => s + x.words, 0);
+      const totalMins = sessions.reduce((s, x) => s + Math.round(x.duration / 60), 0);
+      const goalsMet = sessions.filter(s => s.goalMet).length;
+
+      return (
+        <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`}`}>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            {[
+              { label: 'Total Words', value: totalWords.toLocaleString() },
+              { label: 'Total Minutes', value: totalMins },
+              { label: 'Goals Met', value: goalsMet }
+            ].map((s, i) => (
+              <div key={i} className={`text-center p-4 rounded-xl ${dark ? 'bg-stone-700' : 'bg-stone-50'}`}>
+                <div className={`text-2xl font-bold ${accentColor}`}>{s.value}</div>
+                <div className={`text-sm ${mutedColor}`}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+          <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Recent Sessions</h3>
+          {sessions.length === 0 ? (
+            <p className={mutedColor}>No sessions yet.</p>
+          ) : (
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {[...sessions].reverse().slice(0, 10).map(session => (
+                <div key={session.id} className={`flex justify-between py-3 border-b ${dark ? 'border-stone-700' : 'border-stone-100'}`}>
+                  <div>
+                    <div className={textColor}>{new Date(session.startTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</div>
+                    <div className={`text-sm ${mutedColor}`}>{session.words} words • {Math.round(session.duration / 60)} min</div>
+                  </div>
+                  {session.goalMet && <span className={`text-sm ${accentColor}`}>✓ Goal</span>}
+                </div>
+              ))}
             </div>
           )}
         </div>
       );
     }
 
-    function WritingView({ isWriting, isPaused, currentText, setCurrentText, stats, progress, goalMet, elapsedSeconds, timerTarget, timerProgress, pomodoroComplete, settings, startSession, togglePause, endSession, setPomodoro, textareaRef }) {
-      const [showTimerOptions, setShowTimerOptions] = useState(false);
+    function IdeasViewGeneric({ ideas, setIdeas, dark = false, embedded = false }) {
+      const [newIdea, setNewIdea] = useState('');
+      const bg = dark ? 'bg-stone-800' : 'bg-white';
+      const textColor = dark ? 'text-stone-100' : 'text-stone-800';
+      const mutedColor = dark ? 'text-stone-400' : 'text-stone-500';
 
-      if (!isWriting) {
-        return (
-          <div className="flex flex-col items-center justify-center min-h-[70vh]">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">Ready to Write?</h2>
-              <p className="text-gray-600">
-                Today's goal: {settings.goalType === 'words' && `${settings.wordGoal} words`}
-                {settings.goalType === 'characters' && `${settings.characterGoal} characters`}
-                {settings.goalType === 'time' && `${settings.timeGoal} minutes`}
-              </p>
-            </div>
-            <button onClick={startSession} className="bg-blue-500 hover:bg-blue-600 text-white text-xl px-8 py-4 rounded-xl shadow-lg transition-all transform hover:scale-105 flex items-center gap-3">
-              <Play size={24} />Start Writing Session
-            </button>
-            <div className="mt-8 text-sm text-gray-500">Press to begin your focused writing time</div>
-          </div>
-        );
-      }
-
-      const goalLabel = settings.goalType === 'words' ? 'words' : settings.goalType === 'characters' ? 'chars' : 'min';
-      const goalTarget = settings.goalType === 'words' ? settings.wordGoal : settings.goalType === 'characters' ? settings.characterGoal : settings.timeGoal;
-      const currentValue = settings.goalType === 'words' ? stats.words : settings.goalType === 'characters' ? stats.characters : Math.floor(elapsedSeconds / 60);
+      const addIdea = () => {
+        if (newIdea.trim()) {
+          setIdeas([...ideas, { id: Date.now(), text: newIdea.trim(), createdAt: new Date().toISOString() }]);
+          setNewIdea('');
+        }
+      };
 
       return (
-        <div className="flex flex-col h-[calc(100vh-120px)]">
-          <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-4">
-                <ClockProgress progress={progress} size={80} />
-                <div>
-                  <div className={`text-2xl font-bold ${goalMet ? 'text-green-500' : 'text-gray-800'}`}>{currentValue} / {goalTarget} {goalLabel}</div>
-                  <div className="text-sm text-gray-500">{Math.round(progress * 100)}% of daily goal</div>
+        <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`} max-w-xl mx-auto`}>
+          <h3 className={`font-display font-semibold mb-4 ${textColor}`}>✦ Writing Ideas</h3>
+          <div className="flex gap-2 mb-6">
+            <input type="text" value={newIdea} onChange={(e) => setNewIdea(e.target.value)}
+              placeholder="Capture a thought..."
+              className={`flex-1 px-4 py-3 rounded-lg focus:outline-none ${dark ? 'bg-stone-700 text-stone-100' : 'bg-stone-50 text-stone-800'}`}
+              onKeyDown={(e) => { if (e.key === 'Enter') addIdea(); }} />
+            <button onClick={addIdea} className="px-5 py-3 bg-amber-500 text-white rounded-lg font-medium">+</button>
+          </div>
+          {ideas.length === 0 ? (
+            <p className={mutedColor}>No ideas yet. Add something!</p>
+          ) : (
+            <div className="space-y-3">
+              {[...ideas].reverse().map(idea => (
+                <div key={idea.id} className={`flex items-start gap-3 p-3 rounded-lg group hover:bg-stone-50 ${dark ? 'hover:bg-stone-700' : ''}`}>
+                  <span className="text-amber-500">✦</span>
+                  <span className={`flex-1 ${textColor}`}>{idea.text}</span>
+                  <button onClick={() => setIdeas(ideas.filter(i => i.id !== idea.id))}
+                    className="opacity-0 group-hover:opacity-100 text-red-500">×</button>
                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                {timerTarget && (
-                  <div className="relative">
-                    <ClockProgress progress={timerProgress} size={60} />
-                    <div className={`absolute inset-0 flex items-center justify-center text-xs font-medium ${pomodoroComplete ? 'text-green-500' : 'text-gray-600'}`}>{pomodoroComplete ? '✓' : ''}</div>
-                  </div>
-                )}
-                <div className="text-right">
-                  <div className={`text-xl font-mono ${isPaused ? 'text-yellow-500' : 'text-gray-800'}`}>{formatTime(elapsedSeconds)}</div>
-                  <div className="text-xs text-gray-500">{timerTarget ? `${timerTarget} min timer` : 'elapsed time'}</div>
-                </div>
-                <div className="relative">
-                  <button onClick={() => setShowTimerOptions(!showTimerOptions)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-600" title="Set timer"><Timer size={20} /></button>
-                  {showTimerOptions && (
-                    <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-10">
-                      <div className="text-xs text-gray-500 mb-2 px-2">Quick timers</div>
-                      {[15, 20, 25, 30, 45, 60].map(mins => (
-                        <button key={mins} onClick={() => { setPomodoro(mins); setShowTimerOptions(false); }} className="block w-full text-left px-3 py-1 rounded hover:bg-gray-100 text-sm">{mins} minutes</button>
-                      ))}
-                      <button onClick={() => { setPomodoro(null); setShowTimerOptions(false); }} className="block w-full text-left px-3 py-1 rounded hover:bg-gray-100 text-sm text-gray-500">No timer</button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex gap-4 text-sm">
-                <div className="text-center"><div className="font-semibold text-gray-800">{stats.words}</div><div className="text-gray-500">words</div></div>
-                <div className="text-center"><div className="font-semibold text-gray-800">{stats.characters}</div><div className="text-gray-500">chars</div></div>
-                {settings.separateCommonWords && <div className="text-center"><div className="font-semibold text-gray-800">{stats.contentWords}</div><div className="text-gray-500">content</div></div>}
-                <div className="text-center"><div className="font-semibold text-gray-800">{stats.words > 0 ? Math.round(stats.words / (elapsedSeconds / 60) || 0) : 0}</div><div className="text-gray-500">wpm</div></div>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={togglePause} className={`p-3 rounded-lg transition-colors ${isPaused ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`} title={isPaused ? 'Resume' : 'Pause'}>{isPaused ? <Play size={20} /> : <Pause size={20} />}</button>
-                <button onClick={endSession} className="p-3 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors" title="End session"><Square size={20} /></button>
-              </div>
+              ))}
             </div>
-          </div>
-          <div className="flex-1 bg-white rounded-xl shadow-sm p-4">
-            <textarea ref={textareaRef} value={currentText} onChange={(e) => setCurrentText(e.target.value)} placeholder="Start writing..." className="w-full h-full resize-none text-lg leading-relaxed focus:outline-none" style={{ fontFamily: 'Georgia, serif' }} disabled={isPaused} />
-          </div>
-          {goalMet && <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 animate-bounce"><Check size={20} />Goal reached! Keep going or save your work.</div>}
+          )}
         </div>
       );
     }
 
-    function StatsView({ sessions, settings }) {
-      const [viewMode, setViewMode] = useState('calendar');
-      const [selectedMonth, setSelectedMonth] = useState(new Date());
-
-      const getSessionsForDate = (date) => {
-        const dateStr = date.toISOString().split('T')[0];
-        return sessions.filter(s => s.startTime.split('T')[0] === dateStr);
-      };
-
-      const getDailyTotal = (date) => {
-        const daySessions = getSessionsForDate(date);
-        return {
-          words: daySessions.reduce((sum, s) => sum + s.words, 0),
-          minutes: daySessions.reduce((sum, s) => sum + Math.round(s.duration / 60), 0),
-          sessions: daySessions.length,
-          goalsMet: daySessions.filter(s => s.goalMet).length
-        };
-      };
-
-      const getWeekData = () => {
-        const today = new Date();
-        return Array.from({length: 7}, (_, i) => {
-          const date = new Date(today);
-          date.setDate(date.getDate() - (6 - i));
-          return { date, dayName: date.toLocaleDateString('en-US', { weekday: 'short' }), ...getDailyTotal(date) };
-        });
-      };
-
-      const overallStats = {
-        totalWords: sessions.reduce((sum, s) => sum + s.words, 0),
-        totalMinutes: sessions.reduce((sum, s) => sum + Math.round(s.duration / 60), 0),
-        goalsMet: sessions.filter(s => s.goalMet).length,
-        avgWPM: sessions.length > 0 ? Math.round(sessions.reduce((sum, s) => sum + (s.words / (s.duration / 60)), 0) / sessions.length) : 0
-      };
-
-      const weekData = getWeekData();
-      const maxWeekWords = Math.max(...weekData.map(d => d.words), 1);
+    function SettingsViewGeneric({ settings, setSettings, theme, setTheme, dark = false, embedded = false }) {
+      const bg = dark ? 'bg-stone-800' : 'bg-white';
+      const textColor = dark ? 'text-stone-100' : 'text-stone-800';
+      const mutedColor = dark ? 'text-stone-400' : 'text-stone-500';
 
       return (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl p-4 shadow-sm"><div className="text-2xl font-bold text-blue-500">{overallStats.totalWords.toLocaleString()}</div><div className="text-sm text-gray-500">Total Words</div></div>
-            <div className="bg-white rounded-xl p-4 shadow-sm"><div className="text-2xl font-bold text-green-500">{overallStats.totalMinutes.toLocaleString()}</div><div className="text-sm text-gray-500">Total Minutes</div></div>
-            <div className="bg-white rounded-xl p-4 shadow-sm"><div className="text-2xl font-bold text-purple-500">{overallStats.goalsMet}</div><div className="text-sm text-gray-500">Goals Met</div></div>
-            <div className="bg-white rounded-xl p-4 shadow-sm"><div className="text-2xl font-bold text-orange-500">{overallStats.avgWPM}</div><div className="text-sm text-gray-500">Avg WPM</div></div>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">Last 7 Days</h3>
-            <div className="flex items-end justify-between gap-2 h-48">
-              {weekData.map((day, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center">
-                  <div className={`w-full rounded-t-lg transition-all ${day.goalsMet > 0 ? 'bg-green-400' : day.words > 0 ? 'bg-blue-400' : 'bg-gray-200'}`}
-                    style={{ height: `${(day.words / maxWeekWords) * 100}%`, minHeight: day.words > 0 ? '4px' : '0' }} />
-                  <div className="text-xs text-gray-500 mt-2">{day.dayName}</div>
-                  <div className="text-xs font-medium">{day.words > 0 ? day.words : '-'}</div>
-                </div>
+        <div className={`${embedded ? '' : `${bg} rounded-2xl shadow-lg p-6`} max-w-xl mx-auto space-y-8`}>
+          <div>
+            <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Choose Your Atmosphere</h3>
+            <div className="grid grid-cols-5 gap-3">
+              {Object.values(THEMES).map(t => (
+                <button key={t.id} onClick={() => setTheme(t.id)}
+                  className={`p-4 rounded-xl text-center transition-all hover:scale-105 ${
+                    theme === t.id
+                      ? 'bg-amber-500 text-white shadow-lg'
+                      : dark ? 'bg-stone-700 text-stone-200' : 'bg-stone-100 text-stone-700'
+                  }`}>
+                  <div className="text-2xl mb-2">{t.icon}</div>
+                  <div className="text-xs font-medium">{t.name}</div>
+                </button>
               ))}
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">Recent Sessions</h3>
-            {sessions.length === 0 ? <p className="text-gray-500 text-center py-4">No sessions yet. Start writing!</p> : (
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {[...sessions].reverse().slice(0, 20).map(session => (
-                  <div key={session.id} className="flex items-center justify-between py-2 border-b last:border-0">
-                    <div>
-                      <div className="font-medium">{new Date(session.startTime).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</div>
-                      <div className="text-sm text-gray-500">{session.words} words - {Math.round(session.duration / 60)} min</div>
-                    </div>
-                    {session.goalMet && <div className="bg-green-100 text-green-600 px-2 py-1 rounded text-sm">Goal met</div>}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    function TextsView({ texts, setTexts }) {
-      const [selectedText, setSelectedText] = useState(null);
-      const [showFullText, setShowFullText] = useState(false);
-      const contentRef = useRef(null);
-      const [isScrollable, setIsScrollable] = useState(false);
-      
-      useEffect(() => {
-        if (contentRef.current) {
-          setIsScrollable(contentRef.current.scrollHeight > contentRef.current.clientHeight);
-        }
-      }, [selectedText, showFullText]);
-      
-      const formatDuration = (seconds) => {
-        if (!seconds) return null;
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        if (mins >= 60) {
-          const hrs = Math.floor(mins / 60);
-          const remainingMins = mins % 60;
-          return `${hrs}h ${remainingMins}m`;
-        }
-        return `${mins}m ${secs}s`;
-      };
-      
-      const deleteText = (id) => { if (confirm('Delete this text?')) { setTexts(texts.filter(t => t.id !== id)); if (selectedText?.id === id) setSelectedText(null); } };
-      const exportText = (text) => {
-        const blob = new Blob([`# ${text.title}\n\n${text.content}`], { type: 'text/markdown' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `${text.title.replace(/[^a-z0-9]/gi, '_')}.md`; a.click();
-        URL.revokeObjectURL(url);
-      };
-
-      return (
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="md:col-span-1 bg-white rounded-xl shadow-sm p-4">
-            <h3 className="font-semibold mb-4">Your Writings ({texts.length})</h3>
-            {texts.length === 0 ? <p className="text-gray-500 text-center py-8">No texts saved yet.</p> : (
-              <div className="space-y-2 max-h-[60vh] overflow-y-auto">
-                {[...texts].reverse().map(text => (
-                  <div key={text.id} onClick={() => { setSelectedText(text); setShowFullText(false); }}
-                    className={`p-3 rounded-lg cursor-pointer transition-colors ${selectedText?.id === text.id ? 'bg-blue-50 border-blue-200 border' : 'hover:bg-gray-50 border border-transparent'}`}>
-                    <div className="font-medium truncate">{text.title}</div>
-                    <div className="text-xs text-gray-500">
-                      {formatDate(text.createdAt)} • {text.wordCount} words
-                      {text.duration && ` • ${formatDuration(text.duration)}`}
-                    </div>
-                    {text.goalType === 'time' && text.goalMet && (
-                      <div className="text-xs text-green-500 flex items-center gap-1">
-                        <Clock size={10} /> Time goal met
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="md:col-span-2 bg-white rounded-xl shadow-sm p-6">
-            {selectedText ? (
-              <>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold">{selectedText.title}</h2>
-                  <div className="flex gap-2">
-                    <button onClick={() => exportText(selectedText)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600" title="Export"><Save size={18} /></button>
-                    <button onClick={() => deleteText(selectedText.id)} className="p-2 hover:bg-red-100 rounded-lg text-red-500" title="Delete"><Trash2 size={18} /></button>
-                  </div>
-                </div>
-                
-                {/* Stats with time info */}
-                <div className="mb-4">
-                  <div className="text-sm text-gray-500 flex flex-wrap items-center gap-x-2">
-                    <span>{new Date(selectedText.createdAt).toLocaleString()}</span>
-                    <span>•</span>
-                    <span className="font-medium text-gray-700">{selectedText.wordCount} words</span>
-                    <span>•</span>
-                    <span>{selectedText.characterCount} characters</span>
-                    {selectedText.duration && (
-                      <>
-                        <span>•</span>
-                        <span className="font-medium text-blue-600 flex items-center gap-1">
-                          <Clock size={14} />
-                          {formatDuration(selectedText.duration)}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                  {selectedText.duration && (
-                    <div className="mt-2 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-                      <div className="flex items-center gap-4 text-sm flex-wrap">
-                        <div className="flex items-center gap-2">
-                          <Timer size={16} className="text-blue-500" />
-                          <span className="text-gray-600">Writing time:</span>
-                          <span className="font-semibold text-gray-800">{formatDuration(selectedText.duration)}</span>
-                        </div>
-                        <span className="text-gray-300">|</span>
-                        <div className="flex items-center gap-2">
-                          <TrendingUp size={16} className="text-green-500" />
-                          <span className="text-gray-600">Speed:</span>
-                          <span className="font-semibold text-gray-800">
-                            {selectedText.duration > 0 ? Math.round(selectedText.wordCount / (selectedText.duration / 60)) : 0} wpm
-                          </span>
-                        </div>
-                        {selectedText.goalMet && (
-                          <>
-                            <span className="text-gray-300">|</span>
-                            <div className="flex items-center gap-1 text-green-600">
-                              <Check size={16} />
-                              <span className="font-medium">Goal met!</span>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Toggle for full text view */}
-                <div className="flex items-center justify-between mb-2">
-                  <button
-                    onClick={() => setShowFullText(!showFullText)}
-                    className="text-sm text-blue-500 hover:text-blue-600 flex items-center gap-1"
-                  >
-                    {showFullText ? (
-                      <><ChevronUp size={16} /> Show less</>
-                    ) : (
-                      <><ChevronDown size={16} /> Show full text</>
-                    )}
-                  </button>
-                  {isScrollable && !showFullText && (
-                    <div className="text-xs text-gray-400 flex items-center gap-1 animate-pulse">
-                      <ChevronDown size={14} /> Scroll to see more
-                    </div>
-                  )}
-                </div>
-                
-                {/* Content area */}
-                <div 
-                  ref={contentRef}
-                  className={`prose max-w-none overflow-y-auto transition-all ${showFullText ? '' : 'max-h-[40vh]'}`}
-                  style={{ fontFamily: 'Georgia, serif', scrollbarWidth: 'thin' }}
-                >
-                  {selectedText.content.split('\n').map((para, i) => <p key={i} className="mb-4">{para}</p>)}
-                </div>
-                
-                {/* Fade overlay for scrollable content */}
-                {isScrollable && !showFullText && (
-                  <div className="relative -mt-8 pt-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-                )}
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-500"><FileText size={48} className="mb-4 opacity-50" /><p>Select a text to view</p></div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    function IdeasView({ ideas, setIdeas }) {
-      const [newIdea, setNewIdea] = useState('');
-      const addIdea = () => { if (newIdea.trim()) { setIdeas([...ideas, { id: Date.now(), text: newIdea.trim(), createdAt: new Date().toISOString() }]); setNewIdea(''); } };
-      const deleteIdea = (id) => setIdeas(ideas.filter(i => i.id !== id));
-
-      return (
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-            <h3 className="font-semibold mb-4 flex items-center gap-2"><Lightbulb className="text-yellow-500" />Writing Ideas</h3>
-            <div className="flex gap-2">
-              <input type="text" value={newIdea} onChange={(e) => setNewIdea(e.target.value)} placeholder="Add a new idea or topic..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onKeyDown={(e) => { if (e.key === 'Enter') addIdea(); }} />
-              <button onClick={addIdea} disabled={!newIdea.trim()} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"><Plus size={20} /></button>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h3 className="font-semibold mb-4">Your Ideas ({ideas.length})</h3>
-            {ideas.length === 0 ? <p className="text-gray-500 text-center py-8">No ideas yet. Add something you'd like to write about!</p> : (
-              <div className="space-y-2">
-                {[...ideas].reverse().map(idea => (
-                  <div key={idea.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 group">
-                    <Lightbulb size={18} className="text-yellow-400 flex-shrink-0" />
-                    <span className="flex-1">{idea.text}</span>
-                    <span className="text-xs text-gray-400">{formatDate(idea.createdAt)}</span>
-                    <button onClick={() => deleteIdea(idea.id)} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded text-red-500"><Trash2 size={16} /></button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    function SettingsView({ settings, setSettings }) {
-      const updateSetting = (key, value) => setSettings({ ...settings, [key]: value });
-
-      return (
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-xl shadow-sm p-6 space-y-6">
-            <h3 className="text-lg font-semibold flex items-center gap-2"><Settings className="text-gray-500" />Challenge Settings</h3>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Goal Type</label>
-              <div className="flex gap-2">
-                {[{ value: 'words', label: 'Words' }, { value: 'characters', label: 'Characters' }, { value: 'time', label: 'Time' }].map(opt => (
-                  <button key={opt.value} onClick={() => updateSetting('goalType', opt.value)}
-                    className={`px-4 py-2 rounded-lg transition-colors ${settings.goalType === opt.value ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>{opt.label}</button>
-                ))}
-              </div>
-            </div>
-
-            {settings.goalType === 'words' && (
+          <div>
+            <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Writing Goals</h3>
+            <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Daily Word Goal</label>
+                <label className={`block text-sm mb-2 ${mutedColor}`}>Goal Type</label>
+                <div className="flex gap-2">
+                  {['words', 'time'].map(type => (
+                    <button key={type} onClick={() => setSettings({ ...settings, goalType: type })}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                        settings.goalType === type
+                          ? 'bg-amber-500 text-white'
+                          : dark ? 'bg-stone-700 text-stone-200' : 'bg-stone-100 text-stone-700'
+                      }`}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className={`block text-sm mb-2 ${mutedColor}`}>
+                  Daily {settings.goalType === 'words' ? 'Word' : 'Time'} Goal
+                </label>
                 <div className="flex items-center gap-4">
-                  <input type="number" value={settings.wordGoal} onChange={(e) => updateSetting('wordGoal', parseInt(e.target.value) || 0)}
-                    className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" min="1" />
+                  <input type="number"
+                    value={settings.goalType === 'words' ? settings.wordGoal : settings.timeGoal}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 0;
+                      if (settings.goalType === 'words') setSettings({ ...settings, wordGoal: val });
+                      else setSettings({ ...settings, timeGoal: val });
+                    }}
+                    className={`w-24 px-3 py-2 rounded-lg focus:outline-none ${dark ? 'bg-stone-700 text-stone-100' : 'bg-stone-50 text-stone-800'}`} />
                   <div className="flex gap-2">
-                    {[250, 500, 750, 1000].map(n => (
-                      <button key={n} onClick={() => updateSetting('wordGoal', n)}
-                        className={`px-3 py-1 rounded text-sm ${settings.wordGoal === n ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>{n}</button>
+                    {(settings.goalType === 'words' ? [250, 500, 750, 1000] : [15, 25, 30, 45]).map(n => (
+                      <button key={n} onClick={() => {
+                        if (settings.goalType === 'words') setSettings({ ...settings, wordGoal: n });
+                        else setSettings({ ...settings, timeGoal: n });
+                      }}
+                        className={`px-3 py-1 rounded text-sm ${
+                          (settings.goalType === 'words' ? settings.wordGoal : settings.timeGoal) === n
+                            ? 'bg-amber-500 text-white' : `${dark ? 'bg-stone-700 text-stone-300' : 'bg-stone-100 text-stone-600'}`
+                        }`}>
+                        {n}
+                      </button>
                     ))}
                   </div>
                 </div>
               </div>
-            )}
-
-            {settings.goalType === 'time' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Daily Time Goal (minutes)</label>
-                <div className="flex items-center gap-4">
-                  <input type="number" value={settings.timeGoal} onChange={(e) => updateSetting('timeGoal', parseInt(e.target.value) || 0)}
-                    className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" min="1" />
-                  <div className="flex gap-2">
-                    {[15, 20, 25, 30, 45, 60].map(n => (
-                      <button key={n} onClick={() => updateSetting('timeGoal', n)}
-                        className={`px-3 py-1 rounded text-sm ${settings.timeGoal === n ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>{n}</button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" checked={settings.separateCommonWords} onChange={(e) => updateSetting('separateCommonWords', e.target.checked)}
-                  className="w-4 h-4 text-blue-500 rounded focus:ring-blue-500" />
-                <div><span className="text-sm text-gray-700">Show content words separately</span><p className="text-xs text-gray-500">Distinguishes meaningful words from connectors</p></div>
-              </label>
             </div>
+          </div>
 
-            <div className="pt-6 border-t">
-              <h4 className="font-medium text-gray-700 mb-4">Data Management</h4>
-              <div className="flex gap-4">
-                <button onClick={() => {
-                  const data = { settings, sessions: JSON.parse(localStorage.getItem('writingSessions') || '[]'), ideas: JSON.parse(localStorage.getItem('writingIdeas') || '[]'), texts: JSON.parse(localStorage.getItem('writingTexts') || '[]') };
-                  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                  const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url;
-                  a.download = `writing-challenge-backup-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url);
-                }} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Export All Data</button>
-                <button onClick={() => {
-                  const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
-                  input.onchange = (e) => {
-                    const file = e.target.files[0]; const reader = new FileReader();
-                    reader.onload = (event) => {
-                      try {
-                        const data = JSON.parse(event.target.result);
-                        if (data.settings) localStorage.setItem('writingSettings', JSON.stringify(data.settings));
-                        if (data.sessions) localStorage.setItem('writingSessions', JSON.stringify(data.sessions));
-                        if (data.ideas) localStorage.setItem('writingIdeas', JSON.stringify(data.ideas));
-                        if (data.texts) localStorage.setItem('writingTexts', JSON.stringify(data.texts));
-                        window.location.reload();
-                      } catch { alert('Invalid backup file'); }
-                    };
-                    reader.readAsText(file);
+          <div>
+            <h3 className={`font-display font-semibold mb-4 ${textColor}`}>Data Management</h3>
+            <div className="flex gap-4">
+              <button onClick={() => {
+                const data = { theme, settings, sessions: JSON.parse(localStorage.getItem('writingSessions') || '[]'), ideas: JSON.parse(localStorage.getItem('writingIdeas') || '[]'), texts: JSON.parse(localStorage.getItem('writingTexts') || '[]') };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+                a.download = `writing-backup-${new Date().toISOString().split('T')[0]}.json`; a.click();
+              }} className={`px-4 py-2 rounded-lg ${dark ? 'bg-stone-700 text-stone-200' : 'bg-stone-100 text-stone-700'}`}>
+                Export Data
+              </button>
+              <button onClick={() => {
+                const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
+                input.onchange = (e) => {
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    try {
+                      const data = JSON.parse(ev.target.result);
+                      if (data.theme) localStorage.setItem('writingTheme', JSON.stringify(data.theme));
+                      if (data.settings) localStorage.setItem('writingSettings', JSON.stringify(data.settings));
+                      if (data.sessions) localStorage.setItem('writingSessions', JSON.stringify(data.sessions));
+                      if (data.ideas) localStorage.setItem('writingIdeas', JSON.stringify(data.ideas));
+                      if (data.texts) localStorage.setItem('writingTexts', JSON.stringify(data.texts));
+                      window.location.reload();
+                    } catch { alert('Invalid file'); }
                   };
-                  input.click();
-                }} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Import Data</button>
-              </div>
+                  reader.readAsText(e.target.files[0]);
+                };
+                input.click();
+              }} className={`px-4 py-2 rounded-lg ${dark ? 'bg-stone-700 text-stone-200' : 'bg-stone-100 text-stone-700'}`}>
+                Import Data
+              </button>
             </div>
           </div>
         </div>
       );
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<WritingChallengeApp />);
+    // ============ ROOT RENDER ============
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <AuthProvider>
+        <WritingApp />
+      </AuthProvider>
+    );
   </script>
 </body>
 </html>
