@@ -1,0 +1,11 @@
+# Core dependencies
+sounddevice>=0.4.6
+numpy>=1.24.0
+openai>=1.0.0
+pynput>=1.7.6
+
+# Optional: for Groq backend
+groq>=0.4.0
+
+# Optional: for local Whisper
+# faster-whisper>=0.10.0
