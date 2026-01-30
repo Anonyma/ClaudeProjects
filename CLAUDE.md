@@ -68,6 +68,10 @@ git add -A && git commit -m "Add voice-memo-transcriber project"
 
 ### What to Include:
 
+**CRITICAL:** Only provide a localhost URL if you have VERIFIED the server is actually running and accessible. After starting a server, always test with `curl -s -o /dev/null -w "%{http_code}" http://localhost:XXXX/` before presenting the URL to the user. If the server isn't running, provide the file path instead (but note if the file requires a server to work properly).
+
+**IMPORTANT:** Don't tell the user to "open this file" if it will only display as plain text (e.g., HTML source). If a file needs a browser/server to render properly, either start the server first OR mention "Path: /path/to/file" without suggesting they open it directly.
+
 **IMPORTANT:** Prefer `http://localhost:XXXX` URLs over `file://` URLs - localhost links are clickable, file:// requires copy-paste.
 
 **IMPORTANT:** For documents like Markdown, text files, or other files that render as plain text via localhost, ALWAYS provide BOTH:
@@ -170,33 +174,33 @@ The `_scratch/` folder can be periodically cleaned. Don't put anything critical 
 
 ❌ **Don't spam:** Not for minor edits or routine operations.
 
-### How to Notify (Use clawdbot gateway wake)
+### How to Notify (Telegram via Clawdbot - Preferred)
 
 ```bash
-clawdbot gateway call wake --params '{"text": "Your message here", "mode": "now"}'
+clawdbot message send --channel telegram --target 355422856 --message "Your message here"
 ```
 
 ### Examples
 
 **When blocked:**
 ```bash
-clawdbot gateway call wake --params '{"text": "🆘 Blocked: [project] - [issue]. Need: [what you need]", "mode": "now"}'
+clawdbot message send --channel telegram --target 355422856 --message "🆘 Blocked: [project] - [issue]. Need: [what you need]"
 ```
 
 **When completed:**
 ```bash
-clawdbot gateway call wake --params '{"text": "✅ Done: [project] - [what you completed]", "mode": "now"}'
+clawdbot message send --channel telegram --target 355422856 --message "✅ Done: [project] - [what you completed]"
 ```
 
 **When error:**
 ```bash
-clawdbot gateway call wake --params '{"text": "⚠️ Error: [project] - [error description]", "mode": "now"}'
+clawdbot message send --channel telegram --target 355422856 --message "⚠️ Error: [project] - [error description]"
 ```
 
-### Fallback: Direct Pushover (if clawdbot unavailable)
+### Fallback: Direct Pushover (if clawdbot/Telegram unavailable)
 
 ```bash
-curl -s -F "token=aabpf2tb7a9p3tnhdw3vzfb6hyxcna" \
+curl -s -F "token=ax3nv6fmix3hzr1vzkkb85123js5np" \
   -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
   -F "title=🆘 Agent Needs Help" \
   -F "message=Project: [name] - Issue: [description]" \
