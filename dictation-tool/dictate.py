@@ -7,8 +7,8 @@ Usage:
     python3 dictate.py --groq             # Use Groq's Whisper API (faster, cheaper)
     python3 dictate.py --local            # Use local Whisper (no API needed)
 
-Hotkey: Hold Right Option (⌥) to record, release to transcribe.
-        Or use Cmd+Shift+D to toggle recording.
+Hotkey: Press Right Option (⌥) to start recording, press again to stop.
+        Text is automatically pasted into the current app.
 
 The app runs in your menu bar - look for the 🎙️ icon.
 """
@@ -31,9 +31,10 @@ from pynput import keyboard
 # Configuration
 SAMPLE_RATE = 16000
 CHANNELS = 1
-HOLD_KEY = keyboard.Key.alt_r  # Right Option key for hold-to-record
-# Cmd+Shift+D for toggle mode
-TOGGLE_COMBO = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode.from_char('d')}
+
+# Hotkey options - change this to your preference
+# Options: keyboard.Key.alt_r (Right Option), keyboard.Key.f5, etc.
+TOGGLE_KEY = keyboard.Key.alt_r  # Right Option - press to start, press again to stop
 
 
 class RecordingState(Enum):
@@ -50,19 +51,15 @@ class DictationApp(rumps.App):
         self.state = RecordingState.IDLE
         self.audio_chunks = []
         self.stream = None
-        self.current_keys = set()
-        self.toggle_mode = False  # True = toggle, False = hold
 
         # Menu items
-        self.status_item = rumps.MenuItem("Ready - Hold ⌥ to dictate")
-        self.toggle_item = rumps.MenuItem("Toggle Mode (⌘⇧D)", callback=self.toggle_recording)
+        self.status_item = rumps.MenuItem("Ready - Press ⌥ to dictate")
         self.backend_display = rumps.MenuItem(f"Backend: {backend.title()}")
         self.backend_display.set_callback(None)  # Non-clickable
 
         self.menu = [
             self.status_item,
             None,  # Separator
-            self.toggle_item,
             self.backend_display,
             None,
             rumps.MenuItem("Quit", callback=self.quit_app),
@@ -119,45 +116,16 @@ class DictationApp(rumps.App):
 
     def on_key_press(self, key):
         """Handle key press events."""
-        self.current_keys.add(key)
-
-        # Check for toggle combo (Cmd+Shift+D)
-        if self._check_toggle_combo():
-            self.toggle_recording(None)
-            return
-
-        # Hold-to-record with Right Option
-        if key == HOLD_KEY and self.state == RecordingState.IDLE:
-            self.start_recording()
+        # Toggle recording with the hotkey
+        if key == TOGGLE_KEY:
+            if self.state == RecordingState.IDLE:
+                self.start_recording()
+            elif self.state == RecordingState.RECORDING:
+                self.stop_recording()
 
     def on_key_release(self, key):
         """Handle key release events."""
-        self.current_keys.discard(key)
-
-        # Stop recording on Right Option release (if not in toggle mode)
-        if key == HOLD_KEY and self.state == RecordingState.RECORDING and not self.toggle_mode:
-            self.stop_recording()
-
-    def _check_toggle_combo(self):
-        """Check if toggle key combo is pressed."""
-        # Normalize keys for comparison
-        pressed = set()
-        for k in self.current_keys:
-            if hasattr(k, 'char') and k.char:
-                pressed.add(keyboard.KeyCode.from_char(k.char.lower()))
-            else:
-                pressed.add(k)
-
-        required = {keyboard.Key.cmd, keyboard.Key.shift, keyboard.KeyCode.from_char('d')}
-        return required.issubset(pressed)
-
-    def toggle_recording(self, _):
-        """Toggle recording on/off (for Cmd+Shift+D mode)."""
-        if self.state == RecordingState.IDLE:
-            self.toggle_mode = True
-            self.start_recording()
-        elif self.state == RecordingState.RECORDING:
-            self.stop_recording()
+        pass  # We use press-to-toggle, not hold-to-record
 
     def start_recording(self):
         """Start recording audio."""
@@ -167,7 +135,7 @@ class DictationApp(rumps.App):
         self.state = RecordingState.RECORDING
         self.audio_chunks = []
         self.title = "🔴"
-        self.status_item.title = "Recording... Release ⌥ or press ⌘⇧D to stop"
+        self.status_item.title = "Recording... Press ⌥ to stop"
 
         # Play start sound
         self._play_sound("start")
@@ -192,7 +160,6 @@ class DictationApp(rumps.App):
             return
 
         self.state = RecordingState.PROCESSING
-        self.toggle_mode = False
         self.title = "⏳"
         self.status_item.title = "Transcribing..."
 
@@ -270,7 +237,7 @@ class DictationApp(rumps.App):
         def reset_status():
             time.sleep(3)
             if self.state == RecordingState.IDLE:
-                self.status_item.title = "Ready - Hold ⌥ to dictate"
+                self.status_item.title = "Ready - Press ⌥ to dictate"
         threading.Thread(target=reset_status, daemon=True).start()
 
     def _play_sound(self, sound_type: str):
@@ -313,7 +280,7 @@ def main():
 
     print(f"🎙️ Starting dictation app with {backend} backend...")
     print("   Look for 🎙️ in your menu bar")
-    print("   Hold Right Option (⌥) to record, or use ⌘⇧D to toggle")
+    print("   Press Right Option (⌥) to start/stop recording")
 
     app = DictationApp(backend=backend)
     app.run()
