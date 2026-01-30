@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
 
     case 'QUERY_RESPONSE':
-      handleQueryResponse(message.queryId, message.response, message.error);
+      handleQueryResponse(message.queryId, message.response, message.error, message.conversationUrl);
       sendResponse({ success: true });
       break;
 
@@ -147,7 +147,7 @@ async function handleQuery(message) {
 }
 
 // Handle query response from content script
-function handleQueryResponse(queryId, response, error) {
+function handleQueryResponse(queryId, response, error, conversationUrl) {
   const pending = pendingQueries.get(queryId);
   if (!pending) {
     console.warn('[LLM Council Bridge] No pending query for:', queryId);
@@ -157,7 +157,7 @@ function handleQueryResponse(queryId, response, error) {
   if (error) {
     pending.reject(new Error(error));
   } else {
-    pending.resolve({ success: true, content: response });
+    pending.resolve({ success: true, content: response, conversationUrl });
   }
 }
 

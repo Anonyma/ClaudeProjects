@@ -25,6 +25,29 @@
 
   let isReady = false;
 
+  // Human-like random delay (100-400ms)
+  function humanDelay() {
+    const delay = 100 + Math.random() * 300;
+    return new Promise(r => setTimeout(r, delay));
+  }
+
+  // Longer random delay for actions (500-1500ms)
+  function actionDelay() {
+    const delay = 500 + Math.random() * 1000;
+    return new Promise(r => setTimeout(r, delay));
+  }
+
+  // Get the current conversation URL
+  function getConversationUrl() {
+    // ChatGPT URLs look like: https://chatgpt.com/c/abc123...
+    const url = window.location.href;
+    // Wait a moment for URL to update after sending
+    if (url.includes('/c/') || url.includes('/g/')) {
+      return url;
+    }
+    return null;
+  }
+
   // Notify background script that we're ready
   function notifyReady() {
     chrome.runtime.sendMessage({
@@ -51,13 +74,27 @@
   }
 
   // Set input value (React-compatible)
-  function setInputValue(element, value) {
+  async function setInputValue(element, value) {
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       window.HTMLTextAreaElement.prototype,
       'value'
     ).set;
-    nativeInputValueSetter.call(element, value);
-    element.dispatchEvent(new Event('input', { bubbles: true }));
+
+    // Type character by character for more human-like behavior (first 10 chars, then paste rest)
+    const typePrefix = value.substring(0, Math.min(10, value.length));
+    const restValue = value.substring(typePrefix.length);
+
+    for (const char of typePrefix) {
+      nativeInputValueSetter.call(element, element.value + char);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 20 + Math.random() * 30)); // 20-50ms per char
+    }
+
+    // Paste the rest
+    if (restValue) {
+      nativeInputValueSetter.call(element, element.value + restValue);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }
   }
 
   // Send a query
@@ -67,12 +104,14 @@
       throw new Error('Could not find ChatGPT input field');
     }
 
-    // Focus and set value
+    // Focus and set value with human-like delays
+    await humanDelay();
     input.focus();
-    setInputValue(input, prompt);
+    await humanDelay();
+    await setInputValue(input, prompt);
 
-    // Small delay for React to process
-    await new Promise(r => setTimeout(r, 100));
+    // Delay before clicking send (like a human reviewing)
+    await actionDelay();
 
     // Click send button
     const sendBtn = document.querySelector(SELECTORS.sendButton);
@@ -127,6 +166,30 @@
     });
   }
 
+  // Wait for URL to update (ChatGPT creates conversation after first message)
+  async function waitForConversationUrl(timeout = 10000) {
+    const startTime = Date.now();
+
+    return new Promise((resolve) => {
+      const checkUrl = () => {
+        const url = getConversationUrl();
+        if (url) {
+          resolve(url);
+          return;
+        }
+
+        if (Date.now() - startTime > timeout) {
+          resolve(null); // Timeout, but don't fail - URL is optional
+          return;
+        }
+
+        setTimeout(checkUrl, 500);
+      };
+
+      setTimeout(checkUrl, 1000); // Wait a bit before first check
+    });
+  }
+
   // Handle incoming query from background script
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type !== 'SEND_QUERY') return;
@@ -137,12 +200,18 @@
     (async () => {
       try {
         await sendQuery(prompt);
-        const response = await waitForResponse();
+
+        // Wait for both response and URL
+        const [response, conversationUrl] = await Promise.all([
+          waitForResponse(),
+          waitForConversationUrl()
+        ]);
 
         chrome.runtime.sendMessage({
           type: 'QUERY_RESPONSE',
           queryId,
-          response
+          response,
+          conversationUrl
         });
       } catch (error) {
         chrome.runtime.sendMessage({

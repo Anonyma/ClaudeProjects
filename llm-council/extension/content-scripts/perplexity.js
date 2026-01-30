@@ -25,6 +25,28 @@
 
   let isReady = false;
 
+  // Human-like random delay (100-400ms)
+  function humanDelay() {
+    const delay = 100 + Math.random() * 300;
+    return new Promise(r => setTimeout(r, delay));
+  }
+
+  // Longer random delay for actions (500-1500ms)
+  function actionDelay() {
+    const delay = 500 + Math.random() * 1000;
+    return new Promise(r => setTimeout(r, delay));
+  }
+
+  // Get the current conversation URL
+  function getConversationUrl() {
+    // Perplexity URLs look like: https://www.perplexity.ai/search/abc123...
+    const url = window.location.href;
+    if (url.includes('/search/')) {
+      return url;
+    }
+    return null;
+  }
+
   // Notify background script that we're ready
   function notifyReady() {
     chrome.runtime.sendMessage({
@@ -50,15 +72,30 @@
     });
   }
 
-  // Set textarea value
-  function setInputValue(element, value) {
+  // Set textarea value with human-like typing
+  async function setInputValue(element, value) {
     element.focus();
+
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       window.HTMLTextAreaElement.prototype,
       'value'
     ).set;
-    nativeInputValueSetter.call(element, value);
-    element.dispatchEvent(new Event('input', { bubbles: true }));
+
+    // Type first few characters
+    const typePrefix = value.substring(0, Math.min(10, value.length));
+    const restValue = value.substring(typePrefix.length);
+
+    for (const char of typePrefix) {
+      nativeInputValueSetter.call(element, element.value + char);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 20 + Math.random() * 30));
+    }
+
+    // Paste the rest
+    if (restValue) {
+      nativeInputValueSetter.call(element, element.value + restValue);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }
   }
 
   // Send a query
@@ -68,12 +105,14 @@
       throw new Error('Could not find Perplexity input field');
     }
 
-    // Focus and set value
+    // Focus and set value with human-like delays
+    await humanDelay();
     input.focus();
-    setInputValue(input, prompt);
+    await humanDelay();
+    await setInputValue(input, prompt);
 
-    // Small delay
-    await new Promise(r => setTimeout(r, 200));
+    // Delay before clicking send
+    await actionDelay();
 
     // Click send button or press Enter
     const sendBtn = document.querySelector(SELECTORS.sendButton);
@@ -140,6 +179,30 @@
     });
   }
 
+  // Wait for URL to update
+  async function waitForConversationUrl(timeout = 10000) {
+    const startTime = Date.now();
+
+    return new Promise((resolve) => {
+      const checkUrl = () => {
+        const url = getConversationUrl();
+        if (url) {
+          resolve(url);
+          return;
+        }
+
+        if (Date.now() - startTime > timeout) {
+          resolve(null);
+          return;
+        }
+
+        setTimeout(checkUrl, 500);
+      };
+
+      setTimeout(checkUrl, 1000);
+    });
+  }
+
   // Handle incoming query from background script
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type !== 'SEND_QUERY') return;
@@ -150,12 +213,18 @@
     (async () => {
       try {
         await sendQuery(prompt);
-        const response = await waitForResponse();
+
+        // Wait for both response and URL
+        const [response, conversationUrl] = await Promise.all([
+          waitForResponse(),
+          waitForConversationUrl()
+        ]);
 
         chrome.runtime.sendMessage({
           type: 'QUERY_RESPONSE',
           queryId,
-          response
+          response,
+          conversationUrl
         });
       } catch (error) {
         chrome.runtime.sendMessage({

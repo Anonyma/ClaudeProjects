@@ -25,6 +25,28 @@
 
   let isReady = false;
 
+  // Human-like random delay (100-400ms)
+  function humanDelay() {
+    const delay = 100 + Math.random() * 300;
+    return new Promise(r => setTimeout(r, delay));
+  }
+
+  // Longer random delay for actions (500-1500ms)
+  function actionDelay() {
+    const delay = 500 + Math.random() * 1000;
+    return new Promise(r => setTimeout(r, delay));
+  }
+
+  // Get the current conversation URL
+  function getConversationUrl() {
+    // Claude URLs look like: https://claude.ai/chat/abc123...
+    const url = window.location.href;
+    if (url.includes('/chat/')) {
+      return url;
+    }
+    return null;
+  }
+
   // Notify background script that we're ready
   function notifyReady() {
     chrome.runtime.sendMessage({
@@ -50,15 +72,26 @@
     });
   }
 
-  // Set contenteditable value
-  function setContentEditableValue(element, value) {
+  // Set contenteditable value with human-like typing
+  async function setContentEditableValue(element, value) {
     element.focus();
     element.innerHTML = '';
 
-    // Use execCommand for better compatibility with ProseMirror
-    document.execCommand('insertText', false, value);
+    // Type first few characters for human-like behavior
+    const typePrefix = value.substring(0, Math.min(10, value.length));
+    const restValue = value.substring(typePrefix.length);
 
-    // Also dispatch input event
+    for (const char of typePrefix) {
+      document.execCommand('insertText', false, char);
+      await new Promise(r => setTimeout(r, 20 + Math.random() * 30)); // 20-50ms per char
+    }
+
+    // Paste the rest
+    if (restValue) {
+      document.execCommand('insertText', false, restValue);
+    }
+
+    // Dispatch input event
     element.dispatchEvent(new InputEvent('input', {
       bubbles: true,
       cancelable: true,
@@ -74,12 +107,14 @@
       throw new Error('Could not find Claude input field');
     }
 
-    // Focus and set value
+    // Focus and set value with human-like delays
+    await humanDelay();
     input.focus();
-    setContentEditableValue(input, prompt);
+    await humanDelay();
+    await setContentEditableValue(input, prompt);
 
-    // Small delay for React/ProseMirror to process
-    await new Promise(r => setTimeout(r, 200));
+    // Delay before clicking send (like a human reviewing)
+    await actionDelay();
 
     // Click send button
     const sendBtn = document.querySelector(SELECTORS.sendButton);
@@ -146,6 +181,30 @@
     });
   }
 
+  // Wait for URL to update (Claude creates conversation after first message)
+  async function waitForConversationUrl(timeout = 10000) {
+    const startTime = Date.now();
+
+    return new Promise((resolve) => {
+      const checkUrl = () => {
+        const url = getConversationUrl();
+        if (url) {
+          resolve(url);
+          return;
+        }
+
+        if (Date.now() - startTime > timeout) {
+          resolve(null); // Timeout, but don't fail - URL is optional
+          return;
+        }
+
+        setTimeout(checkUrl, 500);
+      };
+
+      setTimeout(checkUrl, 1000); // Wait a bit before first check
+    });
+  }
+
   // Handle incoming query from background script
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type !== 'SEND_QUERY') return;
@@ -156,12 +215,18 @@
     (async () => {
       try {
         await sendQuery(prompt);
-        const response = await waitForResponse();
+
+        // Wait for both response and URL
+        const [response, conversationUrl] = await Promise.all([
+          waitForResponse(),
+          waitForConversationUrl()
+        ]);
 
         chrome.runtime.sendMessage({
           type: 'QUERY_RESPONSE',
           queryId,
-          response
+          response,
+          conversationUrl
         });
       } catch (error) {
         chrome.runtime.sendMessage({

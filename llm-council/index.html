@@ -274,6 +274,77 @@
             margin-bottom: 16px; font-size: 0.85rem; color: #10b981;
         }
         .info-banner a { color: #34d399; }
+
+        /* History Section */
+        .history-section {
+            background: #12121a; border-radius: 12px; border: 1px solid #2a2a3a;
+            margin-bottom: 24px; overflow: hidden;
+        }
+        .history-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 18px; background: #1a1a24; border-bottom: 1px solid #2a2a3a;
+        }
+        .history-header h3 { font-size: 1rem; color: #aaa; }
+        .history-stats {
+            display: flex; gap: 16px; font-size: 0.8rem; color: #666;
+        }
+        .history-stats .stat { display: flex; align-items: center; gap: 4px; }
+        .history-stats .stat-value { color: #10b981; font-weight: 500; }
+        .history-list { max-height: 400px; overflow-y: auto; }
+        .history-item {
+            padding: 14px 18px; border-bottom: 1px solid #1a1a24;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .history-item:hover { background: #1a1a24; }
+        .history-item:last-child { border-bottom: none; }
+        .history-item-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .history-item-prompt {
+            font-size: 0.9rem; color: #e0e0e0;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 60%;
+        }
+        .history-item-meta {
+            display: flex; gap: 12px; font-size: 0.75rem; color: #666;
+        }
+        .history-item-providers {
+            display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .history-provider-link {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 2px 8px; background: #2a2a3a; border-radius: 12px;
+            font-size: 0.7rem; color: #888; text-decoration: none; transition: all 0.2s;
+        }
+        .history-provider-link:hover { background: #3a3a4a; color: #e0e0e0; }
+        .history-provider-link.has-url { color: #667eea; }
+        .history-provider-link.has-url:hover { color: #8fa4f0; }
+        .history-empty {
+            padding: 40px; text-align: center; color: #666;
+        }
+
+        /* Cost display */
+        .cost-badge {
+            padding: 2px 6px; background: rgba(16,185,129,0.15); color: #10b981;
+            border-radius: 8px; font-size: 0.7rem; font-weight: 500;
+        }
+        .cost-badge.expensive { background: rgba(248,113,113,0.15); color: #f87171; }
+
+        /* Tab navigation */
+        .tab-nav {
+            display: flex; gap: 4px; margin-bottom: 16px;
+        }
+        .tab-btn {
+            padding: 8px 16px; background: transparent; border: 1px solid transparent;
+            border-radius: 8px 8px 0 0; cursor: pointer; color: #888; font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover { color: #e0e0e0; }
+        .tab-btn.active {
+            background: #12121a; border-color: #2a2a3a;
+            border-bottom-color: transparent; color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -285,6 +356,7 @@
                     <span class="status-dot disconnected"></span>
                     <span>Bridge: Disconnected</span>
                 </div>
+                <button class="btn btn-icon" onclick="toggleHistory()" title="History">📜</button>
                 <button class="btn btn-icon" onclick="openSettings()" title="API Keys">🔑</button>
             </div>
         </header>
@@ -292,6 +364,21 @@
         <div class="info-banner" id="extensionBanner" style="display: none;">
             💡 <strong>Use your subscriptions!</strong> Query ChatGPT Plus, Claude Max, Gemini Advanced, and Perplexity Pro via their web UIs instead of API credits.
             Run <code>cd llm-council/server && python login.py --all && python server.py</code> to get started.
+        </div>
+
+        <div class="history-section" id="historySection" style="display: none;">
+            <div class="history-header">
+                <h3>📜 Query History</h3>
+                <div class="history-stats">
+                    <span class="stat">Queries: <span class="stat-value" id="historyCount">0</span></span>
+                    <span class="stat">Total Cost: <span class="stat-value" id="historyTotalCost">$0.00</span></span>
+                    <span class="stat">Total Tokens: <span class="stat-value" id="historyTotalTokens">0</span></span>
+                    <button class="btn btn-secondary" onclick="clearHistory()" style="padding: 4px 12px; font-size: 0.75rem;">Clear</button>
+                </div>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="history-empty">No queries yet. Your history will appear here.</div>
+            </div>
         </div>
 
         <div class="input-section">
@@ -473,6 +560,32 @@
             }
         };
 
+        // ==================== COST PRICING (per 1M tokens) ====================
+        const MODEL_COSTS = {
+            // OpenAI
+            'gpt-4o': { input: 2.50, output: 10.00 },
+            'gpt-4o-mini': { input: 0.15, output: 0.60 },
+            'gpt-4-turbo': { input: 10.00, output: 30.00 },
+            'o1': { input: 15.00, output: 60.00 },
+            'o1-mini': { input: 3.00, output: 12.00 },
+            'o3-mini': { input: 1.10, output: 4.40 },
+            // Anthropic
+            'claude-sonnet-4-20250514': { input: 3.00, output: 15.00 },
+            'claude-opus-4-5-20250514': { input: 15.00, output: 75.00 },
+            'claude-3-5-haiku-20241022': { input: 0.80, output: 4.00 },
+            // Google
+            'gemini-2.0-flash': { input: 0.10, output: 0.40 },
+            'gemini-2.0-flash-thinking-exp': { input: 0.10, output: 0.40 },
+            'gemini-1.5-pro': { input: 1.25, output: 5.00 },
+            'gemini-1.5-flash': { input: 0.075, output: 0.30 },
+            // Perplexity
+            'sonar-pro': { input: 3.00, output: 15.00 },
+            'sonar': { input: 1.00, output: 1.00 },
+            'sonar-reasoning-pro': { input: 2.00, output: 8.00 },
+            'sonar-reasoning': { input: 1.00, output: 5.00 },
+            'sonar-deep-research': { input: 2.00, output: 8.00 },
+        };
+
         // ==================== STATE ====================
         let providerStates = {};
         let responses = {};
@@ -480,6 +593,8 @@
         let playwrightServerConnected = false;
         let playwrightProviders = []; // Providers available via Playwright server
         let incognitoMode = false;
+        let queryHistory = []; // Persisted in localStorage
+        let showHistory = false;
 
         function initProviderStates() {
             Object.keys(PROVIDERS).forEach(providerId => {
@@ -497,6 +612,153 @@
                     }
                 };
             });
+        }
+
+        // ==================== COST CALCULATION ====================
+        function calculateCost(modelId, inputTokens, outputTokens) {
+            const costs = MODEL_COSTS[modelId];
+            if (!costs) return 0;
+            const inputCost = (inputTokens / 1000000) * costs.input;
+            const outputCost = (outputTokens / 1000000) * costs.output;
+            return inputCost + outputCost;
+        }
+
+        function formatCost(cost) {
+            if (cost === 0) return '$0.00';
+            if (cost < 0.01) return `$${cost.toFixed(4)}`;
+            return `$${cost.toFixed(2)}`;
+        }
+
+        function estimateTokens(text) {
+            // Rough estimate: ~4 chars per token
+            return Math.ceil(text.length / 4);
+        }
+
+        // ==================== HISTORY MANAGEMENT ====================
+        function loadHistory() {
+            try {
+                const stored = localStorage.getItem('llm_council_history');
+                queryHistory = stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                queryHistory = [];
+            }
+        }
+
+        function saveHistory() {
+            try {
+                // Keep only last 100 queries
+                if (queryHistory.length > 100) {
+                    queryHistory = queryHistory.slice(-100);
+                }
+                localStorage.setItem('llm_council_history', JSON.stringify(queryHistory));
+            } catch (e) {
+                console.error('Failed to save history:', e);
+            }
+        }
+
+        function addToHistory(prompt, providerResponses, synthesis) {
+            const entry = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                prompt: prompt.substring(0, 500), // Truncate for storage
+                responses: Object.entries(providerResponses).map(([id, r]) => ({
+                    providerId: id,
+                    provider: r.provider,
+                    model: r.model,
+                    content: r.content?.substring(0, 1000), // Truncate
+                    tokens: r.tokens,
+                    cost: r.cost,
+                    elapsed: r.elapsed,
+                    viaWebUi: r.viaWebUi,
+                    conversationUrl: r.conversationUrl
+                })),
+                synthesis: synthesis ? {
+                    content: synthesis.substring(0, 1000),
+                    model: document.getElementById('synthesisModel').value
+                } : null,
+                totalTokens: Object.values(providerResponses).reduce((sum, r) => sum + (r.tokens || 0), 0),
+                totalCost: Object.values(providerResponses).reduce((sum, r) => sum + (r.cost || 0), 0)
+            };
+            queryHistory.push(entry);
+            saveHistory();
+            renderHistory();
+        }
+
+        function toggleHistory() {
+            showHistory = !showHistory;
+            document.getElementById('historySection').style.display = showHistory ? 'block' : 'none';
+            if (showHistory) renderHistory();
+        }
+
+        function clearHistory() {
+            if (confirm('Clear all query history?')) {
+                queryHistory = [];
+                saveHistory();
+                renderHistory();
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const countEl = document.getElementById('historyCount');
+            const costEl = document.getElementById('historyTotalCost');
+            const tokensEl = document.getElementById('historyTotalTokens');
+
+            // Calculate totals
+            const totalCost = queryHistory.reduce((sum, h) => sum + (h.totalCost || 0), 0);
+            const totalTokens = queryHistory.reduce((sum, h) => sum + (h.totalTokens || 0), 0);
+
+            countEl.textContent = queryHistory.length;
+            costEl.textContent = formatCost(totalCost);
+            tokensEl.textContent = totalTokens.toLocaleString();
+
+            if (queryHistory.length === 0) {
+                list.innerHTML = '<div class="history-empty">No queries yet. Your history will appear here.</div>';
+                return;
+            }
+
+            // Render most recent first
+            list.innerHTML = [...queryHistory].reverse().map(entry => {
+                const date = new Date(entry.timestamp);
+                const timeStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                const providerLinks = entry.responses.map(r => {
+                    const hasUrl = r.conversationUrl;
+                    const provider = PROVIDERS[r.providerId];
+                    const icon = provider?.icon || '🔹';
+                    if (hasUrl) {
+                        return `<a href="${r.conversationUrl}" target="_blank" class="history-provider-link has-url" title="Open conversation">${icon} ${r.provider}</a>`;
+                    }
+                    return `<span class="history-provider-link">${icon} ${r.provider}</span>`;
+                }).join('');
+
+                const costClass = entry.totalCost > 0.10 ? 'expensive' : '';
+
+                return `
+                    <div class="history-item" onclick="loadHistoryEntry(${entry.id})">
+                        <div class="history-item-header">
+                            <span class="history-item-prompt">${escapeHtml(entry.prompt)}</span>
+                            <div class="history-item-meta">
+                                <span>${timeStr}</span>
+                                ${entry.totalTokens ? `<span>${entry.totalTokens.toLocaleString()} tokens</span>` : ''}
+                                ${entry.totalCost ? `<span class="cost-badge ${costClass}">${formatCost(entry.totalCost)}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="history-item-providers">${providerLinks}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadHistoryEntry(id) {
+            const entry = queryHistory.find(h => h.id === id);
+            if (!entry) return;
+
+            // Load prompt
+            document.getElementById('prompt').value = entry.prompt;
+
+            // Could expand to show full responses in a modal
+            alert('Prompt loaded. Provider links open their original conversations.');
         }
 
         // ==================== BRIDGE COMMUNICATION ====================
@@ -590,7 +852,12 @@
                 features: state.features
             });
             if (!response.success) throw new Error(response.error || 'Extension query failed');
-            return { content: response.content, tokens: null, viaWebUi: true };
+            return {
+                content: response.content,
+                tokens: null,
+                viaWebUi: true,
+                conversationUrl: response.conversationUrl
+            };
         }
 
         async function queryViaWebUi(providerId, prompt, state) {
@@ -867,6 +1134,9 @@
             submitBtn.disabled = false;
             submitBtn.textContent = '🚀 Send to Council';
             document.getElementById('synthesisSection').style.display = 'block';
+
+            // Save to history (without synthesis for now - will update after synthesis)
+            addToHistory(prompt, responses, null);
         }
 
         async function queryProvider(providerId, state, provider, prompt) {
@@ -891,15 +1161,31 @@
                 }
 
                 const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+
+                // Calculate cost (estimate input tokens from prompt if not provided)
+                let cost = 0;
+                let inputTokens = result.inputTokens || estimateTokens(prompt);
+                let outputTokens = result.outputTokens || (result.tokens ? result.tokens - inputTokens : estimateTokens(result.content));
+                if (!result.viaWebUi && result.tokens) {
+                    cost = calculateCost(modelId, inputTokens, Math.max(0, outputTokens));
+                }
+
                 responses[providerId] = {
                     content: result.content, model: modelId, provider: provider.name,
-                    features: state.features, elapsed, tokens: result.tokens, viaWebUi: result.viaWebUi
+                    features: state.features, elapsed, tokens: result.tokens,
+                    viaWebUi: result.viaWebUi, conversationUrl: result.conversationUrl,
+                    cost: cost
                 };
+
+                const costStr = cost > 0 ? ` · ${formatCost(cost)}` : '';
+                const urlLink = result.conversationUrl
+                    ? `<a href="${result.conversationUrl}" target="_blank" style="color: #667eea; text-decoration: none;" title="Open conversation">🔗</a>`
+                    : '';
 
                 bodyEl.classList.remove('loading');
                 bodyEl.innerHTML = `<pre>${escapeHtml(result.content)}</pre>`;
                 footerEl.innerHTML = `
-                    <span>${elapsed}s${result.tokens ? ` · ${result.tokens} tokens` : ''}${result.viaWebUi ? ' · Web UI' : ''}</span>
+                    <span>${elapsed}s${result.tokens ? ` · ${result.tokens} tokens` : ''}${costStr}${result.viaWebUi ? ' · Web UI' : ''} ${urlLink}</span>
                     <button class="copy-btn" onclick="copyResponse('${providerId}')">📋 Copy</button>
                 `;
             } catch (error) {
@@ -1096,6 +1382,7 @@ Be thorough - no valuable information should be lost.`;
 
         // ==================== INIT ====================
         initProviderStates();
+        loadHistory();
         checkBridges().then(() => renderProviders());
     </script>
 </body>
