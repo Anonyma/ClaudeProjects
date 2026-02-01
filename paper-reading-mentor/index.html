@@ -327,9 +327,21 @@ You're guiding a structured reading session. Focus on the current step and help 
 
       async init() {
         return new Promise((resolve, reject) => {
-          const request = indexedDB.open('PaperReadingMentor', 1);
-          request.onerror = () => reject(request.error);
+          const request = indexedDB.open('PaperReadingMentor_v2', 1);
+
+          // Add timeout to detect hanging
+          const timeout = setTimeout(() => {
+            console.error('IndexedDB init timeout - may be blocked');
+            reject(new Error('Database init timeout'));
+          }, 5000);
+
+          request.onerror = () => {
+            clearTimeout(timeout);
+            console.error('IndexedDB error:', request.error);
+            reject(request.error);
+          };
           request.onsuccess = () => {
+            clearTimeout(timeout);
             this.db = request.result;
             resolve();
           };
@@ -339,10 +351,19 @@ You're guiding a structured reading session. Focus on the current step and help 
               db.createObjectStore('papers', { keyPath: 'id' });
             }
           };
+          request.onblocked = () => {
+            clearTimeout(timeout);
+            console.error('IndexedDB blocked - close other tabs');
+            reject(new Error('Database blocked'));
+          };
         });
       },
 
       async savePaper(paper) {
+        if (!this.db) {
+          console.warn('IndexedDB not available, paper will not persist');
+          return;
+        }
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction('papers', 'readwrite');
           tx.objectStore('papers').put(paper);
@@ -620,7 +641,8 @@ You're guiding a structured reading session. Focus on the current step and help 
         setLoading(true);
         try {
           const arrayBuffer = await file.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const pdfData = new Uint8Array(arrayBuffer);
+          const pdf = await pdfjsLib.getDocument({ data: pdfData.slice() }).promise;
 
           // Try to extract title from first page
           const page = await pdf.getPage(1);
@@ -631,7 +653,7 @@ You're guiding a structured reading session. Focus on the current step and help 
             id: generateId(),
             title: firstLine.substring(0, 100) || file.name.replace('.pdf', ''),
             authors: [],
-            pdfBlob: new Blob([arrayBuffer], { type: 'application/pdf' }),
+            pdfData,
             pageCount: pdf.numPages,
             createdAt: new Date().toISOString(),
             source: 'upload'
@@ -674,13 +696,14 @@ You're guiding a structured reading session. Focus on the current step and help 
           }
 
           const arrayBuffer = await blob.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const pdfData = new Uint8Array(arrayBuffer);
+          const pdf = await pdfjsLib.getDocument({ data: pdfData.slice() }).promise;
 
           const paper = {
             id: generateId(),
             title: url.split('/').pop().replace('.pdf', ''),
             authors: [],
-            pdfBlob: blob,
+            pdfData,
             pageCount: pdf.numPages,
             createdAt: new Date().toISOString(),
             source: 'url',
@@ -704,27 +727,35 @@ You're guiding a structured reading session. Focus on the current step and help 
         setError('');
 
         try {
-          // Fetch metadata first
-          const metaResponse = await fetch(`https://export.arxiv.org/api/query?id_list=${cleanId}`);
-          const metaXml = await metaResponse.text();
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(metaXml, 'text/xml');
-
-          const entry = xmlDoc.querySelector('entry');
-          const title = entry?.querySelector('title')?.textContent?.trim().replace(/\s+/g, ' ') || cleanId;
-          const authors = Array.from(entry?.querySelectorAll('author name') || []).map(n => n.textContent);
+          // Try to fetch metadata (may fail due to CORS)
+          let title = `arXiv:${cleanId}`;
+          let authors = [];
+          try {
+            const metaResponse = await fetch(`https://export.arxiv.org/api/query?id_list=${cleanId}`);
+            if (metaResponse.ok) {
+              const metaXml = await metaResponse.text();
+              const parser = new DOMParser();
+              const xmlDoc = parser.parseFromString(metaXml, 'text/xml');
+              const entry = xmlDoc.querySelector('entry');
+              title = entry?.querySelector('title')?.textContent?.trim().replace(/\s+/g, ' ') || title;
+              authors = Array.from(entry?.querySelectorAll('author name') || []).map(n => n.textContent);
+            }
+          } catch (metaErr) {
+            console.log('Metadata fetch failed (CORS), using arXiv ID as title');
+          }
 
           // Fetch PDF via proxy
           const pdfUrl = `https://arxiv.org/pdf/${cleanId}.pdf`;
           const blob = await fetchPdfViaProxy(pdfUrl);
           const arrayBuffer = await blob.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const pdfData = new Uint8Array(arrayBuffer);
+          const pdf = await pdfjsLib.getDocument({ data: pdfData.slice() }).promise;
 
           const paper = {
             id: generateId(),
             title,
             authors,
-            pdfBlob: blob,
+            pdfData,
             pageCount: pdf.numPages,
             createdAt: new Date().toISOString(),
             source: 'arxiv',
@@ -772,13 +803,14 @@ You're guiding a structured reading session. Focus on the current step and help 
           // Use proxy for the PDF fetch
           const blob = await fetchPdfViaProxy(result.openAccessPdf.url);
           const arrayBuffer = await blob.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const pdfData = new Uint8Array(arrayBuffer);
+          const pdf = await pdfjsLib.getDocument({ data: pdfData.slice() }).promise;
 
           const paper = {
             id: generateId(),
             title: result.title,
             authors: result.authors?.map(a => a.name) || [],
-            pdfBlob: blob,
+            pdfData,
             pageCount: pdf.numPages,
             createdAt: new Date().toISOString(),
             source: 'semantic-scholar',
@@ -968,12 +1000,20 @@ You're guiding a structured reading session. Focus on the current step and help 
 
       // Load PDF
       useEffect(() => {
-        if (!paper?.pdfBlob) return;
+        if (!paper?.pdfData && !paper?.pdfBlob) return;
 
         const loadPdf = async () => {
           try {
-            const arrayBuffer = await paper.pdfBlob.arrayBuffer();
-            const loadedPdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            // Support both new format (pdfData as Uint8Array) and old format (pdfBlob)
+            let data;
+            if (paper.pdfData) {
+              // Use slice() to avoid detaching the original buffer
+              data = paper.pdfData.slice();
+            } else if (paper.pdfBlob) {
+              const arrayBuffer = await paper.pdfBlob.arrayBuffer();
+              data = new Uint8Array(arrayBuffer);
+            }
+            const loadedPdf = await pdfjsLib.getDocument({ data }).promise;
             setPdf(loadedPdf);
           } catch (err) {
             console.error('Failed to load PDF:', err);
@@ -1358,17 +1398,23 @@ You're guiding a structured reading session. Focus on the current step and help 
       // Initialize
       useEffect(() => {
         const init = async () => {
-          await PaperDB.init();
-          setDbReady(true);
+          try {
+            await PaperDB.init();
+            setDbReady(true);
 
-          const savedPapers = await PaperDB.getAllPapers();
-          setPapers(savedPapers);
+            const savedPapers = await PaperDB.getAllPapers();
+            setPapers(savedPapers);
 
-          const savedSettings = Storage.get('settings', { provider: 'ollama', apiKeys: {} });
-          setSettings(savedSettings);
+            const savedSettings = Storage.get('settings', { provider: 'ollama', apiKeys: {} });
+            setSettings(savedSettings);
 
-          const savedNotes = Storage.get('notes', {});
-          setNotes(savedNotes);
+            const savedNotes = Storage.get('notes', {});
+            setNotes(savedNotes);
+          } catch (err) {
+            console.error('Init error:', err);
+            // Still set dbReady so user can use the app (without persistence)
+            setDbReady(true);
+          }
         };
 
         init();
