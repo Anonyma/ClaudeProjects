@@ -2,6 +2,41 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## CRITICAL: Use Linear for Project Tracking
+
+**ALWAYS use Linear to track project status and create issues for bugs, features, and fixes.**
+
+Linear workspace: https://linear.app/z-z-z | Team: Z
+
+### When to Update Linear
+
+| Event | Action |
+|-------|--------|
+| User reports a bug | `mcp__linear-server__create_issue` with project, description, priority |
+| User requests a feature | `mcp__linear-server__create_issue` with requirements |
+| Starting work on an issue | `mcp__linear-server__update_issue` → state: "In Progress" |
+| Completing an issue | `mcp__linear-server__update_issue` → state: "Done" |
+| Project milestone complete | `mcp__linear-server__update_project` with status update |
+
+### Quick Reference
+
+```
+# Create issue for a bug/feature
+mcp__linear-server__create_issue
+  title: "Clear description"
+  team: "Z"
+  project: "Project Name"  # Match exactly
+  description: "Details here"
+  priority: 3  # 1=Urgent, 2=High, 3=Normal, 4=Low
+
+# Update issue status
+mcp__linear-server__update_issue
+  id: "issue-id"
+  state: "Done"  # Backlog, Todo, In Progress, Done, Canceled
+```
+
+---
+
 ## CRITICAL: Report Agent Status
 
 **ALWAYS report your status to the Agent Hub when starting, getting blocked, completing, or encountering errors.**
