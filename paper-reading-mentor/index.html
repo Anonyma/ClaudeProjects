@@ -279,6 +279,9 @@ Encourage them to complete their notes. Keep under 100 words.`,
       }
     };
 
+    const PDF_PROXY_URL = 'https://ydwjzlikslebokuxzwco.supabase.co/functions/v1/pdf-proxy';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlkd2p6bGlrc2xlYm9rdXh6d2NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4NTEwODAsImV4cCI6MjA4NDQyNzA4MH0.CUPTmjww31xOS0-qknpQHByC3ACZ4lk1CiBcVZXHThU';
+
     const MENTOR_SYSTEM_PROMPT = `You are Dr. Reading, a warm but rigorous senior research mentor. Your role is to teach students how to critically read academic papers - not just WHAT to read, but HOW to think about it.
 
 Your style:
@@ -294,6 +297,25 @@ You're guiding a structured reading session. Focus on the current step and help 
     // ============================================
 
     const generateId = () => Math.random().toString(36).substr(2, 9);
+
+    // Fetch PDF via Supabase proxy to bypass CORS
+    async function fetchPdfViaProxy(pdfUrl) {
+      const response = await fetch(PDF_PROXY_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ url: pdfUrl }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(error.error || `Proxy error: ${response.status}`);
+      }
+
+      return response.blob();
+    }
 
     const formatDate = (date) => new Date(date).toLocaleDateString('en-US', {
       month: 'short', day: 'numeric', year: 'numeric'
@@ -629,18 +651,28 @@ You're guiding a structured reading session. Focus on the current step and help 
 
         // Check if it's an arXiv abstract URL
         if (url.includes('arxiv.org/abs/')) {
-          setError('This is an arXiv abstract page. Use the arXiv tab instead, or download the PDF and upload it.');
+          setError('This is an arXiv abstract page. Use the arXiv tab instead.');
           return;
         }
 
         setLoading(true);
         setError('');
 
-        try {
-          const response = await fetch(url);
-          if (!response.ok) throw new Error('Failed to fetch PDF');
+        // Check if URL is from a supported domain for proxy
+        const supportedDomains = ['arxiv.org', 'semanticscholar.org', 'aclanthology.org', 'openreview.net', 'neurips.cc', 'mlr.press'];
+        const urlObj = new URL(url);
+        const useProxy = supportedDomains.some(d => urlObj.hostname.includes(d));
 
-          const blob = await response.blob();
+        try {
+          let blob;
+          if (useProxy) {
+            blob = await fetchPdfViaProxy(url);
+          } else {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch PDF');
+            blob = await response.blob();
+          }
+
           const arrayBuffer = await blob.arrayBuffer();
           const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
@@ -658,7 +690,7 @@ You're guiding a structured reading session. Focus on the current step and help 
           onImport(paper);
           onClose();
         } catch (err) {
-          setError(`Most sites block direct browser downloads (CORS policy).\n\nDownload the PDF manually, then use the Upload tab.`);
+          setError(`Failed to fetch PDF: ${err.message}\n\nTry downloading the PDF manually and using Upload.`);
         } finally {
           setLoading(false);
         }
@@ -679,40 +711,31 @@ You're guiding a structured reading session. Focus on the current step and help 
           const xmlDoc = parser.parseFromString(metaXml, 'text/xml');
 
           const entry = xmlDoc.querySelector('entry');
-          const title = entry?.querySelector('title')?.textContent?.trim() || cleanId;
+          const title = entry?.querySelector('title')?.textContent?.trim().replace(/\s+/g, ' ') || cleanId;
           const authors = Array.from(entry?.querySelectorAll('author name') || []).map(n => n.textContent);
-          const abstract = entry?.querySelector('summary')?.textContent?.trim() || '';
 
-          // Try to fetch PDF (will likely fail due to CORS)
+          // Fetch PDF via proxy
           const pdfUrl = `https://arxiv.org/pdf/${cleanId}.pdf`;
-          try {
-            const pdfResponse = await fetch(pdfUrl);
-            if (!pdfResponse.ok) throw new Error('CORS');
+          const blob = await fetchPdfViaProxy(pdfUrl);
+          const arrayBuffer = await blob.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
-            const blob = await pdfResponse.blob();
-            const arrayBuffer = await blob.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const paper = {
+            id: generateId(),
+            title,
+            authors,
+            pdfBlob: blob,
+            pageCount: pdf.numPages,
+            createdAt: new Date().toISOString(),
+            source: 'arxiv',
+            arxivId: cleanId,
+            sourceUrl: `https://arxiv.org/abs/${cleanId}`
+          };
 
-            const paper = {
-              id: generateId(),
-              title,
-              authors,
-              pdfBlob: blob,
-              pageCount: pdf.numPages,
-              createdAt: new Date().toISOString(),
-              source: 'arxiv',
-              arxivId: cleanId,
-              sourceUrl: `https://arxiv.org/abs/${cleanId}`
-            };
-
-            onImport(paper);
-            onClose();
-          } catch (corsErr) {
-            // CORS blocked - show download instructions
-            setError(`ArXiv blocks direct browser downloads (CORS). Please:\n\n1. Download the PDF: ${pdfUrl}\n2. Use the Upload tab to import it\n\nPaper: "${title}"`);
-          }
+          onImport(paper);
+          onClose();
         } catch (err) {
-          setError('Failed to fetch arXiv metadata: ' + err.message);
+          setError('Failed to import: ' + err.message);
         } finally {
           setLoading(false);
         }
@@ -746,10 +769,8 @@ You're guiding a structured reading session. Focus on the current step and help 
 
         setLoading(true);
         try {
-          const response = await fetch(result.openAccessPdf.url);
-          if (!response.ok) throw new Error('Failed to fetch PDF');
-
-          const blob = await response.blob();
+          // Use proxy for the PDF fetch
+          const blob = await fetchPdfViaProxy(result.openAccessPdf.url);
           const arrayBuffer = await blob.arrayBuffer();
           const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
@@ -831,25 +852,25 @@ You're guiding a structured reading session. Focus on the current step and help 
 
               {mode === 'url' && (
                 <div className="space-y-4">
-                  <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-200 text-sm">
-                    Most sites block browser downloads. If this fails, download the PDF and use Upload instead.
-                  </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">PDF URL</label>
                     <input
                       type="url"
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
-                      placeholder="https://example.com/paper.pdf"
+                      placeholder="https://arxiv.org/pdf/1706.03762.pdf"
                       className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-blue-500"
                     />
+                    <p className="mt-2 text-xs text-slate-400">
+                      Works with arXiv, Semantic Scholar, ACL Anthology, OpenReview, NeurIPS, MLR
+                    </p>
                   </div>
                   <button
                     onClick={handleUrlImport}
                     disabled={loading || !url.trim()}
                     className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-lg font-medium"
                   >
-                    {loading ? 'Importing...' : 'Try Import'}
+                    {loading ? 'Importing...' : 'Import'}
                   </button>
                 </div>
               )}
