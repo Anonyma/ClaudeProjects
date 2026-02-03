@@ -14,6 +14,7 @@ SUPABASE_KEY = os.getenv('SUPABASE_ANON_KEY')
 
 # Mapping from audio filename to asset title in Supabase
 FILENAME_TO_ASSET = {
+    # Original 13
     "Art_Deco_Fused_King_Tut_With_Chrome": "Art Deco Fused King Tut With Chrome",
     "Art_Nouveau_The_Brief_Beautiful_Dream": "Art Nouveau The Brief Beautiful Dream",
     "Automation_Shock_and_the_Post-Work_Transition": "Automation Shock and the Post-Work Transition",
@@ -27,6 +28,24 @@ FILENAME_TO_ASSET = {
     "The_Six_Materials_That_Built_Civilization": "The Six Materials That Built Civilization",
     "Universal_Basic_Income_vs_The_Jobless_Future": "Universal Basic Income vs The Jobless Future",
     "Versailles_Was_Actually_A_Golden_Prison": "Versailles Was Actually A Golden Prison",
+    # Architecture/Brutalism (Urban Imaginings notebook)
+    "Architecture_as_a_Trauma_Response": "Architecture as a Trauma Response",
+    "Why_Brutalism_Started_With_Floral_Wallpaper": "Why Brutalism Started With Floral Wallpaper",
+    "How_Irony_Killed_the_Glass_Box": "How Irony Killed the Glass Box",
+    "Exploding_Buildings_And_The_End_Of_Truth": "Exploding Buildings And The End Of Truth",
+    # American History
+    "The_American_Experiment_From_Cahokia_to_Reconstruction": "The American Experiment From Cahokia to Reconstruction",
+    "How_American_Literature_Shattered_Reality": "How American Literature Shattered Reality",
+    "Mapping_America_s_Inner_Life_Through_Fiction": "Mapping Americas Inner Life Through Fiction",
+    "The_Great_Refusal_of_the_American_Dream": "The Great Refusal of the American Dream",
+    "The_Rise_and_Fracture_of_Modern_America": "The Rise and Fracture of Modern America",
+    "Washington_the_Town_Destroyer_and_Fragile_Experiments": "Washington the Town Destroyer and Fragile Experiments",
+    "Native_Cities_and_the_Sovereignty_Straitjacket": "Native Cities and the Sovereignty Straitjacket",
+    # Beat Generation
+    "The_Beat_Generation_Started_With_Murder": "The Beat Generation Started With Murder",
+    "Murder,_Jazz,_and_the_Birth_of_the_Beats": "Murder Jazz and the Birth of the Beats",
+    "The_Bomb,_LSD,_and_Silicon_Valley": "The Bomb LSD and Silicon Valley",
+    "Selling_The_Revolution_At_A_Markup": "Selling The Revolution At A Markup",
 }
 
 

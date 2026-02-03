@@ -28,24 +28,45 @@ def get_openai_client():
 
 
 def generate_summary(openai_client, transcript: str, title: str) -> dict:
-    """Generate a structured summary with key points."""
+    """Generate an article-style summary that teaches the content directly."""
 
-    prompt = f"""You are summarizing a NotebookLM podcast episode titled "{title}".
+    prompt = f"""You are creating an educational article based on a deep-dive discussion titled "{title}".
+
+CRITICAL: Write as if TEACHING the reader directly. Do NOT write meta descriptions like "The podcast explores..." or "This episode discusses...". Instead, present the actual knowledge and insights as if you're writing a well-researched article.
 
 Based on the transcript below, create:
-1. A concise summary (2-3 paragraphs) covering the main themes and arguments
-2. 5-8 key takeaways as bullet points
-3. A one-sentence "TLDR"
+
+1. A TEACHING-STYLE SUMMARY (3-4 paragraphs):
+   - Address the reader with "you"
+   - Present the actual content, facts, and insights directly
+   - Include specific examples, dates, names, and case studies from the transcript
+   - Write as if you're teaching the material, not describing a podcast
+
+2. KEY INSIGHTS (5-8 points):
+   - Specific, actionable insights
+   - Include supporting details
+
+3. A one-sentence TLDR (what the reader will learn, not what "the episode covers")
+
+4. CONCEPT LINKS: List 3-5 concepts that connect to other topics (for building a knowledge latticework)
+
+5. SUGGESTED EXTERNAL LINKS: 3-5 Wikipedia or educational resource topics that would help deepen understanding
 
 Format your response as JSON:
 {{
-    "summary": "...",
-    "key_points": ["point 1", "point 2", ...],
-    "tldr": "..."
+    "summary": "Teaching-style article text...",
+    "key_points": ["specific insight with detail", ...],
+    "tldr": "You'll learn that...",
+    "concepts": ["concept1", "concept2", ...],
+    "external_topics": ["Wikipedia: Topic Name", "Resource: Topic Name", ...]
 }}
 
+EXAMPLE of good vs bad summary:
+BAD: "The podcast explores how materials shaped history..."
+GOOD: "Materials don't just serve human needs—they actively shape the course of civilizations. Consider glass: its chemical properties enabled the microscope, which revealed bacteria and transformed medicine..."
+
 TRANSCRIPT:
-{transcript[:12000]}  # Limit to avoid token limits
+{transcript[:15000]}
 """
 
     response = openai_client.chat.completions.create(
@@ -124,33 +145,44 @@ def main():
             "asset_id", asset_id
         ).execute()
 
-        if not existing_summary.data:
-            print("  Generating summary...")
-            try:
-                summary_data = generate_summary(openai, transcript_text, asset_title)
+        # Always regenerate summaries (delete existing first for article-style format)
+        if existing_summary.data:
+            supabase.table("notebooklm_summaries").delete().eq("asset_id", asset_id).execute()
+            print("  Deleted old meta-style summary")
 
-                supabase.table("notebooklm_summaries").insert({
-                    "asset_id": asset_id,
-                    "summary_type": "standard",
-                    "summary_text": summary_data["summary"],
-                    "key_points": summary_data["key_points"],
-                    "model_used": MODEL
-                }).execute()
+        print("  Generating article-style summary...")
+        try:
+            summary_data = generate_summary(openai, transcript_text, asset_title)
 
-                # Also save TLDR as separate entry
-                supabase.table("notebooklm_summaries").upsert({
-                    "asset_id": asset_id,
-                    "summary_type": "tldr",
-                    "summary_text": summary_data["tldr"],
-                    "key_points": None,
-                    "model_used": MODEL
-                }, on_conflict="asset_id,summary_type").execute()
+            # Build metadata with concepts and external links
+            metadata = {
+                "concepts": summary_data.get("concepts", []),
+                "external_topics": summary_data.get("external_topics", []),
+                "format": "article-style"
+            }
 
-                print(f"  ✓ Summary created ({len(summary_data['key_points'])} key points)")
-            except Exception as e:
-                print(f"  ✗ Summary error: {e}")
-        else:
-            print("  ✓ Summary already exists")
+            supabase.table("notebooklm_summaries").insert({
+                "asset_id": asset_id,
+                "summary_type": "standard",
+                "summary_text": summary_data["summary"],
+                "key_points": summary_data["key_points"],
+                "model_used": MODEL,
+                "metadata": metadata
+            }).execute()
+
+            # Also save TLDR as separate entry
+            supabase.table("notebooklm_summaries").insert({
+                "asset_id": asset_id,
+                "summary_type": "tldr",
+                "summary_text": summary_data["tldr"],
+                "key_points": None,
+                "model_used": MODEL,
+                "metadata": metadata
+            }).execute()
+
+            print(f"  ✓ Summary created ({len(summary_data['key_points'])} key points, {len(metadata['concepts'])} concepts)")
+        except Exception as e:
+            print(f"  ✗ Summary error: {e}")
 
         # Check if quiz already exists
         existing_quiz = supabase.table("notebooklm_quizzes").select("id").eq(
