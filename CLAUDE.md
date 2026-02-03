@@ -350,58 +350,16 @@ cat /Users/z/Desktop/PersonalProjects/ClaudeProjects/_worklog/LATEST.md
 
 This is a personal projects repository containing independent project directories:
 
-- **notebooklm_scrape/** - Python scripts for scraping NotebookLM data and transcribing audio
+- **notebooklm_scrape/** - NotebookLM Study System (see project CLAUDE.md for details)
 
-## notebooklm_scrape
+## IMPORTANT: Project-Specific Instructions
 
-### Purpose
-Scrapes notebook metadata, sources, and audio assets from NotebookLM. Includes audio transcription via OpenAI API.
+**For NotebookLM tasks (scraping, transcribing, generating audio, summaries):**
+→ **ALWAYS read** `notebooklm_scrape/CLAUDE.md` first. It contains critical instructions for:
+- Summary format requirements (article-style, NOT meta descriptions)
+- Audio generation strategy for comprehensive, non-redundant coverage
+- Transcript analysis workflow
+- Prompting best practices for NotebookLM
 
-### Setup
-```bash
-cd notebooklm_scrape
-pip3 install -r requirements.txt
-export OPENAI_API_KEY='your-key'  # Required for transcription only
-```
-
-### Commands
-
-**Initialize/update notebook data from DOM scrapes:**
-```bash
-python3 scrape_data.py           # Create initial notebooks.json from raw data
-python3 batch_add_notebooks.py   # Batch update all notebook metadata
-```
-
-**Add individual notebook data (from browser scraping):**
-```bash
-python3 add_notebook_data.py '<json_data>'
-```
-
-**Finalize and validate:**
-```bash
-python3 finalize_scrape.py       # Update notebook IDs, validate JSON, print summary
-```
-
-**Transcribe audio files:**
-```bash
-python3 transcribe_notebooklm.py --test-one              # Test with single file first
-python3 transcribe_notebooklm.py notebooklm-audio/       # Transcribe all audio
-```
-
-### Data Files
-- `notebooks.json` - Notebook metadata (title, description, tags, source count)
-- `sources.json` - Source documents for each notebook
-- `assets.json` - Generated assets (audio overviews)
-- `progress.log` - Scraping progress log
-
-### Architecture
-Scripts share common patterns:
-- `SCRAPE_DIR` constant points to the project directory
-- `load_json()`/`save_json()` for data persistence
-- `log_progress()` appends timestamped entries to progress.log
-- Deduplication via `(notebook_id, source_title)` or `(notebook_id, asset_title)` tuples
-
-Workflow: Browser scraping (manual via Claude-in-Chrome) → DOM data → Python processing → JSON files
-
-### Cost Warning
-Transcription uses OpenAI's `gpt-4o-transcribe` model (~$2.50/hour of audio). Always test with `--test-one` first.
+---
+When I report a bug, don't start by trying to fix it. Instead, start by writing a test that reproduces the bug. Then, have subagents try to fix the bug and prove it with a passing test.

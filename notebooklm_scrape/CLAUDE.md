@@ -3,6 +3,149 @@
 ## Overview
 Automated system for scraping NotebookLM audio overviews, transcribing them, generating study materials (summaries + quizzes), and serving them via a web app.
 
+---
+
+## CRITICAL: Summary Format Requirements
+
+**Summaries must be ARTICLE-STYLE, not meta descriptions.**
+
+### What NOT to do (meta style):
+```
+❌ "The podcast explores the transition from ornate to austere art styles..."
+❌ "In this episode, the hosts discuss..."
+❌ "The deep dive examines..."
+```
+
+### What TO do (article style):
+```
+✅ Write as if teaching the reader directly
+✅ Present the actual content and insights
+✅ Use "you" to address the reader
+✅ Include specific examples, dates, names from the transcript
+```
+
+### Required Summary Structure:
+
+```markdown
+# [Topic Title]
+
+## Overview
+[2-3 sentences introducing what you'll learn - NOT what "the podcast covers"]
+
+## [Major Theme 1]
+[Teach the actual content. Include specific examples, quotes, data points]
+
+## [Major Theme 2]
+[Continue teaching. Be specific and substantive]
+
+## Key Insights
+- [Specific insight with supporting detail]
+- [Another insight]
+
+## Connections & Context
+[How this relates to other topics, historical context, modern relevance]
+
+## Learn More
+- [Link 1: Title](url) - Brief description
+- [Link 2: Title](url) - Brief description
+
+---
+
+<!-- Claude Reference (for AI continuity) -->
+```json
+{
+  "topics_covered": ["topic1", "topic2"],
+  "key_concepts": {"concept": "definition"},
+  "connections_to_other_notebooks": ["notebook_title"],
+  "suggested_follow_ups": ["topics for deeper exploration"],
+  "gaps_not_covered": ["what this audio didn't address"]
+}
+```
+```
+
+---
+
+## CRITICAL: Audio Generation Strategy
+
+### Goal: Comprehensive, Non-Redundant Coverage
+
+NotebookLM notebooks often have 50-100 sources. A single 20-minute audio can't cover everything. The strategy is to generate MULTIPLE audio files, each focusing on DIFFERENT aspects.
+
+### NotebookLM Limitations (Research-Based)
+- **Maximum length: ~20 minutes** with "Longer" setting
+- ~10 minutes with "Default"
+- ~5 minutes with "Shorter"
+- **60-minute deep dives are NOT possible** in a single generation
+
+### How to Get Comprehensive Coverage
+
+1. **Analyze existing transcripts first** - Before generating new audio, read ALL existing transcripts for that notebook to understand what's already covered
+
+2. **Generate prompts for uncovered areas** - Use specific, positive instructions (NOT negative like "don't cover X")
+
+3. **Use the Customize feature** with specific focus areas:
+   - "Focus ONLY on [specific subtopic]"
+   - "Target expertise level: expert/advanced"
+   - "Cover the following specific aspects: [list]"
+
+### Before Generating New Audio
+
+Run this analysis workflow:
+
+```
+1. Read all transcripts for the notebook
+2. Create a coverage map:
+   - Topics thoroughly covered
+   - Topics mentioned briefly
+   - Topics NOT covered at all
+3. Check sources.json - what sources exist that weren't discussed?
+4. Generate a prompt targeting UNCOVERED areas
+```
+
+### Effective Prompt Templates
+
+**For deeper exploration of a subtopic:**
+```
+Focus exclusively on [specific topic].
+Assume the listener already knows the basics from previous episodes.
+Go deep into: [specific aspects]
+Include: specific examples, case studies, counterarguments
+Expertise level: Advanced
+```
+
+**For different perspective:**
+```
+Approach this topic from [specific angle/discipline].
+Focus on: [specific questions]
+Don't repeat general overviews - get into the nuances.
+```
+
+**For connecting themes:**
+```
+Explore the connections between [topic A] and [topic B].
+Focus on: how they influenced each other, shared patterns, contrasts
+Assume familiarity with both topics.
+```
+
+### Best Practices from Research
+
+1. **Consolidate sources before generating:**
+   - Generate Study Guide, FAQ, Timeline notes
+   - Click "Convert all notes to source"
+   - This creates a focused summary the AI uses
+
+2. **Set expertise level:** Use "Expert" for more depth, less basics
+
+3. **Use follow-up prompts:** After initial generation, use interactive mode to dig deeper
+
+4. **Multiple passes:** Generate several shorter focused audios rather than one long general one
+
+Sources:
+- https://support.google.com/notebooklm/answer/16212820
+- https://www.xda-developers.com/notebooklm-audio-overview-tips/
+
+---
+
 ## Architecture
 
 ```
@@ -11,7 +154,7 @@ User's NotebookLM Account
    Audio Downloads (.m4a)
          ↓ (OpenAI Whisper)
      Transcripts (.txt)
-         ↓ (GPT-4o-mini)
+         ↓ (GPT-4o-mini / Claude)
   Summaries + Quizzes
          ↓
       Supabase DB
@@ -29,10 +172,10 @@ User's NotebookLM Account
 | Table | Purpose |
 |-------|---------|
 | `notebooklm_notebooks` | Notebook metadata (27 notebooks) |
-| `notebooklm_assets` | Audio overviews, quizzes, flashcards (22 assets) |
-| `notebooklm_transcripts` | Full text transcripts (13 transcripts) |
-| `notebooklm_summaries` | AI summaries - standard + TLDR (26 records) |
-| `notebooklm_quizzes` | Quiz questions (13 quizzes, ~116 questions) |
+| `notebooklm_assets` | Audio overviews, quizzes, flashcards |
+| `notebooklm_transcripts` | Full text transcripts |
+| `notebooklm_summaries` | AI summaries - standard + TLDR |
+| `notebooklm_quizzes` | Quiz questions |
 
 ## Key Files
 
@@ -119,15 +262,15 @@ Stored in `/Users/z/Desktop/PersonalProjects/ClaudeProjects/.env`:
 
 When helping generate new NotebookLM audio overviews:
 
-1. **Always have a conversation first** before generating:
-   - Suggest variations for existing notebooks (different angles, topics not yet covered)
-   - Suggest new topics based on user's interests
-   - Confirm which notebooks the user wants to generate audio for
+1. **Analyze existing coverage first:**
+   - Read ALL transcripts for the notebook in `notebooklm-audio/`
+   - Review `assets.json` for existing audio assets
+   - Create a mental map of what's covered vs. gaps
 
-2. **Check existing audio** before generating:
-   - Review `assets.json` for existing audio assets per notebook
-   - Verify on NotebookLM UI which audio already exists
-   - Don't regenerate audio that already exists unless user wants a new angle
+2. **Propose non-redundant audio:**
+   - Identify topics NOT yet covered
+   - Suggest specific focus areas for new audio
+   - Confirm with user before generating
 
 3. **Daily quota**: User's tier allows ~3 audio/day - be mindful and confirm count
 
@@ -135,37 +278,24 @@ When helping generate new NotebookLM audio overviews:
 
 5. **Format options**: Deep dive (default), Brief, Critique, Debate - ask user preference
 
-## Study Materials Format Requirements
+## Transcript Analysis Workflow
 
-### Summary Format (for human reading)
-Summaries should NOT be meta ("The podcast discusses..."). Instead, write like an article that teaches the actual content:
+Before generating new audio for a notebook:
 
-- **Article-style prose**: Present the information as if teaching the reader directly
-- **Key concepts explained**: Don't just list that a topic was covered; explain what was taught
-- **Structured sections**: Use headers to organize by topic/theme
-- **Examples included**: Include specific examples, statistics, or case studies mentioned
-- **Relevant links**: Research and include 3-5 links to learn more about key topics
-- **Visual suggestions**: Note where images/diagrams would help (to be sourced later)
-
-### Claude Reference Format (for AI continuity)
-A separate machine-readable section to help future Claude sessions:
-
-```json
-{
-  "topics_covered": ["topic1", "topic2"],
-  "key_concepts": {
-    "concept_name": "brief definition or explanation"
-  },
-  "connections_to_other_notebooks": ["notebook_title"],
-  "suggested_follow_ups": ["topic that could be explored deeper"],
-  "questions_raised": ["open questions from this episode"]
-}
+```python
+# Pseudocode for coverage analysis
+1. List all transcripts for notebook (from notebooklm-audio/*.txt)
+2. For each transcript:
+   - Extract main topics discussed
+   - Note specific examples/case studies mentioned
+   - Identify depth level (overview vs deep dive)
+3. Compare against notebook sources (sources.json)
+4. Identify:
+   - Well-covered topics (skip these)
+   - Briefly mentioned topics (could go deeper)
+   - Uncovered source material (target these)
+5. Generate specific prompt for new audio
 ```
-
-This enables:
-- Avoiding repetition in future audio generation
-- Linking concepts across notebooks
-- Building on previously learned material
 
 ## GitHub Repository
 
