@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 # Telegram Bot Token - get from @BotFather
-TELEGRAM_BOT_TOKEN = os.environ.get("LIFE_BOT_TOKEN", "")
+TELEGRAM_BOT_TOKEN = os.environ.get("LIFE_BOT_TOKEN") or os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("LIFE_CHAT_ID", "355422856")  # Your Telegram ID
 
 # Supabase
