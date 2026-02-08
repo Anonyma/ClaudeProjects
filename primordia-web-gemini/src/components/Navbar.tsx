@@ -10,25 +10,30 @@ export function Navbar() {
       </Link>
 
       {/* Links */}
-      <div className="flex items-center gap-8">
-        <Link href="#" className="font-karla font-semibold text-23 leading-none hover:opacity-70 transition-opacity">
+      <div className="flex items-center">
+        <Link href="#" className="font-karla font-semibold text-23 leading-none hover:opacity-70 transition-opacity w-[126px] text-center">
           About
         </Link>
-        {/* Separators in design were complex absolute lines, simplifying to gap for clean React impl */}
-        <Link href="#" className="font-karla font-semibold text-23 leading-none hover:opacity-70 transition-opacity">
+        <div className="w-[61px] flex justify-center">
+             <img src="/images/line.png" alt="" className="h-[61px] w-[1px]" />
+        </div>
+        <Link href="#" className="font-karla font-semibold text-23 leading-none hover:opacity-70 transition-opacity w-[148px] text-center">
           How it Works
         </Link>
-        <Link href="#" className="font-karla font-semibold text-23 leading-none hover:opacity-70 transition-opacity">
+        <div className="w-[61px] flex justify-center">
+             <img src="/images/line.png" alt="" className="h-[61px] w-[1px]" />
+        </div>
+        <Link href="#" className="font-karla font-semibold text-23 leading-none hover:opacity-70 transition-opacity w-[109px] text-center">
           Lab Notes
         </Link>
       </div>
 
       {/* Actions */}
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" className="w-[172px]">
           For Donors
         </Button>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" className="w-[207px]">
           For Applicants
         </Button>
       </div>

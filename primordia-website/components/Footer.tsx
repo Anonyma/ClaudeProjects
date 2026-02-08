@@ -3,14 +3,13 @@ import Link from 'next/link';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="relative w-full h-[236px] bg-gray-light overflow-hidden">
-      {/* Background decorative shape */}
-      <div className="absolute inset-0 pointer-events-none opacity-30">
+    <footer className="relative w-full h-[236px] overflow-hidden">
+      {/* Background gradient image */}
+      <div className="absolute inset-0">
         <img
           src="http://localhost:3845/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
           alt=""
-          className="absolute h-[1023px] left-[1438px] top-[630px] w-[-1438px] object-cover"
-          style={{ transform: 'scale(-1, -1)' }}
+          className="w-full h-full object-cover opacity-70"
         />
       </div>
 

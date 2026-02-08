@@ -17,9 +17,12 @@ const montserrat = Montserrat({
   display: 'swap',
 });
 
-// Futura placeholder - uses system fallbacks (Impact, Arial Black)
-// To use actual Futura: add futura-bold.woff2 to public/fonts/
-const futuraVariable = '--font-futura';
+const futura = localFont({
+  src: '../public/fonts/futura-bold-webfont.woff2',
+  variable: '--font-futura',
+  display: 'swap',
+  weight: '700',
+});
 
 export const metadata: Metadata = {
   title: 'Primordia - Funding Early Biology Experiments in DIY Labs',
@@ -33,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${karla.variable} ${montserrat.variable}`} style={{ [futuraVariable]: 'Impact, "Arial Black", sans-serif' } as React.CSSProperties}>
+    <html lang="en" className={`${karla.variable} ${montserrat.variable} ${futura.variable}`}>
       <body className={karla.className}>{children}</body>
     </html>
   );

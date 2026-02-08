@@ -17,7 +17,7 @@ const config: Config = {
       fontFamily: {
         karla: ["var(--font-karla)", "sans-serif"],
         montserrat: ["var(--font-montserrat)", "sans-serif"],
-        futura: ["Futura", "Futura-Bold", "sans-serif"], // Fallback stack
+        futura: ["Futura", "Futura-Bold", "var(--font-league-spartan)", "sans-serif"], // Fallback stack
       },
       fontSize: {
         // Extracted exact sizes

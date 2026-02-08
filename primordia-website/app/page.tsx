@@ -132,8 +132,8 @@ export default function Home() {
       </section>
 
       {/* SECTION - HOW IT WORKS */}
-      <section className="relative w-full h-[906px] overflow-hidden">
-        <div className="absolute top-[-14px] left-1/2 -translate-x-1/2 w-[1396px] h-[951px]">
+      <section className="relative w-full h-[906px]">
+        <div className="absolute top-[-14px] left-1/2 -translate-x-1/2 w-[1440px] h-[951px]">
           {/* Title */}
           <h2 className="absolute top-[102px] left-1/2 -translate-x-1/2 font-montserrat font-bold text-[78px] leading-none text-black text-center">
             How it Works
@@ -145,7 +145,7 @@ export default function Home() {
           </p>
 
           {/* Steps */}
-          <div className="absolute left-[62px] top-[271px] flex gap-[60px]">
+          <div className="absolute left-1/2 -translate-x-1/2 top-[271px] flex gap-[60px] w-[1425px] justify-center">
             <StepCard
               number="1."
               title="APPLY WITH A CONCRETE EXPERIMENT"
@@ -179,7 +179,7 @@ export default function Home() {
           </div>
 
           {/* CTA Button */}
-          <div className="absolute left-[493px] top-[789px]">
+          <div className="absolute left-1/2 -translate-x-1/2 top-[789px]">
             <Button variant="primary" size="lg" href="#stories">
               View Funded Experiments
             </Button>
@@ -274,21 +274,21 @@ export default function Home() {
       <section className="relative w-full h-[617px]">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[540px]">
           {/* Background */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1254px] h-[469px] rounded-section opacity-80 overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1254px] h-[469px] rounded-section opacity-80">
             <img
               src="http://localhost:3845/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
               alt=""
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-section"
             />
           </div>
 
           {/* Title */}
-          <h2 className="absolute left-[175px] top-[69px] font-montserrat font-bold text-[32px] leading-[1.54] text-black">
+          <h2 className="absolute left-[175px] top-[69px] font-montserrat font-bold text-[32px] leading-[1.54] text-black z-10">
             FAQs
           </h2>
 
-          {/* FAQ Items */}
-          <div className="absolute left-[291px] top-[54px] w-[922px]">
+          {/* FAQ Items Container with overflow control */}
+          <div className="absolute left-[291px] top-[54px] w-[922px] max-h-[420px] overflow-y-auto z-10">
             <FAQAccordion items={faqData} />
           </div>
         </div>

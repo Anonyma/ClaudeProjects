@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Karla, Montserrat } from "next/font/google";
+import { Karla, Montserrat, League_Spartan } from "next/font/google";
 import "./globals.css";
 
 // Configure Google Fonts
@@ -17,9 +17,12 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-// We'll use a class-based approach for Futura since we don't have the local file yet.
-// For now, we define a variable that falls back to system fonts, 
-// ensuring the customized Tailwind config picks it up.
+const leagueSpartan = League_Spartan({
+  subsets: ["latin"],
+  weight: ["700"],
+  variable: "--font-league-spartan",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Primordia",
@@ -34,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${karla.variable} ${montserrat.variable} font-sans antialiased`}
+        className={`${karla.variable} ${montserrat.variable} ${leagueSpartan.variable} font-sans antialiased`}
       >
         {children}
       </body>
