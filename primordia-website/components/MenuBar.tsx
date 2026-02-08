@@ -23,14 +23,7 @@ const MenuBar: React.FC = () => {
           >
             About
           </Link>
-          <div className="w-px h-[61px] -rotate-90 opacity-0">
-            <Image
-              src="http://localhost:3845/assets/6e151bd92ad5e84b4d1076b969e8ea9697131126.svg"
-              alt=""
-              width={1}
-              height={61}
-            />
-          </div>
+          <div className="w-[1px] h-[30px] bg-black/30" />
 
           <Link
             href="#how-it-works"
@@ -38,14 +31,7 @@ const MenuBar: React.FC = () => {
           >
             How it Works
           </Link>
-          <div className="w-px h-[61px] -rotate-90 opacity-0">
-            <Image
-              src="http://localhost:3845/assets/6e151bd92ad5e84b4d1076b969e8ea9697131126.svg"
-              alt=""
-              width={1}
-              height={61}
-            />
-          </div>
+          <div className="w-[1px] h-[30px] bg-black/30" />
 
           <Link
             href="#lab-notes"

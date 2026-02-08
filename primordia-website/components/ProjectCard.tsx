@@ -18,23 +18,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 }) => {
   return (
     <div className="relative w-[499px] h-[499px] rounded-card overflow-hidden shadow-card">
-      {/* Card Background with Image */}
+      {/* Card Background with Gradient */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 overflow-hidden rounded-card">
-          <img
-            src={imageUrl}
-            alt=""
-            className="absolute w-[286.4%] h-[183.83%] object-cover"
-            style={{
-              left: '-169.64%',
-              top: '-57.98%',
-            }}
-          />
-        </div>
+        <img
+          src="http://localhost:3845/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
+          alt=""
+          className="w-full h-full object-cover opacity-80"
+        />
       </div>
 
-      {/* Header Section with Light Gray Background */}
-      <div className="absolute top-0 left-0 right-0 h-[217px] bg-card-light rounded-t-card" />
+      {/* Header Section with White Background */}
+      <div className="absolute top-0 left-0 right-0 h-[217px] bg-white rounded-t-card" />
 
       {/* Content */}
       <div className="relative px-[34px] pt-[249px]">

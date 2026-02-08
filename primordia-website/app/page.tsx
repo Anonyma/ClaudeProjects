@@ -67,14 +67,14 @@ export default function Home() {
           </h1>
 
           {/* Tagline */}
-          <p className="absolute right-0 top-[407px] font-karla font-medium text-[66px] leading-[1.13] tracking-[-4.62px] text-black text-right w-[730px]">
+          <p className="absolute right-[40px] top-[407px] font-karla font-medium text-[66px] leading-[1.13] tracking-[-4.62px] text-black text-right w-[730px]">
             Funding Early Biology Experiments in DIY Labs
           </p>
 
           {/* CTA Buttons */}
-          <div className="absolute left-[640px] top-[579px] flex gap-[26px]">
+          <div className="absolute left-[520px] top-[579px] flex gap-[26px]">
             <div className="relative">
-              <Button variant="secondary" size="md" href="/apply">
+              <Button variant="secondary" size="md" href="/apply" fixedWidth="266px">
                 Apply
               </Button>
               <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[266px]">
@@ -83,10 +83,10 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <Button variant="primary" size="md" href="/fund">
+              <Button variant="primary" size="md" href="/fund" fixedWidth="266px">
                 Fund Experiments
               </Button>
-              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[301px]">
+              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[266px]">
                 Support with as little as 1$/month
               </p>
             </div>
@@ -188,7 +188,7 @@ export default function Home() {
       </section>
 
       {/* SECTION - DEFINITION */}
-      <section className="relative w-full h-[480px]">
+      <section className="relative w-full h-[580px] mt-[80px]">
         {/* Background Shape */}
         <div className="absolute left-[94px] top-[20px] w-[1262px] h-[440px]">
           <img
@@ -260,10 +260,10 @@ export default function Home() {
 
           {/* CTA Buttons */}
           <div className="absolute bottom-0 left-[259px] flex gap-[23px]">
-            <Button variant="secondary" size="md" href="/apply">
+            <Button variant="secondary" size="md" href="/apply" fixedWidth="190px">
               Apply
             </Button>
-            <Button variant="primary" size="md" href="/fund">
+            <Button variant="primary" size="md" href="/fund" fixedWidth="305px">
               Become a Supporter
             </Button>
           </div>
@@ -271,10 +271,10 @@ export default function Home() {
       </section>
 
       {/* SECTION - FAQs */}
-      <section className="relative w-full h-[617px]">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[540px]">
+      <section className="relative w-full h-[800px]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[750px]">
           {/* Background */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1254px] h-[469px] rounded-section opacity-80">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1254px] h-[680px] rounded-section opacity-80">
             <img
               src="http://localhost:3845/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
               alt=""
@@ -287,8 +287,8 @@ export default function Home() {
             FAQs
           </h2>
 
-          {/* FAQ Items Container with overflow control */}
-          <div className="absolute left-[291px] top-[54px] w-[922px] max-h-[420px] overflow-y-auto z-10">
+          {/* FAQ Items Container */}
+          <div className="absolute left-[291px] top-[54px] w-[922px] z-10">
             <FAQAccordion items={faqData} />
           </div>
         </div>

@@ -29,19 +29,19 @@ const StepCard: React.FC<StepCardProps> = ({
   }
 
   return (
-    <div className="relative w-[237px]">
+    <div className="relative w-[237px] flex flex-col">
       {/* Number */}
-      <p className="font-montserrat font-bold text-[42px] leading-none text-black mb-[28px]">
+      <p className="font-montserrat font-bold text-[42px] leading-none text-black mb-[10px]">
         {number}
       </p>
 
       {/* Title */}
-      <h3 className="font-montserrat font-bold text-[22px] leading-[1.24] text-black mb-[24px] max-w-[188px]">
+      <h3 className="font-montserrat font-bold text-[22px] leading-[1.24] text-black mb-[20px] min-h-[55px]">
         {title}
       </h3>
 
       {/* Card Background */}
-      <div className="relative w-full h-[345px] rounded-card overflow-hidden mb-[28px]">
+      <div className="relative w-full h-[290px] rounded-card overflow-hidden mb-[20px]">
         <div className="absolute inset-0 opacity-70">
           <img
             src="http://localhost:3845/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
@@ -51,17 +51,17 @@ const StepCard: React.FC<StepCardProps> = ({
         </div>
 
         {/* Icon */}
-        <div className="absolute bottom-[16px] left-1/2 -translate-x-1/2">
+        <div className="absolute bottom-[20px] left-1/2 -translate-x-1/2">
           <img
             src={iconUrl}
             alt=""
-            className="w-auto max-h-[128px] drop-shadow-step"
+            className="w-auto h-[110px] object-contain drop-shadow-step"
           />
         </div>
       </div>
 
       {/* Description */}
-      <p className="font-karla font-normal text-[18px] leading-[1.22] text-black max-w-[200px]">
+      <p className="font-karla font-normal text-[18px] leading-[1.22] text-black">
         {description}
       </p>
     </div>
