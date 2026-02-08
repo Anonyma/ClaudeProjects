@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibecode Resource Hub</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3a;
+    --text: #e0e0e8;
+    --text-dim: #8888a0;
+    --accent: #7c5cfc;
+    --accent2: #5c9cfc;
+    --green: #4cdb8a;
+    --orange: #fc9c5c;
+    --pink: #fc5c8c;
+    --yellow: #fcd45c;
+    --cyan: #5cdcdc;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Layout */
+  .app { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .main { flex:1; padding: 32px 40px; max-width: 1100px; }
+
+  /* Sidebar */
+  .logo { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .logo span { color: var(--accent); }
+  .tagline { font-size: 12px; color: var(--text-dim); margin-bottom: 24px; }
+  .sidebar h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin: 20px 0 8px; }
+  .filter-btn {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 8px 12px; border: none; border-radius: 8px;
+    background: transparent; color: var(--text); font-size: 13px;
+    cursor: pointer; text-align: left; transition: all .15s;
+  }
+  .filter-btn:hover { background: var(--surface2); }
+  .filter-btn.active { background: var(--accent); color: #fff; font-weight: 600; }
+  .filter-btn .count {
+    margin-left: auto; font-size: 11px; background: var(--surface2);
+    padding: 2px 7px; border-radius: 10px; color: var(--text-dim);
+  }
+  .filter-btn.active .count { background: rgba(255,255,255,.2); color: #fff; }
+  .filter-btn .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Audience toggle */
+  .audience-toggle { display: flex; gap: 4px; margin-bottom: 16px; }
+  .aud-btn {
+    flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px;
+    background: transparent; color: var(--text-dim); font-size: 11px;
+    cursor: pointer; text-align: center; transition: all .15s;
+  }
+  .aud-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .aud-btn:hover:not(.active) { border-color: var(--accent); }
+
+  /* Search */
+  .search-box {
+    width: 100%; padding: 10px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); font-size: 14px; outline: none; margin-bottom: 16px;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--text-dim); }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .stat {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 20px; flex: 1; min-width: 140px;
+  }
+  .stat-num { font-size: 28px; font-weight: 700; }
+  .stat-label { font-size: 12px; color: var(--text-dim); }
+
+  /* Section headers */
+  .section-header {
+    font-size: 16px; font-weight: 600; margin: 28px 0 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
+  }
+  .section-header .badge {
+    font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 10px; transition: all .15s;
+    cursor: pointer; position: relative;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .card-title { font-size: 14px; font-weight: 600; flex: 1; }
+  .card-author { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+  .card-desc { font-size: 13px; color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
+  .card-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px; padding: 3px 8px; border-radius: 6px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
+  }
+  .tag-cat { background: rgba(124,92,252,.15); color: var(--accent); }
+  .tag-audience { border: 1px solid var(--border); color: var(--text-dim); }
+  .tag-value-high { background: rgba(76,219,138,.15); color: var(--green); }
+  .tag-value-med { background: rgba(252,212,92,.12); color: var(--yellow); }
+  .tag-agent { background: rgba(92,220,220,.15); color: var(--cyan); }
+  .tag-human { background: rgba(252,92,140,.15); color: var(--pink); }
+  .tag-both { background: rgba(252,156,92,.15); color: var(--orange); }
+
+  /* Learning path */
+  .path-container {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 24px; margin-bottom: 24px;
+  }
+  .path-step {
+    display: flex; gap: 16px; padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .path-step:last-child { border-bottom: none; }
+  .path-num {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--accent);
+    color: #fff; font-weight: 700; font-size: 14px; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .path-content { flex: 1; }
+  .path-title { font-weight: 600; font-size: 14px; }
+  .path-desc { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+  .path-links { margin-top: 6px; }
+  .path-links a { font-size: 12px; margin-right: 12px; }
+
+  /* Tab nav */
+  .tab-nav { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab-btn {
+    padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px;
+    background: transparent; color: var(--text-dim); font-size: 13px;
+    cursor: pointer; transition: all .15s; font-weight: 500;
+  }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tab-btn:hover:not(.active) { border-color: var(--accent); color: var(--text); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .app { flex-direction: column; }
+    .sidebar { width: 100%; min-width: auto; height: auto; position: static; }
+    .main { padding: 20px; }
+  }
+
+  .hidden { display: none !important; }
+
+  /* Duplicates badge */
+  .dupe-group {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 8px;
+  }
+  .dupe-group-title { font-size: 12px; color: var(--orange); font-weight: 600; margin-bottom: 6px; }
+  .dupe-item { font-size: 12px; color: var(--text-dim); padding: 2px 0; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+  .empty-state p { font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Vibe<span>code</span> Hub</div>
+    <div class="tagline">157 resources, organized &amp; deduplicated</div>
+
+    <input class="search-box" type="text" placeholder="Search resources..." id="searchBox">
+
+    <h3>Audience</h3>
+    <div class="audience-toggle">
+      <button class="aud-btn active" data-aud="all">All</button>
+      <button class="aud-btn" data-aud="human">For Me</button>
+      <button class="aud-btn" data-aud="agent">For Agents</button>
+    </div>
+
+    <h3>Categories</h3>
+    <div id="categoryFilters"></div>
+
+    <h3>Value</h3>
+    <div id="valueFilters">
+      <button class="filter-btn" data-value="all"><span class="dot" style="background:var(--text-dim)"></span>All</button>
+      <button class="filter-btn" data-value="high"><span class="dot" style="background:var(--green)"></span>High Value</button>
+      <button class="filter-btn" data-value="medium"><span class="dot" style="background:var(--yellow)"></span>Medium</button>
+      <button class="filter-btn" data-value="low"><span class="dot" style="background:var(--text-dim)"></span>Low / Skip</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn" data-tab="learning-path">Learning Path</button>
+      <button class="tab-btn" data-tab="agent-tasks">Agent Tasks</button>
+      <button class="tab-btn" data-tab="duplicates">Duplicates</button>
+      <button class="tab-btn" data-tab="all">All Resources</button>
+    </div>
+
+    <!-- Dashboard Tab -->
+    <div id="tab-dashboard" class="tab-content">
+      <div class="stats-bar" id="statsBar"></div>
+      <div id="dashboardContent"></div>
+    </div>
+
+    <!-- Learning Path Tab -->
+    <div id="tab-learning-path" class="tab-content hidden">
+      <h2 style="margin-bottom:8px">Recommended Learning Path</h2>
+      <p style="color:var(--text-dim);font-size:13px;margin-bottom:20px">
+        These are the resources YOU should go through, in order. Duplicates removed, prioritized by value.
+      </p>
+      <div class="path-container" id="learningPath"></div>
+    </div>
+
+    <!-- Agent Tasks Tab -->
+    <div id="tab-agent-tasks" class="tab-content hidden">
+      <h2 style="margin-bottom:8px">Agent-Implementable Resources</h2>
+      <p style="color:var(--text-dim);font-size:13px;margin-bottom:20px">
+        These are things your AI agents can read and implement directly. Copy the task description to send to an agent.
+      </p>
+      <div id="agentTasks"></div>
+    </div>
+
+    <!-- Duplicates Tab -->
+    <div id="tab-duplicates" class="tab-content hidden">
+      <h2 style="margin-bottom:8px">Duplicate / Overlapping Content</h2>
+      <p style="color:var(--text-dim);font-size:13px;margin-bottom:20px">
+        These resources cover similar ground. Read the recommended one and skip the rest.
+      </p>
+      <div id="duplicatesList"></div>
+    </div>
+
+    <!-- All Resources Tab -->
+    <div id="tab-all" class="tab-content hidden">
+      <div id="allResourcesList"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ============================================================
+// RESOURCE DATA - All 157 links categorized and organized
+// ============================================================
+const CATEGORIES = {
+  'claude-code': { label: 'Claude Code', color: '#7c5cfc', icon: '/' },
+  'clawdbot-openclaw': { label: 'Clawdbot/OpenClaw', color: '#5cdcdc', icon: '/' },
+  'skills-plugins': { label: 'Skills & Plugins', color: '#fc9c5c', icon: '/' },
+  'prompting': { label: 'Prompting', color: '#fcd45c', icon: '/' },
+  'ui-design': { label: 'UI & Design', color: '#fc5c8c', icon: '/' },
+  'agent-workflows': { label: 'Agent Workflows', color: '#4cdb8a', icon: '/' },
+  'tutorials-courses': { label: 'Tutorials & Courses', color: '#5c9cfc', icon: '/' },
+  'business-marketing': { label: 'Business & Marketing', color: '#fc6c6c', icon: '/' },
+  'content-creation': { label: 'Content Creation', color: '#b88cfc', icon: '/' },
+  'security': { label: 'Security', color: '#fc5c5c', icon: '/' },
+  'tools-integrations': { label: 'Tools & Integrations', color: '#6cd4a0', icon: '/' },
+  'notebooklm': { label: 'NotebookLM', color: '#fcac5c', icon: '/' },
+};
+
+const resources = [
+  // === CLAUDE CODE GUIDES (foundational) ===
+  { id:3, title:"The Shorthand Guide to Everything Claude Code", author:"cogsec (@affaanmustafa)", url:"https://x.com/affaanmustafa/status/2012378465664745795", cat:"claude-code", audience:"human", value:"high", desc:"Compact reference for all Claude Code features and commands. Great quick-start." },
+  { id:6, title:"The Longform Guide to Everything Claude Code", author:"cogsec (@affaanmustafa)", url:"https://x.com/affaanmustafa/status/2014040193557471352", cat:"claude-code", audience:"human", value:"high", desc:"Deep-dive comprehensive guide to Claude Code. Read this after the shorthand version." },
+  { id:51, title:"Claude Code Missing Manual (Open Source Repo)", author:"@oliviscusAI", url:"https://x.com/oliviscusai/status/2019797755917439285", cat:"claude-code", audience:"both", value:"high", desc:"Repository of workflow strategies to stop Claude from hallucinating or burning tokens." },
+  { id:75, title:"Why You Suck at Vibe Coding (Comprehensive Fix Guide)", author:"@kloss_xyz", url:"https://x.com/kloss_xyz/status/2018097344345223455", cat:"claude-code", audience:"human", value:"high", desc:"Comprehensive guide addressing common vibe coding pitfalls and how to fix them." },
+  { id:81, title:"30-Min Masterclass: Claude Code from Idea to MVP", author:"@DBVolkov", url:"https://x.com/dbvolkov/status/2018692707955466282", cat:"claude-code", audience:"human", value:"high", desc:"Video masterclass taking you from idea to working MVP with Claude Code." },
+  { id:129, title:"30-Min Masterclass on Claude Code from Scratch", author:"@hayesdev_", url:"https://x.com/hayesdev_/status/2015799148361187448", cat:"claude-code", audience:"human", value:"medium", desc:"Another solid Claude Code intro masterclass. Good if you want a different perspective from #81." },
+  { id:29, title:"Shaping 0-1 with Claude Code", author:"@rjs", url:"https://x.com/rjs/status/2020184079350563263", cat:"claude-code", audience:"human", value:"high", desc:"How to take projects from zero to one using Claude Code. Strategic thinking about product development." },
+  { id:48, title:"Plan Mode: Diagrams & Workflow Visualization", author:"Garry Tan (@garrytan)", url:"https://x.com/garrytan/status/2020073518915031350", cat:"claude-code", audience:"human", value:"medium", desc:"Using plan mode to create diagrams of current state and visualize changes." },
+  { id:152, title:"Simulate Before/After with Temporary Files", author:"@0xDesigner", url:"https://x.com/0xdesigner/status/2014765529236386084", cat:"claude-code", audience:"agent", value:"high", desc:"Pattern: ask Claude to create temp files simulating before/after state for every plan. Agent can adopt this workflow." },
+  { id:12, title:"Visual Feedback Loop for Claude Code", author:"CJ Hess (@seejayhess)", url:"https://x.com/seejayhess/status/2014448070214197485", cat:"claude-code", audience:"both", value:"medium", desc:"How to build a visual feedback loop so Claude can see what it's building." },
+  { id:155, title:"Levelsio: 1000 Startup Ideas + Landing Pages Prompt", author:"@levelsio", url:"https://x.com/levelsio/status/2014760508834840932", cat:"claude-code", audience:"human", value:"low", desc:"Fun/inspirational: automated startup idea generation with Claude CLI." },
+  { id:156, title:"Feature Collaboration Prompt Pattern", author:"@rburton", url:"https://x.com/rburton/status/2014791522177180076", cat:"claude-code", audience:"human", value:"medium", desc:"A specific prompt pattern for collaborating on features with Claude Code." },
+  { id:116, title:"Making Playgrounds with Claude Code", author:"@trq212", url:"https://x.com/trq212/status/2017024445244924382", cat:"claude-code", audience:"human", value:"low", desc:"Creating interactive playgrounds using Claude Code." },
+  { id:121, title:"30x Improvement Guide", author:"@kloss_xyz", url:"https://x.com/kloss_xyz/status/2016384553472970995", cat:"claude-code", audience:"human", value:"medium", desc:"Follow-up to the 'why you suck at vibe coding' guide with specific improvement tactics." },
+
+  // === PROMPTING ===
+  { id:134, title:"Anthropic's 10-Step Prompting Process (Breakdown)", author:"Miles Deutscher", url:"https://x.com/milesdeutscher/status/2016587100687352207", cat:"prompting", audience:"human", value:"high", desc:"Breakdown of the exact 10-step process Anthropic designed for prompting Claude. Essential reading." },
+  { id:88, title:"Become an ELITE Prompt Engineer in 24 Hours", author:"Miles Deutscher", url:"https://x.com/milesdeutscher/status/2018512288190513626", cat:"prompting", audience:"human", value:"high", desc:"Prompt engineering fundamentals that save on token usage and improve output quality." },
+  { id:26, title:"Garry Tan's Testing & Refactoring Prompt", author:"Garry Tan (@garrytan)", url:"https://x.com/garrytan/status/2020072098635665909", cat:"prompting", audience:"agent", value:"high", desc:"Specific prompt to push Claude to check its work, test, think about perf and refactoring. Agent-implementable." },
+  { id:38, title:"Most Powerful Vibe Coding Prompt Ever", author:"Miles Deutscher", url:"https://x.com/milesdeutscher/status/2019591900802801988", cat:"prompting", audience:"both", value:"medium", desc:"A mega-prompt for shipping anything with Opus. Overlaps somewhat with #134 and #88." },
+  { id:49, title:"10 Claude Prompts That Revolutionized My Life", author:"Alex Prompter", url:"https://x.com/alex_prompter/status/2019718461723935026", cat:"prompting", audience:"human", value:"medium", desc:"Collection of 10 versatile Claude prompts for various use cases." },
+  { id:50, title:"Research Mega Prompt", author:"Alex Prompter", url:"https://x.com/alex_prompter/status/2019718473895776398", cat:"prompting", audience:"agent", value:"medium", desc:"Detailed research prompt template. Agent can incorporate this into its workflow." },
+  { id:78, title:"Prompt to Generate $10k-$100k App Ideas", author:"Ernesto Lopez", url:"https://x.com/ernestosoftware/status/2018392700022563015", cat:"prompting", audience:"human", value:"low", desc:"App idea generation prompt. More marketing than substance." },
+  { id:85, title:"Add This to Claude's Preferences", author:"Alex Prompter", url:"https://x.com/alex_prompter/status/2018774330943975830", cat:"prompting", audience:"agent", value:"medium", desc:"Specific preferences/instructions to add to Claude config. Agent can self-implement." },
+  { id:56, title:"Kill AI Patterns in Content Using Sub-Agents", author:"@EXM7777", url:"https://x.com/exm7777/status/2019833987162861648", cat:"prompting", audience:"agent", value:"high", desc:"Build a pattern-killer skill using sub-agents to eliminate AI-sounding content. Agent-implementable." },
+  { id:10, title:"Check Official Docs + Best Practices Tip", author:"Alex Hillman", url:"https://x.com/alexhillman/status/2014331597386813761", cat:"prompting", audience:"agent", value:"medium", desc:"Tip: always ask Claude to check its official documentation first. Agent can adopt this pattern." },
+
+  // === SKILLS & PLUGINS ===
+  { id:41, title:"Claude's 33-Page Guide to Building Skills", author:"@sakshamgupta392", url:"https://x.com/sakshamgupta392/status/2020081241618571363", cat:"skills-plugins", audience:"both", value:"high", desc:"Official/detailed guide from Claude on building skills. Essential for both learning and agent self-improvement." },
+  { id:70, title:"Claude Skills Explained: Beginner to Pro", author:"@Meer_AIIT", url:"https://x.com/i/status/2017984668205756551", cat:"skills-plugins", audience:"human", value:"high", desc:"Complete guide from beginner to pro on Claude skills. Good learning resource." },
+  { id:59, title:"Composio Awesome-Claude-Skills (100s of Workflows)", author:"@DataChaz", url:"https://x.com/datachaz/status/2019339118418055174", cat:"skills-plugins", audience:"agent", value:"high", desc:"Massive repo of ready-to-use Claude skills: PDF tools, changelog generators, and more. Agent should explore and install useful ones." },
+  { id:110, title:"700+ Community Skills for Moltbot", author:"@Param_eth", url:"https://x.com/param_eth/status/2016947220923502808", cat:"skills-plugins", audience:"agent", value:"high", desc:"Huge collection of community-built skills. Agent can browse and implement relevant ones." },
+  { id:2, title:"Three.js Skills for Claude Code (10 Skill Files)", author:"CloudAI-X", url:"https://x.com/cloudxdev/status/2013358306392449499", cat:"skills-plugins", audience:"agent", value:"medium", desc:"10 skill files giving Claude base-level Three.js knowledge for 3D web design." },
+  { id:94, title:"'Planning with Files' Skill (Best Single Skill)", author:"@anthonyriera", url:"https://x.com/i/status/2018221220160827828", cat:"skills-plugins", audience:"agent", value:"high", desc:"Rated as the best Claude Code skill. Nails every feature by using file-based planning. Agent should implement." },
+  { id:72, title:"Image Generator Skill for Claude Code", author:"@omarsar0", url:"https://x.com/i/status/2018698581042233509", cat:"skills-plugins", audience:"agent", value:"medium", desc:"Skill to improve image generation using coding agents. Agent can install." },
+  { id:112, title:"Promptify: Auto-Optimize Any Prompt (Skill)", author:"AI Edge", url:"https://x.com/aiedge_/status/2017009896924004468", cat:"skills-plugins", audience:"agent", value:"medium", desc:"Skill that automatically optimizes prompts. Agent can install from GitHub." },
+  { id:143, title:"/last30days Skill: Scan Reddit, X, Web", author:"@mvanhorn", url:"https://x.com/mvanhorn/status/2015551849710190697", cat:"skills-plugins", audience:"agent", value:"medium", desc:"Skill that scans last 30 days of Reddit, X, and web for any topic. Agent-installable." },
+  { id:73, title:"SkillStack: Marketplace for Claude Skills", author:"@useskillstack", url:"https://x.com/i/status/2018702654323785782", cat:"skills-plugins", audience:"both", value:"medium", desc:"Marketplace to buy high-quality, pre-vetted Claude Skills." },
+  { id:117, title:"Typefully Skill: AI Agents Manage Socials", author:"@linuz90", url:"https://x.com/linuz90/status/2016892436333941108", cat:"skills-plugins", audience:"agent", value:"medium", desc:"Skill allowing AI agents to manage social media via Typefully." },
+  { id:106, title:"Claude-Mem: Persistent Memory Plugin", author:"@dr_cintas", url:"https://x.com/dr_cintas/status/2017295582188995066", cat:"skills-plugins", audience:"agent", value:"medium", desc:"Free plugin for persistent memory across Claude sessions, up to 95% fewer tokens. Agent can install." },
+  { id:122, title:"Supermemory Plugin: Stateful Claude Code", author:"@DhravyaShah", url:"https://x.com/dhravyashah/status/2017039467912343638", cat:"skills-plugins", audience:"agent", value:"medium", desc:"Makes Claude Code stateful - learn in real-time, update knowledge. Agent can install." },
+  { id:109, title:"Compound Engineering Plugin (GitHub)", author:"EveryInc", url:"https://github.com/EveryInc/compound-engineering-plugin", cat:"skills-plugins", audience:"agent", value:"high", desc:"Official compound engineering plugin for Claude Code. Agent should review and implement." },
+  { id:108, title:"Compound Product System (GitHub)", author:"snarktank", url:"https://github.com/snarktank/compound-product", cat:"skills-plugins", audience:"agent", value:"high", desc:"Self-improving product system that reads reports, identifies priorities, and autonomously implements fixes." },
+  { id:30, title:"Claude Code Templates: Development Agent", author:"@dani_avila7", url:"https://x.com/dani_avila7/status/2019989288377561377", cat:"skills-plugins", audience:"agent", value:"medium", desc:"npx claude-code-templates with development agent for analyzing repos." },
+
+  // === CLAWDBOT / OPENCLAW / MOLTBOT ===
+  { id:5, title:"How I'm Using Clawd.bot to Change How I Get Things Done", author:"Tom Osman", url:"https://x.com/tomosman/status/2013920874026377309", cat:"clawdbot-openclaw", audience:"human", value:"high", desc:"Practical walkthrough of Clawdbot workflows for productivity." },
+  { id:60, title:"Made OpenClaw 10x Better (Best Practices)", author:"Matthew Berman", url:"https://x.com/matthewberman/status/2019489426783773137", cat:"clawdbot-openclaw", audience:"human", value:"high", desc:"2 weeks of best practices for OpenClaw. Essential if you use it." },
+  { id:96, title:"Best Clawdbot Use Cases", author:"@andreaskellers", url:"https://x.com/andreaskellers/status/2017644091987972475", cat:"clawdbot-openclaw", audience:"human", value:"high", desc:"Curated collection of the best Clawdbot use cases." },
+  { id:99, title:"Clawdbot/Moltbot FULL COURSE 3 HOURS", author:"Julian Goldie SEO", url:"https://x.com/juliangoldieseo/status/2017480694449246233", cat:"clawdbot-openclaw", audience:"human", value:"high", desc:"Comprehensive 3-hour course on Clawdbot/Moltbot. The definitive tutorial." },
+  { id:131, title:"35-Min Clearest Clawdbot/Moltbot Getting Started Guide", author:"Greg Isenberg", url:"https://x.com/gregisenberg/status/2016245123810541756", cat:"clawdbot-openclaw", audience:"human", value:"high", desc:"The clearest explanation for getting started with Clawdbot. Watch this FIRST before the 3hr course." },
+  { id:128, title:"Molt (Clawd) Setup Tutorial", author:"Peter Yang", url:"https://x.com/petergyang/status/2016519165822312619", cat:"clawdbot-openclaw", audience:"human", value:"medium", desc:"Setup tutorial for Molt/Clawd. Overlaps with #131 but different angle." },
+  { id:65, title:"Building Apps with Moltbot + AntiGravity", author:"Julian Goldie SEO", url:"https://x.com/juliangoldieseo/status/2018799118601334852", cat:"clawdbot-openclaw", audience:"human", value:"medium", desc:"Workflow: Message Moltbot > Opens AntiGravity > Agent plans > Code ships." },
+  { id:80, title:"Moltbot + Kimi K2.5: AI as a Worker", author:"Julian Goldie SEO", url:"https://x.com/juliangoldieseo/status/2018701596549345308", cat:"clawdbot-openclaw", audience:"human", value:"medium", desc:"Using Moltbot with Kimi K2.5 for autonomous work. Overlaps with #65." },
+  { id:125, title:"Clawdbot Is Mostly Hype. Unless You Do This", author:"@damianplayer", url:"https://x.com/damianplayer/status/2016498730799714639", cat:"clawdbot-openclaw", audience:"human", value:"medium", desc:"Realistic take on Clawdbot with specific advice to make it actually useful." },
+  { id:126, title:"2-Hour Interview with Peter Steinberger (Clawd Creator)", author:"@Hesamation", url:"https://x.com/hesamation/status/2016712942545240203", cat:"clawdbot-openclaw", audience:"human", value:"high", desc:"Deep interview with the creator of Clawd. Understanding the vision and advanced techniques." },
+  { id:86, title:"What Lives Inside OpenClaw?", author:"@Andrey__HQ", url:"https://x.com/andrey__hq/status/2018767494178349484", cat:"clawdbot-openclaw", audience:"human", value:"medium", desc:"Technical breakdown of OpenClaw internals." },
+  { id:89, title:"OpenClaw: Not a Toy (How to Hire Engineers)", author:"Ryan Carson", url:"https://x.com/i/status/2018343411087016048", cat:"clawdbot-openclaw", audience:"human", value:"medium", desc:"Perspective on using OpenClaw as a serious engineering tool." },
+  { id:127, title:"Make Agent Learn & Ship While You Sleep", author:"Ryan Carson", url:"https://x.com/ryancarson/status/2016520542723924279", cat:"clawdbot-openclaw", audience:"both", value:"medium", desc:"Setting up agents to work autonomously overnight." },
+  { id:84, title:"Ultra Simple One-Click Deploy OpenClaw", author:"@saviomartin7", url:"https://x.com/saviomartin7/status/2018437642820731148", cat:"clawdbot-openclaw", audience:"agent", value:"medium", desc:"Simple deployment for OpenClaw. Agent can follow setup." },
+  { id:123, title:"Cloudflare: Mac Mini Optional for Moltbot", author:"Aakash Gupta", url:"https://x.com/aakashgupta/status/2016962768986096020", cat:"clawdbot-openclaw", audience:"human", value:"medium", desc:"Cloudflare-based hosting makes Mac Mini unnecessary for Moltbot." },
+  { id:77, title:"OpenClaw with Kimi K2.5 (256k Context)", author:"@adeoressi", url:"https://x.com/i/status/2018755662105473179", cat:"clawdbot-openclaw", audience:"agent", value:"medium", desc:"Setup guide for OpenClaw with large-context model. Agent can implement." },
+  { id:107, title:"Openclaw Starter Pack: Tools, Plugins & Resources", author:"AI Edge", url:"https://x.com/aiedge_/status/2017269741564604659", cat:"clawdbot-openclaw", audience:"both", value:"high", desc:"Comprehensive starter pack for OpenClaw with curated tools and plugins." },
+  { id:23, title:"Clawdbot Local Model + Home Network Guide", author:"@0xSero", url:"https://x.com/0xSero/status/2020114769127059809", cat:"clawdbot-openclaw", audience:"both", value:"high", desc:"Guide for running Clawdbot with local models on home network. Many use cases shown." },
+  { id:97, title:"ClawChat: Cross-Platform Voice Chat with OpenClaw", author:"Nate Eliason", url:"https://x.com/nateliason/status/2018026262300615102", cat:"clawdbot-openclaw", audience:"human", value:"medium", desc:"Building voice chat interface for OpenClaw." },
+  { id:100, title:"Clawdbot Browses X Feed & Self-Improves", author:"@RohunJauhar", url:"https://x.com/rohunjauhar/status/2017659862319034821", cat:"clawdbot-openclaw", audience:"agent", value:"high", desc:"Setup where Clawdbot reads X feed daily and improves itself. Agent can replicate this pattern." },
+  { id:111, title:"OpenClaw Cron Jobs for Curated Info Delivery", author:"@dabit3", url:"https://x.com/dabit3/status/2016902311939801453", cat:"clawdbot-openclaw", audience:"agent", value:"medium", desc:"Creating cron jobs in OpenClaw for daily curated information delivery." },
+  { id:113, title:"Secure ClawdBot with 1000+ Apps (Composio)", author:"@KaranVaidya6", url:"https://x.com/karanvaidya6/status/2016919370036105323", cat:"clawdbot-openclaw", audience:"agent", value:"medium", desc:"Merged Claude Code + Composio for secure ClawdBot with 1000+ app integrations." },
+  { id:132, title:"Clawdbot Token Consumption -96% with QDM", author:"@andrarchy", url:"https://x.com/andrarchy/status/2016254068155465796", cat:"clawdbot-openclaw", audience:"agent", value:"high", desc:"Massive token savings using QDM for fast, private indexing. Agent should investigate." },
+  { id:139, title:"How Clawdbot Remembers Everything", author:"@manthanguptaa", url:"https://x.com/manthanguptaa/status/2015780646770323543", cat:"clawdbot-openclaw", audience:"both", value:"medium", desc:"Technical explanation of Clawdbot memory systems." },
+  { id:157, title:"What Skills Should I Try? (Community Suggestions)", author:"@localghost", url:"https://x.com/localghost/status/2014492281261412619", cat:"clawdbot-openclaw", audience:"human", value:"low", desc:"Community discussion of recommended Clawdbot skills." },
+  { id:27, title:"Let OpenClaw Call You via ElevenAgents", author:"ElevenLabs Devs", url:"https://x.com/ElevenLabsDevs/status/2019729311901638663", cat:"clawdbot-openclaw", audience:"agent", value:"medium", desc:"Phone call integration for OpenClaw using ElevenLabs. Agent can implement." },
+  { id:71, title:"Call Your OpenClaw Over the Phone (ElevenLabs)", author:"ElevenLabs Devs", url:"https://x.com/i/status/2018798792485880209", cat:"clawdbot-openclaw", audience:"agent", value:"medium", desc:"Duplicate of #27 - same ElevenLabs phone integration." },
+  { id:32, title:"AI Company with OpenClaw + Vercel + Supabase", author:"@Voxyz_ai", url:"https://x.com/Voxyz_ai/status/2019914775061270747", cat:"clawdbot-openclaw", audience:"human", value:"medium", desc:"Case study: building autonomous AI company with OpenClaw stack." },
+
+  // === AGENT WORKFLOWS ===
+  { id:4, title:"Claude Code as Executive Assistant (CTO Workflow)", author:"Obie Fernandez", url:"https://x.com/obie/status/2013955736292704342", cat:"agent-workflows", audience:"human", value:"high", desc:"How a CTO uses Claude Code as an executive assistant. Inspiring workflow design." },
+  { id:40, title:"Complete Guide to Managing OpenClaw Agent Teams", author:"@KSimback", url:"https://x.com/KSimback/status/2019804584273657884", cat:"agent-workflows", audience:"human", value:"high", desc:"Comprehensive guide to managing multiple agents as a team." },
+  { id:103, title:"Mission Control: Squad of 10 Autonomous Agents", author:"@pbteja1998", url:"https://x.com/i/status/2017495026230775832", cat:"agent-workflows", audience:"both", value:"high", desc:"10 autonomous OpenClaw agents led by Jarvis. They create work on their own. Blueprint for agent swarms." },
+  { id:64, title:"Build AI Agent That Never Goes Crazy", author:"@Av1dlive", url:"https://x.com/av1dlive/status/2019104781172896103", cat:"agent-workflows", audience:"both", value:"high", desc:"Strategies for building reliable, non-hallucinating AI agents. Critical for agent stability." },
+  { id:120, title:"Deploy Parallel Sub-Agents with Cheaper Models", author:"@dansemperepico", url:"https://x.com/dansemperepico/status/2017151700768026837", cat:"agent-workflows", audience:"both", value:"high", desc:"How to use cheaper models for simple sub-tasks to avoid going bankrupt on API costs." },
+  { id:35, title:"Discord as OpenClaw Agent Swarm Hub", author:"@jumperz", url:"https://x.com/jumperz/status/2020098724966343076", cat:"agent-workflows", audience:"human", value:"medium", desc:"Using Discord as the coordination layer for agent swarms." },
+  { id:11, title:"Clawdbot Daily Health Report Automation", author:"@visionik", url:"https://x.com/visionik/status/2014597305622577655", cat:"agent-workflows", audience:"agent", value:"medium", desc:"Automated daily health/sleep report via Clawdbot. Agent can replicate." },
+  { id:118, title:"AI Agent Era: 24/7 Workers for Everything", author:"John Rush", url:"https://x.com/johnrushx/status/2016903205972746645", cat:"agent-workflows", audience:"human", value:"low", desc:"Overview of AI agents doing sales, ads, SEO, legal, accounting. More inspirational than tactical." },
+  { id:119, title:"Give Claude Code Access to Any Online Data", author:"@svpino", url:"https://x.com/svpino/status/2016906799790923971", cat:"agent-workflows", audience:"agent", value:"medium", desc:"Methods to give Claude Code access to any online data source. Agent-implementable." },
+  { id:67, title:"Honcho: Agent Memory System (Beyond RAG)", author:"@thattallguy", url:"https://x.com/thattallguy/status/2018747894044696619", cat:"agent-workflows", audience:"both", value:"medium", desc:"Compelling agent-memory system beyond basic RAG. Worth investigating." },
+  { id:93, title:"QDM: Local Control Exceeding Cloud RAG", author:"@NotThatSimon1", url:"https://x.com/i/status/2018072583678079218", cat:"agent-workflows", audience:"agent", value:"medium", desc:"100% local control while exceeding cloud RAG performance." },
+  { id:105, title:"Get Any URL as Markdown (npx playbooks)", author:"@iannuttall", url:"https://x.com/iannuttall/status/2017237629008249128", cat:"agent-workflows", audience:"agent", value:"medium", desc:"Simple command to get any URL as markdown, even client-side rendered pages." },
+  { id:47, title:"Self-Improving Marketing Skills with Claude Code", author:"Ole Lehmann", url:"https://x.com/itsolelehmann/status/2020040113439285703", cat:"agent-workflows", audience:"agent", value:"medium", desc:"Using self-improving skills for marketing automation. Agent can implement similar patterns." },
+
+  // === SECURITY ===
+  { id:36, title:"SHIELD.md: Security Standard for OpenClaw/AI Agents", author:"@fr0gger_", url:"https://x.com/fr0gger_/status/2020025525784514671", cat:"security", audience:"agent", value:"high", desc:"Security standard document for AI agents. Agent MUST read and implement." },
+  { id:90, title:"Security-First OpenClaw on Raspberry Pi (Tailscale + Matrix)", author:"@VittoStack", url:"https://x.com/i/status/2018326274440073499", cat:"security", audience:"both", value:"high", desc:"48+ hours of research on secure OpenClaw setup: Pi via Tailscale, Matrix E2E chat." },
+  { id:91, title:"Clawbot Security: Safe VPS/Local Setup", author:"Julian Goldie SEO", url:"https://x.com/i/status/2018263127956365345", cat:"security", audience:"both", value:"high", desc:"Security misunderstandings about Clawbot and the safer setup approach." },
+  { id:148, title:"Build Secure Vibe-Coded Apps (Anti-Hacking Guide)", author:"@burakeregar", url:"https://x.com/burakeregar/status/2014696329549648137", cat:"security", audience:"human", value:"high", desc:"How to build vibe-coded apps that don't get hacked. Essential security practices." },
+  { id:145, title:"923 Clawdbot Gateways Exposed with Zero Auth", author:"@0xSammy", url:"https://x.com/0xSammy/status/2015562918151020593", cat:"security", audience:"human", value:"high", desc:"Security warning: hundreds of Clawdbot instances exposed. Read to avoid being one of them." },
+
+  // === UI & DESIGN ===
+  { id:42, title:"Make AI Apps Look Professional (Not AI Slop)", author:"@rexan_wong", url:"https://x.com/rexan_wong/status/2019875823713677538", cat:"ui-design", audience:"human", value:"high", desc:"How to make 90% AI-built apps look professional and sexy, not like AI slop." },
+  { id:7, title:"Figma Connect: Turn Figma Designs to Code", author:"Pietro Schirano", url:"https://x.com/skirano/status/2014403215031247152", cat:"ui-design", audience:"human", value:"high", desc:"Best way to turn Figma designs into code. Copy-paste approach, no MCP needed." },
+  { id:9, title:"Infinite Design Canvas for Claude Code", author:"Linus Ekenstam", url:"https://x.com/linusekenstam/status/2014307006824222954", cat:"ui-design", audience:"human", value:"medium", desc:"Infinite canvas design tool for Claude Code." },
+  { id:153, title:"Pencil: Infinite Design Canvas (WebGL)", author:"@tomkrcha", url:"https://x.com/tomkrcha/status/2014028990810300498", cat:"ui-design", audience:"human", value:"medium", desc:"Superfast WebGL canvas for Claude Code with parallel design agents. Similar to #9." },
+  { id:154, title:"Flowy: UI Graph for Claude Planning Phase", author:"@Hesamation", url:"https://x.com/hesamation/status/2014808467429638633", cat:"ui-design", audience:"human", value:"medium", desc:"Replaces Claude's ASCII charts with a customizable UI graph for planning." },
+  { id:124, title:"Variant UI: Endless Beautiful Designs from Ideas", author:"@bnj", url:"https://x.com/bnj/status/2016595100714095039", cat:"ui-design", audience:"human", value:"medium", desc:"Enter an idea, get endless beautiful UI designs as you scroll. Design exploration tool." },
+  { id:63, title:"Vibe Coder UI Style Explorer", author:"@sanyuan0704", url:"https://x.com/sanyuan0704/status/2019258745705099670", cat:"ui-design", audience:"human", value:"medium", desc:"Tool for exploring different UI styles and variations more easily." },
+  { id:66, title:"50 Design Prompts from ex-Warner Designer (Nano Banana Pro)", author:"@AmirMushich", url:"https://x.com/amirmushich/status/2019073081881293302", cat:"ui-design", audience:"agent", value:"medium", desc:"50 production design prompts. Agent can incorporate these into design workflow." },
+  { id:53, title:"Free Design Websites Collection", author:"@UiSavior", url:"https://x.com/uisavior/status/2019687116813345190", cat:"ui-design", audience:"human", value:"medium", desc:"Collection of free design resources: backgrounds, inspiration, fonts." },
+  { id:17, title:"ColorDesigner: Tints & Shades Generator", author:"@Abmankendrick", url:"https://x.com/Abmankendrick/status/2020067049960305130", cat:"ui-design", audience:"human", value:"low", desc:"Color palette builder tool. Useful but narrow." },
+  { id:61, title:"Shaders: The New Gradients", author:"@CharlesPattson", url:"https://x.com/charlespattson/status/2018651396472705254", cat:"ui-design", audience:"both", value:"medium", desc:"Using shaders instead of gradients for modern design. Agent can learn shader techniques." },
+  { id:62, title:"Animated Dither Graphics with Blue Noise", author:"@soulegit", url:"https://x.com/soulegit/status/2018782189870272703", cat:"ui-design", audience:"both", value:"low", desc:"Niche technique: blue noise dither under ASCII dither for motion effects." },
+  { id:43, title:"Animated Websites with Opus + Nano Banana + Google Flow", author:"@viktoroddy", url:"https://x.com/viktoroddy/status/2020129230760116644", cat:"ui-design", audience:"human", value:"medium", desc:"Creating animated websites combining Claude Opus with design tools." },
+  { id:21, title:"Halftone: From Newspaper Ink to Digital Shaders", author:"Pablo Stanley", url:"https://x.com/pablostanley/status/2020205624513163716", cat:"ui-design", audience:"human", value:"low", desc:"Design inspiration/technique article about halftone effects." },
+  { id:34, title:"Geist Pixel Font", author:"Evil Rabbit", url:"https://x.com/evilrabbit_/status/2019841222043648273", cat:"ui-design", audience:"both", value:"low", desc:"Pixel font by Vercel. Agent can incorporate into projects." },
+  { id:147, title:"Chrome Extension for Design Feedback", author:"Angela Liu", url:"https://x.com/_angelaliu/status/2013047907688026523", cat:"ui-design", audience:"human", value:"low", desc:"Browser extension for design feedback/iteration." },
+  { id:138, title:"Create Top-Tier Landing Pages with AI (1hr)", author:"@ericw_ai", url:"https://x.com/ericw_ai/status/2015655446321971239", cat:"ui-design", audience:"human", value:"medium", desc:"1-hour tutorial on creating high-quality landing pages with AI." },
+
+  // === TUTORIALS & COURSES ===
+  { id:95, title:"Claude FULL COURSE (Build & Automate Anything)", author:"@Rixhabh__", url:"https://x.com/rixhabh__/status/2017561922317758508", cat:"tutorials-courses", audience:"human", value:"high", desc:"Full Claude course covering building and automation. Comprehensive starting point." },
+  { id:54, title:"Masterclass on Claude AI (Julian Goldie)", author:"Julian Goldie SEO", url:"https://x.com/juliangoldieseo/status/2019665658657812796", cat:"tutorials-courses", audience:"human", value:"high", desc:"A masterclass on Claude AI. Highly recommended 'instead of Netflix' content." },
+  { id:74, title:"Full Lovable Workflow (10 Modules Course)", author:"Prajwal Tomar", url:"https://x.com/i/status/2018693497390498031", cat:"tutorials-courses", audience:"human", value:"medium", desc:"Full Lovable AI workflow course: planning, execution, deployment. 10 modules." },
+  { id:92, title:"Turn Ideas into Apps in Minutes", author:"@amelikendrick", url:"https://x.com/i/status/2017994111400493269", cat:"tutorials-courses", audience:"human", value:"low", desc:"Basic tutorial on rapid app building. Likely covered by other resources." },
+  { id:136, title:"Master AI in 30 Days (Exact Roadmap)", author:"@EXM7777", url:"https://x.com/exm7777/status/2016160442603995321", cat:"tutorials-courses", audience:"human", value:"high", desc:"30-day structured roadmap for mastering AI. Good for systematic learning." },
+  { id:87, title:"Best Way to Work with Claude Right Now", author:"@EXM7777", url:"https://x.com/EXM7777/status/2018745809056207266", cat:"tutorials-courses", audience:"human", value:"medium", desc:"Current best practices for starting new Claude projects. Workflow advice." },
+  { id:149, title:"Turn Claude Code into Claude Teacher (CLAUDE.md)", author:"Zara Zhang", url:"https://x.com/zarazhangrui/status/2015057205800980731", cat:"tutorials-courses", audience:"both", value:"high", desc:"Add a paragraph to CLAUDE.md to make every project a learning lesson. Agent-implementable AND you should learn the concept." },
+  { id:150, title:"Shipping Faster but Learning Slower (Warning)", author:"Aakash Gupta", url:"https://x.com/aakashgupta/status/2015143414258688314", cat:"tutorials-courses", audience:"human", value:"high", desc:"Warning: most engineers using Claude Code ship faster but learn slower. How to fix this." },
+  { id:55, title:"AI Agents Learn New Skills from Web (Real-Time)", author:"@ai_for_success", url:"https://x.com/ai_for_success/status/2019669383191359612", cat:"tutorials-courses", audience:"agent", value:"high", desc:"Method for AI agents to learn new skills from the web with up-to-date data. Agent self-improvement." },
+  { id:144, title:"LLMs for Learning CS Fundamentals (deep-ml)", author:"@yacinelearning", url:"https://x.com/yacinelearning/status/2015450096339497118", cat:"tutorials-courses", audience:"human", value:"medium", desc:"Using LLMs to learn fundamental CS topics. Educational paradigm." },
+  { id:39, title:"How to Stop Feeling Behind in AI", author:"@EXM7777", url:"https://x.com/EXM7777/status/2019787951530725396", cat:"tutorials-courses", audience:"human", value:"medium", desc:"Mindset guide for AI overwhelm. Relevant to your situation right now." },
+  { id:8, title:"Simon Willison's Blog (Referenced)", author:"@sidin", url:"https://x.com/sidin/status/2014397290069336147", cat:"tutorials-courses", audience:"human", value:"medium", desc:"Reference to Simon Willison's blog as essential reading for AI practitioners." },
+
+  // === NOTEBOOKLM ===
+  { id:18, title:"NotebookLM + Gemini + Claude Expert Workflow", author:"@hooeem", url:"https://x.com/hooeem/status/2020258841611346430", cat:"notebooklm", audience:"human", value:"high", desc:"Become an expert on any topic using NotebookLM + Gemini + Claude together." },
+  { id:82, title:"NotebookLM Expert Creation Workflow", author:"@hooeem", url:"https://x.com/hooeem/status/2018662549571457041", cat:"notebooklm", audience:"human", value:"medium", desc:"Turn AI into niche expert: YouTube > NotebookLM > Expert source. Overlaps with #18." },
+  { id:76, title:"NotebookLM FULL COURSE 4 HOURS", author:"Julian Goldie SEO", url:"https://x.com/i/status/2018661332531445967", cat:"notebooklm", audience:"human", value:"high", desc:"Comprehensive 4-hour NotebookLM course covering building and automation." },
+  { id:44, title:"NotebookLM + OpenClaw Execution Workflow", author:"Julian Goldie SEO", url:"https://x.com/JulianGoldieSEO/status/2020256261766332619", cat:"notebooklm", audience:"both", value:"medium", desc:"NotebookLM for research + OpenClaw for execution. Workflow combination." },
+
+  // === BUSINESS & MARKETING ===
+  { id:58, title:"Built 10 Apps in 10 Months, $800k/yr (Full Guide)", author:"Ernesto Lopez", url:"https://x.com/ernestosoftware/status/2014110519913857122", cat:"business-marketing", audience:"human", value:"high", desc:"Full guide on building and monetizing 10 apps. Strategic business thinking." },
+  { id:151, title:"Build a ChatGPT App Now (Distribution Economics)", author:"Aakash Gupta", url:"https://x.com/aakashgupta/status/2014845602463408620", cat:"business-marketing", audience:"human", value:"medium", desc:"Window of opportunity for ChatGPT app distribution. Time-sensitive business advice." },
+  { id:15, title:"Subreddits for Posting Your App/Startup", author:"Daniel Dhawan", url:"https://x.com/daniel_dhawan/status/2020047366368149993", cat:"business-marketing", audience:"human", value:"medium", desc:"List of high-traffic subreddits for launching apps and startups." },
+  { id:46, title:"Reddit Playbook: First 1000 Users Free", author:"Allan Guo", url:"https://x.com/_allanguo/status/2018889315812880797", cat:"business-marketing", audience:"human", value:"medium", desc:"Playbook for getting first 1000 users from Reddit. Practical distribution." },
+  { id:33, title:"App Format: $0 to $2000/month Distribution", author:"@maubaron", url:"https://x.com/maubaron/status/2020251301632671750", cat:"business-marketing", audience:"human", value:"medium", desc:"Specific format/approach that worked for app distribution from zero to $2k/mo." },
+  { id:52, title:"App Store & Play Store Checklist", author:"@Hartdrawss", url:"https://x.com/hartdrawss/status/2019705306687697371", cat:"business-marketing", audience:"human", value:"medium", desc:"Comprehensive checklist for App Store and Play Store submissions." },
+  { id:57, title:"Guide to 1000 App Installs This Month (TikTok/IG)", author:"@jackfriks", url:"https://x.com/jackfriks/status/2019795120233599266", cat:"business-marketing", audience:"human", value:"medium", desc:"Free guide for getting app installs via TikTok and Instagram content." },
+  { id:45, title:"$100K/Month Business Model", author:"@NoahEpstein_", url:"https://x.com/noahepstein_/status/2020158945516462472", cat:"business-marketing", audience:"human", value:"low", desc:"Business model overview. Likely clickbait-heavy." },
+  { id:37, title:"10 People Made $847K with AI Agents", author:"@ihtesham2005", url:"https://x.com/ihtesham2005/status/2020165638665441685", cat:"business-marketing", audience:"human", value:"low", desc:"Case studies of AI agent monetization. Inspirational but thin on details." },
+  { id:79, title:"Coin Identifier App ~$1M/month", author:"@justddev", url:"https://x.com/justddev/status/2018715153177444747", cat:"business-marketing", audience:"human", value:"low", desc:"App idea inspiration. Single prompt to build similar apps." },
+  { id:114, title:"Claude-Built Polymarket Trading Bot ($400k/mo)", author:"@frostikkkk", url:"https://x.com/frostikkkk/status/2016974897160081679", cat:"business-marketing", audience:"human", value:"low", desc:"Trading bot case study. Risky territory, not recommended to replicate." },
+  { id:115, title:"Claude Cowork for LinkedIn Outreach", author:"@pierreeliottlal", url:"https://x.com/pierreeliottlal/status/2016953116961165489", cat:"business-marketing", audience:"human", value:"low", desc:"Using Claude for LinkedIn outreach automation." },
+  { id:146, title:"Claude Cowork for SEO", author:"@bloggersarvesh", url:"https://x.com/bloggersarvesh/status/2015460262967705909", cat:"business-marketing", audience:"human", value:"medium", desc:"Using Claude Cowork as 24/7 AI SEO assistant." },
+  { id:13, title:"Cloned $80M/yr App to App Store in 47 Minutes", author:"@Parul_Gautam7", url:"https://x.com/Parul_Gautam7/status/2020075977142042980", cat:"business-marketing", audience:"human", value:"low", desc:"Speed-building demo. Interesting but not deeply educational." },
+  { id:14, title:"Conductor App: Best for Vibe Coding on Mac", author:"@robjama", url:"https://x.com/robjama/status/2019871548220609009", cat:"tools-integrations", audience:"human", value:"medium", desc:"Conductor app recommendation for vibe coding on Mac." },
+
+  // === CONTENT CREATION ===
+  { id:1, title:"Remotion: Video Creation with One Prompt", author:"CloudAI-X", url:"https://x.com/cloudxdev/status/2013778504530248074", cat:"content-creation", audience:"human", value:"medium", desc:"Video creation with Remotion using a single prompt." },
+  { id:141, title:"Create Viral Animated Videos (Non-Technical)", author:"Ole Lehmann", url:"https://x.com/itsolelehmann/status/2014740993208188959", cat:"content-creation", audience:"human", value:"medium", desc:"How non-technical people can create viral animated videos with Claude Code." },
+  { id:28, title:"15 Claude 4.5 Prompts for Faceless YouTube", author:"@nrqa__", url:"https://x.com/nrqa__/status/2019769118866681858", cat:"content-creation", audience:"human", value:"low", desc:"Prompts for faceless YouTube content creation. Niche use case." },
+  { id:16, title:"Instagram + Claude = 30.1M Views in 10 Days", author:"@marryevan999", url:"https://x.com/marryevan999/status/2020173420202492147", cat:"content-creation", audience:"human", value:"low", desc:"Instagram automation claim. Take with grain of salt." },
+  { id:24, title:"Pinterest + Claude + Arcads: AI Influencer Farm", author:"Alex Nguyen", url:"https://x.com/alexcooldev/status/2019969120171880562", cat:"content-creation", audience:"human", value:"low", desc:"AI influencer farm setup. Ethically questionable territory." },
+  { id:68, title:"Massive AI Influencer Content at Scale", author:"Alex Nguyen", url:"https://x.com/alexcooldev/status/2018745979042951265", cat:"content-creation", audience:"human", value:"low", desc:"Duplicate angle of #24 - AI influencer content at scale." },
+  { id:102, title:"Create Realistic Longform AI Videos", author:"@Mho_23", url:"https://x.com/mho_23/status/2017345525305995532", cat:"content-creation", audience:"human", value:"medium", desc:"Full breakdown of realistic longform AI video creation." },
+  { id:133, title:"VidCloner: Clone Viral Videos with AI Avatar", author:"@SimonasDip", url:"https://x.com/SimonasDip/status/2016154328403218439", cat:"content-creation", audience:"human", value:"low", desc:"Tool for cloning viral videos. Ethically gray area." },
+  { id:101, title:"Clawdbot + MakeUGC: 550 Videos/Day", author:"@spwfeijen", url:"https://x.com/spwfeijen/status/2017561060144816416", cat:"content-creation", audience:"human", value:"low", desc:"Mass UGC video production. Scale over quality approach." },
+  { id:104, title:"Clawdbot + Kling: 550 Videos/Day", author:"Maverick Frydberg", url:"https://x.com/maverickecom/status/2017245473145245815", cat:"content-creation", audience:"human", value:"low", desc:"Duplicate approach to #101 with different tool." },
+  { id:135, title:"Claude > ChatGPT for Content (10 Prompts)", author:"@aigleeson", url:"https://x.com/aigleeson/status/2016074868027228488", cat:"content-creation", audience:"human", value:"medium", desc:"Content writing prompts where Claude outperforms ChatGPT." },
+  { id:137, title:"Claude Content Writing: 340% Engagement Boost", author:"@MillieMarconnni", url:"https://x.com/milliemarconnni/status/2015710408796176394", cat:"content-creation", audience:"human", value:"low", desc:"Duplicate of #135 - same engagement claim, different author." },
+  { id:142, title:"AI Influencer Studio for Automated Content", author:"@mhdfaran", url:"https://x.com/mhdfaran/status/2014628759635452235", cat:"content-creation", audience:"human", value:"low", desc:"AI character creation for automated content. Niche tool." },
+  { id:140, title:"Claude + Arcads + Whop: Sell Anything on Autopilot", author:"@kritarthmittal", url:"https://x.com/kritarthmittal/status/2015402830568558661", cat:"content-creation", audience:"human", value:"low", desc:"Automated selling with AI UGC. Marketing-heavy." },
+  { id:31, title:"500 Cold Emails Using Opus 4.6", author:"@shydev69", url:"https://x.com/shydev69/status/2019867706431090976", cat:"content-creation", audience:"human", value:"low", desc:"Cold email automation. Spam territory." },
+  { id:69, title:"Self-Publishing Ebooks with AI in 7 Days", author:"@NickDiFabio1", url:"https://x.com/i/status/2018676420331880833", cat:"content-creation", audience:"human", value:"low", desc:"AI ebook side hustle. Low quality bar content." },
+
+  // === TOOLS & INTEGRATIONS ===
+  { id:19, title:"awesome-llm-apps: Production-Ready LLM App Collection", author:"@hasantoxr", url:"https://x.com/hasantoxr/status/2020184049818694125", cat:"tools-integrations", audience:"both", value:"high", desc:"Massive collection of production-ready LLM apps you can build. Reference resource." },
+  { id:22, title:"Agentic Note-Taking: Hooks & The Habit Gap", author:"@molt_cornelius", url:"https://x.com/molt_cornelius/status/2020120495903911952", cat:"tools-integrations", audience:"human", value:"medium", desc:"Using hooks for agentic note-taking workflows." },
+  { id:25, title:"No-Cloud Automation Stack", author:"Julian Goldie SEO", url:"https://x.com/JulianGoldieSEO/status/2020225782581498119", cat:"tools-integrations", audience:"both", value:"medium", desc:"Local automation stack without cloud dependencies." },
+  { id:83, title:"X MCP: Comprehensive Twitter Integration", author:"@meta_alchemist", url:"https://x.com/meta_alchemist/status/2018748820428079501", cat:"tools-integrations", audience:"agent", value:"medium", desc:"Free, open-source X/Twitter MCP for LLMs and vibe coding tools. Agent can install." },
+  { id:130, title:"Obsidian & Claude Code: Async Hooks for Note History", author:"@arscontexta", url:"https://x.com/arscontexta/status/2016587691505164749", cat:"tools-integrations", audience:"both", value:"medium", desc:"Integration between Obsidian and Claude Code using async hooks." },
+  { id:98, title:"Reddit JSON Trick for Clawdbot", author:"@TheAhmadOsman", url:"https://x.com/theahmadosman/status/2017809819147661449", cat:"tools-integrations", audience:"agent", value:"medium", desc:"Add /.json to Reddit URLs for full thread data. Agent should use this trick." },
+  { id:20, title:"Wisdom Curation from CEO Memos/Briefs/Emails", author:"@thebeautyofsaas", url:"https://x.com/thebeautyofsaas/status/2019861066981818814", cat:"tools-integrations", audience:"human", value:"medium", desc:"Feeding Claude with memos from top founders/CEOs for synthesized wisdom." },
+];
+
+// ============================================================
+// DUPLICATE GROUPS
+// ============================================================
+const duplicateGroups = [
+  { topic: "Claude Code Comprehensive Guides", keep: 6, skip: [3, 129], note: "Read #6 (Longform Guide) first. #3 (Shorthand) is a quick reference. #129 overlaps with both." },
+  { topic: "Anthropic Prompting & Prompt Engineering", keep: 134, skip: [88, 38], note: "#134 (Anthropic's 10-step) is the source of truth. #88 and #38 are derivative." },
+  { topic: "Clawdbot Getting Started", keep: 131, skip: [128, 65, 80], note: "Start with #131 (Greg Isenberg's 35min). Then #99 (3hr full course). Skip #128, #65, #80." },
+  { topic: "ElevenLabs Phone Integration", keep: 27, skip: [71], note: "#27 and #71 are the same integration announced twice." },
+  { topic: "AI Influencer / UGC at Scale", keep: 24, skip: [68, 101, 104, 142], note: "All cover similar ground. If interested, read just #24." },
+  { topic: "Content Writing: Claude vs ChatGPT", keep: 135, skip: [137], note: "#135 and #137 make the same claim. Read one." },
+  { topic: "NotebookLM Expert Workflow", keep: 18, skip: [82], note: "#18 is more detailed. #82 is a shorter version of the same workflow." },
+  { topic: "Infinite Design Canvas", keep: 9, skip: [153], note: "Both are design canvas tools. Pick one to try." },
+  { topic: "Token Optimization / Memory", keep: 132, skip: [106, 122], note: "#132 (96% savings) is the most impactful. #106 and #122 are alternative memory plugins." },
+];
+
+// ============================================================
+// LEARNING PATH
+// ============================================================
+const learningPath = [
+  {
+    phase: "Foundations",
+    title: "Understand Claude Code & Prompting",
+    desc: "Get comfortable with Claude Code itself before diving into agents and skills.",
+    links: [
+      { id: 75, label: "Why You Suck at Vibe Coding (fix your mistakes first)" },
+      { id: 6, label: "Longform Guide to Everything Claude Code" },
+      { id: 134, label: "Anthropic's 10-Step Prompting Process" },
+      { id: 150, label: "Shipping Faster, Learning Slower (important warning)" },
+    ]
+  },
+  {
+    phase: "Level Up",
+    title: "Claude Code Mastery & Skills",
+    desc: "Go deeper with masterclasses and learn the skills system.",
+    links: [
+      { id: 81, label: "30-Min Masterclass: Idea to MVP" },
+      { id: 29, label: "Shaping 0-1 with Claude Code" },
+      { id: 41, label: "Claude's 33-Page Skills Building Guide" },
+      { id: 70, label: "Claude Skills: Beginner to Pro" },
+      { id: 149, label: "Turn Claude Code into Claude Teacher" },
+    ]
+  },
+  {
+    phase: "Agents & Automation",
+    title: "Clawdbot, OpenClaw & Agent Workflows",
+    desc: "Understand the agent ecosystem and how to orchestrate them.",
+    links: [
+      { id: 131, label: "Clearest Clawdbot/Moltbot Getting Started (35 min)" },
+      { id: 99, label: "Clawdbot/Moltbot FULL COURSE (3 hours)" },
+      { id: 60, label: "Made OpenClaw 10x Better (best practices)" },
+      { id: 126, label: "2hr Interview with Clawd Creator" },
+      { id: 40, label: "Guide to Managing Agent Teams" },
+      { id: 64, label: "Build Agent That Never Goes Crazy" },
+      { id: 120, label: "Parallel Sub-Agents with Cheaper Models" },
+    ]
+  },
+  {
+    phase: "Security",
+    title: "Lock Down Your Setup",
+    desc: "Critical security reading before deploying anything publicly.",
+    links: [
+      { id: 148, label: "Secure Vibe-Coded Apps (Anti-Hacking)" },
+      { id: 145, label: "923 Exposed Gateways (cautionary tale)" },
+      { id: 90, label: "Security-First OpenClaw Setup" },
+      { id: 91, label: "Clawbot Security Best Practices" },
+    ]
+  },
+  {
+    phase: "Design & Ship",
+    title: "Make Things Look Great & Launch",
+    desc: "Design skills and business/distribution knowledge.",
+    links: [
+      { id: 42, label: "Make AI Apps Look Professional" },
+      { id: 7, label: "Figma Connect: Designs to Code" },
+      { id: 58, label: "10 Apps in 10 Months, $800k/yr Guide" },
+      { id: 46, label: "Reddit Playbook: First 1000 Users" },
+      { id: 52, label: "App Store Submission Checklist" },
+    ]
+  },
+  {
+    phase: "Deep Dives",
+    title: "Optional Advanced Topics",
+    desc: "Go deeper on specific interests.",
+    links: [
+      { id: 76, label: "NotebookLM FULL COURSE (4 hours)" },
+      { id: 18, label: "NotebookLM + Gemini + Claude Expert Workflow" },
+      { id: 54, label: "Claude AI Masterclass (Julian Goldie)" },
+      { id: 136, label: "Master AI in 30 Days Roadmap" },
+      { id: 103, label: "Mission Control: 10 Autonomous Agents" },
+      { id: 19, label: "awesome-llm-apps Collection" },
+    ]
+  },
+];
+
+// ============================================================
+// AGENT TASKS
+// ============================================================
+const agentTasks = [
+  {
+    title: "Install & Configure High-Value Skills",
+    priority: "P0",
+    desc: "Go read these repos/threads, install the skills, and configure them in the CLAUDE.md or skills directory.",
+    links: [94, 59, 110, 109, 108, 112, 143]
+  },
+  {
+    title: "Implement Security Standard",
+    priority: "P0",
+    desc: "Read SHIELD.md and implement its security recommendations for our agent setup.",
+    links: [36, 90, 91]
+  },
+  {
+    title: "Self-Improvement: Adopt Best Practices",
+    priority: "P1",
+    desc: "Read these threads and update CLAUDE.md / agent workflows with the patterns described.",
+    links: [26, 152, 10, 85, 56, 51]
+  },
+  {
+    title: "Install Memory & Token Optimization",
+    priority: "P1",
+    desc: "Investigate these memory/token solutions and implement the best one.",
+    links: [132, 106, 122, 67, 93]
+  },
+  {
+    title: "Set Up Useful Integrations",
+    priority: "P2",
+    desc: "Install and configure these tools/MCPs/integrations.",
+    links: [83, 98, 105, 130, 117, 119]
+  },
+  {
+    title: "Design Skills Library",
+    priority: "P2",
+    desc: "Download and organize these design resources/prompts for use in projects.",
+    links: [66, 2, 61]
+  },
+  {
+    title: "Agent Self-Learning Pipeline",
+    priority: "P2",
+    desc: "Read and implement the self-learning patterns described in these threads.",
+    links: [55, 100, 47, 30]
+  },
+  {
+    title: "Evaluate Compound Engineering",
+    priority: "P1",
+    desc: "Review the compound product/engineering repos and assess if they can improve our workflow.",
+    links: [108, 109]
+  },
+];
+
+// ============================================================
+// APP LOGIC
+// ============================================================
+
+let activeCategory = 'all';
+let activeAudience = 'all';
+let activeValue = 'all';
+let activeTab = 'dashboard';
+let searchQuery = '';
+
+function getResourceById(id) {
+  return resources.find(r => r.id === id);
+}
+
+function renderCategoryFilters() {
+  const container = document.getElementById('categoryFilters');
+  const counts = {};
+  resources.forEach(r => { counts[r.cat] = (counts[r.cat] || 0) + 1; });
+
+  let html = `<button class="filter-btn active" data-cat="all"><span class="dot" style="background:var(--text-dim)"></span>All<span class="count">${resources.length}</span></button>`;
+  for (const [key, cat] of Object.entries(CATEGORIES)) {
+    if (counts[key]) {
+      html += `<button class="filter-btn" data-cat="${key}"><span class="dot" style="background:${cat.color}"></span>${cat.label}<span class="count">${counts[key]}</span></button>`;
+    }
+  }
+  container.innerHTML = html;
+
+  container.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCategory = btn.dataset.cat;
+      render();
+    });
+  });
+}
+
+function filterResources() {
+  return resources.filter(r => {
+    if (activeCategory !== 'all' && r.cat !== activeCategory) return false;
+    if (activeAudience !== 'all' && r.audience !== activeAudience && r.audience !== 'both') return false;
+    if (activeValue !== 'all' && r.value !== activeValue) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return r.title.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q) || r.author.toLowerCase().includes(q) || (CATEGORIES[r.cat]?.label || '').toLowerCase().includes(q);
+    }
+    return true;
+  });
+}
+
+function renderCard(r) {
+  const cat = CATEGORIES[r.cat];
+  const audienceTag = r.audience === 'agent' ? '<span class="tag tag-agent">AGENT</span>' :
+                      r.audience === 'human' ? '<span class="tag tag-human">FOR YOU</span>' :
+                      '<span class="tag tag-both">BOTH</span>';
+  const valueTag = r.value === 'high' ? '<span class="tag tag-value-high">HIGH VALUE</span>' :
+                   r.value === 'medium' ? '<span class="tag tag-value-med">MEDIUM</span>' : '';
+  return `
+    <div class="card" onclick="window.open('${r.url}','_blank')">
+      <div class="card-top">
+        <div>
+          <div class="card-title">${r.title}</div>
+          <div class="card-author">${r.author}</div>
+        </div>
+      </div>
+      <div class="card-desc">${r.desc}</div>
+      <div class="card-tags">
+        <span class="tag tag-cat" style="background:${cat.color}20;color:${cat.color}">${cat.label}</span>
+        ${audienceTag}${valueTag}
+      </div>
+    </div>`;
+}
+
+function renderStats() {
+  const filtered = filterResources();
+  const high = filtered.filter(r => r.value === 'high').length;
+  const forHuman = filtered.filter(r => r.audience === 'human' || r.audience === 'both').length;
+  const forAgent = filtered.filter(r => r.audience === 'agent' || r.audience === 'both').length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat"><div class="stat-num" style="color:var(--accent)">${filtered.length}</div><div class="stat-label">Resources Shown</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--green)">${high}</div><div class="stat-label">High Value</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--pink)">${forHuman}</div><div class="stat-label">For You</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--cyan)">${forAgent}</div><div class="stat-label">For Agents</div></div>
+  `;
+}
+
+function renderDashboard() {
+  const filtered = filterResources();
+  const highValue = filtered.filter(r => r.value === 'high');
+  const grouped = {};
+  filtered.forEach(r => {
+    if (!grouped[r.cat]) grouped[r.cat] = [];
+    grouped[r.cat].push(r);
+  });
+
+  let html = '';
+  if (!searchQuery && activeCategory === 'all' && activeAudience === 'all' && activeValue === 'all') {
+    html += `<div class="section-header">Top Picks <span class="badge" style="background:var(--green);color:#000">${highValue.length} high-value</span></div>`;
+    highValue.forEach(r => html += renderCard(r));
+  } else {
+    for (const [cat, items] of Object.entries(grouped)) {
+      const catInfo = CATEGORIES[cat];
+      html += `<div class="section-header">${catInfo?.label || cat} <span class="badge" style="background:${catInfo?.color || '#888'}30;color:${catInfo?.color || '#888'}">${items.length}</span></div>`;
+      items.forEach(r => html += renderCard(r));
+    }
+  }
+
+  if (!html) html = '<div class="empty-state"><p>No resources match your filters.</p></div>';
+  document.getElementById('dashboardContent').innerHTML = html;
+}
+
+function renderLearningPath() {
+  const container = document.getElementById('learningPath');
+  let html = '';
+  learningPath.forEach((phase, i) => {
+    html += `<div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div class="path-num">${i+1}</div>
+        <div>
+          <div style="font-size:11px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:1px">${phase.phase}</div>
+          <div class="path-title">${phase.title}</div>
+        </div>
+      </div>
+      <div style="margin-left:44px">
+        <div class="path-desc">${phase.desc}</div>
+        <div style="margin-top:8px">`;
+    phase.links.forEach(link => {
+      const r = getResourceById(link.id);
+      if (r) {
+        html += `<div style="padding:6px 0;border-bottom:1px solid var(--border)">
+          <a href="${r.url}" target="_blank" style="font-size:13px;font-weight:500">${link.label}</a>
+          <span style="font-size:11px;color:var(--text-dim);margin-left:8px">${r.author}</span>
+        </div>`;
+      }
+    });
+    html += `</div></div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderAgentTasks() {
+  const container = document.getElementById('agentTasks');
+  let html = '';
+  agentTasks.forEach(task => {
+    const prioColor = task.priority === 'P0' ? 'var(--pink)' : task.priority === 'P1' ? 'var(--orange)' : 'var(--yellow)';
+    html += `<div class="card" style="cursor:default">
+      <div class="card-top">
+        <div class="card-title">${task.title}</div>
+        <span class="tag" style="background:${prioColor}20;color:${prioColor};font-size:11px">${task.priority}</span>
+      </div>
+      <div class="card-desc">${task.desc}</div>
+      <div style="margin-top:10px">`;
+    task.links.forEach(id => {
+      const r = getResourceById(id);
+      if (r) {
+        html += `<div style="padding:4px 0"><a href="${r.url}" target="_blank" style="font-size:12px">#${r.id}: ${r.title}</a></div>`;
+      }
+    });
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderDuplicates() {
+  const container = document.getElementById('duplicatesList');
+  let html = '';
+  duplicateGroups.forEach(group => {
+    const keepR = getResourceById(group.keep);
+    html += `<div class="dupe-group">
+      <div class="dupe-group-title">${group.topic}</div>
+      <div style="font-size:13px;margin-bottom:6px">
+        <strong style="color:var(--green)">READ:</strong> <a href="${keepR?.url}" target="_blank">#${group.keep}: ${keepR?.title}</a>
+      </div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px">
+        <strong style="color:var(--pink)">SKIP:</strong> ${group.skip.map(id => { const r = getResourceById(id); return r ? `#${id} (${r.title})` : `#${id}`; }).join(', ')}
+      </div>
+      <div style="font-size:12px;color:var(--text-dim);font-style:italic">${group.note}</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderAllResources() {
+  const filtered = filterResources();
+  document.getElementById('allResourcesList').innerHTML = filtered.map(renderCard).join('') || '<div class="empty-state"><p>No resources match.</p></div>';
+}
+
+function render() {
+  renderStats();
+  renderDashboard();
+  renderAllResources();
+}
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
+  });
+});
+
+// Audience toggle
+document.querySelectorAll('.aud-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.aud-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeAudience = btn.dataset.aud;
+    render();
+  });
+});
+
+// Value filters
+document.querySelectorAll('#valueFilters .filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#valueFilters .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeValue = btn.dataset.value;
+    render();
+  });
+});
+
+// Search
+document.getElementById('searchBox').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  render();
+});
+
+// Init
+renderCategoryFilters();
+renderLearningPath();
+renderAgentTasks();
+renderDuplicates();
+render();
+</script>
+</body>
+</html>
