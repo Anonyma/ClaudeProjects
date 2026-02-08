@@ -72,21 +72,21 @@ export default function Home() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="absolute left-[520px] top-[579px] flex gap-[26px]">
+          <div className="absolute left-[445px] top-[579px] flex gap-[26px]">
             <div className="relative">
-              <Button variant="secondary" size="md" href="/apply" fixedWidth="266px">
+              <Button variant="secondary" size="md" href="/apply" fixedWidth="296px">
                 Apply
               </Button>
-              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[266px]">
+              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[296px]">
                 Up-to $3000 for your project
               </p>
             </div>
 
             <div className="relative">
-              <Button variant="primary" size="md" href="/fund" fixedWidth="266px">
+              <Button variant="primary" size="md" href="/fund" fixedWidth="296px">
                 Fund Experiments
               </Button>
-              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[266px]">
+              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[296px]">
                 Support with as little as 1$/month
               </p>
             </div>
@@ -132,20 +132,20 @@ export default function Home() {
       </section>
 
       {/* SECTION - HOW IT WORKS */}
-      <section className="relative w-full h-[906px]">
-        <div className="absolute top-[-14px] left-1/2 -translate-x-1/2 w-[1440px] h-[951px]">
+      <section className="relative w-full h-[1000px]">
+        <div className="absolute top-[0px] left-1/2 -translate-x-1/2 w-[1440px] h-[1000px]">
           {/* Title */}
-          <h2 className="absolute top-[102px] left-1/2 -translate-x-1/2 font-montserrat font-bold text-[78px] leading-none text-black text-center">
+          <h2 className="absolute top-[80px] left-1/2 -translate-x-1/2 font-montserrat font-bold text-[78px] leading-none text-black text-center">
             How it Works
           </h2>
 
           {/* Subtitle */}
-          <p className="absolute top-[211px] left-1/2 -translate-x-1/2 font-karla font-normal text-[32px] leading-none text-black text-center w-[1066px]">
+          <p className="absolute top-[185px] left-1/2 -translate-x-1/2 font-karla font-normal text-[32px] leading-none text-black text-center w-[1066px]">
             Simple cycles for experiments that fit in months and micro-budgets.
           </p>
 
           {/* Steps */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-[271px] flex gap-[60px] w-[1425px] justify-center">
+          <div className="absolute left-1/2 -translate-x-1/2 top-[260px] flex gap-[45px] w-[1315px] justify-center">
             <StepCard
               number="1."
               title="APPLY WITH A CONCRETE EXPERIMENT"
@@ -179,7 +179,7 @@ export default function Home() {
           </div>
 
           {/* CTA Button */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-[789px]">
+          <div className="absolute left-1/2 -translate-x-1/2 top-[880px]">
             <Button variant="primary" size="lg" href="#stories">
               View Funded Experiments
             </Button>
@@ -188,9 +188,9 @@ export default function Home() {
       </section>
 
       {/* SECTION - DEFINITION */}
-      <section className="relative w-full h-[580px] mt-[80px]">
+      <section className="relative w-full h-[540px] mt-[100px]">
         {/* Background Shape */}
-        <div className="absolute left-[94px] top-[20px] w-[1262px] h-[440px]">
+        <div className="absolute left-[94px] top-[50px] w-[1262px] h-[440px]">
           <img
             src="http://localhost:3845/assets/440309f25a5c626dc056db5e980b27ab8298fd9d.png"
             alt=""
@@ -199,10 +199,10 @@ export default function Home() {
         </div>
 
         {/* White Box Container */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[886px] h-[357px] bg-white rounded-[50px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[840px] h-[320px] bg-white rounded-[50px]" />
 
         {/* Text */}
-        <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-karla font-medium text-[30px] leading-[1.63] text-black w-[772px] z-10">
+        <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-karla font-medium text-[30px] leading-[1.63] text-black w-[740px] z-10">
           In biology, a primordium is an organ or tissue in its earliest stage of development.
           Primordia is a collection of those beginnings. That is what this initiative exists for:
           many small, early experiments that can grow into something bigger.
@@ -260,10 +260,10 @@ export default function Home() {
 
           {/* CTA Buttons */}
           <div className="absolute bottom-0 left-[259px] flex gap-[23px]">
-            <Button variant="secondary" size="md" href="/apply" fixedWidth="190px">
+            <Button variant="secondary" size="md" href="/apply" fixedWidth="332px">
               Apply
             </Button>
-            <Button variant="primary" size="md" href="/fund" fixedWidth="305px">
+            <Button variant="primary" size="md" href="/fund" fixedWidth="332px">
               Become a Supporter
             </Button>
           </div>
@@ -271,10 +271,10 @@ export default function Home() {
       </section>
 
       {/* SECTION - FAQs */}
-      <section className="relative w-full h-[800px]">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[750px]">
+      <section className="relative w-full min-h-[650px] mb-[50px]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px]">
           {/* Background */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1254px] h-[680px] rounded-section opacity-80">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1254px] h-[580px] rounded-section opacity-80">
             <img
               src="http://localhost:3845/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
               alt=""
@@ -283,12 +283,12 @@ export default function Home() {
           </div>
 
           {/* Title */}
-          <h2 className="absolute left-[175px] top-[69px] font-montserrat font-bold text-[32px] leading-[1.54] text-black z-10">
+          <h2 className="absolute left-[175px] top-[40px] font-montserrat font-bold text-[32px] leading-[1.54] text-black z-10">
             FAQs
           </h2>
 
-          {/* FAQ Items Container */}
-          <div className="absolute left-[291px] top-[54px] w-[922px] z-10">
+          {/* FAQ Items Container with max height to prevent overflow */}
+          <div className="absolute left-[291px] top-[90px] w-[922px] max-h-[460px] overflow-y-auto z-10">
             <FAQAccordion items={faqData} />
           </div>
         </div>
