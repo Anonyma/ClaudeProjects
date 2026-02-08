@@ -17,3 +17,6 @@ aiohttp>=3.8.0
 
 # Scheduling
 apscheduler>=3.10.0
+
+# LLM Integration
+anthropic>=0.18.0

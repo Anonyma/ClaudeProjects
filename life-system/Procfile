@@ -1,0 +1,1 @@
+worker: python eod_reflection_bot.py
