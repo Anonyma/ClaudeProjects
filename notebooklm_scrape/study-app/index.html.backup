@@ -838,96 +838,8 @@
             if (e.target.id === 'modal') closeModal();
         });
 
-        // Load local generated lesson content
-        async function loadLocalContent() {
-            const files = [
-                // Architecture (8 lessons)
-                'Why_Brutalism_Started_With_Floral_Wallpaper',
-                'Art_Nouveau_The_Brief_Beautiful_Dream',
-                'Art_Deco_Fused_King_Tut_With_Chrome',
-                'Rococo_curves_to_Brutalist_blocks',
-                'The_Glamour_and_Geometry_of_Art_Deco',
-                'Ornament_to_Austerity_Political_Necessity_or_Purity',
-                'Architecture_as_a_Trauma_Response',
-                'How_Irony_Killed_the_Glass_Box',
-                // History & Timeline (6 lessons)
-                'Big_History_in_25_Anchor_Dates',
-                'The_American_Experiment_From_Cahokia_to_Reconstruction',
-                'The_Rise_and_Fracture_of_Modern_America',
-                'Washington_the_Town_Destroyer_and_Fragile_Experiments',
-                'Versailles_Was_Actually_A_Golden_Prison',
-                'Native_Cities_and_the_Sovereignty_Straitjacket',
-                // Culture & Literature (6 lessons)
-                'How_American_Literature_Shattered_Reality',
-                'Murder_Jazz_and_the_Birth_of_the_Beats',
-                'The_Beat_Generation_Started_With_Murder',
-                'The_Great_Refusal_of_the_American_Dream',
-                'Mapping_Americas_Inner_Life_Through_Fiction',
-                'Selling_The_Revolution_At_A_Markup',
-                // Materials & Technology (5 lessons)
-                'The_Six_Materials_That_Built_Civilization',
-                'How_Physical_Materials_Dictate_History',
-                'How_Materials_Rewired_Human_History',
-                'Iron_Sugar_and_Mirrors_Rewired_Humanity',
-                'The_Bomb_LSD_and_Silicon_Valley',
-                // Economics & Future (3 lessons)
-                'Automation_Shock_and_the_Post-Work_Transition',
-                'Universal_Basic_Income_vs_The_Jobless_Future',
-                'Exploding_Buildings_And_The_End_Of_Truth',
-                // Vienna Deep Dives (8 lessons)
-                'Fin_de_Siecle_Vienna_The_Explosion_That_Changed_Everything',
-                'The_Habsburg_Machine_How_an_Empire_Shaped_a_City',
-                'Viennas_Sound_From_Mozart_to_the_Death_of_Tonality',
-                'Red_Vienna_The_Socialist_Utopia_That_Got_Built',
-                'Adolf_Loos_Ornament_and_Crime',
-                'Freuds_Vienna_How_One_City_Invented_the_Unconscious',
-                'The_Ringstrasse_Vienna_Rebuilt_Itself_as_a_Statement',
-                'Vienna_1938_1955_Anschluss_War_and_the_Cold_War_City'
-            ];
-
-            const loadedLessons = [];
-            for (const file of files) {
-                try {
-                    const resp = await fetch(`generated/${file}.json`);
-                    if (resp.ok) {
-                        const data = await resp.json();
-                        loadedLessons.push({
-                            id: data.slug || file,
-                            title: data.title,
-                            slug: data.slug || file,
-                            article: data.article,
-                            key_points: data.key_takeaways || [],
-                            tldr: data.tldr,
-                            is_rich: true,
-                            local_content: true,
-                            full_data: data
-                        });
-                    }
-                } catch (e) {
-                    console.log(`Could not load: ${file}`);
-                }
-            }
-
-            // Replace lessons array with loaded content
-            if (loadedLessons.length > 0) {
-                lessons = loadedLessons;
-
-                // Extract quizzes from lesson data
-                quizzes = lessons
-                    .filter(l => l.full_data?.quiz_questions)
-                    .map(l => ({
-                        id: l.id,
-                        title: `${l.title} Quiz`,
-                        questions: l.full_data.quiz_questions
-                    }));
-
-                renderView();
-                updateStats();
-            }
-        }
-
         // Init - wait for Supabase to load
-        async function init() {
+        function init() {
             if (typeof window.supabase === 'undefined') {
                 setTimeout(init, 100);
                 return;
@@ -935,8 +847,7 @@
             // Create client after library is loaded
             db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             loadProgress();
-            await loadLocalContent(); // Load local lessons first
-            // fetchData(); // Comment out Supabase fetch since we're using local content
+            fetchData();
         }
 
         if (document.readyState === 'loading') {

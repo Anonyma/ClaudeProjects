@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poetry Reading Companion</title>
+<style>
+:root {
+  --bg: #1a1917;
+  --bg2: #232220;
+  --bg3: #2d2b28;
+  --text: #e8e0d4;
+  --text2: #b8b0a4;
+  --text3: #887f73;
+  --accent: #c9a96e;
+  --accent2: #a68a4e;
+  --border: #3a3734;
+  --green: #7a9a6d;
+  --red: #c47a6a;
+  --blue: #6a8fa8;
+}
+.light {
+  --bg: #faf8f5;
+  --bg2: #f0ede8;
+  --bg3: #e6e2dc;
+  --text: #2a2520;
+  --text2: #5a5550;
+  --text3: #8a8580;
+  --accent: #8a6a30;
+  --accent2: #6a5020;
+  --border: #d6d2cc;
+  --green: #4a7a3d;
+  --red: #a45a4a;
+  --blue: #4a7090;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background .3s, color .3s;
+}
+/* Top bar */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(10px);
+}
+.topbar-left { display:flex; align-items:center; gap:12px; }
+.topbar-title {
+  font-size: 15px; font-weight: 600; color: var(--text);
+  cursor: pointer; letter-spacing: 0.3px;
+}
+.topbar-back {
+  display:none; cursor:pointer; color:var(--accent);
+  font-size:14px; padding:4px 8px; border-radius:4px;
+}
+.topbar-back:hover { background: var(--bg2); }
+.topbar-controls { display:flex; gap:8px; align-items:center; }
+.ctrl-btn {
+  background: var(--bg2); border:1px solid var(--border);
+  color: var(--text2); padding:5px 10px; border-radius:6px;
+  cursor:pointer; font-size:12px; transition: all .2s;
+}
+.ctrl-btn:hover { background:var(--bg3); color:var(--text); }
+.ctrl-btn.active { background:var(--accent); color:#1a1917; border-color:var(--accent); }
+/* Library */
+.library { padding: 20px; max-width: 900px; margin: 0 auto; }
+.lib-header { margin-bottom: 24px; }
+.lib-header h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 28px; font-weight: 400; color: var(--text);
+  margin-bottom: 6px;
+}
+.lib-header p { color: var(--text3); font-size: 14px; line-height:1.5; }
+.prep-banner {
+  background: var(--bg2); border:1px solid var(--border);
+  border-radius: 10px; padding:16px 20px; margin-bottom:24px;
+}
+.prep-banner .prep-count {
+  font-size:14px; color:var(--accent); font-weight:600; margin-bottom:4px;
+}
+.prep-banner .prep-hint { font-size:13px; color:var(--text3); }
+.prep-banner.done { border-color: var(--green); }
+.prep-banner.done .prep-count { color: var(--green); }
+.category-section { margin-bottom: 28px; }
+.category-title {
+  font-size: 13px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1.2px;
+  margin-bottom: 12px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.poem-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
+.poem-card {
+  background: var(--bg2); border:1px solid var(--border);
+  border-radius: 10px; padding: 16px; cursor:pointer;
+  transition: all .2s; position:relative;
+}
+.poem-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.poem-card .pc-poet { font-size:12px; color:var(--accent); font-weight:600; margin-bottom:4px; }
+.poem-card .pc-title {
+  font-family: Georgia, serif; font-size:16px; color:var(--text);
+  margin-bottom:6px; line-height:1.3;
+}
+.poem-card .pc-year { font-size:11px; color:var(--text3); }
+.poem-card .pc-status {
+  position:absolute; top:12px; right:12px;
+  width:8px; height:8px; border-radius:50%;
+}
+.pc-status.read { background: var(--green); }
+.pc-status.has-text { background: var(--blue); }
+.pc-status.needs-text { background: var(--border); }
+.poem-card .pc-badge {
+  display:inline-block; font-size:10px; padding:2px 6px;
+  border-radius:4px; margin-top:6px; font-weight:600;
+}
+.pc-badge.pd { background: rgba(122,154,109,.15); color: var(--green); }
+.pc-badge.paste { background: rgba(106,143,168,.15); color: var(--blue); }
+.pc-badge.bilingual { background: rgba(201,169,110,.15); color: var(--accent); }
+/* Reader */
+.reader { display:none; max-width:700px; margin:0 auto; padding:20px 20px 80px; }
+.reader-meta { margin-bottom:24px; }
+.reader-poet { font-size:14px; color:var(--accent); font-weight:600; margin-bottom:4px; }
+.reader-title {
+  font-family: Georgia, serif; font-size:28px; color:var(--text);
+  line-height:1.3; margin-bottom:8px;
+}
+.reader-year { font-size:13px; color:var(--text3); }
+.poem-text-area {
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.8; color: var(--text); margin: 24px 0;
+  max-width: 600px; white-space: pre-wrap;
+}
+.poem-text-area.size-s { font-size: 15px; }
+.poem-text-area.size-m { font-size: 17px; }
+.poem-text-area.size-l { font-size: 20px; }
+.paste-zone {
+  background: var(--bg2); border: 2px dashed var(--border);
+  border-radius: 10px; padding: 20px; margin: 20px 0;
+}
+.paste-zone label {
+  display:block; font-size:13px; color:var(--text3); margin-bottom:8px;
+}
+.paste-zone textarea {
+  width:100%; min-height:200px; background:var(--bg);
+  border:1px solid var(--border); border-radius:8px;
+  color:var(--text); font-family:Georgia, serif;
+  font-size:16px; line-height:1.8; padding:16px;
+  resize:vertical;
+}
+.paste-zone textarea:focus { outline:none; border-color:var(--accent); }
+.paste-zone .source-link {
+  display:inline-block; margin-top:10px; font-size:13px;
+  color:var(--accent); text-decoration:none;
+}
+.paste-zone .source-link:hover { text-decoration:underline; }
+.poem-display {
+  font-family: Georgia, serif; line-height:1.8;
+  color:var(--text); max-width:600px; white-space:pre-wrap;
+}
+.poem-display.size-s { font-size:15px; }
+.poem-display.size-m { font-size:17px; }
+.poem-display.size-l { font-size:20px; }
+/* Expandable sections */
+.exp-section { border-top:1px solid var(--border); margin-top:0; }
+.exp-header {
+  padding:16px 0; cursor:pointer; display:flex;
+  justify-content:space-between; align-items:center;
+  user-select:none;
+}
+.exp-header h3 {
+  font-size:15px; font-weight:600; color:var(--text2);
+}
+.exp-header .exp-arrow {
+  color:var(--text3); transition:transform .2s; font-size:12px;
+}
+.exp-header:hover h3 { color:var(--text); }
+.exp-section.open .exp-arrow { transform:rotate(90deg); }
+.exp-body {
+  max-height:0; overflow:hidden; transition: max-height .4s ease;
+}
+.exp-section.open .exp-body { max-height:5000px; }
+.exp-content {
+  padding: 0 0 20px;
+  font-size:14px; line-height:1.7; color:var(--text2);
+}
+.exp-content p { margin-bottom:12px; }
+.exp-content ul { margin:8px 0 12px 20px; }
+.exp-content li { margin-bottom:6px; }
+.exp-content strong { color:var(--text); }
+.exp-content em { color:var(--accent); font-style:italic; }
+/* Notes */
+.notes-section { margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
+.notes-section label { font-size:13px; color:var(--text3); display:block; margin-bottom:8px; }
+.notes-section textarea {
+  width:100%; min-height:100px; background:var(--bg2);
+  border:1px solid var(--border); border-radius:8px;
+  color:var(--text); font-size:14px; padding:12px;
+  font-family: -apple-system, system-ui, sans-serif;
+  resize:vertical;
+}
+.notes-section textarea:focus { outline:none; border-color:var(--accent); }
+/* Reader actions */
+.reader-actions {
+  display:flex; gap:10px; margin-top:20px; padding-top:16px;
+  border-top:1px solid var(--border); flex-wrap:wrap;
+}
+.reader-actions button {
+  padding:8px 16px; border-radius:8px; font-size:13px;
+  cursor:pointer; border:1px solid var(--border);
+  background:var(--bg2); color:var(--text2); transition:all .2s;
+}
+.reader-actions button:hover { background:var(--bg3); color:var(--text); }
+.reader-actions button.mark-read { background:var(--green); color:#fff; border-color:var(--green); }
+.reader-actions button.mark-read:hover { opacity:.9; }
+.reader-actions button.marked { background:var(--bg2); color:var(--green); border-color:var(--green); }
+/* Progress bar */
+.progress-bar {
+  height:3px; background:var(--border); border-radius:2px;
+  margin-top:8px; overflow:hidden;
+}
+.progress-bar .fill {
+  height:100%; background:var(--green); border-radius:2px;
+  transition:width .3s;
+}
+/* Nav buttons */
+.poem-nav {
+  display:flex; justify-content:space-between; margin-top:30px;
+  padding-top:20px; border-top:1px solid var(--border);
+}
+.poem-nav button {
+  padding:8px 16px; border-radius:8px; font-size:13px;
+  cursor:pointer; border:1px solid var(--border);
+  background:var(--bg2); color:var(--text2); transition:all .2s;
+}
+.poem-nav button:hover { background:var(--bg3); color:var(--text); }
+.poem-nav button:disabled { opacity:.3; cursor:default; }
+/* Responsive */
+@media (max-width:600px) {
+  .poem-grid { grid-template-columns:1fr; }
+  .reader { padding:16px 16px 60px; }
+  .reader-title { font-size:22px; }
+  .topbar { padding:8px 12px; }
+}
+/* Scrollbar */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-back" id="backBtn" onclick="goLibrary()">&#8592; Library</span>
+    <span class="topbar-title" onclick="goLibrary()">Poetry Companion</span>
+  </div>
+  <div class="topbar-controls">
+    <button class="ctrl-btn" onclick="cycleSize()" id="sizeBtn" title="Font size">M</button>
+    <button class="ctrl-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">&#9789;</button>
+  </div>
+</div>
+
+<div class="library" id="libraryView"></div>
+<div class="reader" id="readerView"></div>
+
+<script>
+// ==================== POEM DATA ====================
+const POEMS = [];
+
+// BATCH 1
+POEMS.push(
+  {
+    id:'prufrock', poet:'T.S. Eliot', title:'The Love Song of J. Alfred Prufrock',
+    year:'1915', category:'metaphysical', hasFullText:true,
+    collection:'Prufrock and Other Observations',
+    fullText: `S'io credesse che mia respuesta fosse
+A persona che mai tornasse al mondo,
+Questa fiamma staria senza piu scosse.
+Ma percioche giammai di questo fondo
+Non torno vivo alcun, s'i'odo il vero,
+Senza tema d'infamia ti rispondo.
+
+Let us go then, you and I,
+When the evening is spread out against the sky
+Like a patient etherized upon a table;
+Let us go, through certain half-deserted streets,
+The muttering retreats
+Of restless nights in one-night cheap hotels
+And sawdust restaurants with oyster-shells:
+Streets that follow like a tedious argument
+Of insidious intent
+To lead you to an overwhelming question ...
+Oh, do not ask, “What is it?”
+Let us go and make our visit.
+
+In the room the women come and go
+Talking of Michelangelo.
+
+The yellow fog that rubs its back upon the window-panes,
+The yellow smoke that rubs its muzzle on the window-panes,
+Licked its tongue into the corners of the evening,
+Lingered upon the pools that stand in drains,
+Let fall upon its back the soot that falls from chimneys,
+Slipped by the terrace, made a sudden leap,
+And seeing that it was a soft October night,
+Curled once about the house, and fell asleep.
+
+And indeed there will be time
+For the yellow smoke that slides along the street,
+Rubbing its back upon the window-panes;
+There will be time, there will be time
+To prepare a face to meet the faces that you meet;
+There will be time to murder and create,
+And time for all the works and days of hands
+That lift and drop a question on your plate;
+Time for you and time for me,
+And time yet for a hundred indecisions,
+And for a hundred visions and revisions,
+Before the taking of a toast and tea.
+
+In the room the women come and go
+Talking of Michelangelo.
+
+And indeed there will be time
+To wonder, “Do I dare?” and, “Do I dare?”
+Time to turn back and descend the stair,
+With a bald spot in the middle of my hair —
+(They will say: “How his hair is growing thin!”)
+My morning coat, my collar mounting firmly to the chin,
+My necktie rich and modest, but asserted by a simple pin —
+(They will say: “But how his arms and legs are thin!”)
+Do I dare
+Disturb the universe?
+In a minute there is time
+For decisions and revisions which a minute will reverse.
+
+For I have known them all already, known them all:
+Have known the evenings, mornings, afternoons,
+I have measured out my life with coffee spoons;
+I know the voices dying with a dying fall
+Beneath the music from a farther room.
+So how should I presume?
+
+And I have known the eyes already, known them all—
+The eyes that fix you in a formulated phrase,
+And when I am formulated, sprawling on a pin,
+When I am pinned and wriggling on the wall,
+Then how should I begin
+To spit out all the butt-ends of my days and ways?
+And how should I presume?
+
+And I have known the arms already, known them all—
+Arms that are braceleted and white and bare
+(But in the lamplight, downed with light brown hair!)
+Is it perfume from a dress
+That makes me so digress?
+Arms that lie along a table, or wrap about a shawl.
+And should I then presume?
+And how should I begin?
+
+Shall I say, I have gone at dusk through narrow streets
+And watched the smoke that rises from the pipes
+Of lonely men in shirt-sleeves, leaning out of windows? ...
+I should have been a pair of ragged claws
+Scuttling across the floors of silent seas.
+
+And the afternoon, the evening, sleeps so peacefully!
+Smoothed by long fingers,
+Asleep ... tired ... or it malingers,
+Stretched on the floor, here beside you and me.
+Should I, after tea and cakes and ices,
+Have the strength to force the moment to its crisis?
+But though I have wept and fasted, wept and prayed,
+Though I have seen my head (grown slightly bald) brought in upon a platter,
+I am no prophet — and here's no great matter;
+I have seen the moment of my greatness flicker,
+And I have seen the eternal Footman hold my coat, and snicker,
+And in short, I was afraid.
+
+And would it have been worth it, after all,
+After the cups, the marmalade, the tea,
+Among the porcelain, among some talk of you and me,
+Would it have been worth while,
+To have bitten off the matter with a smile,
+To have squeezed the universe into a ball
+To roll it towards some overwhelming question,
+To say: “I am Lazarus, come from the dead,
+Come back to tell you all, I shall tell you all”—
+If one, settling a pillow by her head
+Should say: “That is not what I meant at all;
+That is not it, at all.”
+
+And would it have been worth it, after all,
+Would it have been worth while,
+After the sunsets and the dooryards and the sprinkled streets,
+After the novels, after the teacups, after the skirts that trail along the floor—
+And this, and so much more?-
+It is impossible to say just what I mean!
+But as if a magic lantern threw the nerves in patterns on a screen:
+Would it have been worth while
+If one, settling a pillow or throwing off a shawl,
+And turning toward the window, should say:
+“That is not it at all,
+That is not what I meant, at all.”
+
+No! I am not Prince Hamlet, nor was meant to be;
+Am an attendant lord, one that will do
+To swell a progress, start a scene or two,
+Advise the prince; no doubt, an easy tool,
+Deferential, glad to be of use,
+Politic, cautious, and meticulous;
+Full of high sentence, but a bit obtuse;
+At times, indeed, almost ridiculous—
+Almost, at times, the Fool.
+
+I grow old ... I grow old ...
+I shall wear the bottoms of my trousers rolled.
+Shall I part my hair behind? Do I dare to eat a peach?
+I shall wear white flannel trousers, and walk upon the beach.
+I have heard the mermaids singing, each to each.
+I do not think that they will sing to me.
+
+I have seen them riding seaward on the waves
+Combing the white hair of the waves blown back
+When the wind blows the water white and black.
+We have lingered in the chambers of the sea
+By sea-girls wreathed with seaweed red and brown
+Till human voices wake us, and we drown`,
+    sourceUrl:'https://www.poetryfoundation.org/poetrymagazine/poems/44212/the-love-song-of-j-alfred-prufrock',
+    reflect:`
+      <ul>
+        <li><strong>The Etherized Patient:</strong> The poem opens with a shock: the evening sky compared to

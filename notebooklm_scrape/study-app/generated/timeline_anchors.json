@@ -1,0 +1,338 @@
+{
+  "title": "Big History in 25 Anchor Dates",
+  "description": "A scaffolding framework for understanding all of history through 25 pivotal moments, organized by three driving engines: Energy, Institutions, and Information",
+  "engines": {
+    "energy": "Complexity is expensive - requires denser energy sources to maintain order",
+    "institutions": "The glue that holds separate entities together so they can act as a whole (gravity, chemical bonds, laws)",
+    "information": "Anything that stores and shares instructions - DNA, brains, language, writing, digital"
+  },
+  "sections": [
+    {
+      "name": "Cosmos and Earth Foundations",
+      "scale": "billions",
+      "anchors": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "name": "Hominid Evolution",
+      "scale": "millions",
+      "anchors": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "name": "Agrarian Civilizations",
+      "scale": "thousands",
+      "anchors": [
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "name": "Modern Revolution",
+      "scale": "centuries",
+      "anchors": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ]
+    }
+  ],
+  "anchors": [
+    {
+      "number": 1,
+      "title": "The Big Bang",
+      "date_display": "13.8 billion years ago",
+      "date_years_ago": 13800000000,
+      "mechanism": "energy",
+      "threshold": 1,
+      "description": "The origin of matter, energy, space, and time itself. The rate of expansion was tuned just right - not too violent (matter flies apart) or too weak (collapses back) - to allow structure to emerge.",
+      "goldilocks_factor": "Rate of expansion precisely calibrated for future structure formation",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Big_Bang"
+    },
+    {
+      "number": 2,
+      "title": "First Stars and Galaxies",
+      "date_display": "13.5 billion years ago",
+      "date_years_ago": 13500000000,
+      "mechanism": "institutions",
+      "threshold": 2,
+      "description": "Gravity (the first institution) pulls hydrogen and helium clouds together until nuclear fusion ignites. Stars become factories, forging heavier elements (carbon, oxygen, iron) that scatter across the universe when they die as supernovae.",
+      "goldilocks_factor": "Gravity as organizing force enabling stellar nucleosynthesis",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Star_formation"
+    },
+    {
+      "number": 3,
+      "title": "Formation of Solar System and Earth",
+      "date_display": "4.57 billion years ago",
+      "date_years_ago": 4570000000,
+      "mechanism": "energy",
+      "threshold": 3,
+      "description": "Our sun provides stable energy. Earth forms in the Goldilocks zone - not too hot (water boils), not too cold (water freezes). The magnetosphere (formed ~4.4 billion years ago) protects our atmosphere from solar wind.",
+      "goldilocks_factor": "Stable star, orbital distance for liquid water, magnetic shield",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Formation_and_evolution_of_the_Solar_System"
+    },
+    {
+      "number": 4,
+      "title": "Emergence of Life",
+      "date_display": "3.8-4 billion years ago",
+      "date_years_ago": 3900000000,
+      "mechanism": "information",
+      "threshold": 5,
+      "description": "Matter starts to learn. DNA emerges as the first true software - durable, copyable code that allows blueprints to pass between generations. Early archaea process chemical energy from deep sea vents.",
+      "goldilocks_factor": "DNA enables hereditary information transfer",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Abiogenesis"
+    },
+    {
+      "number": 5,
+      "title": "Great Oxidation Event",
+      "date_display": "2.3-2.7 billion years ago",
+      "date_years_ago": 2500000000,
+      "mechanism": "energy",
+      "threshold": null,
+      "description": "Cyanobacteria invent photosynthesis - eating sunlight instead of rocks. This solar power revolution causes a mass extinction (oxygen was poison to anaerobes) but creates the oxygen-rich atmosphere needed for complex life.",
+      "goldilocks_factor": "Photosynthesis unlocks nearly infinite solar energy",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Great_Oxidation_Event"
+    },
+    {
+      "number": 6,
+      "title": "Multicellularity and Cambrian Explosion",
+      "date_display": "600-540 million years ago",
+      "date_years_ago": 570000000,
+      "mechanism": "institutions",
+      "threshold": 6,
+      "description": "Cells stop working alone and start specializing - a cooperative society becomes a body. Around 520 million years ago, the eye evolves, creating an information arms race that accelerates evolution dramatically.",
+      "goldilocks_factor": "Cellular cooperation and vision enable complex organisms",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Cambrian_explosion"
+    },
+    {
+      "number": 7,
+      "title": "Chicxulub Asteroid Impact",
+      "date_display": "66 million years ago",
+      "date_years_ago": 66000000,
+      "mechanism": "energy",
+      "threshold": null,
+      "description": "A mountain-sized asteroid hits Yucatan, blocking sunlight for years. Dinosaurs (energy-hungry giants) die. Small, warm-blooded mammals survive with endothermy (internal furnaces) and inherit an empty ecological stage.",
+      "goldilocks_factor": "Mammals' endothermy enables survival through the long winter",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Chicxulub_crater"
+    },
+    {
+      "number": 8,
+      "title": "Hominid Split - Bipedalism",
+      "date_display": "7 million years ago",
+      "date_years_ago": 7000000,
+      "mechanism": "institutions",
+      "threshold": 7,
+      "description": "Standing on two legs frees the hands for carrying and tool-making. Walking upright is also more energy-efficient for long distances, allowing ancestors to expand their range for the same caloric cost.",
+      "goldilocks_factor": "Free hands + energy efficiency = platform for tool use",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Human_evolution"
+    },
+    {
+      "number": 9,
+      "title": "First Stone Tools (Oldowan)",
+      "date_display": "2.6 million years ago",
+      "date_years_ago": 2600000,
+      "mechanism": "energy",
+      "threshold": null,
+      "description": "Sharp rocks compensate for our pathetic teeth and claws. Crucially, they allow access to bone marrow - a super-dense energy packet of pure fat and protein that fueled initial brain expansion.",
+      "goldilocks_factor": "Tools unlock high-quality calories driving brain growth",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Oldowan"
+    },
+    {
+      "number": 10,
+      "title": "Control of Fire",
+      "date_display": "1.5 million years ago",
+      "date_years_ago": 1500000,
+      "mechanism": "energy",
+      "threshold": null,
+      "description": "Cooking is 'external digestion' - fire breaks down food before eating, allowing smaller guts and redirecting saved energy to the brain. The campfire becomes the first social center, enabling bonding and information sharing.",
+      "goldilocks_factor": "Pre-digestion frees energy budget for larger brains",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Control_of_fire_by_early_humans"
+    },
+    {
+      "number": 11,
+      "title": "Appearance of Homo Sapiens",
+      "date_display": "300,000 years ago",
+      "date_years_ago": 300000,
+      "mechanism": "information",
+      "threshold": null,
+      "description": "Anatomically modern humans appear (Jebel Irhoud, Morocco). The hardware is finalized - if you gave them a haircut, they'd look like anyone today. But the software is still in beta; toolkits stay the same for 100,000+ years.",
+      "goldilocks_factor": "Physical form complete, awaiting cognitive upgrade",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Homo_sapiens"
+    },
+    {
+      "number": 12,
+      "title": "Cognitive Revolution",
+      "date_display": "50,000 years ago",
+      "date_years_ago": 50000,
+      "mechanism": "information",
+      "threshold": null,
+      "description": "Explosion of innovation: symbolic art, complex tools, long-distance trade, elaborate burials. Collective learning emerges - complex language allows information to decouple from individuals and accumulate across generations.",
+      "goldilocks_factor": "Language enables cultural memory beyond individual lifespans",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Behavioral_modernity"
+    },
+    {
+      "number": 13,
+      "title": "Neolithic Revolution - Agriculture",
+      "date_display": "11,000 years ago (9000 BCE)",
+      "date_years_ago": 11000,
+      "mechanism": "energy",
+      "threshold": 7,
+      "description": "Farming traps solar energy in crops on specific acres instead of chasing calories across landscapes. Population density explodes, but quality of life often declined (shorter, sicker people working harder). Crucially, it produces surplus.",
+      "goldilocks_factor": "Concentrated energy production enables population growth",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Neolithic_Revolution"
+    },
+    {
+      "number": 14,
+      "title": "Writing and First Cities",
+      "date_display": "3500 BCE",
+      "date_years_ago": 5500,
+      "mechanism": "information",
+      "threshold": null,
+      "description": "Writing wasn't invented by poets but by accountants - tracking bushels of grain and taxes. It extends state memory, enabling millions of strangers to cooperate (or be coerced) through recorded obligations rather than kinship.",
+      "goldilocks_factor": "Written records enable large-scale institutional coordination",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/History_of_writing"
+    },
+    {
+      "number": 15,
+      "title": "Axial Age",
+      "date_display": "500 BCE",
+      "date_years_ago": 2500,
+      "mechanism": "institutions",
+      "threshold": null,
+      "description": "Synchronous spiritual revolution: Socrates, Buddha, Confucius, Hebrew prophets. Multi-ethnic empires needed universal moral frameworks beyond tribal gods. Iron weapons made warfare bloodier, requiring new social contracts.",
+      "goldilocks_factor": "Universal ethics enable diverse peoples to coexist in empires",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Axial_Age"
+    },
+    {
+      "number": 16,
+      "title": "Silk Roads Peak",
+      "date_display": "1200-1450 CE",
+      "date_years_ago": 700,
+      "mechanism": "information",
+      "threshold": null,
+      "description": "Peak connectivity of the Afro-Eurasian world zone. Ideas (paper, gunpowder, compass, printing) move from China westward. But microbes travel the same roads - the Black Death (1346) killed a third of Europe.",
+      "goldilocks_factor": "Trade networks accelerate technology transfer",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Silk_Road"
+    },
+    {
+      "number": 17,
+      "title": "Columbian Exchange",
+      "date_display": "1492 CE",
+      "date_years_ago": 532,
+      "mechanism": "energy",
+      "threshold": null,
+      "description": "Two separate world systems become one. Potatoes and corn (miracle crops) fuel population booms in the Old World. Diseases devastate the Americas (~90% population collapse). Horses and cattle transform American landscapes.",
+      "goldilocks_factor": "Global system integration with massive biological exchange",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Columbian_exchange"
+    },
+    {
+      "number": 18,
+      "title": "Steam Engine - Industrial Revolution",
+      "date_display": "1712-1769",
+      "date_years_ago": 280,
+      "mechanism": "energy",
+      "threshold": 8,
+      "description": "Breaking the biological energy ceiling. Coal is fossilized sunlight - millions of years stored underground. We stopped using our solar allowance and cracked open the planet's trust fund. One engine does the work of hundreds of horses.",
+      "goldilocks_factor": "Fossil fuels provide exponentially denser energy",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Industrial_Revolution"
+    },
+    {
+      "number": 19,
+      "title": "Democratic Revolutions",
+      "date_display": "1776-1789",
+      "date_years_ago": 240,
+      "mechanism": "institutions",
+      "threshold": null,
+      "description": "American and French revolutions provide institutional software for new energy hardware. Industrialization needs mobile, educated workers who can move, sign contracts, and buy products. Old dynastic systems were too rigid.",
+      "goldilocks_factor": "Liberal institutions unlock industrial potential",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Atlantic_Revolutions"
+    },
+    {
+      "number": 20,
+      "title": "Telegraph and Electricity",
+      "date_display": "Mid-19th century",
+      "date_years_ago": 170,
+      "mechanism": "information",
+      "threshold": null,
+      "description": "Communication separates from transportation for the first time. Information moves at light speed, instantly changing finance, news, and warfare. Electricity becomes versatile energy transport, creating the modern nervous system.",
+      "goldilocks_factor": "Instantaneous communication transforms all coordination",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Electrical_telegraph"
+    },
+    {
+      "number": 21,
+      "title": "World Wars",
+      "date_display": "1914-1945",
+      "date_years_ago": 90,
+      "mechanism": "institutions",
+      "threshold": null,
+      "description": "Industrial capacity applied to destruction. Old imperial structures shatter. Totalitarianism emerges as failed institutional experiments. But war pressure massively accelerates technology: aviation, rocketry, computing, antibiotics.",
+      "goldilocks_factor": "Crisis drives institutional experimentation and technological acceleration",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/World_war"
+    },
+    {
+      "number": 22,
+      "title": "Nuclear Age",
+      "date_display": "1945",
+      "date_years_ago": 81,
+      "mechanism": "energy",
+      "threshold": null,
+      "description": "Humans acquire power to end the entire timeline. Nuclear fission releases energy from atomic nuclei - millions of times more powerful than chemical energy. The Great Acceleration begins: all graphs go vertical after 1945.",
+      "goldilocks_factor": "Nuclear energy demonstrates both ultimate power and existential risk",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Nuclear_weapon"
+    },
+    {
+      "number": 23,
+      "title": "Discovery of DNA Structure",
+      "date_display": "1953",
+      "date_years_ago": 73,
+      "mechanism": "information",
+      "threshold": null,
+      "description": "Watson, Crick, and Franklin decode life's software, circling back to Anchor 4. Biology becomes an information science. We learned to read the 4-letter code (A-C-T-G), and eventually to edit it.",
+      "goldilocks_factor": "Understanding genetic code opens biological engineering",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/DNA"
+    },
+    {
+      "number": 24,
+      "title": "Space Age",
+      "date_display": "1957",
+      "date_years_ago": 69,
+      "mechanism": "institutions",
+      "threshold": null,
+      "description": "Sputnik launches. Humans leave the cradle. More importantly, we see Earth from space - a fragile blue marble with no visible borders. The 'overview effect' shifts how we view our home and kickstarts environmentalism.",
+      "goldilocks_factor": "Planetary perspective enables global consciousness",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Space_Age"
+    },
+    {
+      "number": 25,
+      "title": "World Wide Web",
+      "date_display": "1990",
+      "date_years_ago": 36,
+      "mechanism": "information",
+      "threshold": null,
+      "description": "If the telegraph was the nervous system, this is the global brain. Cost of storing, copying, sharing information drops to near zero. Individual human brains connect into one network - a new 'noosphere' enveloping the biosphere.",
+      "goldilocks_factor": "Zero-cost information sharing enables collective intelligence",
+      "wikipedia_url": "https://en.wikipedia.org/wiki/World_Wide_Web"
+    }
+  ],
+  "key_insight": "The techno-humanitarian balance: Our technological power grows exponentially while our wisdom grows linearly at best. We have Stone Age emotions, medieval institutions, and godlike technology. The challenge of threshold 9 isn't just inventing fusion or AGI - it's inventing better wisdom to manage them."
+}

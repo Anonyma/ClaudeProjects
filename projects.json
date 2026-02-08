@@ -735,6 +735,46 @@
       ]
     },
     {
+      "id": "poetry-companion",
+      "name": "Poetry Reading Companion",
+      "description": "Self-contained offline-capable poetry reading app. 24 curated poems across 6 categories with rich educational content: reflection prompts, author bios, historical context, cross-disciplinary connections. Dark/light themes, font controls, reading progress tracking via localStorage. All poems as paste-in areas (copyright-safe) with source URLs.",
+      "path": "/Users/z/Desktop/PersonalProjects/ClaudeProjects/_scratch/poetry-companion",
+      "type": "web-app",
+      "category": "upskilling",
+      "created": "2026-02-06",
+      "updated": "2026-02-08",
+      "tags": [
+        "poetry",
+        "reading",
+        "education",
+        "offline",
+        "single-file",
+        "literature",
+        "renaissance-man"
+      ],
+      "status": "active",
+      "access": {
+        "method": "hosted",
+        "url": "file:///Users/z/Desktop/PersonalProjects/ClaudeProjects/_scratch/poetry-companion/index.html",
+        "instructions": "Open hosted URL on any device. Paste poem texts from source file or online links. All data persists in localStorage per domain.",
+        "hosted": "https://poetry-companion-flight.netlify.app",
+        "deploymentPlatform": "netlify",
+        "requiresServer": false
+      },
+      "github": {
+        "repo": null
+      },
+      "deployments": {
+        "netlify": {
+          "siteId": "e0c06902-e47e-45bb-ba61-7a842cd2dabc",
+          "url": "https://poetry-companion-flight.netlify.app"
+        }
+      },
+      "files": [
+        "index.html"
+      ]
+    },
+    {
       "id": "reading-dashboard",
       "name": "NotebookLM Reading Dashboard",
       "description": "Dashboard for NotebookLM sources (superseded by NotebookLM Study Hub)",

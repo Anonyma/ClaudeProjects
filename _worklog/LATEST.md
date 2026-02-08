@@ -8,3 +8,7 @@
 | 2026-01-29 | notifications | completed | Fixed clawdbot/Pushover - use telegram target 355422856, token ax3nv6f... |
 | 2026-01-29 | writing-challenge | completed | Deployed with Supabase Auth + cozy landing - https://writing-challenge-app.netlify.app |
 | 2025-01-30 | dictation-tool | MVP complete | System-wide dictation app with Groq/Whisper - press ⌥ to record, press again to transcribe+paste |
+| 2026-02-06 | candypop-notebooklm | blocked | Set up Python/Playwright on CandyPop, blocked on browser auth (Chrome profile locked) |
+| 2026-02-08 | poetry-companion | completed | Added full texts for all 24 poems (including Eliot, Rilke, Valéry), side-by-side bilingual view, and extensive scholarly analysis (historical, philosophical, cross-disciplinary) - https://poetry-companion-flight.netlify.app |
+| 2026-02-08 | art-discovery | completed | Fixed Netlify deployment - build config + Supabase key typo. All 45 entities loading. |
+| 2026-02-08 | vienna-deep-dives | completed (lessons) / in-progress (audio) | Created 8 Vienna lessons (56k words), deployed to Netlify. Audio generation on CandyPop via Gemini CLI. |
