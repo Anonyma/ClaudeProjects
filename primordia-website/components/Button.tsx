@@ -29,7 +29,7 @@ const Button: React.FC<ButtonProps> = ({
     primary: 'bg-black border-black text-white hover:bg-gray-800',
     secondary: 'bg-white border-black text-black hover:bg-gray-50',
     nav: 'bg-transparent border-black text-black hover:bg-gray-50',
-    status: 'bg-white border-black text-black text-[23px] h-[42px] px-6',
+    status: 'bg-white border-black text-black text-[23px] h-[42px] px-6 rounded-full',
   };
 
   const sizeStyles = {

@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   // Match the user's requested folder structure: tests/figma-baselines/{name}.png
-  snapshotPathTemplate: '{testDir}/figma-baselines/{arg}',
+  snapshotPathTemplate: '{testDir}/figma-baselines/{arg}{ext}',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

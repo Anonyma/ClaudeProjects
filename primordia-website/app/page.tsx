@@ -72,8 +72,8 @@ export default function Home() {
           </p>
 
           {/* CTA Buttons - Span full width under subtitle */}
-          <div className="absolute right-[40px] top-[560px] flex gap-[16px] w-[730px] justify-between">
-            <div className="relative flex-1">
+          <div className="absolute right-[40px] top-[560px] flex gap-[20px] w-[730px]">
+            <div className="relative" style={{ width: '340px' }}>
               <Button variant="secondary" size="md" href="/apply" className="w-full">
                 Apply
               </Button>
@@ -82,7 +82,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="relative flex-1">
+            <div className="relative" style={{ width: '370px' }}>
               <Button variant="primary" size="md" href="/fund" className="w-full">
                 Fund Experiments
               </Button>
@@ -198,15 +198,17 @@ export default function Home() {
           />
         </div>
 
-        {/* White Box Container */}
-        <div className="absolute top-[140px] left-[240px] w-[780px] h-[300px] bg-white rounded-[50px]" />
+        {/* White Box Container - Positioned to not overlap background */}
+        <div className="absolute top-[100px] left-[180px] w-[820px] h-[340px] bg-white rounded-[50px]" />
 
-        {/* Text */}
-        <p className="absolute top-[140px] left-[240px] font-karla font-medium text-[30px] leading-[1.63] text-black w-[740px] z-10 py-8 px-10">
-          In biology, a primordium is an organ or tissue in its earliest stage of development.
-          Primordia is a collection of those beginnings. That is what this initiative exists for:
-          many small, early experiments that can grow into something bigger.
-        </p>
+        {/* Text - Centered in white box */}
+        <div className="absolute top-[100px] left-[180px] w-[820px] h-[340px] flex items-center justify-center z-10">
+          <p className="font-karla font-medium text-[30px] leading-[1.63] text-black w-[740px] text-center px-10">
+            In biology, a primordium is an organ or tissue in its earliest stage of development.
+            Primordia is a collection of those beginnings. That is what this initiative exists for:
+            many small, early experiments that can grow into something bigger.
+          </p>
+        </div>
       </section>
 
       {/* SECTION - STORIES */}

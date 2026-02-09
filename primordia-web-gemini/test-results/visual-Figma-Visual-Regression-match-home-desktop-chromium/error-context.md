@@ -44,85 +44,85 @@
         - generic [ref=e38]:
           - paragraph [ref=e39]: "1."
           - heading "APPLY WITH A CONCRETE EXPERIMENT" [level=3] [ref=e40]
-          - paragraph [ref=e44]: Teams propose a focused experiment they can run in a community lab or other compliant space within a few months.
-        - generic [ref=e45]:
-          - paragraph [ref=e46]: "2."
-          - heading "REVIEW AND SELECTION" [level=3] [ref=e47]
-          - paragraph [ref=e51]: Applications are reviewed by a panel of community lab leaders and practitioners. In some rounds we also use community voting and quadratic matching to allocate part of the pool.
-        - generic [ref=e52]:
-          - paragraph [ref=e53]: "3."
-          - heading "MICROGRANTS AND LAB ACCESS" [level=3] [ref=e54]
-          - paragraph [ref=e58]: Selected teams receive a flexible microgrant (for reagents, consumables, and a portion for lab membership) and plug into a local lab.
-        - generic [ref=e59]:
-          - paragraph [ref=e60]: "4."
-          - heading "LAB NOTES AND UPDATES" [level=3] [ref=e61]
-          - paragraph [ref=e65]: Grantees commit to sharing short updates and lab notes during the grant period, building an open portfolio of their progress.
-        - generic [ref=e66]:
-          - paragraph [ref=e67]: "5."
-          - heading "SHOWCASE AND NEXT STEPS" [level=3] [ref=e68]
-          - paragraph [ref=e72]: At the end of the cycle, projects share results in a public session and written summary. Some may continue with follow on grants, partnerships, or company formation.
-      - link "View Funded Experiments" [ref=e74] [cursor=pointer]:
+          - paragraph [ref=e45]: Teams propose a focused experiment they can run in a community lab or other compliant space within a few months.
+        - generic [ref=e46]:
+          - paragraph [ref=e47]: "2."
+          - heading "REVIEW AND SELECTION" [level=3] [ref=e48]
+          - paragraph [ref=e53]: Applications are reviewed by a panel of community lab leaders and practitioners. In some rounds we also use community voting and quadratic matching to allocate part of the pool.
+        - generic [ref=e54]:
+          - paragraph [ref=e55]: "3."
+          - heading "MICROGRANTS AND LAB ACCESS" [level=3] [ref=e56]
+          - paragraph [ref=e61]: Selected teams receive a flexible microgrant (for reagents, consumables, and a portion for lab membership) and plug into a local lab.
+        - generic [ref=e62]:
+          - paragraph [ref=e63]: "4."
+          - heading "LAB NOTES AND UPDATES" [level=3] [ref=e64]
+          - paragraph [ref=e69]: Grantees commit to sharing short updates and lab notes during the grant period, building an open portfolio of their progress.
+        - generic [ref=e70]:
+          - paragraph [ref=e71]: "5."
+          - heading "SHOWCASE AND NEXT STEPS" [level=3] [ref=e72]
+          - paragraph [ref=e77]: At the end of the cycle, projects share results in a public session and written summary. Some may continue with follow on grants, partnerships, or company formation.
+      - link "View Funded Experiments" [ref=e79] [cursor=pointer]:
         - /url: "#stories"
-    - paragraph [ref=e78]: "In biology, a primordium is an organ or tissue in its earliest stage of development. Primordia is a collection of those beginnings. That is what this initiative exists for: many small, early experiments that can grow into something bigger."
-    - generic [ref=e80]:
-      - heading "Stories & Lab Notes" [level=2] [ref=e81]
-      - paragraph [ref=e82]: Learn about DIY community bio initiatives
-      - generic [ref=e83]:
-        - generic [ref=e87]:
-          - generic [ref=e88]:
-            - heading "Microplastics in Streams" [level=3] [ref=e89]
-            - paragraph [ref=e90]: Studying levels of microplastic particles in local streams.
-            - paragraph [ref=e91]: Open Bio Lab, Boston
-          - button "In Progress" [ref=e93] [cursor=pointer]
-        - generic [ref=e97]:
-          - generic [ref=e98]:
-            - heading "Easy DNA Extraction" [level=3] [ref=e99]
-            - paragraph [ref=e100]: Developing a fast, low-cost DNA extraction method.
-            - paragraph [ref=e101]: Community Lab, Oakland
-          - button "Completed" [ref=e103] [cursor=pointer]
-      - generic [ref=e104]:
-        - generic [ref=e108]:
-          - generic [ref=e109]:
-            - heading "Microplastics in Streams" [level=3] [ref=e110]
-            - paragraph [ref=e111]: Studying levels of microplastic particles in local streams.
-            - paragraph [ref=e112]: Open Bio Lab, Boston
-          - button "In Progress" [ref=e114] [cursor=pointer]
-        - generic [ref=e118]:
-          - generic [ref=e119]:
-            - heading "Easy DNA Extraction" [level=3] [ref=e120]
-            - paragraph [ref=e121]: Developing a fast, low-cost DNA extraction method.
-            - paragraph [ref=e122]: Community Lab, Oakland
-          - button "Completed" [ref=e124] [cursor=pointer]
-      - generic [ref=e125]:
-        - link "Apply" [ref=e126] [cursor=pointer]:
+    - paragraph [ref=e83]: "In biology, a primordium is an organ or tissue in its earliest stage of development. Primordia is a collection of those beginnings. That is what this initiative exists for: many small, early experiments that can grow into something bigger."
+    - generic [ref=e85]:
+      - heading "Stories & Lab Notes" [level=2] [ref=e86]
+      - paragraph [ref=e87]: Learn about DIY community bio initiatives
+      - generic [ref=e88]:
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - heading "Microplastics in Streams" [level=3] [ref=e94]
+            - paragraph [ref=e95]: Studying levels of microplastic particles in local streams.
+            - paragraph [ref=e96]: Open Bio Lab, Boston
+          - button "In Progress" [ref=e98] [cursor=pointer]
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - heading "Easy DNA Extraction" [level=3] [ref=e104]
+            - paragraph [ref=e105]: Developing a fast, low-cost DNA extraction method.
+            - paragraph [ref=e106]: Community Lab, Oakland
+          - button "Completed" [ref=e108] [cursor=pointer]
+      - generic [ref=e109]:
+        - generic [ref=e113]:
+          - generic [ref=e114]:
+            - heading "Microplastics in Streams" [level=3] [ref=e115]
+            - paragraph [ref=e116]: Studying levels of microplastic particles in local streams.
+            - paragraph [ref=e117]: Open Bio Lab, Boston
+          - button "In Progress" [ref=e119] [cursor=pointer]
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - heading "Easy DNA Extraction" [level=3] [ref=e125]
+            - paragraph [ref=e126]: Developing a fast, low-cost DNA extraction method.
+            - paragraph [ref=e127]: Community Lab, Oakland
+          - button "Completed" [ref=e129] [cursor=pointer]
+      - generic [ref=e130]:
+        - link "Apply" [ref=e131] [cursor=pointer]:
           - /url: /apply
-        - link "Become a Supporter" [ref=e127] [cursor=pointer]:
+        - link "Become a Supporter" [ref=e132] [cursor=pointer]:
           - /url: /fund
-    - generic [ref=e129]:
-      - heading "FAQs" [level=2] [ref=e131]
-      - generic [ref=e133]:
-        - button "Who can apply to Primordia?" [ref=e135] [cursor=pointer]:
-          - generic [ref=e136]: Who can apply to Primordia?
-        - button "Do I need to be part of a community lab to apply?" [ref=e139] [cursor=pointer]:
-          - generic [ref=e140]: Do I need to be part of a community lab to apply?
-        - button "What can grant funds be used for?" [ref=e143] [cursor=pointer]:
-          - generic [ref=e144]: What can grant funds be used for?
-        - button "How large are the microgrants?" [ref=e147] [cursor=pointer]:
-          - generic [ref=e148]: How large are the microgrants?
-        - button "How long are projects expected to run?" [ref=e151] [cursor=pointer]:
-          - generic [ref=e152]: How long are projects expected to run?
-        - button "Can donors remain anonymous?" [ref=e155] [cursor=pointer]:
-          - generic [ref=e156]: Can donors remain anonymous?
-        - button "How is safety and legal compliance handled in different countries?" [ref=e159] [cursor=pointer]:
-          - generic [ref=e160]: How is safety and legal compliance handled in different countries?
-    - generic [ref=e164]:
-      - generic [ref=e165]:
-        - link "For Experiments" [ref=e166] [cursor=pointer]:
+    - generic [ref=e134]:
+      - heading "FAQs" [level=2] [ref=e136]
+      - generic [ref=e138]:
+        - button "Who can apply to Primordia?" [ref=e140] [cursor=pointer]:
+          - generic [ref=e141]: Who can apply to Primordia?
+        - button "Do I need to be part of a community lab to apply?" [ref=e144] [cursor=pointer]:
+          - generic [ref=e145]: Do I need to be part of a community lab to apply?
+        - button "What can grant funds be used for?" [ref=e148] [cursor=pointer]:
+          - generic [ref=e149]: What can grant funds be used for?
+        - button "How large are the microgrants?" [ref=e152] [cursor=pointer]:
+          - generic [ref=e153]: How large are the microgrants?
+        - button "How long are projects expected to run?" [ref=e156] [cursor=pointer]:
+          - generic [ref=e157]: How long are projects expected to run?
+        - button "Can donors remain anonymous?" [ref=e160] [cursor=pointer]:
+          - generic [ref=e161]: Can donors remain anonymous?
+        - button "How is safety and legal compliance handled in different countries?" [ref=e164] [cursor=pointer]:
+          - generic [ref=e165]: How is safety and legal compliance handled in different countries?
+    - generic [ref=e169]:
+      - generic [ref=e170]:
+        - link "For Experiments" [ref=e171] [cursor=pointer]:
           - /url: /apply
-        - link "For Donors" [ref=e167] [cursor=pointer]:
+        - link "For Donors" [ref=e172] [cursor=pointer]:
           - /url: /fund
-        - link "Privacy Policy" [ref=e168] [cursor=pointer]:
+        - link "Privacy Policy" [ref=e173] [cursor=pointer]:
           - /url: /privacy
-      - paragraph [ref=e170]: Primordia Grants is a cross collaboration between ValleyDAO & Biopunk Labs
-  - alert [ref=e171]
+      - paragraph [ref=e175]: Primordia Grants is a cross collaboration between ValleyDAO & Biopunk Labs
+  - alert [ref=e176]
 ```
