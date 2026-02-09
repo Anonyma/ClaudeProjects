@@ -97,3 +97,30 @@ with open(statuses_file, 'w') as f:
 
 print(f"✓ {name}: {status}" + (f" - {message}" if message else ""))
 EOF
+
+# Send Telegram notification for actionable statuses (blocked, completed, error)
+if [[ "$STATUS" == "blocked" || "$STATUS" == "completed" || "$STATUS" == "error" ]]; then
+    # Emoji per status
+    case "$STATUS" in
+        blocked)   EMOJI="🆘" ;;
+        completed) EMOJI="✅" ;;
+        error)     EMOJI="⚠️" ;;
+    esac
+
+    NOTIFY_MSG="$EMOJI $NAME: $STATUS"
+    [ -n "$MESSAGE" ] && NOTIFY_MSG="$NOTIFY_MSG - $MESSAGE"
+
+    # Try clawdbot first (Telegram), fall back to Pushover
+    if command -v clawdbot &>/dev/null; then
+        /opt/homebrew/bin/node /opt/homebrew/bin/clawdbot message send \
+            --channel telegram --target 355422856 \
+            --message "$NOTIFY_MSG" 2>/dev/null &
+    else
+        curl -s -F "token=ax3nv6fmix3hzr1vzkkb85123js5np" \
+            -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
+            -F "title=Agent Status" \
+            -F "message=$NOTIFY_MSG" \
+            -F "priority=0" \
+            https://api.pushover.net/1/messages.json >/dev/null 2>&1 &
+    fi
+fi
