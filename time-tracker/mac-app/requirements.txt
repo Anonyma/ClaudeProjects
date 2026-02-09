@@ -4,3 +4,5 @@
 rumps>=0.4.0
 requests>=2.28.0
 python-dotenv>=1.0.0
+# Needed for native styled quick-log window
+pyobjc-framework-WebKit>=10.0

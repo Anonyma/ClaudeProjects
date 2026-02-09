@@ -39,7 +39,7 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const widthStyle = fixedWidth ? { width: fixedWidth } : {};
-  const classes = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
+  const classes = `${baseStyles} ${variantStyles[variant]} ${variant !== 'status' ? sizeStyles[size] : ''} ${className}`.trim();
 
   if (href) {
     return (

@@ -5,6 +5,7 @@ Falls back gracefully if WebKit isn't available.
 """
 
 from pathlib import Path
+import threading
 from urllib.parse import urlencode, urlparse, urlunparse
 
 _OPEN_WINDOWS = []
@@ -110,16 +111,41 @@ def show_quick_log_window(ping_id: str = None, on_logged=None) -> bool:
                 except Exception as e:
                     print(f"Log callback error: {e}")
 
-            if name in ("logged", "close"):
+            if name == "close":
                 self.window.performClose_(None)
 
         def windowWillClose_(self, _notification):
             if self in _OPEN_WINDOWS:
                 _OPEN_WINDOWS.remove(self)
 
-    controller = QuickLogWindowController.alloc().initWithURL_onLogged_(url, on_logged)
-    if controller is None:
-        return False
+    def _open_window() -> bool:
+        controller = QuickLogWindowController.alloc().initWithURL_onLogged_(url, on_logged)
+        if controller is None:
+            return False
+        _OPEN_WINDOWS.append(controller)
+        return True
 
-    _OPEN_WINDOWS.append(controller)
-    return True
+    if threading.current_thread() is threading.main_thread():
+        return _open_window()
+
+    result = {"value": False}
+
+    class MainThreadInvoker(NSObject):
+        def initWithCallback_(self, callback):
+            self = super().init()
+            if self is None:
+                return None
+            self.callback = callback
+            return self
+
+        def run_(self, _):
+            self.callback()
+
+    def _callback():
+        result["value"] = _open_window()
+
+    invoker = MainThreadInvoker.alloc().initWithCallback_(_callback)
+    if invoker is None:
+        return False
+    NSApp().performSelectorOnMainThread_withObject_waitUntilDone_(invoker, "run:", None, True)
+    return result["value"]

@@ -71,22 +71,22 @@ export default function Home() {
             Funding Early Biology Experiments in DIY Labs
           </p>
 
-          {/* CTA Buttons */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-[560px] flex gap-[20px]">
-            <div className="relative">
-              <Button variant="secondary" size="md" href="/apply" fixedWidth="200px">
+          {/* CTA Buttons - Span full width under subtitle */}
+          <div className="absolute right-[40px] top-[560px] flex gap-[16px] w-[730px] justify-between">
+            <div className="relative flex-1">
+              <Button variant="secondary" size="md" href="/apply" className="w-full">
                 Apply
               </Button>
-              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[220px]">
+              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-full whitespace-nowrap">
                 Up-to $3000 for your project
               </p>
             </div>
 
-            <div className="relative">
-              <Button variant="primary" size="md" href="/fund" fixedWidth="240px">
+            <div className="relative flex-1">
+              <Button variant="primary" size="md" href="/fund" className="w-full">
                 Fund Experiments
               </Button>
-              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[260px]">
+              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-full whitespace-nowrap">
                 Support with as little as 1$/month
               </p>
             </div>
@@ -271,10 +271,10 @@ export default function Home() {
       </section>
 
       {/* SECTION - FAQs */}
-      <section className="relative w-full h-[760px] mb-[20px]">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[720px]">
-          {/* Background */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1254px] h-[680px] rounded-section opacity-80">
+      <section className="relative w-full h-[980px] mb-[20px]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[940px]">
+          {/* Background - Tall enough for all expanded FAQ items */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1254px] h-[900px] rounded-section opacity-80">
             <img
               src="http://localhost:3845/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
               alt=""

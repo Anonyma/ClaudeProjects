@@ -248,10 +248,10 @@ export default function FundExperimentsPage() {
       </section>
 
       {/* SECTION - FAQs */}
-      <section className="relative w-full h-[617px]">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[540px]">
-          {/* Background */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1254px] h-[469px] rounded-section opacity-80 overflow-hidden">
+      <section className="relative w-full h-[780px]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[740px]">
+          {/* Background - Tall enough for all expanded FAQ items */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1254px] h-[700px] rounded-section opacity-80 overflow-hidden">
             <img
               src="http://localhost:3845/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
               alt=""

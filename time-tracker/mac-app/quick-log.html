@@ -257,6 +257,23 @@
             }
         });
 
+        function notifyLogged(text) {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.logged) {
+                window.webkit.messageHandlers.logged.postMessage({
+                    text: text,
+                    ping_id: pingId || null
+                });
+            }
+        }
+
+        function requestClose() {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.close) {
+                window.webkit.messageHandlers.close.postMessage({ reason: 'close' });
+                return;
+            }
+            window.close();
+        }
+
         async function handleLog() {
             const textarea = document.getElementById('activity');
             const text = textarea.value.trim();
@@ -277,7 +294,7 @@
                     },
                     body: JSON.stringify({
                         activity_text: text,
-                        device: 'web',
+                        device: 'mac',
                         entry_type: pingId ? 'ping_response' : (isAFK ? 'afk_return' : 'manual'),
                         ping_id: pingId || null
                     })
@@ -304,9 +321,10 @@
                     // Show success
                     document.getElementById('formContent').classList.add('hidden');
                     document.getElementById('successMessage').classList.add('show');
+                    notifyLogged(text);
 
                     // Close after delay
-                    setTimeout(() => window.close(), 1000);
+                    setTimeout(() => requestClose(), 1000);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -315,7 +333,7 @@
         }
 
         function handleCancel() {
-            window.close();
+            requestClose();
         }
     </script>
 </body>

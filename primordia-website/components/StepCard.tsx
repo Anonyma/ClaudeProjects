@@ -40,8 +40,17 @@ const StepCard: React.FC<StepCardProps> = ({
         {title}
       </h3>
 
-      {/* Card Background */}
-      <div className="relative w-full h-[270px] rounded-card overflow-hidden mb-[16px]">
+      {/* Icon - positioned HALF IN / HALF OUT of card (50% overlap) */}
+      <div className="relative w-full flex justify-center mb-[-50px] z-10">
+        <img
+          src={iconUrl}
+          alt=""
+          className="w-auto h-[100px] object-contain drop-shadow-step"
+        />
+      </div>
+
+      {/* Card Background with text INSIDE */}
+      <div className="relative w-full h-[270px] rounded-card overflow-hidden">
         <div className="absolute inset-0 opacity-70">
           <img
             src="http://localhost:3845/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
@@ -50,20 +59,13 @@ const StepCard: React.FC<StepCardProps> = ({
           />
         </div>
 
-        {/* Icon */}
-        <div className="absolute bottom-[25px] left-1/2 -translate-x-1/2">
-          <img
-            src={iconUrl}
-            alt=""
-            className="w-auto h-[100px] object-contain drop-shadow-step"
-          />
+        {/* Description - INSIDE green box */}
+        <div className="relative h-full flex items-end pb-[20px] px-[16px]">
+          <p className="font-karla font-normal text-[17px] leading-[1.24] text-black">
+            {description}
+          </p>
         </div>
       </div>
-
-      {/* Description */}
-      <p className="font-karla font-normal text-[17px] leading-[1.24] text-black">
-        {description}
-      </p>
     </div>
   );
 };

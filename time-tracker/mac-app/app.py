@@ -27,6 +27,7 @@ from config import (
 from afk_detector import get_idle_time, format_duration
 from supabase_client import TimeTrackerClient
 from native_dialog import show_activity_dialog_cocoa, show_afk_return_dialog
+from native_webview import show_quick_log_window
 
 
 class TimeTrackerApp(rumps.App):
@@ -125,22 +126,18 @@ class TimeTrackerApp(rumps.App):
             time.sleep(5)  # Check every 5 seconds
 
     def _check_hourly_ping(self):
-        """Check if it's time to send an hourly ping."""
+        """Check if it's time to send a ping based on interval."""
         now = datetime.now()
 
-        # Don't ping if we already did recently (less than 55 minutes ago)
-        if self.last_ping_time:
-            time_since_last = (now - self.last_ping_time).total_seconds() / 60
-            if time_since_last < 55:
-                return
+        if self.last_ping_time is None:
+            self.last_ping_time = now - timedelta(minutes=PING_INTERVAL_MINUTES)
 
-        # Only ping within first 5 minutes of the hour
-        if now.minute > 5:
+        time_since_last = (now - self.last_ping_time).total_seconds() / 60
+        if time_since_last < PING_INTERVAL_MINUTES:
             return
 
         # Don't ping if recent activity
         if self.client.should_skip_ping(minutes=SKIP_IF_ACTIVITY_WITHIN_MINUTES):
-            self.last_ping_time = now
             return
 
         # Create and show ping
@@ -154,19 +151,25 @@ class TimeTrackerApp(rumps.App):
         if ping:
             self.current_ping_id = ping['id']
 
-            # Send Pushover notification first (more reliable)
+            opened = show_quick_log_window(
+                ping_id=ping['id'],
+                on_logged=self._handle_webview_logged
+            )
+
+            # Still send push notifications if configured (cross-device)
             self._send_pushover_notification(ping['id'])
 
-            # Try local notification (may fail due to rumps bug)
-            try:
-                rumps.notification(
-                    title="What are you doing?",
-                    subtitle="Time to log your activity",
-                    message="Click to log what you're working on",
-                    sound=True
-                )
-            except Exception as e:
-                print(f"Local notification failed: {e}")
+            if not opened:
+                # Try local notification (may fail due to rumps bug)
+                try:
+                    rumps.notification(
+                        title="What are you doing?",
+                        subtitle="Time to log your activity",
+                        message="Click to log what you're working on",
+                        sound=True
+                    )
+                except Exception as e:
+                    print(f"Local notification failed: {e}")
 
     def _send_pushover_notification(self, ping_id: str):
         """Send push notification via Pushover."""
@@ -215,6 +218,10 @@ class TimeTrackerApp(rumps.App):
 
     def prompt_log_activity(self, _):
         """Show native dialog for manual activity logging."""
+        opened = show_quick_log_window(on_logged=self._handle_webview_logged)
+        if opened:
+            return
+
         response = show_activity_dialog_cocoa(
             title="What are you doing?",
             subtitle="Log your current activity"
@@ -228,6 +235,21 @@ class TimeTrackerApp(rumps.App):
                 entry_type='manual'
             )
             self._update_last_activity(response)
+
+    def _handle_webview_logged(self, payload):
+        """Handle a log event from the native webview."""
+        if isinstance(payload, dict):
+            text = payload.get('text')
+            ping_id = payload.get('ping_id') or payload.get('pingId')
+        else:
+            text = None
+            ping_id = None
+
+        if text:
+            self._update_last_activity(text)
+
+        if ping_id:
+            self.current_ping_id = None
 
     def manual_ping(self, _):
         """Manually trigger a ping."""
