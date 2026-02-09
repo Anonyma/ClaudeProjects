@@ -49,6 +49,8 @@ class TimeTrackerApp(rumps.App):
         self.afk_started_at = None
         self.current_ping_id = None
         self.last_ping_time = None
+        self.snooze_until = None
+        self.snooze_ping_id = None
 
         # Build menu
         self.menu = [
@@ -127,7 +129,15 @@ class TimeTrackerApp(rumps.App):
 
     def _check_hourly_ping(self):
         """Check if it's time to send a ping based on interval."""
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
+
+        if self.snooze_until:
+            if now >= self.snooze_until:
+                ping_id = self.snooze_ping_id
+                self.snooze_until = None
+                self.snooze_ping_id = None
+                self._trigger_ping(ping_id=ping_id, send_push=False)
+            return
 
         if self.last_ping_time is None:
             self.last_ping_time = now - timedelta(minutes=PING_INTERVAL_MINUTES)
@@ -144,20 +154,22 @@ class TimeTrackerApp(rumps.App):
         self.last_ping_time = now
         self._trigger_ping()
 
-    def _trigger_ping(self):
+    def _trigger_ping(self, ping_id: str = None, send_push: bool = True):
         """Trigger a ping notification."""
         # Create ping record
-        ping = self.client.create_ping()
+        ping = {"id": ping_id} if ping_id else self.client.create_ping()
         if ping:
             self.current_ping_id = ping['id']
 
             opened = show_quick_log_window(
                 ping_id=ping['id'],
-                on_logged=self._handle_webview_logged
+                on_logged=self._handle_webview_logged,
+                on_snooze=self._handle_snooze
             )
 
             # Still send push notifications if configured (cross-device)
-            self._send_pushover_notification(ping['id'])
+            if send_push:
+                self._send_pushover_notification(ping['id'])
 
             if not opened:
                 # Try local notification (may fail due to rumps bug)
@@ -218,7 +230,10 @@ class TimeTrackerApp(rumps.App):
 
     def prompt_log_activity(self, _):
         """Show native dialog for manual activity logging."""
-        opened = show_quick_log_window(on_logged=self._handle_webview_logged)
+        opened = show_quick_log_window(
+            on_logged=self._handle_webview_logged,
+            on_snooze=self._handle_snooze
+        )
         if opened:
             return
 
@@ -250,6 +265,39 @@ class TimeTrackerApp(rumps.App):
 
         if ping_id:
             self.current_ping_id = None
+            self.snooze_until = None
+            self.snooze_ping_id = None
+
+    def _handle_snooze(self, payload):
+        """Handle snooze requests from the native webview."""
+        minutes = None
+        ping_id = None
+
+        if isinstance(payload, dict):
+            minutes = payload.get('minutes')
+            ping_id = payload.get('ping_id') or payload.get('pingId')
+
+        if ping_id is None:
+            ping_id = self.current_ping_id
+
+        try:
+            minutes_int = int(minutes)
+        except (TypeError, ValueError):
+            return
+
+        if minutes_int <= 0:
+            return
+
+        self._schedule_snooze(minutes_int, ping_id)
+
+    def _schedule_snooze(self, minutes: int, ping_id: str = None):
+        """Schedule the next prompt after a snooze interval."""
+        now = datetime.now(timezone.utc)
+        self.snooze_until = now + timedelta(minutes=minutes)
+        self.snooze_ping_id = ping_id
+
+        if ping_id:
+            self.client.snooze_ping(ping_id, self.snooze_until)
 
     def manual_ping(self, _):
         """Manually trigger a ping."""

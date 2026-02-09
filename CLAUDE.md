@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+> **GLOBAL DIRECTIVES:** Before proceeding, read `AGENTS.md` in the repository root for global operating procedures valid for all agents.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## CRITICAL: Use Linear for Project Tracking
@@ -193,6 +195,44 @@ If a scratch file becomes useful long-term, move it to its own project folder an
 
 ### Cleanup
 The `_scratch/` folder can be periodically cleaned. Don't put anything critical here.
+
+---
+
+## Device File Sync (`device-sync/`)
+
+**For files that need to be transferred between Mac and CandyPop, use the `device-sync/` folder.**
+
+### Location
+- **Mac:** `/Users/z/Desktop/PersonalProjects/ClaudeProjects/device-sync/`
+- **CandyPop:** `~/device-sync/`
+
+### Structure
+```
+device-sync/
+├── audio-transcriptions/  # Voice journals and their transcripts
+├── documents/             # Documents to share between devices
+└── media/                 # Images, videos, etc.
+```
+
+### When to Use
+- Voice journal recordings and transcriptions
+- Documents that need to be accessed on both machines
+- Media files for processing or transfer
+- Any file that should be kept long-term and accessible on both devices
+
+### Transfer Commands
+```bash
+# Mac → CandyPop
+scp /path/to/file CandyPop:~/device-sync/[subfolder]/
+
+# CandyPop → Mac
+scp CandyPop:~/device-sync/[subfolder]/file /Users/z/Desktop/PersonalProjects/ClaudeProjects/device-sync/[subfolder]/
+```
+
+### Important
+- **NOT for temporary files** - use `_scratch/` for that
+- Files here are intended to be kept and synced between devices
+- Commit important transcriptions and documents to git
 
 ---
 

@@ -106,6 +106,13 @@
             gap: 12px;
         }
 
+        .secondary-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
         button {
             flex: 1;
             padding: 14px 24px;
@@ -138,6 +145,57 @@
 
         .btn-log:active {
             transform: translateY(0);
+        }
+
+        .btn-snooze {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-snooze:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .snooze-custom {
+            flex: 1;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .snooze-custom input {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .snooze-custom input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .web-actions {
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .btn-link {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .btn-link:hover {
+            color: #fff;
         }
 
         .dictation-hint {
@@ -212,6 +270,24 @@
                 <button class="btn-log" onclick="handleLog()">Log Activity</button>
             </div>
 
+            <div class="secondary-actions" id="snoozeActions">
+                <button class="btn-snooze" onclick="handleSnooze(10)">Snooze 10m</button>
+                <div class="snooze-custom">
+                    <input
+                        type="number"
+                        id="snoozeMinutes"
+                        min="1"
+                        max="180"
+                        placeholder="Custom minutes"
+                    />
+                    <button class="btn-snooze" onclick="handleCustomSnooze()">Snooze</button>
+                </div>
+            </div>
+
+            <div class="web-actions">
+                <button class="btn-link" onclick="openWebApp()">Open web app for longer notes</button>
+            </div>
+
             <div class="dictation-hint">
                 <p>🎤 Use voice: Press <span class="keys"><kbd>Fn</kbd><kbd>Fn</kbd></span> or use Wispr Flow</p>
             </div>
@@ -234,6 +310,10 @@
         const isAFK = urlParams.get('afk');
         const afkDuration = urlParams.get('duration');
 
+        const webUrl = pingId
+            ? `https://time-tracker-zk.netlify.app/quick-log.html?ping=${pingId}`
+            : 'https://time-tracker-zk.netlify.app/';
+
         // Update subtitle based on context
         if (isAFK && afkDuration) {
             document.getElementById('subtitle').textContent = `You were away for ${afkDuration}`;
@@ -242,6 +322,10 @@
         } else if (pingId) {
             document.getElementById('subtitle').textContent = 'Hourly check-in';
             document.querySelector('.icon').textContent = '🔔';
+        }
+
+        if (!pingId) {
+            document.getElementById('snoozeActions').style.display = 'none';
         }
 
         // Focus textarea
@@ -264,6 +348,23 @@
                     ping_id: pingId || null
                 });
             }
+        }
+
+        function notifySnooze(minutes) {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.snooze) {
+                window.webkit.messageHandlers.snooze.postMessage({
+                    minutes: minutes,
+                    ping_id: pingId || null
+                });
+            }
+        }
+
+        function openWebApp() {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.openWeb) {
+                window.webkit.messageHandlers.openWeb.postMessage({ url: webUrl });
+                return;
+            }
+            window.open(webUrl, '_blank');
         }
 
         function requestClose() {
@@ -335,6 +436,30 @@
         function handleCancel() {
             requestClose();
         }
+
+        function handleSnooze(minutes) {
+            if (!minutes || minutes <= 0) {
+                return;
+            }
+            notifySnooze(minutes);
+            requestClose();
+        }
+
+        function handleCustomSnooze() {
+            const input = document.getElementById('snoozeMinutes');
+            const minutes = parseInt(input.value, 10);
+            if (Number.isNaN(minutes) || minutes <= 0) {
+                input.focus();
+                return;
+            }
+            handleSnooze(minutes);
+        }
+
+        document.getElementById('snoozeMinutes').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                handleCustomSnooze();
+            }
+        });
     </script>
 </body>
 </html>

@@ -158,6 +158,17 @@ class TimeTrackerClient:
             return result[0]
         return None
 
+    def snooze_ping(self, ping_id: str, scheduled_at: datetime) -> bool:
+        """Update a ping's scheduled time after snoozing."""
+        if not ping_id:
+            return False
+        data = {
+            'status': 'pending',
+            'scheduled_at': scheduled_at.astimezone(timezone.utc).isoformat()
+        }
+        result = self._request('PATCH', f'pings?id=eq.{ping_id}', data)
+        return result is not None
+
     def answer_ping(
         self,
         ping_id: str,

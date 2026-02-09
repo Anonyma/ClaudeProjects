@@ -6,6 +6,7 @@ Falls back gracefully if WebKit isn't available.
 
 from pathlib import Path
 import threading
+import subprocess
 from urllib.parse import urlencode, urlparse, urlunparse
 
 _OPEN_WINDOWS = []
@@ -20,7 +21,7 @@ def _build_file_url(path: Path, params: dict) -> str:
     return urlunparse(parsed._replace(query=query))
 
 
-def show_quick_log_window(ping_id: str = None, on_logged=None) -> bool:
+def show_quick_log_window(ping_id: str = None, on_logged=None, on_snooze=None) -> bool:
     """Open a native WebKit window for logging activity."""
     try:
         from AppKit import (
@@ -58,11 +59,12 @@ def show_quick_log_window(ping_id: str = None, on_logged=None) -> bool:
     read_access = NSURL.fileURLWithPath_(str(html_path.parent))
 
     class QuickLogWindowController(NSObject):
-        def initWithURL_onLogged_(self, load_url, on_logged_callback):
+        def initWithURL_onLogged_onSnooze_(self, load_url, on_logged_callback, on_snooze_callback):
             self = super().init()
             if self is None:
                 return None
             self.on_logged_callback = on_logged_callback
+            self.on_snooze_callback = on_snooze_callback
 
             style = (
                 NSWindowStyleMaskTitled
@@ -79,6 +81,8 @@ def show_quick_log_window(ping_id: str = None, on_logged=None) -> bool:
             content_controller = WKUserContentController.alloc().init()
             content_controller.addScriptMessageHandler_name_(self, "close")
             content_controller.addScriptMessageHandler_name_(self, "logged")
+            content_controller.addScriptMessageHandler_name_(self, "snooze")
+            content_controller.addScriptMessageHandler_name_(self, "openWeb")
 
             config = WKWebViewConfiguration.alloc().init()
             config.setUserContentController_(content_controller)
@@ -110,6 +114,20 @@ def show_quick_log_window(ping_id: str = None, on_logged=None) -> bool:
                     self.on_logged_callback(body)
                 except Exception as e:
                     print(f"Log callback error: {e}")
+            elif name == "snooze" and self.on_snooze_callback:
+                try:
+                    self.on_snooze_callback(body)
+                except Exception as e:
+                    print(f"Snooze callback error: {e}")
+            elif name == "openWeb":
+                url = None
+                if isinstance(body, dict):
+                    url = body.get("url")
+                if isinstance(url, str) and url:
+                    try:
+                        subprocess.run(["open", url], check=False)
+                    except Exception as e:
+                        print(f"Open web error: {e}")
 
             if name == "close":
                 self.window.performClose_(None)
@@ -119,7 +137,9 @@ def show_quick_log_window(ping_id: str = None, on_logged=None) -> bool:
                 _OPEN_WINDOWS.remove(self)
 
     def _open_window() -> bool:
-        controller = QuickLogWindowController.alloc().initWithURL_onLogged_(url, on_logged)
+        controller = QuickLogWindowController.alloc().initWithURL_onLogged_onSnooze_(
+            url, on_logged, on_snooze
+        )
         if controller is None:
             return False
         _OPEN_WINDOWS.append(controller)
