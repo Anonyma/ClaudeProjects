@@ -72,21 +72,21 @@ export default function Home() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="absolute right-[80px] top-[560px] flex gap-[16px]">
+          <div className="absolute left-1/2 -translate-x-1/2 top-[560px] flex gap-[20px]">
             <div className="relative">
-              <Button variant="secondary" size="md" href="/apply" fixedWidth="170px">
+              <Button variant="secondary" size="md" href="/apply" fixedWidth="200px">
                 Apply
               </Button>
-              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[200px]">
+              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[220px]">
                 Up-to $3000 for your project
               </p>
             </div>
 
             <div className="relative">
-              <Button variant="primary" size="md" href="/fund" fixedWidth="220px">
+              <Button variant="primary" size="md" href="/fund" fixedWidth="240px">
                 Fund Experiments
               </Button>
-              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[240px]">
+              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-[260px]">
                 Support with as little as 1$/month
               </p>
             </div>
@@ -199,10 +199,10 @@ export default function Home() {
         </div>
 
         {/* White Box Container */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[780px] h-[300px] bg-white rounded-[50px]" />
+        <div className="absolute top-[140px] left-[240px] w-[780px] h-[300px] bg-white rounded-[50px]" />
 
         {/* Text */}
-        <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-karla font-medium text-[30px] leading-[1.63] text-black w-[700px] z-10 px-4">
+        <p className="absolute top-[140px] left-[240px] font-karla font-medium text-[30px] leading-[1.63] text-black w-[740px] z-10 py-8 px-10">
           In biology, a primordium is an organ or tissue in its earliest stage of development.
           Primordia is a collection of those beginnings. That is what this initiative exists for:
           many small, early experiments that can grow into something bigger.
@@ -210,7 +210,7 @@ export default function Home() {
       </section>
 
       {/* SECTION - STORIES */}
-      <section id="stories" className="relative w-full h-[1467px] opacity-90">
+      <section id="stories" className="relative w-full h-[1580px] opacity-90 mb-[100px]">
         <div className="absolute left-[120px] top-[68px] w-[1206px] h-[1384px]">
           {/* Title */}
           <h2 className="absolute top-[10px] left-1/2 -translate-x-1/2 font-montserrat font-semibold text-[66px] leading-none text-black text-center whitespace-nowrap">
@@ -271,10 +271,10 @@ export default function Home() {
       </section>
 
       {/* SECTION - FAQs */}
-      <section className="relative w-full h-[620px] mb-[20px]">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[580px]">
+      <section className="relative w-full h-[760px] mb-[20px]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1440px] h-[720px]">
           {/* Background */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1254px] h-[540px] rounded-section opacity-80">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1254px] h-[680px] rounded-section opacity-80">
             <img
               src="http://localhost:3845/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
               alt=""
