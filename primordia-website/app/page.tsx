@@ -55,7 +55,7 @@ export default function Home() {
           {/* Hero Background Image */}
           <div className="absolute left-[63px] top-[22px] w-[1241px] h-[658px]">
             <img
-              src="http://localhost:3845/assets/32461e24d0d9c8497991428510487f8da2c90c15.png"
+              src="/assets/32461e24d0d9c8497991428510487f8da2c90c15.png"
               alt=""
               className="w-full h-full object-cover"
             />
@@ -100,7 +100,7 @@ export default function Home() {
           {/* Background Shape with Illustration */}
           <div className="absolute left-[101px] top-[47px] w-[1237px] h-[717px]">
             <img
-              src="http://localhost:3845/assets/0b68b04ef484612a8302eacb563e9a74db16e442.png"
+              src="/assets/0b68b04ef484612a8302eacb563e9a74db16e442.png"
               alt=""
               className="w-full h-full object-cover"
             />
@@ -108,7 +108,7 @@ export default function Home() {
 
           <div className="absolute left-[134px] top-[283px] w-[586px] h-[362px] mix-blend-multiply opacity-90">
             <img
-              src="http://localhost:3845/assets/77f49b00e2c6d6dbc0ba3c392b5749f9e7ec5c28.png"
+              src="/assets/77f49b00e2c6d6dbc0ba3c392b5749f9e7ec5c28.png"
               alt=""
               className="w-full h-full object-cover"
             />
@@ -150,31 +150,31 @@ export default function Home() {
               number="1."
               title="APPLY WITH A CONCRETE EXPERIMENT"
               description="Teams propose a focused experiment they can run in a community lab or other compliant space within a few months."
-              iconUrl="http://localhost:3845/assets/9afca041dba5cd1fa389abbb0765a0042dbe5236.png"
+              iconUrl="/assets/9afca041dba5cd1fa389abbb0765a0042dbe5236.png"
             />
             <StepCard
               number="2."
               title="REVIEW AND SELECTION"
               description="Applications are reviewed by a panel of community lab leaders and practitioners. In some rounds we also use community voting and quadratic matching to allocate part of the pool."
-              iconUrl="http://localhost:3845/assets/ea4670ec3d4f8db0d31297273878f93a6c92fe2e.png"
+              iconUrl="/assets/ea4670ec3d4f8db0d31297273878f93a6c92fe2e.png"
             />
             <StepCard
               number="3."
               title="MICROGRANTS AND LAB ACCESS"
               description="Selected teams receive a flexible microgrant (for reagents, consumables, and a portion for lab membership) and plug into a local lab."
-              iconUrl="http://localhost:3845/assets/63923dde393fae74daf3ce68223f2f650045cfcb.png"
+              iconUrl="/assets/63923dde393fae74daf3ce68223f2f650045cfcb.png"
             />
             <StepCard
               number="4."
               title="LAB NOTES AND UPDATES"
               description="Grantees commit to sharing short updates and lab notes during the grant period, building an open portfolio of their progress."
-              iconUrl="http://localhost:3845/assets/075f86b177a42c4a339421f3181e9fa8f9327235.png"
+              iconUrl="/assets/075f86b177a42c4a339421f3181e9fa8f9327235.png"
             />
             <StepCard
               number="5."
               title="SHOWCASE AND NEXT STEPS"
               description="At the end of the cycle, projects share results in a public session and written summary. Some may continue with follow on grants, partnerships, or company formation."
-              iconUrl="http://localhost:3845/assets/ff65de78e09e9f9541b2e09040621bf6607e10a5.png"
+              iconUrl="/assets/ff65de78e09e9f9541b2e09040621bf6607e10a5.png"
             />
           </div>
 
@@ -192,7 +192,7 @@ export default function Home() {
         {/* Background Shape */}
         <div className="absolute left-[94px] top-[40px] w-[1262px] h-[440px]">
           <img
-            src="http://localhost:3845/assets/440309f25a5c626dc056db5e980b27ab8298fd9d.png"
+            src="/assets/440309f25a5c626dc056db5e980b27ab8298fd9d.png"
             alt=""
             className="w-full h-full object-cover"
           />
@@ -231,14 +231,14 @@ export default function Home() {
               description="Studying levels of microplastic particles in local streams."
               location="Open Bio Lab, Boston"
               status="In Progress"
-              imageUrl="http://localhost:3845/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
+              imageUrl="/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
             />
             <ProjectCard
               title="Easy DNA Extraction"
               description="Developing a fast, low-cost DNA extraction method."
               location="Community Lab, Oakland"
               status="Completed"
-              imageUrl="http://localhost:3845/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
+              imageUrl="/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
             />
           </div>
 
@@ -249,14 +249,14 @@ export default function Home() {
               description="Studying levels of microplastic particles in local streams."
               location="Open Bio Lab, Boston"
               status="In Progress"
-              imageUrl="http://localhost:3845/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
+              imageUrl="/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
             />
             <ProjectCard
               title="Easy DNA Extraction"
               description="Developing a fast, low-cost DNA extraction method."
               location="Community Lab, Oakland"
               status="Completed"
-              imageUrl="http://localhost:3845/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
+              imageUrl="/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
             />
           </div>
 
@@ -278,7 +278,7 @@ export default function Home() {
           {/* Background - Tall enough for all expanded FAQ items */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1254px] h-[900px] rounded-section opacity-80">
             <img
-              src="http://localhost:3845/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
+              src="/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
               alt=""
               className="w-full h-full object-cover rounded-section"
             />

@@ -55,7 +55,7 @@ export default function FundExperimentsPage() {
           {/* Hero Background Image */}
           <div className="absolute left-[10px] top-0 w-[1241px] h-[638px]">
             <img
-              src="http://localhost:3845/assets/39852c721342aaa96278cdc70081f158db4c8611.png"
+              src="/assets/39852c721342aaa96278cdc70081f158db4c8611.png"
               alt=""
               className="w-full h-full object-cover"
             />
@@ -85,7 +85,7 @@ export default function FundExperimentsPage() {
           {/* Payment Logos */}
           <div className="absolute left-[471px] top-[624px] w-[289px] h-[50px]">
             <Image
-              src="http://localhost:3845/assets/a8d195d8b033f652716bf2ab79b3f0c17cde4382.png"
+              src="/assets/a8d195d8b033f652716bf2ab79b3f0c17cde4382.png"
               alt="Payment methods: Visa, Mastercard, Apple Pay"
               width={289}
               height={50}
@@ -100,7 +100,7 @@ export default function FundExperimentsPage() {
         {/* Background */}
         <div className="absolute left-[40px] top-[47px] w-[1360px] h-[881px] rounded-card opacity-80 overflow-hidden">
           <img
-            src="http://localhost:3845/assets/8d73f6d3cc79c4f4218df42cafdf8d31d713b7f9.png"
+            src="/assets/8d73f6d3cc79c4f4218df42cafdf8d31d713b7f9.png"
             alt=""
             className="w-[112.99%] h-[108.96%] object-cover"
             style={{ left: '-2.04%', top: '-4.2%' }}
@@ -161,7 +161,7 @@ export default function FundExperimentsPage() {
             {/* Arrow Vector */}
             <div className="absolute left-[148px] top-[57px] w-[696px] h-[57px]">
               <Image
-                src="http://localhost:3845/assets/54d8cd4a62e3b957bb65c8f803bb503852acc155.svg"
+                src="/assets/54d8cd4a62e3b957bb65c8f803bb503852acc155.svg"
                 alt=""
                 width={696}
                 height={57}
@@ -175,14 +175,14 @@ export default function FundExperimentsPage() {
               <div className="flex flex-col items-center">
                 <div className="relative w-[218px] h-[218px]">
                   <Image
-                    src="http://localhost:3845/assets/e7e0d4ed436a8a6b39bdbeef41060633bee97592.svg"
+                    src="/assets/e7e0d4ed436a8a6b39bdbeef41060633bee97592.svg"
                     alt=""
                     width={218}
                     height={218}
                   />
                   <div className="absolute top-[-4px] left-1/2 -translate-x-1/2 w-[151px] h-[185px]">
                     <Image
-                      src="http://localhost:3845/assets/f39ae31b7771689f3c1fa20426744bd06f34552e.png"
+                      src="/assets/f39ae31b7771689f3c1fa20426744bd06f34552e.png"
                       alt="Pipette icon"
                       width={151}
                       height={185}
@@ -199,14 +199,14 @@ export default function FundExperimentsPage() {
               <div className="flex flex-col items-center">
                 <div className="relative w-[218px] h-[218px]">
                   <Image
-                    src="http://localhost:3845/assets/e7e0d4ed436a8a6b39bdbeef41060633bee97592.svg"
+                    src="/assets/e7e0d4ed436a8a6b39bdbeef41060633bee97592.svg"
                     alt=""
                     width={218}
                     height={218}
                   />
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[126px] h-[204px]">
                     <Image
-                      src="http://localhost:3845/assets/3b21be1039f6340027e437d94df81f738eec80ca.png"
+                      src="/assets/3b21be1039f6340027e437d94df81f738eec80ca.png"
                       alt="Microscope icon"
                       width={126}
                       height={204}
@@ -223,14 +223,14 @@ export default function FundExperimentsPage() {
               <div className="flex flex-col items-center">
                 <div className="relative w-[218px] h-[218px]">
                   <Image
-                    src="http://localhost:3845/assets/e7e0d4ed436a8a6b39bdbeef41060633bee97592.svg"
+                    src="/assets/e7e0d4ed436a8a6b39bdbeef41060633bee97592.svg"
                     alt=""
                     width={218}
                     height={218}
                   />
                   <div className="absolute top-[66px] left-1/2 -translate-x-1/2 w-[142px] h-[106px]">
                     <Image
-                      src="http://localhost:3845/assets/b29f79ab71bd00aa97f1db350e76a7ffe51b3907.png"
+                      src="/assets/b29f79ab71bd00aa97f1db350e76a7ffe51b3907.png"
                       alt="Coins icon"
                       width={142}
                       height={106}
@@ -253,7 +253,7 @@ export default function FundExperimentsPage() {
           {/* Background - Tall enough for all expanded FAQ items */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1254px] h-[700px] rounded-section opacity-80 overflow-hidden">
             <img
-              src="http://localhost:3845/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
+              src="/assets/e42062b9935acba3ba062eb6a431490b57cca7e0.png"
               alt=""
               className="w-full h-full object-cover"
             />

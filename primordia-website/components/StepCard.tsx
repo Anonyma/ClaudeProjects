@@ -53,7 +53,7 @@ const StepCard: React.FC<StepCardProps> = ({
       <div className="relative w-full h-[270px] rounded-card overflow-hidden">
         <div className="absolute inset-0 opacity-70">
           <img
-            src="http://localhost:3845/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
+            src="/assets/b19a591256bc5de634d2547a52cfb3c58c3b47d0.png"
             alt=""
             className="w-full h-full object-cover"
           />

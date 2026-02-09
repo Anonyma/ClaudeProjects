@@ -56,7 +56,7 @@ const FAQAccordion: React.FC<FAQAccordionProps> = ({ items }) => {
                 }`}
               >
                 <Image
-                  src="http://localhost:3845/assets/487a73d8c184fd88b96c8045f7b9f67433570f6f.svg"
+                  src="/assets/487a73d8c184fd88b96c8045f7b9f67433570f6f.svg"
                   alt=""
                   width={21}
                   height={18}
