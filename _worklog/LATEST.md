@@ -12,3 +12,4 @@
 | 2026-02-08 | poetry-companion | completed | Added full texts for all 24 poems (including Eliot, Rilke, Valéry), side-by-side bilingual view, and extensive scholarly analysis (historical, philosophical, cross-disciplinary) - https://poetry-companion-flight.netlify.app |
 | 2026-02-08 | art-discovery | completed | Fixed Netlify deployment - build config + Supabase key typo. All 45 entities loading. |
 | 2026-02-08 | vienna-deep-dives | completed (lessons) / in-progress (audio) | Created 8 Vienna lessons (56k words), deployed to Netlify. Audio generation on CandyPop via Gemini CLI. |
+| 2026-02-09 | paper-reading-mentor | completed | Initialized standalone GitHub repo and pushed main; updated projects.json. |

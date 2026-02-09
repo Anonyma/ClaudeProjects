@@ -180,7 +180,7 @@
         "requiresServer": false
       },
       "github": {
-        "repo": null
+        "repo": "https://github.com/Anonyma/paper-reading-mentor"
       },
       "files": [
         "manifest.json",
