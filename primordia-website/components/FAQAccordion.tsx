@@ -34,24 +34,21 @@ const FAQAccordion: React.FC<FAQAccordionProps> = ({ items }) => {
         const contentId = `faq-content-${index}`;
 
         return (
-          <div
-            key={index}
-            className="relative bg-white border border-border-light rounded-faq shadow-faq overflow-hidden transition-all duration-300"
-          >
+          <div key={index} className="relative">
             <button
               id={itemId}
               aria-expanded={isOpen}
               aria-controls={contentId}
               onClick={() => toggleItem(index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              className="w-full flex items-center justify-between px-[40px] py-[20.5px] hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-inset"
+              className="w-full flex items-center justify-between px-[40px] py-[20.5px] bg-white border border-border-light rounded-faq shadow-faq hover:shadow-lg transition-shadow focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
             >
               <span className="font-karla font-normal text-[23px] leading-[1.54] text-black text-left">
                 {item.question}
               </span>
 
               <div
-                className={`flex-shrink-0 ml-4 transition-transform duration-300 ${
+                className={`flex-shrink-0 ml-4 transition-transform ${
                   isOpen ? 'rotate-0' : 'rotate-180'
                 }`}
               >
@@ -65,20 +62,18 @@ const FAQAccordion: React.FC<FAQAccordionProps> = ({ items }) => {
               </div>
             </button>
 
-            <div
-              id={contentId}
-              role="region"
-              aria-labelledby={itemId}
-              className={`transition-all duration-300 overflow-hidden ${
-                isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-              }`}
-            >
-              <div className="px-[40px] pb-[20px] pt-[8px] border-t border-border-light">
+            {isOpen && (
+              <div
+                id={contentId}
+                role="region"
+                aria-labelledby={itemId}
+                className="mt-2 px-[40px] py-[20px] bg-white border border-border-light rounded-faq shadow-faq"
+              >
                 <p className="font-karla font-normal text-[20px] leading-[1.6] text-black">
                   {item.answer}
                 </p>
               </div>
-            </div>
+            )}
           </div>
         );
       })}

@@ -34,7 +34,8 @@ test.describe('Figma Visual Regression', () => {
       // 4. Compare screenshot
       await expect(page).toHaveScreenshot(`${vp.name}.png`, {
         fullPage: true,
-        maxDiffPixelRatio: 0.05, // Relaxing threshold slightly for initial comparison
+        // Optional: Adjust threshold if rendering differs slightly across environments
+        maxDiffPixelRatio: 0.02, 
       });
     });
   }

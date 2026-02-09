@@ -35,8 +35,8 @@ const StepCard: React.FC<StepCardProps> = ({
         {number}
       </p>
 
-      {/* Title - Fixed height for alignment */}
-      <h3 className="font-montserrat font-bold text-[20px] leading-[1.2] text-black mb-[16px] h-[72px] flex items-start">
+      {/* Title */}
+      <h3 className="font-montserrat font-bold text-[20px] leading-[1.2] text-black mb-[16px] min-h-[50px]">
         {title}
       </h3>
 

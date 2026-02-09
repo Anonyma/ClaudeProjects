@@ -3,36 +3,50 @@ import { Footer } from "@/components/Footer";
 import { Section } from "@/components/Section";
 import { Button } from "@/components/Button";
 import { FAQAccordion } from "@/components/FAQAccordion";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
-      {/* NAVBAR + HERO = 828px in Figma */}
-      <div className="h-[828px] relative overflow-hidden">
-        <Navbar />
-        
-        {/* HERO Content - Figma Frame 1 is at y=80, height 680 */}
-        <div className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[1350px] h-[680px] z-0">
-             {/* Background Shape */}
+      <Navbar />
+
+      {/* HERO SECTION */}
+      <Section className="pt-[80px] pb-20">
+        <div className="relative w-full max-w-[1350px] mx-auto h-[680px] rounded-[30px] overflow-hidden">
+             
+             {/* Background Shape - Positioned absolutely at back */}
              <div className="absolute left-[63px] top-[22px] w-[1241px] h-[658px] z-0">
                 <img src="/images/hero-shape.png" alt="" className="w-full h-full object-cover" />
              </div>
 
-             {/* Content Layer */}
+             {/* Content Container - z-10 to be on top */}
              <div className="relative z-10 h-full w-full">
+                {/* PRIMORDIA - Centered Top */}
                 <h1 className="absolute top-[34px] left-1/2 -translate-x-1/2 font-futura font-bold text-125 tracking-[-10px] leading-none text-black whitespace-nowrap">
                   PRIMORDIA
                 </h1>
 
+                {/* Subheading - Right aligned */}
                 <h2 className="absolute top-[407px] right-[63px] font-karla font-medium text-66 leading-[1.13] tracking-[-4.62px] text-right w-[730px] text-black">
                    Funding Early Biology Experiments in DIY Labs
                 </h2>
 
-                <div className="absolute top-[579px] left-[640px] flex gap-[26px]"> 
+                {/* Buttons - Bottom aligned with specific positioning from Figma */}
+                <div className="absolute top-[579px] left-[640px] flex gap-[2px]"> 
+                   {/* Note: Figma had Apply at 640px and Fund at 960px. That's a 320px gap?
+                       Wait, Apply width is 294. 640 + 294 = 934. 
+                       Fund starts at 960. Gap is 960 - 934 = 26px.
+                   */}
+                   
+                   {/* Apply Group */}
                    <div className="flex flex-col items-center gap-4 relative">
                       <Button className="w-[294px]">Apply</Button>
                       <span className="font-karla text-18 font-medium opacity-100 text-center whitespace-nowrap absolute top-[68px]">Up-to $3000 for your project</span>
                    </div>
+
+                   <div className="w-[26px]"></div> {/* Spacer */}
+
+                   {/* Fund Group */}
                    <div className="flex flex-col items-center gap-4 relative">
                        <Button variant="primary" className="w-[318px]">Fund Experiments</Button>
                        <span className="font-karla text-18 font-medium opacity-100 text-center whitespace-nowrap absolute top-[68px]">Support with as little as 1$/month</span>
@@ -40,13 +54,13 @@ export default function Home() {
                 </div>
              </div>
         </div>
-      </div>
+      </Section>
 
-      {/* WHAT IS PRIMORDIA - Height 840px */}
-      <section className="h-[840px] relative">
-         <div className="relative w-full h-[800px] top-[20px]">
+      {/* WHAT IS PRIMORDIA */}
+      <Section className="py-20">
+         <div className="relative w-full min-h-[800px]">
              {/* Background Shape */}
-             <div className="absolute top-[47px] left-[101px] w-[1237px] h-[717px] z-0">
+             <div className="absolute top-[27px] left-[101px] w-[1237px] h-[717px] z-0">
                  <img src="/images/bg-shape.png" alt="" className="w-full h-full" />
              </div>
              
@@ -65,21 +79,19 @@ export default function Home() {
                  </p>
              </div>
          </div>
-      </section>
+      </Section>
 
-      {/* HOW IT WORKS - Height 906px */}
-      <section className="h-[906px] relative px-[60px]">
-         <div className="absolute top-[102px] left-[422px]">
+      {/* HOW IT WORKS */}
+      <Section className="py-20">
+         <div className="flex justify-between items-end mb-16 px-6">
             <h2 className="font-montserrat font-bold text-78 leading-none">How it Works</h2>
-         </div>
-         <div className="absolute top-[211px] left-1/2 -translate-x-1/2 w-[1066px]">
-            <p className="font-karla text-31 leading-tight text-center">
+            <p className="font-karla text-31 leading-tight max-w-[1066px] text-right">
                Simple cycles for experiments that fit in months and micro-budgets.
             </p>
          </div>
 
-         {/* Steps Grid - Y=271 in Figma */}
-         <div className="absolute top-[271px] left-[62px] right-[62px] grid grid-cols-5 gap-6">
+         {/* Steps Grid */}
+         <div className="grid grid-cols-5 gap-4">
             {[1, 2, 3, 4, 5].map((step) => (
                 <div key={step} className="bg-white rounded-[20px] p-6 h-[466px] flex flex-col justify-between border-[2.5px] border-black">
                    <div className="flex flex-col gap-4">
@@ -104,32 +116,33 @@ export default function Home() {
             ))}
          </div>
          
-         <div className="absolute top-[789px] left-1/2 -translate-x-1/2">
+         <div className="flex justify-center mt-12">
             <Button className="w-[408px]">View Funded Experiments</Button>
          </div>
-      </section>
+      </Section>
 
-      {/* DEFINITION SECTION - Height 480px */}
-      <section className="h-[480px] relative">
-          <div className="absolute top-[20px] left-[94px] right-[94px] h-[440px]">
+      {/* DEFINITION SECTION */}
+      <Section className="py-20">
+          <div className="relative w-full max-w-[1262px] mx-auto h-[440px]">
+             {/* Background Shape Reused or Similar */}
              <div className="absolute inset-0 bg-[#F2F2F2] rounded-[100px] -rotate-1 z-0" />
-             <div className="relative z-10 flex items-center justify-center h-full text-center p-20">
+             
+             <div className="relative z-10 flex items-center justify-center h-full p-20 text-center">
                 <p className="font-karla text-31 leading-[1.48] max-w-[772px]">
                     In biology, a primordium is an organ or tissue in its earliest stage of development. Primordia is a collection of those beginnings. That is what this initiative exists for: many small, early experiments that can grow into something bigger.
                 </p>
              </div>
           </div>
-      </section>
+      </Section>
 
-      {/* STORIES & LAB NOTES - Height 1467px */}
-      <section className="h-[1467px] relative">
-         <div className="flex flex-col items-center absolute top-[68px] left-0 right-0">
+      {/* STORIES & LAB NOTES */}
+      <Section className="py-20">
+         <div className="flex flex-col items-center mb-16">
             <h2 className="font-montserrat font-bold text-78 leading-none mb-4 text-center">Stories & Lab Notes</h2>
             <p className="font-karla text-31 text-center opacity-60">Learn about DIY community bio initiatives</p>
          </div>
 
-         {/* Grid starting at Y=159 within section */}
-         <div className="absolute top-[227px] left-1/2 -translate-x-1/2 grid grid-cols-2 gap-[55px]">
+         <div className="flex justify-center gap-8 mb-16">
             {/* Card 1 */}
             <div className="w-[499px] h-[499px] bg-white border-[2.5px] border-black rounded-[39px] p-8 relative flex flex-col items-center text-center">
                <div className="w-full h-[215px] bg-gray-200 rounded-[20px] mb-8" />
@@ -146,21 +159,19 @@ export default function Home() {
             </div>
          </div>
 
-         <div className="absolute top-[1290px] left-1/2 -translate-x-1/2 flex gap-8">
+         <div className="flex justify-center gap-8">
             <Button className="w-[332px]">Apply</Button>
             <Button className="w-[332px]">Become a Supporter</Button>
          </div>
-      </section>
+      </Section>
 
-      {/* FAQs - Height 617px */}
-      <section className="h-[617px] relative px-[60px]">
-         <div className="absolute top-[69px] left-[175px]">
-            <h2 className="font-montserrat font-bold text-78 leading-none">FAQs</h2>
-         </div>
-         <div className="absolute top-[39px] left-[291px] right-[229px]">
+      {/* FAQs */}
+      <Section className="py-20 mb-20">
+         <div className="flex gap-20">
+            <h2 className="font-montserrat font-bold text-78 leading-none shrink-0 w-[175px]">FAQs</h2>
             <FAQAccordion />
          </div>
-      </section>
+      </Section>
 
       <Footer />
     </main>
