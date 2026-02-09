@@ -5,18 +5,20 @@ const viewports = [
   { 
     name: 'home-desktop', 
     path: '/', 
-    width: 1440, 
+    width: 1500, 
     height: 5374 // Use height from Figma for initial viewport, though fullPage screenshot handles scroll
   },
   { 
     name: 'fund-desktop', 
     path: '/fund-experiments', 
-    width: 1440, 
+    width: 1500, 
     height: 2842 
   },
 ];
 
 test.describe('Figma Visual Regression', () => {
+  test.use({ deviceScaleFactor: 4 });
+
   for (const vp of viewports) {
     test(`match ${vp.name}`, async ({ page }) => {
       // 1. Set viewport to match Figma baseline width
@@ -32,8 +34,11 @@ test.describe('Figma Visual Regression', () => {
       await page.evaluate(() => document.fonts.ready);
 
       // 4. Compare screenshot
+      console.log(`Comparing screenshot: ${vp.name}.png`);
       await expect(page).toHaveScreenshot(`${vp.name}.png`, {
         fullPage: true,
+        scale: 'device',
+        timeout: 30000,
         // Optional: Adjust threshold if rendering differs slightly across environments
         maxDiffPixelRatio: 0.02, 
       });

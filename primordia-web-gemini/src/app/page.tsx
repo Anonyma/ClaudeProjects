@@ -57,7 +57,7 @@ export default function Home() {
       </Section>
 
       {/* WHAT IS PRIMORDIA */}
-      <Section className="py-20">
+      <Section className="py-28">
          <div className="relative w-full min-h-[800px]">
              {/* Background Shape */}
              <div className="absolute top-[27px] left-[101px] w-[1237px] h-[717px] z-0">
@@ -82,7 +82,7 @@ export default function Home() {
       </Section>
 
       {/* HOW IT WORKS */}
-      <Section className="py-20">
+      <Section className="py-28">
          <div className="flex justify-between items-end mb-16 px-6">
             <h2 className="font-montserrat font-bold text-78 leading-none">How it Works</h2>
             <p className="font-karla text-31 leading-tight max-w-[1066px] text-right">
@@ -122,7 +122,7 @@ export default function Home() {
       </Section>
 
       {/* DEFINITION SECTION */}
-      <Section className="py-20">
+      <Section className="py-28">
           <div className="relative w-full max-w-[1262px] mx-auto h-[440px]">
              {/* Background Shape Reused or Similar */}
              <div className="absolute inset-0 bg-[#F2F2F2] rounded-[100px] -rotate-1 z-0" />
@@ -136,7 +136,7 @@ export default function Home() {
       </Section>
 
       {/* STORIES & LAB NOTES */}
-      <Section className="py-20">
+      <Section className="py-28">
          <div className="flex flex-col items-center mb-16">
             <h2 className="font-montserrat font-bold text-78 leading-none mb-4 text-center">Stories & Lab Notes</h2>
             <p className="font-karla text-31 text-center opacity-60">Learn about DIY community bio initiatives</p>
@@ -166,7 +166,7 @@ export default function Home() {
       </Section>
 
       {/* FAQs */}
-      <Section className="py-20 mb-20">
+      <Section className="py-28 mb-14">
          <div className="flex gap-20">
             <h2 className="font-montserrat font-bold text-78 leading-none shrink-0 w-[175px]">FAQs</h2>
             <FAQAccordion />

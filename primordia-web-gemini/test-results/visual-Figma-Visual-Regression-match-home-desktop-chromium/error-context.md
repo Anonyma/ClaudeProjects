@@ -3,126 +3,126 @@
 ```yaml
 - generic [active] [ref=e1]:
   - main [ref=e2]:
-    - generic [ref=e3]:
-      - navigation [ref=e4]:
-        - generic [ref=e5]:
-          - link "PRIMORDIA" [ref=e6] [cursor=pointer]:
-            - /url: /
-          - generic [ref=e7]:
-            - link "About" [ref=e8] [cursor=pointer]:
-              - /url: "#about"
-            - link "How it Works" [ref=e10] [cursor=pointer]:
-              - /url: "#how-it-works"
-            - link "Lab Notes" [ref=e12] [cursor=pointer]:
-              - /url: "#lab-notes"
-          - generic [ref=e13]:
-            - link "For Donors" [ref=e14] [cursor=pointer]:
-              - /url: /fund
-            - link "For Applicants" [ref=e15] [cursor=pointer]:
-              - /url: /apply
-      - generic [ref=e16]:
-        - heading "PRIMORDIA" [level=1] [ref=e18]
-        - paragraph [ref=e19]: Funding Early Biology Experiments in DIY Labs
-        - generic [ref=e20]:
-          - generic [ref=e21]:
-            - link "Apply" [ref=e22] [cursor=pointer]:
-              - /url: /apply
-            - paragraph [ref=e23]: Up-to $3000 for your project
-          - generic [ref=e24]:
-            - link "Fund Experiments" [ref=e25] [cursor=pointer]:
-              - /url: /fund
-            - paragraph [ref=e26]: Support with as little as 1$/month
-    - generic [ref=e28]:
-      - heading "What is Primordia?" [level=2] [ref=e31]:
-        - text: What is
-        - text: Primordia?
-      - paragraph [ref=e32]: Primordia is a microgrants program for early stage biology experiments run in community labs and other compliant spaces. We help people move ideas out of notebooks and into the lab by providing small, fast grants and a structure for sharing lab notes, results, and stories.
+    - navigation [ref=e3]:
+      - link "PRIMORDIA" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "About" [ref=e6] [cursor=pointer]:
+          - /url: "#"
+        - link "How it Works" [ref=e8] [cursor=pointer]:
+          - /url: "#"
+        - link "Lab Notes" [ref=e10] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e11]:
+        - button "For Donors" [ref=e12]
+        - button "For Applicants" [ref=e13]
+    - generic [ref=e17]:
+      - heading "PRIMORDIA" [level=1] [ref=e18]
+      - heading "Funding Early Biology Experiments in DIY Labs" [level=2] [ref=e19]
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - button "Apply" [ref=e22]
+          - generic [ref=e23]: Up-to $3000 for your project
+        - generic [ref=e25]:
+          - button "Fund Experiments" [ref=e26]
+          - generic [ref=e27]: Support with as little as 1$/month
+    - generic [ref=e29]:
+      - generic:
+        - heading "What is Primordia?" [level=2] [ref=e32]:
+          - text: What is
+          - text: Primordia?
+        - paragraph [ref=e33]: Primordia is a microgrants program for early stage biology experiments run in community labs and other compliant spaces. We help people move ideas out of notebooks and into the lab by providing small, fast grants and a structure for sharing lab notes, results, and stories.
     - generic [ref=e34]:
-      - heading "How it Works" [level=2] [ref=e35]
-      - paragraph [ref=e36]: Simple cycles for experiments that fit in months and micro-budgets.
-      - generic [ref=e37]:
-        - generic [ref=e38]:
-          - paragraph [ref=e39]: "1."
-          - heading "APPLY WITH A CONCRETE EXPERIMENT" [level=3] [ref=e40]
-          - paragraph [ref=e44]: Teams propose a focused experiment they can run in a community lab or other compliant space within a few months.
-        - generic [ref=e45]:
-          - paragraph [ref=e46]: "2."
-          - heading "REVIEW AND SELECTION" [level=3] [ref=e47]
-          - paragraph [ref=e51]: Applications are reviewed by a panel of community lab leaders and practitioners. In some rounds we also use community voting and quadratic matching to allocate part of the pool.
+      - generic [ref=e35]:
+        - heading "How it Works" [level=2] [ref=e36]
+        - paragraph [ref=e37]: Simple cycles for experiments that fit in months and micro-budgets.
+      - generic [ref=e38]:
+        - generic [ref=e40]:
+          - generic [ref=e41]: "1."
+          - heading "APPLY WITH A CONCRETE EXPERIMENT" [level=3] [ref=e42]
+          - paragraph [ref=e43]: Teams propose a focused experiment they can run in a community lab or other compliant space within a few months.
+        - generic [ref=e46]:
+          - generic [ref=e47]: "2."
+          - heading "REVIEW AND SELECTION" [level=3] [ref=e48]
+          - paragraph [ref=e49]: Applications are reviewed by a panel of community lab leaders and practitioners.
         - generic [ref=e52]:
-          - paragraph [ref=e53]: "3."
+          - generic [ref=e53]: "3."
           - heading "MICROGRANTS AND LAB ACCESS" [level=3] [ref=e54]
-          - paragraph [ref=e58]: Selected teams receive a flexible microgrant (for reagents, consumables, and a portion for lab membership) and plug into a local lab.
-        - generic [ref=e59]:
-          - paragraph [ref=e60]: "4."
-          - heading "LAB NOTES AND UPDATES" [level=3] [ref=e61]
-          - paragraph [ref=e65]: Grantees commit to sharing short updates and lab notes during the grant period, building an open portfolio of their progress.
-        - generic [ref=e66]:
-          - paragraph [ref=e67]: "5."
-          - heading "SHOWCASE AND NEXT STEPS" [level=3] [ref=e68]
-          - paragraph [ref=e72]: At the end of the cycle, projects share results in a public session and written summary. Some may continue with follow on grants, partnerships, or company formation.
-      - link "View Funded Experiments" [ref=e74] [cursor=pointer]:
-        - /url: "#stories"
-    - paragraph [ref=e78]: "In biology, a primordium is an organ or tissue in its earliest stage of development. Primordia is a collection of those beginnings. That is what this initiative exists for: many small, early experiments that can grow into something bigger."
-    - generic [ref=e80]:
-      - heading "Stories & Lab Notes" [level=2] [ref=e81]
-      - paragraph [ref=e82]: Learn about DIY community bio initiatives
-      - generic [ref=e83]:
-        - generic [ref=e87]:
-          - generic [ref=e88]:
-            - heading "Microplastics in Streams" [level=3] [ref=e89]
-            - paragraph [ref=e90]: Studying levels of microplastic particles in local streams.
-            - paragraph [ref=e91]: Open Bio Lab, Boston
-          - button "In Progress" [ref=e93] [cursor=pointer]
-        - generic [ref=e97]:
-          - generic [ref=e98]:
-            - heading "Easy DNA Extraction" [level=3] [ref=e99]
-            - paragraph [ref=e100]: Developing a fast, low-cost DNA extraction method.
-            - paragraph [ref=e101]: Community Lab, Oakland
-          - button "Completed" [ref=e103] [cursor=pointer]
-      - generic [ref=e104]:
-        - generic [ref=e108]:
-          - generic [ref=e109]:
-            - heading "Microplastics in Streams" [level=3] [ref=e110]
-            - paragraph [ref=e111]: Studying levels of microplastic particles in local streams.
-            - paragraph [ref=e112]: Open Bio Lab, Boston
-          - button "In Progress" [ref=e114] [cursor=pointer]
-        - generic [ref=e118]:
-          - generic [ref=e119]:
-            - heading "Easy DNA Extraction" [level=3] [ref=e120]
-            - paragraph [ref=e121]: Developing a fast, low-cost DNA extraction method.
-            - paragraph [ref=e122]: Community Lab, Oakland
-          - button "Completed" [ref=e124] [cursor=pointer]
-      - generic [ref=e125]:
-        - link "Apply" [ref=e126] [cursor=pointer]:
-          - /url: /apply
-        - link "Become a Supporter" [ref=e127] [cursor=pointer]:
-          - /url: /fund
-    - generic [ref=e129]:
-      - heading "FAQs" [level=2] [ref=e131]
-      - generic [ref=e133]:
-        - button "Who can apply to Primordia?" [ref=e135] [cursor=pointer]:
-          - generic [ref=e136]: Who can apply to Primordia?
-        - button "Do I need to be part of a community lab to apply?" [ref=e139] [cursor=pointer]:
-          - generic [ref=e140]: Do I need to be part of a community lab to apply?
-        - button "What can grant funds be used for?" [ref=e143] [cursor=pointer]:
-          - generic [ref=e144]: What can grant funds be used for?
-        - button "How large are the microgrants?" [ref=e147] [cursor=pointer]:
-          - generic [ref=e148]: How large are the microgrants?
-        - button "How long are projects expected to run?" [ref=e151] [cursor=pointer]:
-          - generic [ref=e152]: How long are projects expected to run?
-        - button "Can donors remain anonymous?" [ref=e155] [cursor=pointer]:
-          - generic [ref=e156]: Can donors remain anonymous?
-        - button "How is safety and legal compliance handled in different countries?" [ref=e159] [cursor=pointer]:
-          - generic [ref=e160]: How is safety and legal compliance handled in different countries?
-    - generic [ref=e164]:
-      - generic [ref=e165]:
-        - link "For Experiments" [ref=e166] [cursor=pointer]:
-          - /url: /apply
-        - link "For Donors" [ref=e167] [cursor=pointer]:
-          - /url: /fund
-        - link "Privacy Policy" [ref=e168] [cursor=pointer]:
-          - /url: /privacy
-      - paragraph [ref=e170]: Primordia Grants is a cross collaboration between ValleyDAO & Biopunk Labs
-  - alert [ref=e171]
+          - paragraph [ref=e55]: Selected teams receive a flexible microgrant and plug into a local lab.
+        - generic [ref=e58]:
+          - generic [ref=e59]: "4."
+          - heading "LAB NOTES AND UPDATES" [level=3] [ref=e60]
+          - paragraph [ref=e61]: Grantees commit to sharing short updates and lab notes during the grant period.
+        - generic [ref=e64]:
+          - generic [ref=e65]: "5."
+          - heading "SHOWCASE AND NEXT STEPS" [level=3] [ref=e66]
+          - paragraph [ref=e67]: At the end of the cycle, projects share results in a public session and written summary.
+      - button "View Funded Experiments" [ref=e70]
+    - paragraph [ref=e75]: "In biology, a primordium is an organ or tissue in its earliest stage of development. Primordia is a collection of those beginnings. That is what this initiative exists for: many small, early experiments that can grow into something bigger."
+    - generic [ref=e76]:
+      - generic [ref=e77]:
+        - heading "Stories & Lab Notes" [level=2] [ref=e78]
+        - paragraph [ref=e79]: Learn about DIY community bio initiatives
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - heading "Microplastics in Streams" [level=3] [ref=e83]
+          - paragraph [ref=e84]: Studying levels of microplastic particles in local streams. Open Bio Lab, Boston
+          - button "In Progress" [ref=e85]
+        - generic [ref=e86]:
+          - heading "Easy DNA Extraction" [level=3] [ref=e88]
+          - paragraph [ref=e89]: Developing a fast, low-cost DNA extraction method. Community Lab, Oakland
+          - button "Completed" [ref=e90]
+      - generic [ref=e91]:
+        - button "Apply" [ref=e92]
+        - button "Become a Supporter" [ref=e93]
+    - generic [ref=e95]:
+      - heading "FAQs" [level=2] [ref=e96]
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - button "Who can apply to Primordia?" [ref=e99]:
+            - generic [ref=e100]: Who can apply to Primordia?
+            - img [ref=e102]
+          - generic: Individuals or teams with a concrete biology experiment idea that can be performed in a community lab or compliant space.
+        - generic [ref=e104]:
+          - button "Do I need to be part of a community lab to apply?" [ref=e105]:
+            - generic [ref=e106]: Do I need to be part of a community lab to apply?
+            - img [ref=e108]
+          - generic: It is highly recommended as we partner with labs to ensure safety and equipment access, but we can help match you to one.
+        - generic [ref=e110]:
+          - button "What can grant funds be used for?" [ref=e111]:
+            - generic [ref=e112]: What can grant funds be used for?
+            - img [ref=e114]
+          - generic: Reagents, consumables, small equipment, and lab membership fees.
+        - generic [ref=e116]:
+          - button "How large are the microgrants?" [ref=e117]:
+            - generic [ref=e118]: How large are the microgrants?
+            - img [ref=e120]
+          - generic: Typically up to $3000 per project, designed for small proof-of-concept experiments.
+        - generic [ref=e122]:
+          - button "How long are projects expected to run?" [ref=e123]:
+            - generic [ref=e124]: How long are projects expected to run?
+            - img [ref=e126]
+          - generic: Projects are generally expected to complete their initial experiment within 3-4 months.
+        - generic [ref=e128]:
+          - button "Can donors remain anonymous?" [ref=e129]:
+            - generic [ref=e130]: Can donors remain anonymous?
+            - img [ref=e132]
+          - generic: Yes, donors can choose to remain anonymous on our public pages.
+        - generic [ref=e134]:
+          - button "How is safety and legal compliance handled in different countries?" [ref=e135]:
+            - generic [ref=e136]: How is safety and legal compliance handled in different countries?
+            - img [ref=e138]
+          - generic: We work with local community labs that adhere to their respective national safety and biosafety regulations.
+    - generic [ref=e142]:
+      - generic [ref=e143]:
+        - link "For Experiments" [ref=e144] [cursor=pointer]:
+          - /url: "#"
+        - link "For Donors" [ref=e145] [cursor=pointer]:
+          - /url: "#"
+        - link "Privacy Policy" [ref=e146] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e147]: Primordia Grants is a cross collaboration between ValleyDAO & Biopunk Labs
+  - button "Open Next.js Dev Tools" [ref=e153] [cursor=pointer]:
+    - img [ref=e154]
+  - alert [ref=e157]
 ```

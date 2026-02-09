@@ -71,22 +71,22 @@ export default function Home() {
             Funding Early Biology Experiments in DIY Labs
           </p>
 
-          {/* CTA Buttons - Span full width under subtitle */}
-          <div className="absolute right-[40px] top-[560px] flex gap-[16px] w-[730px] justify-between">
-            <div className="relative flex-1">
+          {/* CTA Buttons - Match Figma exact measurements */}
+          <div className="absolute right-[40px] top-[560px] flex gap-[26px] w-[730px]">
+            <div className="relative" style={{ width: '344px' }}>
               <Button variant="secondary" size="md" href="/apply" className="w-full">
                 Apply
               </Button>
-              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-full whitespace-nowrap">
+              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center whitespace-nowrap">
                 Up-to $3000 for your project
               </p>
             </div>
 
-            <div className="relative flex-1">
+            <div className="relative" style={{ width: '360px' }}>
               <Button variant="primary" size="md" href="/fund" className="w-full">
                 Fund Experiments
               </Button>
-              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center w-full whitespace-nowrap">
+              <p className="absolute top-[68px] left-1/2 -translate-x-1/2 font-karla font-medium text-[18px] leading-[1.67] text-black text-center whitespace-nowrap">
                 Support with as little as 1$/month
               </p>
             </div>

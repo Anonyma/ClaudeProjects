@@ -2,8 +2,97 @@
 
 ```yaml
 - generic [active] [ref=e1]:
-  - generic [ref=e3]:
-    - heading "404" [level=1] [ref=e4]
-    - heading "This page could not be found." [level=2] [ref=e6]
-  - alert [ref=e7]
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - link "PRIMORDIA" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "About" [ref=e6] [cursor=pointer]:
+          - /url: "#"
+        - link "How it Works" [ref=e8] [cursor=pointer]:
+          - /url: "#"
+        - link "Lab Notes" [ref=e10] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e11]:
+        - button "For Donors" [ref=e12]
+        - button "For Applicants" [ref=e13]
+    - generic [ref=e17]:
+      - heading "Fund Experiments" [level=1] [ref=e18]:
+        - generic [ref=e19]: Fund
+        - generic [ref=e20]: Experiments
+      - generic [ref=e21]:
+        - heading "Primordia turns your donations into visible experiments and community capacity, not overhead and jargon." [level=2] [ref=e22]
+        - generic [ref=e23]:
+          - button "Become a Donor" [ref=e24]
+          - button "Partner on a Themed Round" [ref=e25]
+    - generic [ref=e26]:
+      - heading "For Donors & Partners" [level=2] [ref=e27]
+      - paragraph [ref=e28]: Pool your contribution with others to support concrete biology experiments in community labs.
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]: "1."
+          - paragraph [ref=e32]: Pooled donations fund small experiments that would never fit traditional grants.
+        - generic [ref=e33]:
+          - generic [ref=e34]: "2."
+          - paragraph [ref=e35]: Transparent reporting through public lab notes, summaries, and showcases.
+        - generic [ref=e36]:
+          - generic [ref=e37]: "3."
+          - paragraph [ref=e38]: Minimal overhead of 5% to support digital service fees.
+        - generic [ref=e39]:
+          - generic [ref=e40]: "4."
+          - paragraph [ref=e41]: Option for institutions to provide matching pools that are allocated via community voting.
+      - generic [ref=e43]:
+        - generic [ref=e46]: Experiment Grants
+        - generic [ref=e49]: Lab Access
+        - generic [ref=e52]: Program Ops
+    - generic [ref=e54]:
+      - heading "FAQs" [level=2] [ref=e55]
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - button "Who can apply to Primordia?" [ref=e58]:
+            - generic [ref=e59]: Who can apply to Primordia?
+            - img [ref=e61]
+          - generic: Individuals or teams with a concrete biology experiment idea that can be performed in a community lab or compliant space.
+        - generic [ref=e63]:
+          - button "Do I need to be part of a community lab to apply?" [ref=e64]:
+            - generic [ref=e65]: Do I need to be part of a community lab to apply?
+            - img [ref=e67]
+          - generic: It is highly recommended as we partner with labs to ensure safety and equipment access, but we can help match you to one.
+        - generic [ref=e69]:
+          - button "What can grant funds be used for?" [ref=e70]:
+            - generic [ref=e71]: What can grant funds be used for?
+            - img [ref=e73]
+          - generic: Reagents, consumables, small equipment, and lab membership fees.
+        - generic [ref=e75]:
+          - button "How large are the microgrants?" [ref=e76]:
+            - generic [ref=e77]: How large are the microgrants?
+            - img [ref=e79]
+          - generic: Typically up to $3000 per project, designed for small proof-of-concept experiments.
+        - generic [ref=e81]:
+          - button "How long are projects expected to run?" [ref=e82]:
+            - generic [ref=e83]: How long are projects expected to run?
+            - img [ref=e85]
+          - generic: Projects are generally expected to complete their initial experiment within 3-4 months.
+        - generic [ref=e87]:
+          - button "Can donors remain anonymous?" [ref=e88]:
+            - generic [ref=e89]: Can donors remain anonymous?
+            - img [ref=e91]
+          - generic: Yes, donors can choose to remain anonymous on our public pages.
+        - generic [ref=e93]:
+          - button "How is safety and legal compliance handled in different countries?" [ref=e94]:
+            - generic [ref=e95]: How is safety and legal compliance handled in different countries?
+            - img [ref=e97]
+          - generic: We work with local community labs that adhere to their respective national safety and biosafety regulations.
+    - generic [ref=e101]:
+      - generic [ref=e102]:
+        - link "For Experiments" [ref=e103] [cursor=pointer]:
+          - /url: "#"
+        - link "For Donors" [ref=e104] [cursor=pointer]:
+          - /url: "#"
+        - link "Privacy Policy" [ref=e105] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e106]: Primordia Grants is a cross collaboration between ValleyDAO & Biopunk Labs
+  - button "Open Next.js Dev Tools" [ref=e112] [cursor=pointer]:
+    - img [ref=e113]
+  - alert [ref=e116]
 ```
