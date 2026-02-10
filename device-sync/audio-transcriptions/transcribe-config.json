@@ -1,0 +1,46 @@
+{
+  "model": "large-v2",
+  "device": "cuda",
+  "compute_type": "float16",
+
+  "transcription_options": {
+    "language": "en",
+    "beam_size": 5,
+    "best_of": 5,
+    "temperature": 0,
+    "vad_filter": true,
+    "vad_parameters": {
+      "threshold": 0.5,
+      "min_speech_duration_ms": 250,
+      "max_speech_duration_s": 30,
+      "min_silence_duration_ms": 2000,
+      "speech_pad_ms": 400
+    }
+  },
+
+  "word_replacements": {
+    "ridlin": "Ritalin",
+    "riddlin": "Ritalin",
+    "ridilin": "Ritalin",
+    "aderall": "Adderall",
+    "HTGAA": "HTGAA",
+    "notebooklm": "NotebookLM",
+    "clawed": "Claude",
+    "anthropic": "Anthropic",
+    "AI": "AI",
+    "MIT": "MIT"
+  },
+
+  "formatting": {
+    "min_silence_for_paragraph": 3.0,
+    "capitalize_sentences": true,
+    "add_timestamps": true,
+    "timestamp_format": "srt"
+  },
+
+  "notes": {
+    "model_info": "large-v2 uses ~5GB VRAM, works well on RTX 2060",
+    "vad_info": "VAD (Voice Activity Detection) helps with pauses and line breaks",
+    "min_silence_duration_ms": "Wait 2 seconds before line break (adjust if too aggressive)"
+  }
+}
