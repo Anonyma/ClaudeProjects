@@ -81,44 +81,17 @@ mcp__linear-server__update_project
 
 ---
 
-## CRITICAL: Report Agent Status
+## CRITICAL: Report Agent Status & Notifications
 
-**ALWAYS report your status to the Agent Hub when starting, getting blocked, completing, or encountering errors.**
-
-### When to Report
-
-| Event | Command |
-|-------|---------|
-| Starting work | `report-status --name [agent-name] running "Starting: [task description]"` |
-| Making progress | `report-status --name [agent-name] running "[current task]"` |
-| Blocked/need help | `report-status --name [agent-name] blocked "[what you need]"` |
-| Task completed | `report-status --name [agent-name] completed "[what was done]"` |
-| Error occurred | `report-status --name [agent-name] error "[error description]"` |
-
-### Agent Naming
-- Use a short, descriptive name: `deploy-bot`, `scraper`, `refactor-auth`, `fix-bug-123`
-- If working on a specific project, include it: `brainstormrr-fixes`, `time-tracker-deploy`
-- The `--name` flag is optional; defaults to current directory name
-
-### Examples
+**Report status to the Agent Hub. `blocked`/`completed`/`error` auto-notify via Telegram.**
 
 ```bash
-# Starting a task
-report-status --name feature-auth running "Implementing OAuth login flow"
-
-# When blocked
-report-status --name feature-auth blocked "Need OAuth client credentials for Google"
-
-# On completion
-report-status --name feature-auth completed "OAuth login working, deployed to staging"
-
-# On error
-report-status --name feature-auth error "Build failed: missing @auth/core dependency"
+report-status [--name NAME] [--ai TYPE] [--project NAME] STATUS "message"
 ```
 
-### Dashboard Access
-- **Terminal:** Run `agent-status` or `agents`
-- **Web:** Open http://localhost:8766/dashboard.html or run `agent-dashboard`
+- `--name`: Agent name (default: cwd basename). Use descriptive names: `deploy-bot`, `fix-bug-123`
+- `--ai`: `claude` (default) | `gemini` | `codex` | `ollama`
+- **Dashboard:** http://localhost:8767/ | **Terminal:** `agents` or `agent-status --watch`
 
 ---
 
@@ -277,53 +250,6 @@ scp CandyPop:~/device-sync/[subfolder]/file /Users/z/Desktop/PersonalProjects/Cl
 - Commit important transcriptions and documents to git
 
 ---
-
-## CRITICAL: Notify User via BabyClaw (Telegram)
-
-**ALWAYS notify the user when you need help, complete significant work, or encounter errors.**
-
-### When to Notify
-
-✅ **MUST notify when:**
-- You are **blocked** and need user intervention
-- You have **completed** a significant task
-- You encounter **critical errors**
-
-❌ **Don't spam:** Not for minor edits or routine operations.
-
-### How to Notify (Telegram via Clawdbot - Preferred)
-
-```bash
-clawdbot message send --channel telegram --target 355422856 --message "Your message here"
-```
-
-### Examples
-
-**When blocked:**
-```bash
-clawdbot message send --channel telegram --target 355422856 --message "🆘 Blocked: [project] - [issue]. Need: [what you need]"
-```
-
-**When completed:**
-```bash
-clawdbot message send --channel telegram --target 355422856 --message "✅ Done: [project] - [what you completed]"
-```
-
-**When error:**
-```bash
-clawdbot message send --channel telegram --target 355422856 --message "⚠️ Error: [project] - [error description]"
-```
-
-### Fallback: Direct Pushover (if clawdbot/Telegram unavailable)
-
-```bash
-curl -s -F "token=ax3nv6fmix3hzr1vzkkb85123js5np" \
-  -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
-  -F "title=🆘 Agent Needs Help" \
-  -F "message=Project: [name] - Issue: [description]" \
-  -F "priority=1" \
-  https://api.pushover.net/1/messages.json
-```
 
 ---
 

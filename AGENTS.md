@@ -29,5 +29,6 @@
 
 ## 4. Notifications
 - **When to Notify:** Blockers, Completion, Critical Errors.
-- **Method:** Use `clawdbot` (Telegram) or direct Pushover API if available.
-  - Target: `355422856` (Telegram)
+- **Method:** Use `report-status` — notifications are handled automatically by the Agent Hub server.
+  - `report-status --name my-agent blocked "Need help"` → auto-sends Telegram
+  - Dashboard: http://localhost:8767/
