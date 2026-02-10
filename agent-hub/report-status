@@ -1,11 +1,22 @@
 #!/bin/bash
 # Report agent status to the Agent Hub
+# Works on both Mac (local) and CandyPop (remote via Tailscale)
 
 AGENT_HUB_DIR="$(cd "$(dirname "$0")" && pwd)"
 STATUSES_FILE="$AGENT_HUB_DIR/statuses.json"
 
-# Initialize statuses file if it doesn't exist
-if [ ! -f "$STATUSES_FILE" ]; then
+# Detect which machine we're on
+if [[ "$(uname)" == "Darwin" ]]; then
+    DEFAULT_HOST="mac"
+    HUB_URL="http://localhost:8766"
+else
+    DEFAULT_HOST="candypop"
+    # On CandyPop, post to Mac via Tailscale
+    HUB_URL="http://100.68.184.93:8766"
+fi
+
+# Initialize statuses file if it doesn't exist (local only)
+if [[ "$DEFAULT_HOST" == "mac" ]] && [ ! -f "$STATUSES_FILE" ]; then
     echo '{"agents":{}}' > "$STATUSES_FILE"
 fi
 
@@ -13,11 +24,55 @@ fi
 NAME=""
 STATUS=""
 MESSAGE=""
+HOST="$DEFAULT_HOST"
+AI_TYPE="claude"
+PROJECT=""
+PATH_ARG=""
+
+show_help() {
+    cat << 'EOF'
+Usage: report-status [OPTIONS] <status> [message]
+
+Statuses: running, blocked, completed, error, idle
+
+Options:
+  --name, -n       Agent name (default: current directory name)
+  --host           Host machine: mac, candypop (auto-detected)
+  --ai             AI type: claude, gemini, codex, gpt, copilot, etc. (default: claude)
+  --project, -p    Project name being worked on
+  --path           Path/file being worked on
+
+Examples:
+  report-status running "Starting auth refactor"
+  report-status --name auth-bot --ai claude --project time-tracker running "Fixing bug"
+  report-status --project poetry-companion completed "Deployed to Netlify"
+EOF
+}
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --help|-h)
+            show_help
+            exit 0
+            ;;
         --name|-n)
             NAME="$2"
+            shift 2
+            ;;
+        --host)
+            HOST="$2"
+            shift 2
+            ;;
+        --ai)
+            AI_TYPE="$2"
+            shift 2
+            ;;
+        --project|-p)
+            PROJECT="$2"
+            shift 2
+            ;;
+        --path)
+            PATH_ARG="$2"
             shift 2
             ;;
         running|blocked|completed|error|idle)
@@ -44,22 +99,52 @@ fi
 if [ -z "$STATUS" ]; then
     echo "Usage: report-status [--name agent-name] <status> [message]"
     echo "Statuses: running, blocked, completed, error, idle"
+    echo "Run 'report-status --help' for more options"
     exit 1
 fi
 
 # Get current timestamp
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Update the JSON file using python (more reliable than jq for complex updates)
-python3 << EOF
+# Try to POST to the hub server first (works for both local and remote)
+POST_SUCCESS=false
+
+# Build JSON payload
+JSON_PAYLOAD=$(python3 -c "
 import json
-import sys
+payload = {
+    'name': '''$NAME''',
+    'status': '''$STATUS''',
+    'message': '''$MESSAGE''',
+    'host': '''$HOST''',
+    'ai_type': '''$AI_TYPE''',
+    'project': '''$PROJECT''',
+    'path': '''$PATH_ARG'''
+}
+print(json.dumps(payload))
+")
+
+# Try to post to hub
+if curl -s -f -X POST "$HUB_URL/api/status" \
+    -H "Content-Type: application/json" \
+    -d "$JSON_PAYLOAD" >/dev/null 2>&1; then
+    POST_SUCCESS=true
+fi
+
+# If on Mac and POST failed, update local file directly
+if [[ "$DEFAULT_HOST" == "mac" ]] && [[ "$POST_SUCCESS" == "false" ]]; then
+    python3 << EOF
+import json
 
 statuses_file = "$STATUSES_FILE"
 name = "$NAME"
 status = "$STATUS"
 message = """$MESSAGE"""
 timestamp = "$TIMESTAMP"
+host = "$HOST"
+ai_type = "$AI_TYPE"
+project = "$PROJECT"
+path_arg = "$PATH_ARG"
 
 try:
     with open(statuses_file, 'r') as f:
@@ -77,12 +162,19 @@ agent = data["agents"].get(name, {"history": []})
 agent["status"] = status
 agent["message"] = message
 agent["updated_at"] = timestamp
+agent["host"] = host
+agent["ai_type"] = ai_type
+if project:
+    agent["project"] = project
+if path_arg:
+    agent["path"] = path_arg
 
 # Add to history (keep last 20 entries)
 agent["history"].insert(0, {
     "status": status,
     "message": message,
-    "timestamp": timestamp
+    "timestamp": timestamp,
+    "host": host
 })
 agent["history"] = agent["history"][:20]
 
@@ -94,9 +186,16 @@ data["agents"][name] = agent
 
 with open(statuses_file, 'w') as f:
     json.dump(data, f, indent=2)
-
-print(f"✓ {name}: {status}" + (f" - {message}" if message else ""))
 EOF
+fi
+
+# Output confirmation
+DISPLAY_HOST="[$HOST]"
+DISPLAY_AI="($AI_TYPE)"
+DISPLAY_PROJECT=""
+[[ -n "$PROJECT" ]] && DISPLAY_PROJECT=" @$PROJECT"
+
+echo "✓ $DISPLAY_HOST $DISPLAY_AI $NAME$DISPLAY_PROJECT: $STATUS" $([ -n "$MESSAGE" ] && echo "- $MESSAGE")
 
 # Send Telegram notification for actionable statuses (blocked, completed, error)
 if [[ "$STATUS" == "blocked" || "$STATUS" == "completed" || "$STATUS" == "error" ]]; then
@@ -107,20 +206,29 @@ if [[ "$STATUS" == "blocked" || "$STATUS" == "completed" || "$STATUS" == "error"
         error)     EMOJI="⚠️" ;;
     esac
 
-    NOTIFY_MSG="$EMOJI $NAME: $STATUS"
+    NOTIFY_MSG="$EMOJI [$HOST] $NAME: $STATUS"
+    [ -n "$PROJECT" ] && NOTIFY_MSG="$NOTIFY_MSG (@$PROJECT)"
     [ -n "$MESSAGE" ] && NOTIFY_MSG="$NOTIFY_MSG - $MESSAGE"
 
-    # Try clawdbot first (Telegram), fall back to Pushover
-    if command -v clawdbot &>/dev/null; then
-        /opt/homebrew/bin/node /opt/homebrew/bin/clawdbot message send \
-            --channel telegram --target 355422856 \
-            --message "$NOTIFY_MSG" 2>/dev/null &
+    # On Mac: try clawdbot first, fall back to Pushover
+    # On CandyPop: use direct Telegram API
+    if [[ "$DEFAULT_HOST" == "mac" ]]; then
+        if command -v clawdbot &>/dev/null; then
+            /opt/homebrew/bin/node /opt/homebrew/bin/clawdbot message send \
+                --channel telegram --target 355422856 \
+                --message "$NOTIFY_MSG" 2>/dev/null &
+        else
+            curl -s -F "token=ax3nv6fmix3hzr1vzkkb85123js5np" \
+                -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
+                -F "title=Agent Status" \
+                -F "message=$NOTIFY_MSG" \
+                -F "priority=0" \
+                https://api.pushover.net/1/messages.json >/dev/null 2>&1 &
+        fi
     else
-        curl -s -F "token=ax3nv6fmix3hzr1vzkkb85123js5np" \
-            -F "user=u8wpte8pqd3snj75s2n8gxqdzq94xj" \
-            -F "title=Agent Status" \
-            -F "message=$NOTIFY_MSG" \
-            -F "priority=0" \
-            https://api.pushover.net/1/messages.json >/dev/null 2>&1 &
+        # CandyPop: direct Telegram API
+        curl -s -X POST "https://api.telegram.org/bot8313000949:AAHi0XNA5NRS5aQT_O_gsxhDCiCMM5maJII/sendMessage" \
+            -d "chat_id=355422856" \
+            -d "text=$NOTIFY_MSG" >/dev/null 2>&1 &
     fi
 fi
