@@ -1,0 +1,217 @@
+{
+  "batch_id": "2026-02-batch",
+  "created": "2026-02-11",
+  "target_sources_per_topic": 50,
+  "deep_dives_per_topic": 3,
+  "topics": [
+    {
+      "id": "bbb-crossing",
+      "title": "Blood-Brain Barrier Crossing Technologies",
+      "notebook_name": "Blood-Brain Barrier Crossing Technologies",
+      "priority": 1,
+      "subtopics": [
+        "Focused ultrasound + microbubbles (FUS-BBBO)",
+        "Receptor-mediated transcytosis (transferrin receptor, LRP1, insulin receptor)",
+        "Nanoparticle carriers: lipid nanoparticles, polymeric NPs, dendrimers, exosomes",
+        "Engineered AAVs for CNS delivery (AAV9, AAVrh10, PHP.eB, PHP.eB variants)",
+        "Cell-penetrating peptides and shuttle peptides",
+        "Nose-to-brain delivery pathways",
+        "Intrathecal and intracerebroventricular delivery",
+        "BBB-on-a-chip and organ-on-chip screening models",
+        "Trojan horse antibody strategies (bispecific antibodies)",
+        "Convection-enhanced delivery (CED)",
+        "Clinical trials landscape: Alzheimer's, Parkinson's, glioblastoma, lysosomal storage diseases",
+        "BBB physiology: tight junctions, pericytes, astrocyte end-feet, efflux transporters"
+      ],
+      "source_guidance": "Focus on peer-reviewed research, Nature/Science reviews, clinical trial reports. Key journals: Journal of Controlled Release, Advanced Drug Delivery Reviews, Brain. Include both foundational BBB biology and cutting-edge delivery tech. Look for Denali Therapeutics, Roche Brain Shuttle, InSightec FUS work.",
+      "deep_dive_prompts": [
+        "Focus on the biology of the blood-brain barrier: tight junctions, transport mechanisms, why it exists, and how diseases compromise it. Include the history of BBB discovery. Expertise level: Advanced.",
+        "Focus exclusively on non-invasive BBB crossing strategies: focused ultrasound, receptor-mediated transcytosis, engineered viruses, and nanoparticles. Compare efficacy, safety profiles, and clinical progress. Expertise level: Expert.",
+        "Focus on clinical applications and trials: which BBB-crossing technologies are closest to patients, for which diseases, and what are the remaining obstacles. Cover Alzheimer's, brain tumors, lysosomal storage diseases, and gene therapy delivery to the CNS."
+      ],
+      "connections": ["Gene Therapies", "Nanoparticle Therapies", "Targeting Amyloidogenesis"]
+    },
+    {
+      "id": "crispr-precision",
+      "title": "CRISPR 2.0: Base Editing, Prime Editing, and Epigenetic Control",
+      "notebook_name": "CRISPR 2.0: Base Editing, Prime Editing, and Epigenetic Control",
+      "priority": 2,
+      "subtopics": [
+        "Base editing: cytosine base editors (CBEs), adenine base editors (ABEs), mechanism and limitations",
+        "Prime editing: mechanism (pegRNA + Cas9 nickase + reverse transcriptase), efficiency improvements",
+        "Epigenetic editing: CRISPRoff, CRISPRon, dCas9-DNMT3A/TET1 fusions",
+        "Delivery bottlenecks: LNPs vs AAVs vs VLPs vs ribonucleoproteins",
+        "In vivo vs ex vivo editing tradeoffs",
+        "Off-target effects: detection methods (GUIDE-seq, CIRCLE-seq, DISCOVER-seq)",
+        "Landmark clinical results: sickle cell (Casgevy), TTR amyloidosis (Verve), liver targets",
+        "Next-gen CRISPR: Cas12, Cas13 (RNA targeting), CasX, smaller Cas variants",
+        "Regulatory landscape and ethics of germline editing",
+        "Agricultural CRISPR applications"
+      ],
+      "source_guidance": "Key sources: David Liu lab papers (base/prime editing), Feng Zhang lab, Jennifer Doudna, Beam Therapeutics, Prime Medicine, Verve Therapeutics publications. Nature Biotechnology reviews, NEJM clinical trial reports. Include the Casgevy (exa-cel) approval story.",
+      "deep_dive_prompts": [
+        "Focus on the evolution from CRISPR-Cas9 to base editing and prime editing. Explain the molecular mechanisms in detail, their advantages over traditional CRISPR cuts, and current efficiency limitations. Expertise level: Expert.",
+        "Focus on epigenetic editing with CRISPR: how CRISPRoff/CRISPRon work, the concept of gene silencing without DNA cuts, therapeutic applications, and why this might be safer than permanent genome edits. Include recent results.",
+        "Focus on the clinical translation of precision editing: Casgevy approval, Verve's in vivo base editing for heart disease, delivery challenges, and what the next 5 years of CRISPR medicine look like. Expertise level: Advanced."
+      ],
+      "connections": ["Gene Therapies", "RNA Editing", "Nucleic Acid Gene Therapies"]
+    },
+    {
+      "id": "japanese-history",
+      "title": "Japanese History: Culture, Power, and Transformation",
+      "notebook_name": "Japanese History: Culture, Power, and Transformation",
+      "priority": 3,
+      "subtopics": [
+        "Jomon and Yayoi periods: origins of Japanese civilization",
+        "Heian court culture: Tale of Genji, aristocratic aesthetics, women writers",
+        "Rise of the samurai: Kamakura shogunate, bushido, feudal Japan",
+        "Mongol invasions and the kamikaze legend",
+        "Muromachi period: Zen Buddhism, tea ceremony, Noh theater, wabi-sabi",
+        "Sengoku (Warring States): Oda Nobunaga, Toyotomi Hideyoshi, Tokugawa Ieyasu",
+        "Edo period: sakoku (isolation), urbanization, Kabuki, ukiyo-e, merchant culture",
+        "Meiji Restoration: rapid modernization, Westernization vs tradition",
+        "Imperial Japan: militarism, colonialism, Pacific War",
+        "Postwar transformation: occupation, economic miracle, cultural exports",
+        "Japanese aesthetics: mono no aware, wabi-sabi, ma (negative space), ikigai"
+      ],
+      "source_guidance": "Use broad historical surveys (Cambridge History of Japan, Totman, Jansen), cultural studies, primary source translations. Mix political/military history with cultural/aesthetic history. Include women's history (Murasaki Shikibu, Sei Shonagon). Get contemporary Japan too (Lost Decade, anime/manga cultural export).",
+      "deep_dive_prompts": [
+        "Focus on the aesthetic and cultural foundations of Japan: Heian court culture, Zen influence, wabi-sabi, mono no aware, the tea ceremony as philosophy. How did Japan develop such a distinctive aesthetic sensibility? Expertise level: Advanced.",
+        "Focus on the political transformations: from imperial court to samurai rule to Tokugawa isolation to Meiji modernization. What made Japan uniquely able to modernize so rapidly? Compare with China and Korea's paths.",
+        "Focus on the Edo period as a laboratory of urbanization and culture without industrialization: 250 years of peace, the world's largest city (Edo/Tokyo), merchant culture, woodblock prints, theater, and how isolation bred innovation."
+      ],
+      "connections": ["Chinese History", "Indian History", "Urban Imaginings"]
+    },
+    {
+      "id": "neuroscience-rigorous",
+      "title": "Neuroscience of Consciousness and Perception",
+      "notebook_name": "Neuroscience of Consciousness and Perception",
+      "priority": 4,
+      "subtopics": [
+        "Neural correlates of consciousness (NCC): empirical findings, lesion studies, anesthesia research",
+        "Integrated Information Theory (IIT): Tononi's phi, axioms, mathematical framework, criticisms",
+        "Global Neuronal Workspace Theory (GNWT): Dehaene and Changeux, ignition, broadcasting",
+        "Predictive processing / Bayesian brain: Karl Friston's free energy principle, prediction error minimization",
+        "The binding problem: how distributed processing creates unified experience",
+        "Default mode network: resting state, mind-wandering, self-referential processing",
+        "Psychedelics and neuroplasticity: psilocybin, LSD effects on serotonin 5-HT2A, REBUS model (relaxed beliefs under psychedelics)",
+        "Brain-computer interfaces: current state (BrainGate, Neuralink, Stentrode), signal decoding",
+        "Attention mechanisms: selective attention, biased competition, attentional blink",
+        "Disorders of consciousness: coma, vegetative state, minimally conscious state, locked-in syndrome",
+        "Neuroimaging methods: fMRI, EEG, MEG, optogenetics - what each reveals and its limits"
+      ],
+      "source_guidance": "ONLY rigorous peer-reviewed neuroscience. Key authors: Giulio Tononi, Stanislas Dehaene, Karl Friston, Anil Seth, Christof Koch. Key journals: Nature Neuroscience, Neuron, PNAS, Trends in Cognitive Sciences. NO philosophy of mind speculation without empirical grounding. Include meta-analyses and systematic reviews where available. The Adversarial Collaboration on consciousness (Templeton Foundation) is a great source.",
+      "deep_dive_prompts": [
+        "Focus on the two leading scientific theories of consciousness: Integrated Information Theory and Global Neuronal Workspace Theory. Present the empirical evidence for and against each, including the Templeton Foundation adversarial collaboration results. NO speculation, only data. Expertise level: Expert.",
+        "Focus on the predictive brain: Karl Friston's free energy principle, predictive processing, and how the brain constructs perception from predictions rather than raw input. Include Bayesian inference, prediction error, and clinical implications (autism, schizophrenia as prediction errors). Expertise level: Expert.",
+        "Focus on psychedelics and neuroscience: the REBUS model, serotonin 5-HT2A receptor mechanisms, what fMRI/EEG show during psychedelic states, entropic brain hypothesis, and clinical trial results for depression and PTSD. Only peer-reviewed evidence."
+      ],
+      "connections": ["Systems Thinking", "Cognitive Plasticity and Aging"]
+    },
+    {
+      "id": "architecture-parametric",
+      "title": "Architecture Beyond Postmodernism: Parametric, Computational, and Sustainable Design",
+      "notebook_name": "Architecture Beyond Postmodernism: Parametric, Computational, and Sustainable Design",
+      "priority": 5,
+      "subtopics": [
+        "Parametricism: Zaha Hadid, Patrik Schumacher, fluid forms, algorithmic generation",
+        "Computational design: Grasshopper/Rhino, topology optimization, generative algorithms",
+        "Biomimetic architecture: structures inspired by nature, Achim Menges, ICD Stuttgart",
+        "Mass timber revolution: CLT, glulam, Brock Commons, tall wood buildings",
+        "Responsive and kinetic architecture: Al Bahar Towers, Media-TIC, adaptive facades",
+        "3D-printed buildings: ICON, Apis Cor, concrete printing, Mars habitat prototypes",
+        "AI in architecture: generative design, Midjourney/DALL-E for concept, text-to-architecture",
+        "Sustainable and circular design: Passivhaus, net-zero, cradle-to-cradle, embodied carbon",
+        "Deconstructivism legacy: Gehry, Libeskind, Coop Himmelb(l)au, and the transition to digital",
+        "BIG (Bjarke Ingels Group): hedonistic sustainability, pragmatic utopia",
+        "The starchitect debate: spectacle vs social responsibility"
+      ],
+      "source_guidance": "Architectural Record, Dezeen, The Architectural Review, AD (Architectural Design) journal. Patrik Schumacher's manifestos, BIG's 'Yes is More', Achim Menges research. Include both theoretical writings and built project case studies. Photograph-rich sources preferred for the study hub article.",
+      "deep_dive_prompts": [
+        "Focus on the rise of parametric design: how computer algorithms changed architecture from drawing to scripting. Cover Zaha Hadid's legacy, Patrik Schumacher's parametricism manifesto, and specific built projects. How does algorithmic form differ from traditional design? Expertise level: Advanced.",
+        "Focus on sustainable and biomimetic architecture: mass timber, 3D printing, nature-inspired structures, and how architecture is responding to the climate crisis. Include specific projects and quantified environmental benefits.",
+        "Focus on AI and the future of architecture: generative design, text-to-architecture tools, robotic construction, and whether architects will be replaced or augmented. Include the debate about authorship and creativity in algorithmic design."
+      ],
+      "connections": ["Urban Imaginings", "Materials and Commodities"],
+      "special_task": "ALSO generate a full study hub article (3000-5000 words) with embedded images covering the trajectory from deconstructivism through parametricism to AI-assisted design. Use Wikipedia Commons and architecture photography URLs."
+    },
+    {
+      "id": "microbiome",
+      "title": "The Microbiome and Gut-Brain Axis",
+      "notebook_name": "The Microbiome and Gut-Brain Axis",
+      "priority": 6,
+      "subtopics": [
+        "Gut microbiome composition: phyla, diversity metrics, enterotypes",
+        "Gut-brain signaling: vagus nerve, microbial metabolites (SCFAs, tryptophan), immune pathways",
+        "Microbiome and mental health: depression, anxiety, autism spectrum - evidence and limitations",
+        "Fecal microbiota transplantation (FMT): C. diff, IBD, and experimental applications",
+        "Probiotics evidence base: what works, what doesn't, strain specificity, prebiotics vs probiotics",
+        "Microbiome and aging: diversity loss, inflammaging, centenarian microbiomes",
+        "Diet-microbiome interactions: fiber, fermented foods, Mediterranean diet, ultra-processed food effects",
+        "Skin microbiome: barrier function, eczema, acne",
+        "Oral microbiome and systemic disease: periodontal disease, cardiovascular links",
+        "Microbiome in drug metabolism: pharmacomicrobiomics",
+        "Human Microbiome Project findings and methodology"
+      ],
+      "source_guidance": "Cell, Nature, Science microbiome papers. Key labs: Rob Knight (UCSD), Tim Spector, Jack Gilbert. Human Microbiome Project publications. Be careful to distinguish strong evidence (C. diff FMT) from preliminary findings (depression). Include systematic reviews and meta-analyses.",
+      "deep_dive_prompts": [
+        "Focus on the gut-brain axis: how gut bacteria communicate with the brain via the vagus nerve, metabolites, and immune signaling. What does the evidence actually show about depression, anxiety, and cognition? Be rigorous about what's proven vs preliminary. Expertise level: Advanced.",
+        "Focus on practical microbiome science: diet effects, probiotics evidence, FMT for C. diff and beyond, and what individuals can actually do based on current evidence. Separate hype from science.",
+        "Focus on the microbiome in aging and longevity: how diversity changes with age, centenarian microbiome studies, inflammaging, and whether microbiome interventions could extend healthspan. Connect to metabolic health."
+      ],
+      "connections": ["Metabolic Pathways and Longevity", "Cognitive Plasticity and Aging"]
+    },
+    {
+      "id": "senolytics",
+      "title": "Senolytics and Cellular Senescence",
+      "notebook_name": "Senolytics and Cellular Senescence",
+      "priority": 7,
+      "subtopics": [
+        "Cellular senescence biology: replicative vs stress-induced, p16INK4a, p21, telomere shortening",
+        "Senescence-associated secretory phenotype (SASP): inflammatory cytokines, tissue dysfunction",
+        "Senolytic drugs: dasatinib + quercetin (D+Q), navitoclax, fisetin, UBX0101",
+        "Senomorphics: rapamycin, metformin, SASP modulators",
+        "CAR-T approaches to senescent cells: targeting uPAR, GPNMB",
+        "Tissue-specific senescence: brain (astrocytes, microglia), vascular, immune, adipose",
+        "Clinical trials landscape: Unity Biotechnology, Oisin Biotechnologies, Mayo Clinic studies",
+        "Biomarkers of senescence: SA-beta-gal, p16 expression, SASP factors, senescence scores",
+        "Senescence in development and wound healing: beneficial roles",
+        "The threshold hypothesis: when does senescent cell burden become pathological?",
+        "Connections to other hallmarks of aging: telomere attrition, mitochondrial dysfunction, epigenetic alterations"
+      ],
+      "source_guidance": "Key researchers: James Kirkland (Mayo), Judith Campisi (legacy), Jan van Deursen. Key papers: Baker et al. 2011 (INK-ATTAC), Xu et al. 2018 (D+Q in humans). Nature Aging, Aging Cell, Cell Metabolism. Include both the promise and the failures (Unity Biotech Phase 2 failure).",
+      "deep_dive_prompts": [
+        "Focus on the biology of cellular senescence: what triggers it, the SASP, why it evolved (tumor suppression vs aging tradeoff), and how senescent cells accumulate with age. Include the landmark mouse studies that proved clearing senescent cells extends healthspan. Expertise level: Expert.",
+        "Focus on senolytic and senomorphic interventions: dasatinib+quercetin, fisetin, navitoclax, rapamycin. Compare mechanisms, clinical evidence, and which are closest to approved therapies. Include both successes and failures honestly.",
+        "Focus on next-generation approaches: CAR-T for senescent cells, gene therapy approaches, targeted senolysis, and the senescence biomarker problem. How do you measure if senolytics are working in humans?"
+      ],
+      "connections": ["Cellular Reprogramming", "Longevity Research", "Mitochondrial Medicine"]
+    },
+    {
+      "id": "philosophy-tech",
+      "title": "Philosophy of Technology and AI Ethics",
+      "notebook_name": "Philosophy of Technology and AI Ethics",
+      "priority": 8,
+      "subtopics": [
+        "Heidegger's question concerning technology: Gestell (enframing), technology as revealing",
+        "Attention economy: persuasive design, Tristan Harris, behavioral manipulation at scale",
+        "AI alignment problem: instrumental convergence, orthogonality thesis, reward hacking",
+        "Surveillance capitalism: Shoshana Zuboff's framework, behavioral surplus, prediction products",
+        "Post-humanism and transhumanism: Nick Bostrom, enhancement ethics, morphological freedom",
+        "Philosophy of AI consciousness: hard problem, Chinese room, zombie arguments, substrate independence",
+        "Algorithmic bias and fairness: hiring algorithms, criminal justice, healthcare disparities",
+        "Autonomy and manipulation: dark patterns, recommendation engines, epistemic autonomy",
+        "Technology and democracy: filter bubbles, deepfakes, platform power, epistemic commons",
+        "Ethics of autonomous weapons and lethal autonomous systems (LAWS)",
+        "Digital rights and data sovereignty"
+      ],
+      "source_guidance": "Mix classic philosophy of technology (Heidegger, Ellul, Mumford) with contemporary work (Zuboff, Crawford, Floridi, Russell). Include empirical studies on tech effects, not just philosophical speculation. Key books: Surveillance Capitalism (Zuboff), Weapons of Math Destruction (O'Neil), Human Compatible (Russell), Atlas of AI (Crawford).",
+      "deep_dive_prompts": [
+        "Focus on surveillance capitalism: Zuboff's framework, how behavioral data extraction works, prediction markets, and the political economy of data. Connect to Heidegger's concept of technology as 'enframing'. Expertise level: Advanced.",
+        "Focus on the AI alignment problem: what it means technically, instrumental convergence, the control problem, and current approaches to alignment research. Include both existential risk perspectives and near-term bias/fairness concerns.",
+        "Focus on technology and human autonomy: attention economy, persuasive design, algorithmic curation, dark patterns, and what it means for free will and democratic self-governance. Include empirical evidence on behavioral effects."
+      ],
+      "connections": ["Work Wealth and Automation", "Transformers ML AI", "Systems Thinking"]
+    }
+  ]
+}
