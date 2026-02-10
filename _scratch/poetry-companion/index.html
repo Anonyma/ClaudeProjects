@@ -270,14 +270,15 @@ body {
 <script>
 // ==================== POEM DATA ====================
 const POEMS = [];
+</script>
 
-// BATCH 1
+<script id="poem-data-batch-1">
 POEMS.push(
   {
     id:'prufrock', poet:'T.S. Eliot', title:'The Love Song of J. Alfred Prufrock',
     year:'1915', category:'metaphysical', hasFullText:true,
     collection:'Prufrock and Other Observations',
-    fullText: `S'io credesse che mia respuesta fosse
+    fullText: `S'io credesse che mia risposta fosse
 A persona che mai tornasse al mondo,
 Questa fiamma staria senza piu scosse.
 Ma percioche giammai di questo fondo
@@ -398,7 +399,7 @@ And would it have been worth it, after all,
 Would it have been worth while,
 After the sunsets and the dooryards and the sprinkled streets,
 After the novels, after the teacups, after the skirts that trail along the floor—
-And this, and so much more?-
+And this, and so much more?—
 It is impossible to say just what I mean!
 But as if a magic lantern threw the nerves in patterns on a screen:
 Would it have been worth while
@@ -429,8 +430,1278 @@ Combing the white hair of the waves blown back
 When the wind blows the water white and black.
 We have lingered in the chambers of the sea
 By sea-girls wreathed with seaweed red and brown
-Till human voices wake us, and we drown`,
+Till human voices wake us, and we drown.`,
     sourceUrl:'https://www.poetryfoundation.org/poetrymagazine/poems/44212/the-love-song-of-j-alfred-prufrock',
     reflect:`
       <ul>
-        <li><strong>The Etherized Patient:</strong> The poem opens with a shock: the evening sky compared to
+        <li><strong>The Etherized Patient:</strong> The poem opens with a shock: the evening sky compared to "a patient etherized upon a table." This is the birth of Modernism in a single image — fusing the romantic (sky/evening) with the clinical and morbid. How does this set the tone for Prufrock's paralysis?</li>
+        <li><strong>Social Masking:</strong> "To prepare a face to meet the faces that you meet." Prufrock is agonizingly aware of the performance of self. Where do you feel this gap between your internal monologue and your social presentation?</li>
+        <li><strong>The Overwhelming Question:</strong> Prufrock never asks it. What is it? A marriage proposal? A metaphysical query? Or is the "question" simply the act of decisive action itself?</li>
+        <li><strong>"I am not Prince Hamlet":</strong> Prufrock realizes he is not the tragic hero, but the "attendant lord" — Polonius, perhaps. There is a specific tragedy in realizing one is a minor character in one's own life.</li>
+        <li><strong>The Mermaids:</strong> "I do not think that they will sing to me." The poem ends with drowning in "human voices." Fantasy fails; reality suffocates. Is this a total defeat, or a moment of clarity?</li>
+      </ul>
+    `,
+    aboutPoem:`
+      <p>Begun in 1910 when Eliot was just 22 and studying at Harvard, "Prufrock" is the first masterpiece of Modernism in English. It was published in 1915 in *Poetry* magazine at the urging of Ezra Pound, who famously wrote: "It is such a comfort to meet a man and not have to tell him not to be a damn fool."</p>
+      <p><strong>Genre & Form:</strong> A dramatic monologue, heavily influenced by Robert Browning but filtered through the irony of French Symbolist Jules Laforgue. Unlike Browning's speakers who are confident and revealing, Prufrock is defined by hesitation, digression, and self-cancellation. The meter shifts constantly, slipping in and out of iambic pentameter, mirroring Prufrock's unstable consciousness.</p>
+      <p><strong>The Epigraph:</strong> From Dante's *Inferno* (Canto 27). Guido da Montefeltro speaks from a flame, believing Dante can never return to the world to repeat his words. This frames the entire poem as a confession made in a private hell, not meant to be heard. Prufrock speaks only because he believes he is effectively dead to the world.</p>
+      <p><strong>Key Themes:</strong> The paralysis of the modern intellectual; the fear of sexual impotence and social ridicule; the fragmentation of the self; the crushing weight of time ("time for a hundred indecisions").</p>
+    `,
+    aboutAuthor:`
+      <p><strong>T.S. Eliot (1888-1965)</strong> was the dominant force in 20th-century English literature. Born in St. Louis to a prominent Unitarian family, he educated himself at Harvard, the Sorbonne, and Oxford before settling in London in 1914. He worked as a schoolteacher and a bank clerk at Lloyds Bank while writing the poems that would shatter the Romantic tradition.</p>
+      <p>Eliot's critical essays (e.g., "Tradition and the Individual Talent") reshaped the canon, arguing that poetry should be an escape <em>from</em> personality, not an expression of it. In 1948, he won the Nobel Prize. His journey from the fragmentation of *The Waste Land* to the spiritual integration of *Four Quartets* traces the spiritual trajectory of the century.</p>
+    `,
+    historicalContext:`
+      <p><strong>The Early 20th Century:</strong> Written on the eve of World War I, "Prufrock" anticipates the collapse of European confidence. The old Victorian certainties — progress, empire, coherent identity — were cracking. Freud was mapping the unconscious; Einstein was destabilizing time and space; Picasso was fracturing perspective.</p>
+      <p>Prufrock is the archetype of the "modern" man: highly educated, neurotic, physically comfortable but spiritually empty, paralyzed by the sheer number of choices and the fear of judgment. He is the first "anti-hero" of the new century.</p>
+    `,
+    connections:`
+      <p><strong>Literature:</strong> Compare with <em>Hamlet</em> (whom Prufrock references) — another paralyzed intellectual, but one with a kingdom at stake. Prufrock has only a tea party.</p>
+      <p><strong>Philosophy:</strong> Henri Bergson's concept of <em>durée</em> (lived time vs. clock time) was a major influence on Eliot. Prufrock experiences time as subjective elasticity.</p>
+      <p><strong>In this collection:</strong> Pair with <strong>Larkin's "Aubade"</strong> (another terrifying confrontation with the self, but in the morning instead of evening) and <strong>Szymborska's "Possibilities"</strong> (which embraces choice where Prufrock fears it).</p>
+    `
+  },
+  {
+    id:'waste-land', poet:'T.S. Eliot', title:'The Waste Land',
+    year:'1922', category:'metaphysical', hasFullText:true,
+    fullText: `'Nam Sibyllam quidem Cumis ego ipse oculis meis vidi in ampulla pendere, et cum illi pueri dicerent: Σίβυλλα τί θέλεις; respondebat illa: ἀποθανεîν θέλω.'
+For Ezra Pound
+il miglior fabbro.
+
+I. The Burial of the Dead
+April is the cruellest month, breeding
+Lilacs out of the dead land, mixing
+Memory and desire, stirring
+Dull roots with spring rain.
+Winter kept us warm, covering
+Earth in forgetful snow, feeding
+A little life with dried tubers.
+Summer surprised us, coming over the Starnbergersee
+With a shower of rain; we stopped in the colonnade,
+And went on in sunlight, into the Hofgarten,
+And drank coffee, and talked for an hour.
+Bin gar keine Russin, stamm' aus Litauen, echt deutsch.
+And when we were children, staying at the archduke's,
+My cousin's, he took me out on a sled,
+And I was frightened. He said, Marie,
+hold on tight. And down we went.
+In the mountains, there you feel free.
+I read, much of the night, and go south in the winter.
+What are the roots that clutch, what branches grow
+Out of this stony rubbish? Son of man,
+You cannot say, or guess, for you know only
+A heap of broken images, where the sun beats,
+And the dead tree gives no shelter, the cricket no relief,
+And the dry stone no sound of water. Only
+There is shadow under this red rock,
+(Come in under the shadow of this red rock),
+And I will show you something different from either
+Your shadow at morning striding behind you
+Or your shadow at evening rising to meet you;
+I will show you fear in a handful of dust.
+Frisch weht der Wind
+Der Heimat zu
+Mein Irisch Kind,
+Wo weilest du?
+'You gave me hyacinths first a year ago;
+'They called me the hyacinth girl.'
+—Yet when we came back, late, from the Hyacinth garden,
+Your arms full, and your hair wet, I could not
+Speak, and my eyes failed, I was neither
+Living nor dead, and I knew nothing,
+Looking into the heart of light, the silence.
+Oed' und leer das Meer.
+Madame Sosostris, famous clairvoyante,
+Had a bad cold, nevertheless
+Is known to be the wisest woman in Europe,
+With a wicked pack of cards. Here, said she,
+Is your card, the drowned Phoenician Sailor,
+(Those are pearls that were his eyes. Look!)
+Here is Belladonna, the Lady of the Rocks,
+The lady of situations.
+Here is the man with three staves, and here the Wheel,
+And here is the one-eyed merchant, and this card,
+Which is blank, is something he carries on his back,
+Which I am forbidden to see. I do not find
+The Hanged Man. Fear death by water.
+I see crowds of people, walking round in a ring.
+Thank you. If you see dear Mrs. Equitone,
+Tell her I bring the horoscope myself:
+One must be so careful these days.
+Unreal City,
+Under the brown fog of a winter dawn,
+A crowd flowed over London Bridge, so many,
+I had not thought death had undone so many.
+Sighs, short and infrequent, were exhaled,
+And each man fixed his eyes before his feet.
+Flowed up the hill and down King William Street,
+To where Saint Mary Woolnoth kept the hours
+With a dead sound on the final stroke of nine.
+There I saw one I knew, and stopped him, crying: 'Stetson!
+'You who were with me in the ships at Mylae!
+'That corpse you planted last year in your garden,
+'Has it begun to sprout? Will it bloom this year?
+'Or has the sudden frost disturbed its bed?
+'Oh keep the Dog far hence, that's friend to men,
+'Or with his nails he'll dig it up again!
+'You! hypocrite lecteur!—mon semblable,—mon frère!”
+
+II. A Game of Chess
+The Chair she sat in, like a burnished throne,
+Glowed on the marble, where the glass
+Held up by standards wrought with fruited vines
+From which a golden Cupidon peeped out
+(Another hid his eyes behind his wing)
+Doubled the flames of sevenbranched candelabra
+Reflecting light upon the table as
+The glitter of her jewels rose to meet it,
+From satin cases poured in rich profusion;
+In vials of ivory and coloured glass
+Unstoppered, lurked her strange synthetic perfumes,
+Unguent, powdered, or liquid—troubled, confused
+And drowned the sense in odours; stirred by the air
+That freshened from the window, these ascended
+In fattening the prolonged candle-flames,
+Flung their smoke into the laquearia,
+Stirring the pattern on the coffered ceiling.
+Huge sea-wood fed with copper
+Burned green and orange, framed by the coloured stone,
+In which sad light a carvéd dolphin swam.
+Above the antique mantel was displayed
+As though a window gave upon the sylvan scene
+The change of Philomel, by the barbarous king
+So rudely forced; yet there the nightingale
+Filled all the desert with inviolable voice
+And still she cried, and still the world pursues,
+'Jug Jug' to dirty ears.
+And other withered stumps of time
+Were told upon the walls; staring forms
+Leaned out, leaning, hushing the room enclosed.
+Footsteps shuffled on the stair.
+Under the firelight, under the brush, her hair
+Spread out in fiery points
+Glowed into words, then would be savagely still.
+'My nerves are bad tonight. Yes, bad. Stay with me.
+Speak to me. Why do you never speak. Speak.
+What are you thinking of? What thinking? What?
+I never know what you are thinking. Think.'
+I think we are in rats' alley
+Where the dead men lost their bones.
+'What is that noise?'
+The wind under the door.
+'What is that noise now? What is the wind doing?'
+Nothing again nothing.
+'Do
+'You know nothing? Do you see nothing? Do you remember
+'Nothing?'
+I remember
+Those are pearls that were his eyes.
+'Are you alive, or not? Is there nothing in your head?'
+But
+O O O O that Shakespeherian Rag—
+It's so elegant
+So intelligent
+'What shall I do now? What shall I do?'
+'I shall rush out as I am, and walk the street
+'With my hair down, so. What shall we do tomorrow?
+'What shall we ever do?'
+The hot water at ten.
+And if it rains, a closed car at four.
+And we shall play a game of chess,
+Pressing lidless eyes and waiting for a knock upon the door.
+When Lil's husband got demobbed, I said—
+I didn't mince my words, I said to her myself,
+HURRY UP PLEASE ITS TIME
+Now Albert's coming back, make yourself a bit smart.
+He'll want to know what you done with that money he gave you
+To get yourself some teeth. He did, I was there.
+You have them all out, Lil, and get a nice set,
+He said, I swear, I can't bear to look at you.
+And no more can't I, I said, and think of poor Albert,
+He's been in the army four years, he wants a good time,
+And if you don't give it him, there's others will, I said.
+Oh is there, she said. Something o' that, I said.
+Then I'll know who to thank, she said, and give me a straight look.
+HURRY UP PLEASE ITS TIME
+If you don't like it you can get on with it, I said.
+Others can pick and choose if you can't.
+But if Albert makes off, it won't be for lack of telling.
+You ought to be ashamed, I said, to look so antique.
+(And her only thirty-one.)
+I can't help it, she said, pulling a long face,
+It's them pills I took, to bring it off, she said.
+(She's had five already, and nearly died of young George.)
+The chemist said it would be all right, but I've never been the same.
+You are a proper fool, I said.
+Well, if Albert won't leave you alone, there it is, I said,
+What you get married for if you don't want children?
+HURRY UP PLEASE ITS TIME
+Well, that Sunday Albert was home, they had a hot gammon,
+And they asked me in to dinner, to get the beauty of it hot—
+HURRY UP PLEASE ITS TIME
+HURRY UP PLEASE ITS TIME
+Goonight Bill. Goonight Lou. Goonight May. Goonight.
+Ta ta. Goonight. Goonight.
+Good night, ladies, good night, sweet ladies, good night, good night.
+
+III. The Fire Sermon
+The river's tent is broken: the last fingers of leaf
+Clutch and sink into the wet bank. The wind
+Crosses the brown land, unheard. The nymphs are departed.
+Sweet Thames, run softly, till I end my song.
+The river bears no empty bottles, sandwich papers,
+Silk handkerchiefs, cardboard boxes, cigarette ends
+Or other testimony of summer nights. The nymphs are departed.
+And their friends, the loitering heirs of City directors;
+Departed, have left no addresses.
+By the waters of Leman I sat down and wept . . .
+Sweet Thames, run softly till I end my song,
+Sweet Thames, run softly, for I speak not loud or long.
+But at my back in a cold blast I hear
+The rattle of the bones, and chuckle spread from ear to ear.
+A rat crept softly through the vegetation
+Dragging its slimy belly on the bank
+While I was fishing in the dull canal
+On a winter evening round behind the gashouse
+Musing upon the king my brother's wreck
+And on the king my father's death before him.
+White bodies naked on the low damp ground
+And bones cast in a little low dry garret,
+Rattled by the rat's foot only, year to year.
+But at my back from time to time I hear
+The sound of horns and motors, which shall bring
+Sweeney to Mrs. Porter in the spring.
+O the moon shone bright on Mrs. Porter
+And on her daughter
+They wash their feet in soda water
+Et O ces voix d'enfants, chantant dans la coupole!
+Twit twit twit
+Jug jug jug jug jug jug
+So rudely forc'd.
+Tereu
+Unreal City
+Under the brown fog of a winter noon
+Mr. Eugenides, the Smyrna merchant
+Unshaven, with a pocket full of currants
+C.i.f. London: documents at sight,
+Asked me in demotic French
+To luncheon at the Cannon Street Hotel
+Followed by a weekend at the Metropole.
+At the violet hour, when the eyes and back
+Turn upward from the desk, when the human engine waits
+Like a taxi throbbing waiting,
+I Tiresias, though blind, throbbing between two lives,
+Old man with wrinkled female breasts, can see
+At the violet hour, the evening hour that strives
+Homeward, and brings the sailor home from sea,
+The typist home at teatime, clears her breakfast, lights
+Her stove, and lays out food in tins.
+Out of the window perilously spread
+Her drying combinations touched by the sun's last rays,
+On the divan are piled (at night her bed)
+Stockings, slippers, camisoles, and stays.
+I Tiresias, old man with wrinkled dugs
+Perceived the scene, and foretold the rest—
+I too awaited the expected guest.
+He, the young man carbuncular, arrives,
+A small house agent's clerk, with one bold stare,
+One of the low on whom assurance sits
+As a silk hat on a Bradford millionaire.
+The time is now propitious, as he guesses,
+The meal is ended, she is bored and tired,
+Endeavours to engage her in caresses
+Which still are unreproved, if undesired.
+Flushed and decided, he assaults at once;
+Exploring hands encounter no defence;
+His vanity requires no response,
+And makes a welcome of indifference.
+(And I Tiresias have foresuffered all
+Enacted on this same divan or bed;
+I who have sat by Thebes below the wall
+And walked among the lowest of the dead.)
+Bestows one final patronising kiss,
+And gropes his way, finding the stairs unlit . . .
+She turns and looks a moment in the glass,
+Hardly aware of her departed lover;
+Her brain allows one half-formed thought to pass:
+'Well now that's done: and I'm glad it's over.'
+When lovely woman stoops to folly and
+Paces about her room again, alone,
+She smooths her hair with automatic hand,
+And puts a record on the gramophone.
+'This music crept by me upon the waters'
+And along the Strand, up Queen Victoria Street.
+O City city, I can sometimes hear
+Beside a public bar in Lower Thames Street,
+The pleasant whining of a mandoline
+And a clatter and a chatter from within
+Where fishmen lounge at noon: where the walls
+Of Magnus Martyr hold
+Inexplicable splendour of Ionian white and gold.
+The river sweats
+Oil and tar
+The barges drift
+With the turning tide
+Red sails
+Wide
+To leeward, swing on the heavy spar.
+The barges wash
+Drifting logs
+Down Greenwich reach
+Past the Isle of Dogs.
+Weialala leia
+Wallala leialala
+Elizabeth and Leicester
+Beating oars
+The stern was formed
+A gilded shell
+Red and gold
+The brisk swell
+Rippled both shores
+Southwest wind
+Carried down stream
+The peal of bells
+White towers
+Weialala leia
+Wallala leialala
+'Trams and dusty trees.
+Highbury bore me. Richmond and Kew
+Undid me. By Richmond I raised my knees
+Supine on the floor of a narrow canoe.'
+'My feet are at Moorgate, and my heart
+Under my feet. After the event
+He wept. He promised a 'new start.'
+I made no comment. What should I resent?'
+'On Margate Sands.
+I can connect
+Nothing with nothing.
+The broken fingernails of dirty hands.
+My people humble people who expect
+Nothing.'
+la la
+To Carthage then I came
+Burning burning burning burning
+O Lord Thou pluckest me out
+O Lord Thou pluckest
+burning
+
+IV. Death by Water
+Phlebas the Phoenician, a fortnight dead,
+Forgot the cry of gulls, and the deep sea swell
+And the profit and loss.
+A current under sea
+Picked his bones in whispers. As he rose and fell
+He passed the stages of his age and youth
+Entering the whirlpool.
+Gentile or Jew
+O you who turn the wheel and look to windward,
+Consider Phlebas, who was once handsome and tall as you.
+
+V. What the Thunder Said
+After the torchlight red on sweaty faces
+After the frosty silence in the gardens
+After the agony in stony places
+The shouting and the crying
+Prison and palace and reverberation
+Of thunder of spring over distant mountains
+He who was living is now dead
+We who were living are now dying
+With a little patience
+Here is no water but only rock
+Rock and no water and the sandy road
+The road winding above among the mountains
+Which are mountains of rock without water
+If there were water we should stop and drink
+Amongst the rock one cannot stop or think
+Sweat is dry and feet are in the sand
+If there were only water amongst the rock
+Dead mountain mouth of carious teeth that cannot spit
+Here one can neither stand nor lie nor sit
+There is not even silence in the mountains
+But dry sterile thunder without rain
+There is not even solitude in the mountains
+But red sullen faces sneer and snarl
+From doors of mudcracked houses
+If there were water
+And no rock
+If there were rock
+And also water
+And water
+A spring
+A pool among the rock
+If there were the sound of water only
+Not the cicada
+And dry grass singing
+But sound of water over a rock
+Where the hermit-thrush sings in the pine trees
+Drip drop drip drop drop drop drop
+But there is no water
+Who is the third who walks always beside you?
+When I count, there are only you and I together
+But when I look ahead up the white road
+There is always another one walking beside you
+Gliding wrapt in a brown mantle, hooded
+I do not know whether a man or a woman
+—But who is that on the other side of you?
+What is that sound high in the air
+Murmur of maternal lamentation
+Who are those hooded hordes swarming
+Over endless plains, stumbling in cracked earth
+Ringed by the flat horizon only
+What is the city over the mountains
+Cracks and reforms and bursts in the violet air
+Falling towers
+Jerusalem Athens Alexandria
+Vienna London
+Unreal
+A woman drew her long black hair out tight
+And fiddled whisper music on those strings
+And bats with baby faces in the violet light
+Whistled, and beat their wings
+And crawled head downward down a blackened wall
+And upside down in air were towers
+Tolling reminiscent bells, that kept the hours
+And voices singing out of empty cisterns and exhausted wells.
+In this decayed hole among the mountains
+In the faint moonlight, the grass is singing
+Over the tumbled graves, about the chapel
+There is the empty chapel, only the wind's home.
+It has no windows, and the door swings,
+Dry bones can harm no one.
+Only a cock stood on the rooftree
+Co co rico co co rico
+In a flash of lightning. Then a damp gust
+Bringing rain
+Ganga was sunken, and the limp leaves
+Waited for rain, while the black clouds
+Gathered far distant, over Himavant.
+The jungle crouched, humped in silence.
+Then spoke the thunder
+DADA
+Datta: what have we given?
+My friend, blood shaking my heart
+The awful daring of a moment of surrender
+Which an age of prudence can never retract
+By this, and this only, we have existed
+Which is not to be found in our obituaries
+Or in memories draped by the beneficent spider
+Or under seals broken by the lean solicitor
+In our empty rooms
+DA
+Dayadhvam: I have heard the key
+Turn in the door once and turn once only
+We think of the key, each in his prison
+Thinking of the key, each confirms a prison
+Only at nightfall, aethereal rumours
+Revive for a moment a broken Coriolanus
+DA
+Damyata: The boat responded
+Gaily, to the hand expert with sail and oar
+The sea was calm, your heart would have responded
+Gaily, when invited, beating obedient
+To controlling hands
+I sat upon the shore
+Fishing, with the arid plain behind me
+Shall I at least set my lands in order?
+London Bridge is falling down falling down falling down
+Poi s'ascose nel foco che gli affina
+Quando fiam uti chelidon—O swallow swallow
+Le Prince d'Aquitaine à la tour abolie
+These fragments I have shored against my ruins
+Why then Ile fit you. Hieronymo's mad againe.
+Datta. Dayadhvam. Damyata.
+Shantih shantih shantih.`,
+    sourceUrl:'https://www.poetryfoundation.org/poems/47311/the-waste-land',
+    reflect:`
+      <ul>
+        <li><strong>Fragmentation as Form:</strong> The poem is a "heap of broken images." It does not narrate; it accumulates. Why is this fragmented structure essential to conveying the poem's meaning about the brokenness of modern civilization?</li>
+        <li><strong>Voices from the Dead:</strong> You hear Marie, the Hyacinth girl, Madame Sosostris, Stetson, the pub women, Tiresias, the Thunder. Do these voices ever truly communicate, or are they monologues in a crowded room?</li>
+        <li><strong>The Grail Legend:</strong> Behind the modern squalor lies the myth of the Fisher King — a wounded king whose impotence makes the land barren. The quest is to heal the king and restore water (life) to the waste land. Where do you see this quest failing or succeeding?</li>
+        <li><strong>"Shantih shantih shantih":</strong> The poem ends with Sanskrit ("The Peace which passeth understanding"). Is this a true resolution, or a desperate last shard against the ruins?</li>
+        <li><strong>The Unreal City:</strong> Eliot's London is a necropolis ("I had not thought death had undone so many"). How does this compare to your own experience of modern urban life?</li>
+      </ul>
+    `,
+    aboutPoem:`
+      <p>Published in 1922, *The Waste Land* is arguably the most important poem of the 20th century. It appeared in the same "annus mirabilis" as Joyce's *Ulysses* and Rilke's *Duino Elegies*. It is a poem of radical disillusionment, written in the aftermath of World War I, capturing the spiritual and cultural exhaustion of Europe.</p>
+      <p><strong>The Editing:</strong> The original manuscript ("He Do the Police in Different Voices") was nearly twice as long. Ezra Pound, whom Eliot called "il miglior fabbro" (the better craftsman) in the dedication, slashed through the draft, removing long narrative sections and leaving the sharp, jagged edges that define the poem's power.</p>
+      <p><strong>Structure:</strong>
+      1. <em>The Burial of the Dead:</em> Memory, desire, and fear in a dead land.
+      2. <em>A Game of Chess:</em> The failure of sex and relationship, high class and low.
+      3. <em>The Fire Sermon:</em> Lust without love, the mechanical sordidness of modern coupling.
+      4. <em>Death by Water:</em> Purification through dissolution (Phlebas).
+      5. <em>What the Thunder Said:</em> The journey to the Chapel Perilous, the promise of rain, and the fragments of shore.</p>
+      <p><strong>Method:</strong> The "mythical method" (a term Eliot used for Joyce) — manipulating a continuous parallel between contemporaneity and antiquity. A pub conversation in London echoes a scene from Shakespeare; a typist's affair echoes the rape of Philomel.</p>
+    `,
+    aboutAuthor:`
+      <p>See Eliot bio above. *The Waste Land* was written during a period of intense personal suffering for Eliot — his marriage to Vivienne Haigh-Wood was collapsing, his health was poor, and he was working a demanding job at Lloyds Bank. He famously said, "To me it was only the relief of a personal and wholly insignificant grouse against life; it is just a piece of rhythmical grumbling." Critics, of course, saw the collapse of Western civilization.</p>
+    `,
+    historicalContext:`
+      <p><strong>1922:</strong> Post-war Europe was traumatized. The Spanish Flu had killed millions more. The map of Europe was redrawn; empires had vanished. The poem captures the specific mood of the 1920s: a mix of desperate hedonism (jazz, sex) and profound underlying dread.</p>
+      <p>The poem's polyphony (many voices) reflects the modern city, where all languages and classes mix but do not connect. It anticipates the sampling culture of the 21st century by nearly 100 years.</p>
+    `,
+    connections:`
+      <p><strong>Literature:</strong> Dante's *Inferno*, Shakespeare's *The Tempest*, Weston's *From Ritual to Romance*, Frazer's *The Golden Bough*. The poem is a hyper-text before the internet.</p>
+      <p><strong>In this collection:</strong> Contrast with <strong>Paz's "Sunstone"</strong> (which sees cyclical renewal where Eliot sees ruin) and <strong>Lorca's "Dawn"</strong> (which shares the urban nightmare). <strong>Celan's "Deathfugue"</strong> is the only other poem here that matches its historical weight.</p>
+    `
+  },
+  {
+    id:'thirteen-ways', poet:'Wallace Stevens', title:'Thirteen Ways of Looking at a Blackbird',
+    year:'1917', category:'precision', hasFullText:true,
+    fullText: `I
+Among twenty snowy mountains,
+The only moving thing
+Was the eye of the blackbird.
+
+II
+I was of three minds,
+Like a tree
+In which there are three blackbirds.
+
+III
+The blackbird whirled in the autumn winds.
+It was a small part of the pantomime.
+
+IV
+A man and a woman
+Are one.
+A man and a woman and a blackbird
+Are one.
+
+V
+I do not know which to prefer,
+The beauty of inflections
+Or the beauty of innuendoes,
+The blackbird whistling
+Or just after.
+
+VI
+Icicles filled the long window
+With barbaric glass.
+The shadow of the blackbird
+Crossed it, to and fro.
+The mood
+Traced in the shadow
+An indecipherable cause.
+
+VII
+O thin men of Haddam,
+Why do you imagine golden birds?
+Do you not see how the blackbird
+Walks around the feet
+Of the women about you?
+
+VIII
+I know noble accents
+And lucid, inescapable rhythms;
+But I know, too,
+That the blackbird is involved
+In what I know.
+
+IX
+When the blackbird flew out of sight,
+It marked the edge
+Of one of many circles.
+
+X
+At the sight of blackbirds
+Flying in a green light,
+Even the bawds of euphony
+Would cry out sharply.
+
+XI
+He rode over Connecticut
+In a glass coach.
+Once, a fear pierced him,
+In that he mistook
+The shadow of his equipage
+For blackbirds.
+
+XII
+The river is moving.
+The blackbird must be flying.
+
+XIII
+It was evening all afternoon.
+It was snowing
+And it was going to snow.
+The blackbird sat
+In the cedar-limbs.`,
+    sourceUrl:'https://www.poetryfoundation.org/poems/45236/thirteen-ways-of-looking-at-a-blackbird',
+    reflect:`
+      <ul>
+        <li><strong>Perspective as form:</strong> Each section is a different angle on the same subject. How does meaning accumulate through juxtaposition rather than narrative?</li>
+        <li><strong>The blackbird itself:</strong> Is it a real bird, a symbol, a philosophical concept? Notice how it shifts from concrete to abstract across the thirteen sections.</li>
+        <li><strong>Economy:</strong> Some sections are only two or three lines. What is gained by such extreme compression?</li>
+        <li><strong>Section XIII:</strong> The final image of evening and snow — how does this closing reframe everything that came before?</li>
+        <li><strong>Cross-disciplinary:</strong> Compare with Cubism's simultaneous perspectives (Braque, Picasso) and with quantum superposition — the idea that something can be in multiple states until observed.</li>
+      </ul>
+    `,
+    aboutPoem:`
+      <p>Published in 1917, this is Stevens's most anthologized poem and perhaps the purest example of his philosophical imagination at work. Each of the thirteen sections is a miniature poem — a haiku-like observation that places the blackbird in a different relationship to landscape, mind, and meaning.</p>
+      <p><strong>Form:</strong> Thirteen numbered sections of varying length, from two to eight lines. The numbering creates expectation of progression, but the sections are non-sequential — they could be rearranged. This is the poem's radical insight: reality is not a story but a set of simultaneous perspectives.</p>
+      <p><strong>Influences:</strong> Japanese haiku (Stevens was interested in Eastern aesthetics), Cubist painting, and imagism (though Stevens always went beyond pure image into philosophical territory).</p>
+    `,
+    aboutAuthor:`
+      <p><strong>Wallace Stevens (1879-1955)</strong> — Born in Reading, Pennsylvania. Harvard, then New York Law School. Spent his entire adult career as an insurance executive at the Hartford Accident and Indemnity Company in Connecticut, eventually becoming vice president.</p>
+      <p><strong>The double life:</strong> Stevens is the supreme example of the poet who lives in the "real world." He wrote poems on his daily walk to the office, composing in his head, and dictated them to his secretary. His colleagues at Hartford had little idea of his literary reputation.</p>
+      <p><strong>Movement:</strong> Often grouped with the modernists but really sui generis. His project was philosophical: to explore what the imagination can do in a world without God. "The final belief is to believe in a fiction, which you know to be a fiction, there being nothing else."</p>
+      <p><strong>Style:</strong> Lush, sensuous, musical language deployed in service of abstract ideas. No one else sounds like Stevens — the combination of Florida-exotic imagery with rigorous philosophical inquiry is unique.</p>
+      <p><strong>Essential works:</strong> "Harmonium" (1923), "The Man with the Blue Guitar" (1937), "Notes Toward a Supreme Fiction" (1942), "The Auroras of Autumn" (1950).</p>
+    `,
+    historicalContext:`
+      <p><strong>1917:</strong> America enters World War I. The Russian Revolution. Duchamp exhibits a urinal as art ("Fountain"). The old order is collapsing everywhere — in politics, art, philosophy.</p>
+      <p>Stevens, insulated by his corporate career, responded not with Eliot's despair but with a cool, almost scientific inquiry into how the mind constructs meaning from raw experience. His poetry is less about the crisis of modernity and more about the permanent human condition of being a consciousness embedded in a physical world.</p>
+    `,
+    connections:`
+      <p><strong>In this collection:</strong> Compare with Carson's "Short Talks" — both use fragmented, numbered/titled sections to approach truth through multiple angles. Stevens's blackbird and Szymborska's catalog of preferences both resist the tyranny of single meaning.</p>
+      <p><strong>Philosophy:</strong> Phenomenology (Husserl, Merleau-Ponty) — the study of how things appear to consciousness. Each section is a phenomenological reduction.</p>
+      <p><strong>Science:</strong> The observer problem. Heisenberg's uncertainty principle (1927, ten years after this poem). The complementarity principle — light as both wave and particle, blackbird as both thing and idea.</p>
+    `
+  },
+  {
+    id:'snow-man', poet:'Wallace Stevens', title:'The Snow Man',
+    year:'1921', category:'precision', hasFullText:true,
+    fullText: `One must have a mind of winter
+To regard the frost and the boughs
+Of the pine-trees crusted with snow;
+
+And have been cold a long time
+To behold the junipers shagged with ice,
+The spruces rough in the distant glitter
+
+Of the January sun; and not to think
+Of any misery in the sound of the wind,
+In the sound of a few leaves,
+
+Which is the sound of the land
+Full of the same wind
+That is blowing in the same bare place
+
+For the listener, who listens in the snow,
+And, nothing himself, beholds
+Nothing that is not there and the nothing that is.`,
+    sourceUrl:'https://www.poetryfoundation.org/poems/45235/the-snow-man-9702',
+    reflect:`
+      <ul>
+        <li><strong>One sentence:</strong> The entire poem is a single sentence. Read it aloud and feel how the syntax carries you forward without a place to rest. What effect does this create?</li>
+        <li><strong>The listener:</strong> "One must have a mind of winter" — who is this "one"? What would it mean to actually achieve this?</li>
+        <li><strong>Nothing:</strong> The poem arrives at "Nothing that is not there and the nothing that is." What is the difference between these two nothings?</li>
+        <li><strong>Personal:</strong> Have you ever achieved a "mind of winter" — a moment of seeing without projecting your own emotions onto the world?</li>
+        <li><strong>Cross-disciplinary:</strong> Compare with Buddhist concepts of emptiness (sunyata) and with the scientific ideal of objectivity. Is pure observation possible?</li>
+      </ul>
+    `,
+    aboutPoem:`
+      <p>Published in 1921 in Poetry magazine. At only 15 lines, it is one of the most compressed philosophical arguments in English poetry. The entire poem is a single sentence that builds through a series of infinitive phrases toward its devastating final line.</p>
+      <p><strong>Form:</strong> Five tercets (three-line stanzas) in blank verse, forming one unbroken sentence. The syntax itself enacts the argument: you must keep going, keep stripping away, until you reach the bare minimum of perception.</p>
+      <p><strong>The argument:</strong> To truly perceive winter, you must become winter — strip away all human projection, all pathetic fallacy, all "misery." Only then can you see "Nothing that is not there and the nothing that is." This is Stevens's version of kenosis — self-emptying as a mode of perception.</p>
+    `,
+    aboutAuthor:`<p>See Wallace Stevens bio above (Thirteen Ways of Looking at a Blackbird).</p>`,
+    historicalContext:`
+      <p><strong>1921:</strong> The aftermath of WWI. Wittgenstein is writing the Tractatus. Heidegger is beginning "Being and Time." The question of what we can know and how we can speak about it is consuming philosophy and art alike.</p>
+      <p>Stevens, from his office in Hartford, was engaged in the same inquiry as the European philosophers but through the medium of poetry rather than systematic argument. "The Snow Man" is arguably a more elegant statement of certain Wittgensteinian ideas than the Tractatus itself.</p>
+    `,
+    connections:`
+      <p><strong>In this collection:</strong> The Snow Man's "nothing" resonates with Szymborska's "Nothing" in "The Three Oddest Words." Compare also with Larkin's "Aubade" — both face nothingness, but Stevens finds a kind of austere beauty in emptiness while Larkin finds only terror.</p>
+      <p><strong>Philosophy:</strong> Husserl's phenomenological reduction (epoche) — bracketing assumptions to see things as they are. Zen Buddhism's concept of beginner's mind. Wittgenstein's "Whereof one cannot speak, thereof one must be silent."</p>
+      <p><strong>Science:</strong> The ideal of scientific objectivity — observing without disturbing. But also quantum mechanics' revelation that pure observation is impossible. Stevens intuited this tension.</p>
+    `
+  },
+  {
+    id:'duino-vii', poet:'Rainer Maria Rilke', title:'Duino Elegy VII',
+    year:'1923', category:'metaphysical', hasFullText:true,
+    fullText: `End all your wooing, o voice that's outgrown it! woo no more! be your signalling cry.
+Even if you cried as clear as a bird on the wing, rising high in the surge of season,
+almost forgetting he's a needy creature and feeling himself singled out for springtime
+to throw into joyous heights, into purest heaven.
+No less would you woo, to arouse your beckoning call, love-kindled partner to your ardent feelings.
+She who'd been feeling you close, unseen,
+let her answer, breathlessly,
+from her dark surroundings.
+O and the Spring would comprehend—
+there is no cranny that would not echo the tone of annunciation.
+First the tiny question of the piping flute, which a widely receptive silence
+prolifically surrounds with stillness.
+Then the clear steps of the call, up the stairs of the future!
+And the oak-tree out there would start to grow, till its future leaves form a hollow
+to shelter the peal of your voice.
+The Universe would re-echo your praise!
+O, the beloveds are all disappearing,
+and we can not hold them.
+We, who must transform the visible into the invisible.
+Nowhere, beloved, can world exist but within.
+Life passes in transformation. And, ever diminishing,
+the outer world disappears.
+Where once was a lasting house, an imagined structure
+imposes itself obliquely, totally at the mercy
+of thoughts, as if it still stood in the brain.
+The Zeitgeist builds vast storehouses of power, formless
+as the taut strain which it extracts from everything.
+Temples it knows no longer. We're secretly saving
+the extravagance of the heart.
+Yes, where one survives, a single thing once prayed to, one thing once tended,
+knelt to, it stays as it is, reaching into the unseen.
+Many perceive it no longer, but miss the advantage
+of building it 'inwardly', with pillars and statues, greater!
+Each dull turn of the world has such disinherited children,
+to whom no longer what's been, and not yet what is coming, belongs.
+For the next grace is furthest.
+But let us not be confused by this; it strengthens
+the shape of the Forces, that we can preserve them.
+Once, there were pylons, and arches, and cathedrals,
+and the Sphinx, that grim, grey, stranger to mankind.
+Was it not a miracle? O gaze, Angel, gaze for it's we—
+O great one, tell them, that we could achieve this, my breath's
+too short for this praise. So, after all, we have not
+failed to make use of the spaces, these generous spaces, these
+spaces of ours. (How frighteningly great they must be,
+since thousands of years of our feelings have not made them full.)
+But a tower was great, was it not? O Angel, it was, though—
+even compared to you? Chartres was great—and music
+reached up still higher and passed far beyond us.
+But even a girl in love, oh, alone at night
+at her window... did she not reach to your knee?
+Don't think that I'm wooing.
+Angel, and even if I were, you would not come! For my
+call is always filled with outflowing; against such a powerful
+current you cannot advance. Like a stretching arm
+is my call. And its clutching, upwardly open hand is
+always before you as open for warding and warning,
+Ingraspable, wide open.`,
+    originalLang:'German',
+    sourceUrl:'https://www.poetryfoundation.org/poems/52108/the-seventh-elegy',
+    reflect:`
+      <ul>
+        <li><strong>The Great Turn:</strong> The first six elegies are dominated by lament and insufficiency. Elegy VII marks the "Wende" (turn). Rilke stops wooing the Angel and starts asserting the value of human existence. What is the specific value he claims for us?</li>
+        <li><strong>"Hiersein ist herrlich" (Being here is glorious):</strong> This famous line appears here. How does Rilke arrive at this affirmation after so much despair? Is it a denial of the darkness, or a way of including it?</li>
+        <li><strong>Invisible Cathedrals:</strong> Rilke argues that the modern world is destroying the "things" (Haus, Baum, Fremde) that held spiritual meaning. Our task is to save them by transforming them into an invisible inner world. Do you feel this loss of "real things" in the digital age?</li>
+        <li><strong>The Challenge to the Angel:</strong> Rilke points to human achievements — Chartres, music, a lover at the window — and tells the Angel: "Look! We did this!" It is a moment of supreme human pride.</li>
+      </ul>
+    `,
+    aboutPoem:`
+      <p>Written in a burst of creative fury in February 1922 at the Château de Muzot, ending a ten-year writer's block. The Seventh Elegy is the trumpet blast of the cycle. It moves from the "wooing" (Werbung) of the earlier elegies to "celebration" (Rühmung).</p>
+      <p><strong>Core Philosophy:</strong> <em>Weltinnenraum</em> (World-inner-space). Rilke argues that the external world is vanishing under the pressure of technology and modernity ("The Zeitgeist builds vast storehouses of power"). The only place the world can survive is inside human consciousness. We are the bees of the invisible, gathering the nectar of the visible world to store it in the golden hive of the invisible.</p>
+      <p><strong>Structure:</strong> Free verse, sweeping and symphonic. It builds to a crescendo of affirmation, challenging the Angel to acknowledge human greatness, not in power, but in feeling and transformation.</p>
+    `,
+    aboutAuthor:`
+      <p><strong>Rainer Maria Rilke (1875-1926)</strong> is the great poet of inwardness. Born in Prague, he wandered Europe, absorbing the influences of Russia (Tolstoy), Paris (Rodin, Cézanne), and the Mediterranean. He dedicated his life to the task of seeing — truly seeing — the world and translating it into language.</p>
+      <p>He died of leukemia in 1926, famously pricking his finger on a rose thorn shortly before the diagnosis (a mythic but apocryphal cause of death; it was the disease). His tombstone reads: "Rose, oh pure contradiction, desire / to be no one's sleep under so many / lids."</p>
+    `,
+    historicalContext:`
+      <p><strong>1922:</strong> The same year as *The Waste Land*. While Eliot was diagnosing the fragmentation of the West, Rilke was proposing a radical solution: internalization. The "storehouses of power" Rilke mentions are power stations, factories, the industrial infrastructure that was replacing the old "temples." He saw the modern age as one of disinherited children, cut off from the past and not yet at home in the future.</p>
+    `,
+    connections:`
+      <p><strong>In this collection:</strong> Pair with <strong>Stevens's "Anecdote of the Jar"</strong> (not here, but similar theme) or <strong>Valéry's "Cimetière marin"</strong> (the struggle between pure consciousness and the act of living). Compare with <strong>Tracy K. Smith's</strong> view of the cosmos — Rilke looks inward to find the infinite; Smith looks outward.</p>
+    `
+  },
+  {
+    id:'duino-viii', poet:'Rainer Maria Rilke', title:'Duino Elegy VIII',
+    year:'1923', category:'metaphysical', hasFullText:true,
+    fullText: `With all its eyes the animal sees openness.
+Our eyes alone are as if reversed and set all around it like traps,
+surrounding its unhindered departure.
+What exists beyond, we know only from the countenance of the animal;
+for we turn even the child around and force it to look back at creation,
+not at the openness embedded so deeply in the animal face.
+
+Free from death. Only we see death; the free animal
+always has death behind it and before it God,
+and when it moves, it moves in eternity just as the fountains do.
+We never have ahead of us, not for a single day,
+the pure space into which the flowers forever unfold.
+It is always our human world and never a nowhere without the negative:
+that which is pure and unconstrained, which one breathes in
+and knows perfectly and does not desire.
+As a child one gets lost there in the quiet and is recalled by a shake.
+Or someone dies and is it.
+For when death approaches one no longer sees death, but gazes beyond,
+perhaps with the great look of the animal.
+
+Lovers, if it were not for the other, who obstructs the view,
+are near to it and marvel.
+As by error it opens for them beyond the beloved.
+But neither can move past the other, and again the world crowds in.
+Always turned toward our concrete world, we see in it only the reflection
+of boundlessness dimmed by ourselves.
+Or an animal, a dumb animal, looks up and calmly through us.
+This is called destiny: always to be on the outside, nothing but that,
+and always shut out.
+
+If the animal, moving toward us so surely, had consciousness like ours—
+it would wrench us around with its change.
+But its being is infinite to itself, not understood, without a view
+to its condition, pure as its outward gaze.
+And where we see Future, it sees Everything, and itself in Everything,
+and is healed forever.
+
+And yet, within the warm, alert beast lies the weight and care of a great sadness.
+For that which often overwhelms us clings to him as well—a memory
+that what we are now striving for was once nearer and truer,
+and its attachment infinitely tender.
+Here all is distance, there it was breath.
+After the first home the second seems drafty and a hybrid.
+O bliss of the tiny creature which stays forever in the womb that brought it forth!
+O happiness of the gnat, which still leaps within, even when it weds:
+for womb is all.
+And look at the half-assurance of the bird, which from its origin
+almost knows both the inside and outside, as if it were the soul of an Etruscan,
+flown from the dead man enclosed within the space, but with his resting figure as a lid.
+And how confused is anything that comes from a womb and has to fly.
+As if terrified of itself, it darts through the air like a crack going through a cup.
+So the track of a bat tears through the porcelain of evening.
+
+And we: spectators, always, everywhere, looking at everything and never through!
+It fills us. We arrange it. It collapses. We re-arrange it, and collapse ourselves.
+
+Who has twisted us around like this, so that no matter what we do,
+we are in the posture of someone going away?
+Just as, upon the farthest hill, which shows him his whole valley one last time,
+he turns, stops, lingers—, so we live here, forever taking leave.`,
+    originalLang:'German',
+    sourceUrl:'https://www.poetryfoundation.org/poems/52109/the-eighth-elegy',
+    reflect:`
+      <ul>
+        <li><strong>The Open (Das Offene):</strong> The central concept of this elegy. Animals see "the Open" — pure, unbounded reality without the filter of language or self-consciousness. We see "the world" — a structured, labeled, limited interpretation. Can you imagine seeing without naming?</li>
+        <li><strong>Death and Time:</strong> Rilke claims animals do not see death; they move "in eternity." Humans are obsessed with the future and death. How does this awareness of time trap us?</li>
+        <li><strong>The Spectator:</strong> "We: spectators, always, everywhere." We are separated from the world by our very act of observing it. We watch life rather than purely being it.</li>
+        <li><strong>Taking Leave:</strong> The final image is devastating: we are always in the posture of someone leaving. Every moment is a goodbye because we are conscious of its passing.</li>
+      </ul>
+    `,
+    aboutPoem:`
+      <p>Dedicated to Rudolf Kassner. This is perhaps the most philosophical of the Elegies, anticipating Heidegger's existentialism and later animal studies. It defines the human condition via *negativa* — by contrasting it with the animal.</p>
+      <p><strong>Key distinction:</strong>
+      *   **Animal:** Has "death behind it," sees God/Openness before it. Exists in a continuous present.
+      *   **Human:** Has "death before it." Our eyes are "reversed," trapping us in self-reflection. We never see the world directly, only our interpretation of it.</p>
+      <p><strong>The Womb:</strong> Rilke praises the gnat and the small creature because they essentially remain in a womb-like state, never fully separated from their environment. The bird is "half-assured," and the bat is a "crack in the cup" — a hysterical, terrified consciousness.</p>
+    `,
+    aboutAuthor:`<p>See Rilke bio above.</p>`,
+    historicalContext:`
+      <p><strong>Phenomenology:</strong> Rilke was writing at the same time Husserl was developing phenomenology. The Eighth Elegy is a poetic phenomenology of animal vs. human perception. It asks: What is it like to be a bat? (decades before Thomas Nagel asked the same question). It questions the superiority of human consciousness, suggesting it might be a fall from grace.</p>
+    `,
+    connections:`
+      <p><strong>In this collection:</strong> Connects deeply with <strong>Stevens's "The Snow Man"</strong> (the attempt to see "nothing that is not there" — to see like the animal). Also <strong>Larkin's "Aubade"</strong> (the terror of death that defines human consciousness) and <strong>Carson's "Short Talks"</strong> (which also examine the limits of perception).</p>
+    `
+  },
+  {
+    id:'cimetiere-marin', poet:'Paul Valery', title:'Le Cimetiere marin (The Graveyard by the Sea)',
+    year:'1920', category:'metaphysical', hasFullText:true,
+    originalLang:'French',
+    originalText: `Ce toit tranquille, où marchent des colombes,
+Entre les pins palpite, entre les tombes;
+Midi le juste y compose de feux
+La mer, la mer, toujours recommencee
+O récompense après une pensée
+Qu'un long regard sur le calme des dieux!
+
+Quel pur travail de fins éclairs consume
+Maint diamant d'imperceptible écume,
+Et quelle paix semble se concevoir!
+Quand sur l'abîme un soleil se repose,
+Ouvrages purs d'une éternelle cause,
+Le temps scintille et le songe est savoir.
+
+Stable trésor, temple simple à Minerve,
+Masse de calme, et visible réserve,
+Eau sourcilleuse, Oeil qui gardes en toi
+Tant de sommeil sous une voile de flamme,
+O mon silence! . . . Édifice dans l'ame,
+Mais comble d'or aux mille tuiles, Toit!
+
+Temple du Temps, qu'un seul soupir résume,
+À ce point pur je monte et m'accoutume,
+Tout entouré de mon regard marin;
+Et comme aux dieux mon offrande suprême,
+La scintillation sereine sème
+Sur l'altitude un dédain souverain.
+
+Comme le fruit se fond en jouissance,
+Comme en délice il change son absence
+Dans une bouche où sa forme se meurt,
+Je hume ici ma future fumée,
+Et le ciel chante à l'âme consumée
+Le changement des rives en rumeur.
+
+Beau ciel, vrai ciel, regarde-moi qui change!
+Après tant d'orgueil, après tant d'étrange
+Oisiveté, mais pleine de pouvoir,
+Je m'abandonne à ce brillant espace,
+Sur les maisons des morts mon ombre passe
+Qui m'apprivoise à son frêle mouvoir.
+
+L'âme exposée aux torches du solstice,
+Je te soutiens, admirable justice
+De la lumière aux armes sans pitié!
+Je te tends pure à ta place première,
+Regarde-toi! . . . Mais rendre la lumière
+Suppose d'ombre une morne moitié.
+
+O pour moi seul, à moi seul, en moi-même,
+Auprès d'un coeur, aux sources du poème,
+Entre le vide et l'événement pur,
+J'attends l'écho de ma grandeur interne,
+Amère, sombre, et sonore citerne,
+Sonnant dans l'âme un creux toujours futur!
+
+Sais-tu, fausse captive des feuillages,
+Golfe mangeur de ces maigres grillages,
+Sur mes yeux clos, secrets éblouissants,
+Quel corps me traîne à sa fin paresseuse,
+Quel front l'attire à cette terre osseuse?
+Une étincelle y pense à mes absents.
+
+Fermé, sacré, plein d'un feu sans matière,
+Fragment terrestre offert à la lumière,
+Ce lieu me plaît, dominé de flambeaux,
+Composé d'or, de pierre et d'arbres sombres,
+Où tant de marbre est tremblant sur tant d'ombres;
+La mer fidèle y dort sur mes tombeaux!
+
+Chienne splendide, écarte l'idolâtre!
+Quand solitaire au sourire de pâtre,
+Je pais longtemps, moutons mystérieux,
+Le blanc troupeau de mes tranquilles tombes,
+Éloignes-en les prudentes colombes,
+Les songes vains, les anges curieux!
+
+Ici venu, l'avenir est paresse.
+L'insecte net gratte la sécheresse;
+Tout est brûlé, défait, reçu dans l'air
+A je ne sais quelle sévère essence . . .
+La vie est vaste, étant ivre d'absence,
+Et l'amertume est douce, et l'esprit clair.
+
+Les morts cachés sont bien dans cette terre
+Qui les réchauffe et sèche leur mystère.
+Midi là-haut, Midi sans mouvement
+En soi se pense et convient à soi-même
+Tête complète et parfait diadème,
+Je suis en toi le secret changement.
+
+Tu n'as que moi pour contenir tes craintes!
+Mes repentirs, mes doutes, mes contraintes
+Sont le défaut de ton grand diamant! . . .
+Mais dans leur nuit toute lourde de marbres,
+Un peuple vague aux racines des arbres
+A pris déjà ton parti lentement.
+
+Ils ont fondu dans une absence épaisse,
+L'argile rouge a bu la blanche espèce,
+Le don de vivre a passé dans les fleurs!
+Où sont des morts les phrases familières,
+L'art personnel, les âmes singulières?
+La larve file où se formaient les pleurs.
+
+Les cris aigus des filles chatouillées,
+Les yeux, les dents, les paupières mouillées,
+Le sein charmant qui joue avec le feu,
+Le sang qui brille aux lèvres qui se rendent,
+Les derniers dons, les doigts qui les défendent,
+Tout va sous terre et rentre dans le jeu!
+
+Et vous, grande âme, espérez-vous un songe
+Qui n'aura plus ces couleurs de mensonge
+Qu'aux yeux de chair l'onde et l'or font ici?
+Chanterez-vous quand serez vaporeuse?
+Allez! Tout fuit! Ma présence est poreuse,
+La sainte impatience meurt aussi!
+
+Maigre immortalité noire et dorée,
+Consolatrice affreusement laurée,
+Qui de la mort fais un sein maternel,
+Le beau mensonge et la pieuse ruse!
+Qui ne connaît, et qui ne les refuse,
+Ce crâne vide et ce rire éternel!
+
+Pères profonds, têtes inhabitées,
+Qui sous le poids de tant de pelletées,
+Êtes la terre et confondez nos pas,
+Le vrai rongeur, le ver irréfutable
+N'est point pour vous qui dormez sous la table,
+Il vit de vie, il ne me quitte pas!
+
+Amour, peut-être, ou de moi-même haine?
+Sa dent secrète est de moi si prochaine
+Que tous les noms lui peuvent convenir!
+Qu'importe! Il voit, il veut, il songe, il touche!
+Ma chair lui plaît, et jusque sur ma couche,
+À ce vivant je vis d'appartenir!
+
+Zénon! Cruel Zénon! Zénon d'Êlée!
+M'as-tu percé de cette flèche ailée
+Qui vibre, vole, et qui ne vole pas!
+Le son m'enfante et la flèche me tue!
+Ah! le soleil . . . Quelle ombre de tortue
+Pour l'âme, Achille immobile à grands pas!
+
+Non, non! . . . Debout! Dans l'ère successive!
+Brisez, mon corps, cette forme pensive!
+Buvez, mon sein, la naissance du vent!
+Une fraîcheur, de la mer exhalée,
+Me rend mon âme . . . O puissance salée!
+Courons à l'onde en rejaillir vivant.
+
+Oui! grande mer de delires douée,
+Peau de panthère et chlamyde trouée,
+De mille et mille idoles du soleil,
+Hydre absolue, ivre de ta chair bleue,
+Qui te remords l'étincelante queue
+Dans un tumulte au silence pareil
+
+Le vent se lève! . . . il faut tenter de vivre!
+L'air immense ouvre et referme mon livre,
+La vague en poudre ose jaillir des rocs!
+Envolez-vous, pages tout éblouies!
+Rompez, vagues! Rompez d'eaux rejouies
+Ce toit tranquille où picoraient des focs!`,
+    fullText: `This quiet roof, where dove-sails saunter by,
+Between the pines, the tombs, throbs visibly.
+Impartial noon patterns the sea in flame --
+That sea forever starting and re-starting.
+When thought has had its hour, oh how rewarding
+Are the long vistas of celestial calm!
+What grace of light, what pure toil goes to form
+The manifold diamond of the elusive foam!
+What peace I feel begotten at that source!
+When sunlight rests upon a profound sea,
+Time's air is sparkling, dream is certainty --
+Pure artifice both of an eternal Cause.
+
+Sure treasure, simple shrine to intelligence,
+Palpable calm, visible reticence,
+Proud-lidded water, Eye wherein there wells
+Under a film of fire such depth of sleep --
+O silence! . . . Mansion in my soul, you slope
+Of gold, roof of a myriad golden tiles.
+
+Temple of time, within a brief sigh bounded,
+To this rare height inured I climb, surrounded
+By the horizons of a sea-girt eye.
+And, like my supreme offering to the gods,
+That peaceful coruscation only breeds
+A loftier indifference on the sky.
+
+Even as a fruit's absorbed in the enjoying,
+Even as within the mouth its body dying
+Changes into delight through dissolution,
+So to my melted soul the heavens declare
+All bounds transfigured into a boundless air,
+And I breathe now my future's emanation.
+
+Beautiful heaven, true heaven, look how I change!
+After such arrogance, after so much strange
+Idleness -- strange, yet full of potency --
+I am all open to these shining spaces;
+Over the homes of the dead my shadow passes,
+Ghosting along -- a ghost subduing me.
+My soul laid bare to your midsummer fire,
+O just, impartial light whom I admire,
+
+Whose arms are merciless, you have I stayed
+And give back, pure, to your original place.
+Look at yourself . . . But to give light implies
+No less a somber moiety of shade.
+
+Oh, for myself alone, mine, deep within
+At the heart's quick, the poem's fount, between
+The void and its pure issue, I beseech
+The intimations of my secret power.
+O bitter, dark, and echoing reservoir
+Speaking of depths always beyond my reach.
+
+But know you -- feigning prisoner of the boughs,
+Gulf which cats up their slender prison-bars,
+Secret which dazzles though mine eyes are closed --
+What body drags me to its lingering end,
+What mind draws it to this bone-peopled ground?
+A star broods there on all that I have lost.
+
+Closed, hallowed, full of insubstantial fire,
+Morsel of earth to heaven's light given o'er --
+This plot, ruled by its flambeaux, pleases me --
+A place all gold, stone, and dark wood, where shudders
+So much marble above so many shadows:
+And on my tombs, asleep, the faithful sea.
+
+Keep off the idolaters, bright watch-dog, while --
+A solitary with the shepherd's smile --
+I pasture long my sheep, my mysteries,
+My snow-white flock of undisturbed graves!
+Drive far away from here the careful doves,
+The vain daydreams, the angels' questioning eyes!
+
+Now present here, the future takes its time.
+The brittle insect scrapes at the dry loam;
+All is burnt up, used up, drawn up in air
+To some ineffably rarefied solution . . .
+Life is enlarged, drunk with annihilation,
+And bitterness is sweet, and the spirit clear.
+
+The dead lie easy, hidden in earth where they
+Are warmed and have their mysteries burnt away.
+Motionless noon, noon aloft in the blue
+Broods on itself -- a self-sufficient theme.
+O rounded dome and perfect diadem,
+
+I am what's changing secretly in you.
+
+I am the only medium for your fears.
+My penitence, my doubts, my baulked desires --
+These are the flaw within your diamond pride . . .
+But in their heavy night, cumbered with marble,
+Under the roots of trees a shadow people
+Has slowly now come over to your side.
+To an impervious nothingness they're thinned,
+For the red clay has swallowed the white kind;
+Into the flowers that gift of life has passed.
+Where are the dead? -- their homely turns of speech,
+The personal grace, the soul informing each?
+Grubs thread their way where tears were once composed.
+
+The bird-sharp cries of girls whom love is teasing,
+The eyes, the teeth, the eyelids moistly closing,
+The pretty breast that gambles with the flame,
+The crimson blood shining when lips are yielded,
+The last gift, and the fingers that would shield it --
+All go to earth, go back into the game.
+
+And you, great soul, is there yet hope in you
+To find some dream without the lying hue
+That gold or wave offers to fleshly eyes?
+Will you be singing still when you're thin air?
+All perishes. A thing of flesh and pore
+Am I. Divine impatience also dies.
+
+Lean immortality, all crêpe and gold,
+Laurelled consoler frightening to behold,
+Death is a womb, a mother's breast, you feign
+The fine illusion, oh the pious trick!
+Who does not know them, and is not made sick
+That empty skull, that everlasting grin?
+
+Ancestors deep down there, 0 derelict heads
+Whom such a weight of spaded earth o'erspreads,
+Who are the earth, in whom our steps are lost,
+The real flesh-eater, worm unanswerable
+Is not for you that sleep under the table:
+Life is his meat, and I am still his host.
+
+'Love,' shall we call him? 'Hatred of self,' maybe?
+His secret tooth is so intimate with me
+That any name would suit him well enough,
+Enough that he can see, will, daydream, touch --
+My flesh delights him, even upon my couch
+I live but as a morsel of his life.
+
+Zeno, Zeno, cruel philosopher Zeno,
+Have you then pierced me with your feathered arrow
+That hums and flies, yet does not fly! The sounding
+Shaft gives me life, the arrow kills. Oh, sun! --
+Oh, what a tortoise-shadow to outrun
+My soul, Achilles' giant stride left standing!
+
+No, no! Arise! The future years unfold.
+Shatter, O body, meditation's mould!
+And, O my breast, drink in the wind's reviving!
+A freshness, exhalation of the sea,
+Restores my soul . . . Salt-breathing potency!
+Let's run at the waves and be hurled back to living!
+
+Yes, mighty sea with such wild frenzies gifted
+(The panther skin and the rent chlamys), sifted
+All over with sun-images that glisten,
+Creature supreme, drunk on your own blue flesh,
+Who in a tumult like the deepest hush
+Bite at your sequin-glittering tail -- yes, listen!
+
+The wind is rising! . . . We must try to live!
+The huge air opens and shuts my book: the wave
+Dares to explode out of the rocks in reeking
+Spray. Fly away, my sun-bewildered pages!
+Break, waves! Break up with your rejoicing surges
+This quiet roof where sails like doves were pecking.`,
+    sourceUrl:'https://www.poetryfoundation.org/poems/52092/the-graveyard-by-the-sea',
+    reflect:`
+      <ul>
+        <li><strong>The setting:</strong> A cemetery overlooking the Mediterranean at Sete, Valery's birthplace. How does the juxtaposition of death (graves) and life (blazing sea, noon sun) structure the entire poem?</li>
+        <li><strong>Noon as absolute:</strong> The poem takes place at the moment of maximum light — high noon. What does this temporal choice mean philosophically?</li>
+        <li><strong>The sea as thought:</strong> Valery was obsessed with the relationship between the mind and the sea. How does the sea function as a metaphor for consciousness throughout?</li>
+        <li><strong>The final command:</strong> The poem ends with an exhortation to live, to plunge into the waves. After all the philosophical meditation, why this physical conclusion?</li>
+        <li><strong>Cross-disciplinary:</strong> Valery was deeply interested in mathematics and science. How does his precision of language reflect a scientific sensibility applied to poetic material?</li>
+      </ul>
+    `,
+    aboutPoem:`
+      <p>Composed between 1917 and 1920, published in the Nouvelle Revue Francaise in 1920. Valery considered it incomplete — his friend Jacques Riviere essentially took it from him and published it. The poem is set in the Cimetiere marin at Sete, overlooking the Mediterranean, where Valery is now buried.</p>
+      <p><strong>Form:</strong> 24 stanzas of six decasyllabic lines each (the French decasyllable, not the English iambic pentameter). The form is exquisitely controlled — Valery said poetry should have "the exactness of algebra and the sensuality of music."</p>
+      <p><strong>The argument:</strong> Moving from contemplation of the sea's surface (pure, brilliant, absolute) through meditation on death, the body, and philosophical paralysis, to a final affirmation of life and action. The poem dramatizes the mind's temptation to remain in pure thought versus the body's demand to live.</p>
+    `,
+    aboutAuthor:`
+      <p><strong>Paul Valery (1871-1945)</strong> — Born in Sete, France. The supreme French intellectual of the first half of the 20th century: poet, essayist, philosopher of mind, quasi-scientist.</p>
+      <p><strong>The great silence:</strong> Valery published youthful Symbolist poetry in the 1890s, then stopped writing poetry entirely for nearly 20 years (1898-1917), devoting himself to private notebooks (the "Cahiers" — 26,000 pages of reflection on consciousness, mathematics, language, and method). When he returned to poetry with "La Jeune Parque" (1917), he was instantly recognized as a master.</p>
+      <p><strong>Obsessions:</strong> The mechanics of thought itself, the relationship between intellect and sensation, the limits of language, pure form. He was as much a philosopher of mind as a poet.</p>
+      <p><strong>Vivid detail:</strong> Valery woke at 5am every day to write in his notebooks before the day's demands. He said he wrote poetry "as an exercise" — the process interested him more than the product.</p>
+    `,
+    historicalContext:`
+      <p><strong>1920:</strong> Two years after WWI's end. France is mourning nearly 1.4 million dead. The poem's meditation on death in a sun-drenched Mediterranean setting gains extraordinary weight against this backdrop — beauty and annihilation coexisting.</p>
+      <p>Valery's return to poetry in 1917 coincided with the war's darkest years. "Le Cimetiere marin" can be read as a French intellectual's response to the same civilizational crisis that produced "The Waste Land" and the Duino Elegies — but where Eliot fragments and Rilke soars, Valery crystallizes.</p>
+    `,
+    connections:`
+      <p><strong>In this collection:</strong> Compare Valery's noon-absolute with Stevens's "The Snow Man" — both seek a state of pure perception. Valery's ultimate choice of life/action over contemplation inverts Prufrock's paralysis.</p>
+      <p><strong>Philosophy:</strong> Valery was deeply engaged with Descartes, Leibniz, and the rationalist tradition. His notebooks anticipate aspects of cognitive science and philosophy of mind.</p>
+      <p><strong>Science:</strong> Valery's interest in thermodynamics and entropy. The poem's movement from stillness to motion parallels the second law — the universe tends toward equilibrium, but life resists.</p>
+    `
+  },
+  {
+    id:'grodek', poet:'Georg Trakl', title:'Grodek',
+    year:'1914', category:'abyss', hasFullText:true,
+    fullText: `At nightfall the autumn woods cry out
+With deadly weapons and the golden plains,
+The deep blue lakes, above which more darkly
+Rolls the sun; the night embraces
+Dying warriors, the wild lament
+Of their broken mouths.
+But quietly there in the willow dell
+Red clouds in which an angry god resides,
+The shed blood gathers, lunar coolness.
+All the roads lead to blackest carrion.
+Under golden twigs of the night and stars
+The sister’s shade now sways through the silent copse
+To greet the ghosts of heroes, the bleeding heads;
+And softly the dark flutes of autumn sound in the reeds.
+O prouder grief! You brazen altars,
+Today a great pain feeds the hot flame of the spirit,
+The grandsons yet unborn.`,
+    originalLang:'German',
+    sourceUrl:'https://www.poetryfoundation.org/poems/155559/grodek',
+    reflect:`
+      <ul>
+        <li><strong>Color:</strong> Trakl was a painter of language. Track the colors through the poem — golds, reds, blues, blacks. How do they create an emotional arc?</li>
+        <li><strong>Nature and violence:</strong> Autumn forests, dying soldiers — how does Trakl fuse landscape with carnage? Is nature indifferent, complicit, or mourning?</li>
+        <li><strong>The last line:</strong> Written days before Trakl's death, the poem's ending carries extraordinary weight. How does knowing this biography change your reading?</li>
+        <li><strong>Sound:</strong> Read this aloud in German if you can, or listen to a recording. Trakl's music is inseparable from his meaning.</li>
+        <li><strong>Cross-disciplinary:</strong> Compare with medical/psychiatric accounts of trauma. Trakl was a pharmacist who served as a medic — his poetry mediates between clinical observation and visionary experience.</li>
+      </ul>
+    `,
+    aboutPoem:`
+      <p>"Grodek" is Trakl's last poem, written in October or early November 1914 after the Battle of Grodek (now Horodok, Ukraine), where he served as a military pharmacist in the Austrian army. He was responsible for treating ninety severely wounded soldiers in a barn, largely without supplies. Some accounts say he attempted to take his own life during this period; he died of a drug overdose on November 3, 1914, at age 27.</p>
+      <p><strong>Form:</strong> Free verse with an incantatory, almost liturgical rhythm. The imagery follows Trakl's characteristic method: concrete sensory details (autumn woods, golden plains, blue lakes) that seem to exist in a space between realism and hallucination.</p>
+      <p><strong>Significance:</strong> Perhaps the greatest single poem to emerge from World War I. In 18 lines, it compresses the entire experience of industrial warfare into a visionary landscape where beauty and horror are inseparable.</p>
+    `,
+    aboutAuthor:`
+      <p><strong>Georg Trakl (1887-1914)</strong> — Born in Salzburg, Austria. Pharmacist by training, visionary poet by vocation. Dead at 27, likely by intentional overdose, after witnessing the Battle of Grodek.</p>
+      <p><strong>Style:</strong> Trakl developed a unique idiom — recurring images (blue, gold, decay, autumn, sister-figures, twilight) arranged in a grammar that follows dream-logic rather than narrative. His poems read like fever-visions: precise in their sensory detail, mysterious in their connections.</p>
+      <p><strong>Influences and admirers:</strong> Holderlin, Rimbaud. Ludwig Wittgenstein — who gave Trakl a large anonymous financial gift through the publisher Ludwig von Ficker. Wittgenstein said of Trakl's poetry: "I do not understand it, but its tone delights me. It is the tone of true genius."</p>
+      <p><strong>Essential works:</strong> "Poems" (1913), "Sebastian in Dream" (1915, posthumous). His complete works fit in a single slim volume.</p>
+    `,
+    historicalContext:`
+      <p><strong>1914:</strong> The opening months of World War I. The Battle of Grodek (September 1914) was part of the Austro-Hungarian campaign in Galicia against Russia. The Austrians suffered catastrophic losses — poorly equipped troops against Russian artillery.</p>
+      <p>Trakl's death in November 1914 makes him one of the earliest literary casualties of the war. Unlike the later British war poets (Owen, Sassoon), Trakl does not protest or satirize — his response is visionary, transforming the battlefield into a mythic landscape of cosmic suffering.</p>
+      <p><strong>Context in Trakl's life:</strong> He had a history of drug dependency and psychological fragility. Whether his death was intentional suicide or accidental overdose remains debated. Either way, Grodek was the precipitating trauma.</p>
+    `,
+    connections:`
+      <p><strong>In this collection:</strong> Trakl's fusion of beauty and horror anticipates Celan's "Deathfugue" — both find terrible music in atrocity. Compare also with Lorca's "Dawn," which shares the technique of making landscape express psychological extremity.</p>
+      <p><strong>Philosophy:</strong> Trakl's vision of a fallen world resonates with Gnostic theology — the idea that the material world is inherently broken, a flawed creation.</p>
+      <p><strong>Art:</strong> German Expressionism — Kirchner, Nolde, Schiele. The same distortion of form to express inner states.</p>
+      <p><strong>Science:</strong> Pharmacology and altered states of consciousness. Trakl's dual identity as pharmacist and visionary poet embodies the tension between clinical and experiential knowledge.</p>
+    `
+  }
+);
+</script>

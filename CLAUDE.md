@@ -20,7 +20,43 @@ Linear workspace: https://linear.app/z-z-z | Team: Z
 | Completing an issue | `mcp__linear-server__update_issue` → state: "Done" |
 | Project milestone complete | `mcp__linear-server__update_project` with status update |
 
-### Quick Reference
+### Creating/Updating Projects
+
+When creating or updating Linear projects, include comprehensive details in the description:
+
+**Required sections:**
+- Brief overview (what it does)
+- Key features (bullet list)
+- File paths (Mac/CandyPop if applicable)
+- Access URLs (localhost, deployed, file paths)
+
+**Recommended sections:**
+- GitHub repo link (if exists): `**GitHub:** [https://github.com/user/repo](url)`
+- Category (Apps, Infrastructure, Utilities, Upskilling, Bots)
+- Recent Updates section with dated changelog
+- Status notes for known issues
+
+**Example:**
+```markdown
+Custom local transcription using faster-whisper. 100% private, GPU-accelerated.
+
+## Features
+- Model: large-v2 (~5GB VRAM)
+- 4x faster than openai-whisper
+- Word corrections: Configurable dictionary
+
+## Setup
+- **Mac:** /path/to/project
+- **GitHub:** [https://github.com/user/repo](url)
+- **Access:** http://localhost:8080
+
+## Recent Updates
+**Feb 9, 2026:**
+- ✅ Installed faster-whisper
+- ✅ Configured large-v2 model
+```
+
+### Quick Reference - Issues
 
 ```
 # Create issue for a bug/feature
@@ -35,6 +71,12 @@ mcp__linear-server__create_issue
 mcp__linear-server__update_issue
   id: "issue-id"
   state: "Done"  # Backlog, Todo, In Progress, Done, Canceled
+
+# Update project with changelog
+mcp__linear-server__update_project
+  id: "project-id"
+  description: "Updated description with Recent Updates section"
+  state: "In Progress"  # Backlog, In Progress, Completed, Canceled
 ```
 
 ---

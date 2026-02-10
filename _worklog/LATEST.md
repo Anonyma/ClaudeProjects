@@ -14,3 +14,5 @@
 | 2026-02-08 | vienna-deep-dives | completed (lessons) / in-progress (audio) | Created 8 Vienna lessons (56k words), deployed to Netlify. Audio generation on CandyPop via Gemini CLI. |
 | 2026-02-09 | paper-reading-mentor | completed | Initialized standalone GitHub repo and pushed main; updated projects.json. |
 Last: Mon Feb  9 21:48:56 CET 2026 - time-tracker - completed
+Last: Tue Feb 10 03:18:01 CET 2026 - time-tracker - completed
+| 2026-02-10 | audio-transcription-system | completed | Set up faster-whisper on CandyPop with custom word corrections & smart formatting |
