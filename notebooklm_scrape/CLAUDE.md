@@ -7,6 +7,7 @@ Automated system for scraping NotebookLM audio overviews, transcribing them, gen
 
 ## User Communication Preferences
 - Do not output code changes or diffs in responses. Provide diagrams, brief summaries, or checklists instead.
+- Always include an access link at the end of responses (live URL or local file path) so the user can preview the app or work.
 
 ---
 
