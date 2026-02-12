@@ -1,5 +1,7 @@
-# Latest Session
+# Latest Sessions
 
-- Session: `_worklog/sessions/2026-02-12_12-50-28.md`
-- Focus: Lesson thumbnail fallback improvements
-- Changes: Updated `study-app/index.html`, added lesson fallback test + artifact backup
+| Date | Project | Status | Summary |
+|------|---------|--------|---------|
+| 2026-02-12 | notebooklm-batch | in-progress | 695 sources added (0 fail), 21/24 deep dives generating, 3 JP History need retry (Z-13) |
+| 2026-02-12 | htgaa-week2 | deployed | Week 2 study guide committed & deployed to Netlify |
+| 2026-02-12 | lesson-thumbnails | completed | Lesson thumbnail fallback improvements |
