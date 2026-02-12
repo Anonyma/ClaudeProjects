@@ -1,5 +1,5 @@
 # Latest Session
 
-- Session: `_worklog/sessions/2026-02-12_16-14-48.md`
-- Focus: Add access-link requirement
-- Changes: Updated User Communication Preferences in CLAUDE.md
+- Session: `_worklog/sessions/2026-02-12_16-36-52.md`
+- Focus: Fix broken images and add wiki fallback
+- Changes: Added Wikipedia image fallback for cards/articles/entities and patched broken Wikimedia URLs
