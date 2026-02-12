@@ -1,4 +1,3 @@
-# Gemini Agent Instructions
+# GEMINI.md
 
-Read and follow ALL instructions in `AGENTS.md` in this directory before doing any work.
-Read and follow ALL instructions in `CLAUDE.md` in this directory — it contains project-specific rules that apply to all agents, not just Claude.
+**All agent instructions are in `AGENTS.md`.** Read it fully before doing any work.
