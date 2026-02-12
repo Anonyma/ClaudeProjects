@@ -5,6 +5,11 @@ Automated system for scraping NotebookLM audio overviews, transcribing them, gen
 
 ---
 
+## User Communication Preferences
+- Do not output code changes or diffs in responses. Provide diagrams, brief summaries, or checklists instead.
+
+---
+
 ## CRITICAL: Summary Format Requirements
 
 **Summaries must be ARTICLE-STYLE, not meta descriptions.**
@@ -62,6 +67,25 @@ Automated system for scraping NotebookLM audio overviews, transcribing them, gen
 }
 ```
 ```
+
+---
+
+## CRITICAL: Source Sourcing Strategy
+
+### Goal: Deep Research Base (50+ Sources)
+
+**Before creating any Deep Dive audio, you MUST ensure a robust source base.**
+A Deep Dive based on 5-10 sources is shallow. One based on 50+ sources is comprehensive.
+
+### The Protocol:
+1.  **Prompt NotebookLM to find sources:** Ask it to find relevant sources for your topic.
+2.  **Iterative Collection:**
+    - It typically finds ~10 sources at a time.
+    - **Import** these sources immediately.
+    - **Repeat** the prompt to find *more* different sources.
+    - **Alternative:** Use **Deep Research Mode** if available to find larger batches (up to 50).
+3.  **Threshold:** Do NOT generate the Deep Dive audio until you have imported **at least 50 high-quality sources**.
+4.  **Verification:** Check the "Sources" tab to ensure diversity (papers, articles, reliable web pages).
 
 ---
 
