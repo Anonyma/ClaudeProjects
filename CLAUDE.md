@@ -86,11 +86,14 @@ mcp__linear-server__update_project
 **Report status to the Agent Hub. `blocked`/`completed`/`error` auto-notify via Telegram.**
 
 ```bash
-report-status [--name NAME] [--ai TYPE] [--project NAME] STATUS "message"
+report-status [--name NAME] [--ai TYPE] [--project NAME] [--url URL] STATUS "message"
 ```
 
 - `--name`: Agent name (default: cwd basename). Use descriptive names: `deploy-bot`, `fix-bug-123`
 - `--ai`: `claude` (default) | `gemini` | `codex` | `ollama`
+- `--url`: Live URL to include in Telegram notification (clickable link on phone)
+- **IMPORTANT:** When completing a project with a live URL, ALWAYS include `--url`:
+  - `report-status --name my-deploy --url "https://app.netlify.app" completed "Ready for review"`
 - **Dashboard:** http://localhost:8767/ | **Terminal:** `agents` or `agent-status --watch`
 
 ---
@@ -100,17 +103,44 @@ report-status [--name NAME] [--ai TYPE] [--project NAME] STATUS "message"
 **After creating or modifying files in this repository, ALWAYS commit the changes.**
 
 - Commit after adding new files
+
 - Commit after editing existing files
+
 - Commit after updating `projects.json`
+
 - Use clear, descriptive commit messages
+
 - Don't batch unrelated changes - commit per logical unit of work
 
+
+
 Example:
+
 ```bash
+
 git add -A && git commit -m "Add voice-memo-transcriber project"
+
 ```
 
+
+
 ---
+
+
+
+## CRITICAL: Netlify Deployment Safety
+
+- **NEW SITES:** When deploying a NEW project, ALWAYS create a NEW Netlify site (`netlify sites:create`).
+
+- **NO REUSE:** NEVER reuse an existing Site ID or existing URL (like `art-discoverer`) unless you are certain it belongs to the current project.
+
+- **VERIFY:** Verify the target URL matches the project name before confirming deployment.
+
+
+
+---
+
+
 
 ## CRITICAL: Always Provide Access Instructions
 
