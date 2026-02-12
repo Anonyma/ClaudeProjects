@@ -1,5 +1,5 @@
 # Latest Session
 
-- Session: `_worklog/sessions/2026-02-12_16-36-52.md`
-- Focus: Fix broken images and add wiki fallback
-- Changes: Added Wikipedia image fallback for cards/articles/entities and patched broken Wikimedia URLs
+- Session: `_worklog/sessions/2026-02-12_19-15-30.md`
+- Focus: Redeploy + wiki thumbnail fallback for local preview
+- Changes: Switched wiki thumbnail lookup to CORS-friendly API and redeployed Netlify
