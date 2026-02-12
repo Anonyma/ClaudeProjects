@@ -19,6 +19,8 @@ LESSON_MAP = {
     "The_Rise_and_Fracture_of_Modern_America": "United States Capitol",
     "Washington_the_Town_Destroyer_and_Fragile_Experiments": "George Washington",
     "Versailles_Was_Actually_A_Golden_Prison": "Palace of Versailles",
+    "The Ethics of Raw Concrete: Brutalism and the Socialist Dream": "Boston City Hall",
+    "The Rococo Rebellion and the Return of the Senses": "The Swing (Fragonard)",
     "Native_Cities_and_the_Sovereignty_Straitjacket": "Indigenous peoples of the Americas",
     "How_American_Literature_Shattered_Reality": "American literature",
     "Murder_Jazz_and_the_Birth_of_the_Beats": "Louis Armstrong",
@@ -59,6 +61,14 @@ HEADERS_IMG = {"User-Agent": "Mozilla/5.0"}
 OUT_DIR = Path("study-app/assets/lesson-thumbs")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 OUT_JSON = OUT_DIR / "overrides.json"
+
+
+def slugify_key(value):
+    safe = (value or "").strip().replace(" ", "_")
+    safe = "".join(ch if ch.isalnum() or ch in ["_", "-"] else "_" for ch in safe)
+    while "__" in safe:
+        safe = safe.replace("__", "_")
+    return safe.strip("_")
 
 
 def fetch_pageimage(title):
@@ -133,7 +143,8 @@ def main():
             continue
 
         ext = os.path.splitext(thumb_url.split("?")[0])[1].lower() or ".jpg"
-        dest_name = f"{slug}{ext}"
+        safe_slug = slugify_key(slug)
+        dest_name = f"{safe_slug}{ext}"
         dest_path = OUT_DIR / dest_name
 
         try:

@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study Hub Learning Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-timeline@7.7.3/styles/vis-timeline-graph2d.min.css">
+  <style>
+    :root {
+      --bg: #f6f2ea;
+      --ink: #1f1f1f;
+      --muted: #6f6a61;
+      --accent: #0f766e;
+      --accent-2: #d97706;
+      --card: #ffffff;
+      --border: rgba(31, 31, 31, 0.12);
+      --shadow: 0 24px 60px rgba(31, 31, 31, 0.14);
+      --radius: 18px;
+    }
+
+    [data-theme="night"] {
+      --bg: #121417;
+      --ink: #f3f2ee;
+      --muted: #a29f96;
+      --accent: #78d6c6;
+      --accent-2: #f0b86e;
+      --card: #1b1f24;
+      --border: rgba(243, 242, 238, 0.12);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, rgba(217, 119, 6, 0.12), transparent 45%),
+                  radial-gradient(circle at 20% 20%, rgba(15, 118, 110, 0.16), transparent 40%),
+                  var(--bg);
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 32px;
+      align-items: center;
+      margin-bottom: 36px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 3vw, 3.2rem);
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-family: "IBM Plex Serif", serif;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin: 4px 6px 0 0;
+    }
+
+    .lab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 22px;
+    }
+
+    .panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      min-height: 240px;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+    }
+
+    .panel small {
+      color: var(--muted);
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .matrix-card {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(15, 118, 110, 0.08);
+      border: 1px solid rgba(15, 118, 110, 0.2);
+      font-size: 0.85rem;
+    }
+
+    .flashcards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .flashcard {
+      position: relative;
+      height: 140px;
+      border-radius: 14px;
+      background: rgba(217, 119, 6, 0.15);
+      border: 1px solid rgba(217, 119, 6, 0.3);
+      perspective: 800px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: absolute;
+      inset: 0;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flashcard.is-flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px;
+      backface-visibility: hidden;
+      font-size: 0.85rem;
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" data-theme="day" id="theme-root">
+    <div class="hero">
+      <div>
+        <h1>Learning Lab: Interactive Study Patterns</h1>
+        <p>Prototype playground with interactive tools for visual learning, synthesis, and memory. This page is a sandbox to test what feels engaging before wiring into the main app.</p>
+        <div style="margin-top:16px;">
+          <span class="pill">Concept maps</span>
+          <span class="pill">Adaptive timelines</span>
+          <span class="pill">Flashcards</span>
+          <span class="pill">Knowledge graphs</span>
+          <span class="pill">Progress visuals</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3>Style Toggle</h3>
+        <p>Switch between a warm editorial palette and a nocturne studio palette to test different study vibes.</p>
+        <button class="theme-toggle" id="theme-toggle">Switch Theme</button>
+      </div>
+    </div>
+
+    <div class="lab-grid">
+      <section class="panel">
+        <h2>Knowledge Graph</h2>
+        <small>Network-style overview of key entities and their relationships.</small>
+        <div id="graph" style="height:220px;margin-top:12px;"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Timeline Orbit</h2>
+        <small>See turning points over time with zoomable timeline controls.</small>
+        <div id="timeline" style="height:220px;margin-top:12px;"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Concept Matrix</h2>
+        <small>Cross-compare themes and outcomes at a glance.</small>
+        <div class="matrix">
+          <div class="matrix-card"><strong>Material</strong><br>Carbon footprint</div>
+          <div class="matrix-card"><strong>System</strong><br>Labor effects</div>
+          <div class="matrix-card"><strong>Culture</strong><br>Symbolic impact</div>
+          <div class="matrix-card"><strong>Policy</strong><br>Redistribution</div>
+          <div class="matrix-card"><strong>Technology</strong><br>Automation scope</div>
+          <div class="matrix-card"><strong>Ethics</strong><br>Risk lens</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Flashcards</h2>
+        <small>Tap to flip. Great for key definitions or exam prompts.</small>
+        <div class="flashcards">
+          <div class="flashcard">
+            <div class="flashcard-inner">
+              <div class="flashcard-face">Parametricism</div>
+              <div class="flashcard-face flashcard-back">Design defined by variables that update geometry.</div>
+            </div>
+          </div>
+          <div class="flashcard">
+            <div class="flashcard-inner">
+              <div class="flashcard-face">Brutalism</div>
+              <div class="flashcard-face flashcard-back">Beton brut, ethics of raw structure.</div>
+            </div>
+          </div>
+          <div class="flashcard">
+            <div class="flashcard-inner">
+              <div class="flashcard-face">UBI</div>
+              <div class="flashcard-face flashcard-back">Unconditional income floor for every citizen.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Mermaid Diagram</h2>
+        <small>Use for causal maps, flow charts, or story arcs.</small>
+        <div class="mermaid">
+flowchart LR
+  A[Automation] --> B[Displacement]
+  A --> C[Productivity]
+  C --> D[New Demand]
+  D --> E[New Roles]
+  B --> F[Policy Responses]
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Progress Rings</h2>
+        <small>Visual progress for notebooks or learning paths.</small>
+        <canvas id="progress" height="180"></canvas>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vis-timeline@7.7.3/standalone/umd/vis-timeline-graph2d.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const root = document.getElementById('theme-root');
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      root.dataset.theme = root.dataset.theme === 'day' ? 'night' : 'day';
+    });
+
+    document.querySelectorAll('.flashcard').forEach(card => {
+      card.addEventListener('click', () => card.classList.toggle('is-flipped'));
+    });
+
+    cytoscape({
+      container: document.getElementById('graph'),
+      elements: [
+        { data: { id: 'g1', label: 'Parametricism' } },
+        { data: { id: 'g2', label: 'Biomimicry' } },
+        { data: { id: 'g3', label: 'Mass Timber' } },
+        { data: { id: 'g4', label: 'AI Tooling' } },
+        { data: { source: 'g1', target: 'g4' } },
+        { data: { source: 'g2', target: 'g1' } },
+        { data: { source: 'g3', target: 'g2' } },
+      ],
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'background-color': '#0f766e',
+            'label': 'data(label)',
+            'color': '#fff',
+            'text-outline-width': 0,
+            'font-size': 10,
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            'line-color': '#d97706',
+            'width': 2,
+          }
+        }
+      ],
+      layout: { name: 'circle' }
+    });
+
+    const items = new vis.DataSet([
+      { id: 1, content: 'Deconstructivism', start: '1988-06-01' },
+      { id: 2, content: 'Guggenheim Bilbao', start: '1997-10-01' },
+      { id: 3, content: 'Parametricism', start: '2008-08-01' },
+      { id: 4, content: 'Mass Timber Surge', start: '2017-05-01' },
+    ]);
+    new vis.Timeline(document.getElementById('timeline'), items, {
+      height: '220px',
+      editable: false,
+      margin: { item: 12 },
+      showCurrentTime: false,
+    });
+
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+
+    new Chart(document.getElementById('progress'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Complete', 'In Progress'],
+        datasets: [{
+          data: [68, 32],
+          backgroundColor: ['#0f766e', '#f1e7d6'],
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        cutout: '72%',
+        plugins: { legend: { display: false } },
+      }
+    });
+  </script>
+</body>
+</html>
